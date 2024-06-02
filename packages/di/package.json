@@ -21,9 +21,6 @@
     "watch:tsc": "tsc -b -w",
     "dev": "concurrently \"npm:watch:*\""
   },
-  "dependencies": {
-    "tslib": "^2"
-  },
   "devDependencies": {
     "@jest/globals": "^29",
     "@types/node": "^20",

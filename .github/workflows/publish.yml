@@ -15,6 +15,7 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v4
+      - run: corepack enable
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
@@ -22,8 +23,17 @@ jobs:
           scope: '@wroud'
           cache: 'yarn'
 
+      - name: Setup .yarnrc.yml
+        run: |
+          yarn config set npmAlwaysAuth true
+          yarn config set npmPublishRegistry "https://registry.npmjs.org"
+          yarn config set npmAuthToken $NPM_AUTH_TOKEN
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          
+
       - name: Install modules
-        run: yarn
+        run: yarn install --immutable
 
       - name: Build modules
         run: yarn build
@@ -32,7 +42,5 @@ jobs:
         run: yarn test
 
       - name: Publish to npm
-        run: yarn npm publish
+        run: yarn npm publish --access public --tolerate-republish
         working-directory: ./packages/di
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

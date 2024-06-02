@@ -1,1 +1,0 @@
-{"version":3,"file":"getNameOfServiceType.js","sourceRoot":"","sources":["../../src/di/getNameOfServiceType.ts"],"names":[],"mappings":"AAEA,MAAM,UAAU,oBAAoB,CAAC,OAAyB;IAC5D,OAAO,CAAC,OAAO,OAAO,KAAK,QAAQ,IAAI,OAAO,OAAO,KAAK,UAAU,CAAC;QACnE,OAAO;QACP,MAAM,IAAI,OAAO;QACjB,CAAC,CAAC,OAAO,CAAC,IAAI;QACd,CAAC,CAAC,MAAM,CAAC,OAAO,CAAC,CAAC;AACtB,CAAC"}

@@ -1,0 +1,54 @@
+name: CI
+
+on: 
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+  workflow_dispatch:
+
+jobs:
+  linux:
+    name: Linux
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: jwalton/gh-find-current-pr@v1
+        id: findPr
+
+      - run: corepack enable
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'yarn'
+
+      - name: Install modules
+        run: yarn install --immutable
+
+      - name: Build modules
+        run: yarn build
+
+      - name: Run tests
+        run: yarn test --ci --json --coverage --testLocationInResults --outputFile=coverage/report.json
+
+      - name: Archive code coverage results
+        uses: actions/upload-artifact@v4
+        with:
+          name: code-coverage-report
+          path: coverage
+
+      - name: Download coverage report
+        uses: actions/download-artifact@v4
+        with:
+          name: code-coverage-report
+          path: ./coverage-main
+
+      - uses: ArtiomTr/jest-coverage-report-action@v2
+        with:
+          coverage-file: ./coverage/report.json
+          base-coverage-file: ./coverage-main/report.json
+          prnumber: ${{ steps.findPr.outputs.number }}

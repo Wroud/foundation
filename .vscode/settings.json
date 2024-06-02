@@ -1,0 +1,18 @@
+{
+    "search.exclude": {
+      "**/.yarn": true,
+      "**/.pnp.*": true
+    },
+    "typescript.tsdk": ".yarn/sdks/typescript/lib",
+    "typescript.tsserver.experimental.useVsCodeWatcher": false, // issue: https://github.com/yarnpkg/berry/issues/6270
+    "typescript.enablePromptUseWorkspaceTsdk": true,
+    "typescript.preferences.importModuleSpecifierEnding": "js",
+    "editor.tabSize": 2,
+    "prettier.prettierPath": ".yarn/sdks/prettier/index.cjs",
+  
+    "editor.formatOnSave": true,
+    "typescript.tsc.autoDetect": "off",
+  
+    "npm.autoDetect": "off",
+    "npm.packageManager": "yarn"
+}

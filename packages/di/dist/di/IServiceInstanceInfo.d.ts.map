@@ -1,0 +1,1 @@
+{"version":3,"file":"IServiceInstanceInfo.d.ts","sourceRoot":"","sources":["../../src/di/IServiceInstanceInfo.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,kBAAkB,EAAE,MAAM,yBAAyB,CAAC;AAElE,MAAM,WAAW,oBAAoB,CAAC,CAAC;IACrC,UAAU,EAAE,kBAAkB,CAAC,CAAC,CAAC,CAAC;IAClC,QAAQ,EAAE,CAAC,CAAC;CACb"}

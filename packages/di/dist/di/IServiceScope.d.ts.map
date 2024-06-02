@@ -1,0 +1,1 @@
+{"version":3,"file":"IServiceScope.d.ts","sourceRoot":"","sources":["../../src/di/IServiceScope.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,gBAAgB,EAAE,MAAM,uBAAuB,CAAC;AAC9D,MAAM,WAAW,aAAa;IAC5B,eAAe,EAAE,gBAAgB,CAAC;IAClC,CAAC,MAAM,CAAC,OAAO,CAAC,IAAI,IAAI,CAAC;CAC1B"}

@@ -43,3 +43,4 @@ jobs:
 
       - name: Publish to npm
         run: yarn npm publish --access public --tolerate-republish
+        working-directory: ./packages/di

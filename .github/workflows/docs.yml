@@ -37,7 +37,7 @@ jobs:
         run: yarn install --immutable
 
       - name: Build with VitePress
-        run: npm run docs:build
+        run: yarn run docs:build
         working-directory: ./packages/docs
 
       - name: Upload artifact

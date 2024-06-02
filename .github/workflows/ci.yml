@@ -33,7 +33,7 @@ jobs:
         run: yarn build
 
       - name: Run tests
-        run: yarn test --ci --json --coverage --testLocationInResults --outputFile=report.json
+        run: yarn test --ci --json --coverage --testLocationInResults --outputFile=coverage/report.json
 
       - name: Archive code coverage results
         uses: actions/upload-artifact@v4
@@ -45,10 +45,10 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: code-coverage-report
-          path: ./coverage/main
+          path: ./coverage-main
 
       - uses: ArtiomTr/jest-coverage-report-action@v2
         with:
           coverage-file: ./coverage/report.json
-          base-coverage-file: ./coverage/main/report.json
+          base-coverage-file: ./coverage-main/report.json
           prnumber: ${{ steps.findPr.outputs.number }}

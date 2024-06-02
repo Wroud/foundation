@@ -9,8 +9,11 @@
 # In that case, don't forget to run `yarn config set enableGlobalCache false`!
 # Documentation here: https://yarnpkg.com/features/caching#zero-installs
 
-#!.yarn/cache
+!.yarn/cache
 .pnp.*
 
 # coverage
 coverage
+
+# build artifacts
+dist

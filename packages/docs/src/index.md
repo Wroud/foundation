@@ -27,7 +27,7 @@ features:
   - icon: 🧩
     title: Dependency Injection
     details: Enhance modularity and testability with an easy-to-use DI system.
-    link: /configuration-options/#output-format
+    link: /packages/di/overview
     linkText: See documentation
   - icon: 🏗️
     title: Build for Scale

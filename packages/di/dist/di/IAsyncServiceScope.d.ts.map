@@ -1,1 +1,0 @@
-{"version":3,"file":"IAsyncServiceScope.d.ts","sourceRoot":"","sources":["../../src/di/IAsyncServiceScope.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,gBAAgB,EAAE,MAAM,uBAAuB,CAAC;AAE9D,MAAM,WAAW,kBAAkB;IACjC,eAAe,EAAE,gBAAgB,CAAC;IAClC,CAAC,MAAM,CAAC,YAAY,CAAC,IAAI,OAAO,CAAC,IAAI,CAAC,CAAC;CACxC"}

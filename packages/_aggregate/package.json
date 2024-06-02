@@ -1,0 +1,24 @@
+{
+  "name": "@wroud/_aggregate",
+  "version": "0.0.1",
+  "private": true,
+  "packageManager": "yarn@4.2.2",
+  "type": "module",
+  "license": "MIT",
+  "author": "Wroud",
+  "sideEffects": [],
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "rimraf ./dist",
+    "watch:tsc": "tsc -b -w",
+    "dev": "concurrently \"npm:watch:*\""
+  },
+  "dependencies": {
+    "tslib": "^2"
+  },
+  "devDependencies": {
+    "concurrently": "^8",
+    "rimraf": "^5",
+    "typescript": "^5"
+  }
+}

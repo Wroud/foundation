@@ -3,6 +3,7 @@
   "private": true,
   "packageManager": "yarn@4.2.2",
   "devDependencies": {
+    "@shikijs/vitepress-twoslash": "^1",
     "vitepress": "^1",
     "vue": "^3"
   },

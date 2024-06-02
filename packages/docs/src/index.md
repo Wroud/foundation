@@ -4,22 +4,36 @@ layout: home
 
 hero:
   name: "Wroud Foundation"
-  text: "Tools for modern js"
-  tagline: My great project tagline
+  text: "Empowering Modern JS Development"
+  tagline: "Simplify, Standardize, Succeed"
   actions:
     - theme: brand
-      text: Markdown Examples
-      link: /markdown-examples
+      text: Get Started
+      link: /get-started
     - theme: alt
-      text: API Examples
-      link: /api-examples
+      text: Documentation
+      link: /documentation
 
 features:
-  - title: Feature A
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-  - title: Feature B
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-  - title: Feature C
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
+  - icon: 🚀
+    title: Modern JavaScript Support
+    details: Utilize the latest JavaScript features and syntax, including ES modules, for cutting-edge development.
+  - icon: 📦
+    title: Small Bundle Size
+    details: Keep your applications lean and efficient with minimal overhead.
+  - icon: 🔧
+    title: Modern Decorators
+    details: Enhance your code with powerful and intuitive decorators, making it cleaner and more maintainable.
+  - icon: 🧩
+    title: Dependency Injection
+    details: Enhance modularity and testability with an easy-to-use DI system.
+    link: /configuration-options/#output-format
+    linkText: See documentation
+  - icon: 🏗️
+    title: Build for Scale
+    details: Designed to grow with your projects, ensuring performance and maintainability in large applications.
+  - icon: 🧠
+    title: Simple by Default
+    details: Get started quickly without needing extensive knowledge, thanks to straightforward and intuitive design.
 ---
 

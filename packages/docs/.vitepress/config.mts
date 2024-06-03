@@ -1,5 +1,6 @@
 import { defineConfig } from "vitepress";
 import { transformerTwoslash } from "@shikijs/vitepress-twoslash";
+import vite from "./vite.config";
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
@@ -7,6 +8,8 @@ export default defineConfig({
   description: "Tools for modern js",
   srcDir: "./src",
   cleanUrls: true,
+  lastUpdated: true,
+  vite,
   markdown: {
     codeTransformers: [transformerTwoslash()],
   },
@@ -36,7 +39,7 @@ export default defineConfig({
     },
     editLink: {
       pattern:
-        "https://github.com/wroud/foundation/edit/master/packages/docs/src/:path",
+        "https://github.com/wroud/foundation/edit/main/packages/docs/src/:path",
       text: "Edit this page on GitHub",
     },
     footer: {
@@ -73,11 +76,11 @@ export default defineConfig({
             items: [
               { text: "Overview", link: "overview" },
               {
-                text: "DI",
+                text: "Dependency Injection",
                 base: "/packages/di/",
                 items: [
                   { text: "Overview", link: "overview" },
-                  { text: "Installation", link: "installation" },
+                  { text: "Installation", link: "install" },
                   { text: "Usage", link: "usage" },
                   { text: "API", link: "api" },
                 ],

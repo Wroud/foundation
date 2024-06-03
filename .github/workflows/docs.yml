@@ -39,6 +39,10 @@ jobs:
       - name: Build modules
         run: yarn build
 
+      - name: Build with VitePress
+        run: yarn run docs:build
+        working-directory: ./packages/docs
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

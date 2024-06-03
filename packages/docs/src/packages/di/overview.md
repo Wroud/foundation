@@ -2,6 +2,8 @@
 outline: deep
 ---
 
+# Dependency Injection
+
 ## Overview
 
 `@wroud/di` is a powerful dependency injection (DI) library inspired by the .NET framework and implemented in pure JavaScript. It leverages modern JavaScript features, including optional decorators and explicit resource management, to provide a robust and flexible DI system suitable for a wide range of applications. It also supports legacy decorators from TypeScript, ensuring broad compatibility.

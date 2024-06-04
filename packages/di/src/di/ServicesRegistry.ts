@@ -13,9 +13,7 @@ export class ServicesRegistry {
     new WeakMap();
 
   static register<
-    TClass extends abstract new (
-      ...args: MapToServicesType<TServices>
-    ) => any | Function,
+    TClass extends abstract new (...args: MapToServicesType<TServices>) => any,
     TServices extends ServiceType<any>[] = [],
   >(service: TClass, metadata: IServiceMetadata<TServices>) {
     const existing = this.services.get(service);

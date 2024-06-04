@@ -1,17 +1,32 @@
 import type { MapToServicesType } from "./MapToServicesType.js";
+import type { ServiceType } from "./ServiceType.js";
 import { ServicesRegistry } from "./ServicesRegistry.js";
 
-export function injectable<TServices extends any[] = []>(
+function injectable(): <
+  TClass extends abstract new (...args: MapToServicesType<[]>) => any,
+>(
+  target: TClass,
+  context?: ClassDecoratorContext<TClass> | undefined,
+) => TClass;
+function injectable<TServices extends ServiceType<any>[]>(
+  dependencies: () => [...TServices],
+): <TClass extends abstract new (...args: MapToServicesType<TServices>) => any>(
+  target: TClass,
+  context?: ClassDecoratorContext<TClass> | undefined,
+) => TClass;
+function injectable<TServices extends ServiceType<any>[]>(
+  dependencies: () => [...TServices],
+): <TClass extends new (...args: MapToServicesType<TServices>) => any>(
+  target: TClass,
+) => TClass;
+function injectable<TServices extends ServiceType<any>[]>(
   dependencies: () => [...TServices] = () => [] as any,
 ) {
   return <
-    TClass extends abstract new (
-      ...args: MapToServicesType<TServices>
-    ) => any | Function,
+    TClass extends abstract new (...args: MapToServicesType<TServices>) => any,
   >(
     target: TClass,
     context?: ClassDecoratorContext<TClass> | undefined,
-    ...rest: any[]
   ): TClass => {
     let name = target.name;
 
@@ -32,3 +47,5 @@ export function injectable<TServices extends any[] = []>(
     return target;
   };
 }
+
+export { injectable };

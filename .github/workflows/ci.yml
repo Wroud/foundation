@@ -75,3 +75,6 @@ jobs:
             ./coverage/report.json
           branches: '*'
           target-branch: badges
+
+      - name: ⬆️ Push badges branch
+        run: git push origin badges

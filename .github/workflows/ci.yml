@@ -47,6 +47,26 @@ jobs:
           name: code-coverage-report
           path: ./coverage-main
 
+      - name: 🔴 Delete remote badges branch
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: git push origin --delete badges
+        continue-on-error: true
+
+      - name: ➕ Create badges branch
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: git checkout -b badges
+        continue-on-error: true
+
+      - name: ⚙️ Generating coverage badges
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: jpb06/coverage-badges-action@latest
+        continue-on-error: true
+        with:
+          coverage-summary-path: |
+            ./coverage/report.json
+          branches: '*'
+          target-branch: badges
+
       - uses: ArtiomTr/jest-coverage-report-action@v2
         with:
           coverage-file: ./coverage/report.json

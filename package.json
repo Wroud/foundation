@@ -31,6 +31,7 @@
   },
   "scripts": {
     "build": "cd packages/_aggregate && yarn build",
-    "test": "jest ./packages/*/dist"
+    "clean": "rimraf packages/*/dist",
+    "test": "yarn node --expose-gc $(yarn bin jest) ./packages/*/dist"
   }
 }

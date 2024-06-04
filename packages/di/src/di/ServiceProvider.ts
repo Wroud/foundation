@@ -10,7 +10,7 @@ import { IServiceProvider } from "./IServiceProvider.js";
 import type { IServiceScope } from "./IServiceScope.js";
 import { ServiceCollection } from "./ServiceCollection.js";
 import type { ServiceType } from "./ServiceType.js";
-import { ServiceRegistry } from "./ServicesRegistry.js";
+import { ServicesRegistry } from "./ServicesRegistry.js";
 import { getNameOfServiceType } from "./getNameOfServiceType.js";
 
 export class ServiceProvider implements IServiceProvider {
@@ -20,13 +20,13 @@ export class ServiceProvider implements IServiceProvider {
   >;
   constructor(
     private readonly collection: ServiceCollection,
-    private readonly parent?: IServiceProvider
+    private readonly parent?: IServiceProvider,
   ) {
     this.instances = new Map();
     this.addInstance(
       IServiceProvider,
       collection.getDescriptors(IServiceProvider)![0]!,
-      this
+      this,
     );
   }
 
@@ -37,8 +37,8 @@ export class ServiceProvider implements IServiceProvider {
       services.push(
         this.createInstanceFromDescriptor(
           service,
-          descriptor as IServiceDescriptor<T>
-        )
+          descriptor as IServiceDescriptor<T>,
+        ),
       );
     }
 
@@ -51,7 +51,7 @@ export class ServiceProvider implements IServiceProvider {
     if (descriptors.length === 0) {
       let name = getNameOfServiceType(service);
 
-      const metadata = ServiceRegistry.get(service);
+      const metadata = ServicesRegistry.get(service);
 
       if (metadata?.name) {
         name = metadata.name;
@@ -62,7 +62,7 @@ export class ServiceProvider implements IServiceProvider {
 
     return this.createInstanceFromDescriptor(
       service,
-      descriptors[descriptors.length - 1]! as IServiceDescriptor<T>
+      descriptors[descriptors.length - 1]! as IServiceDescriptor<T>,
     );
   }
 
@@ -90,11 +90,11 @@ export class ServiceProvider implements IServiceProvider {
 
   private createInstanceFromDescriptor<T>(
     service: ServiceType<T>,
-    descriptor: IServiceDescriptor<T>
+    descriptor: IServiceDescriptor<T>,
   ): T {
     const initialize = () => {
       try {
-        const metadata = ServiceRegistry.get(descriptor.implementation);
+        const metadata = ServicesRegistry.get(descriptor.implementation);
 
         if (metadata) {
           const dependencies = metadata.dependencies.map((dependency) => {
@@ -105,7 +105,7 @@ export class ServiceProvider implements IServiceProvider {
           });
 
           return new (descriptor.implementation as IServiceConstructor<T>)(
-            ...dependencies
+            ...dependencies,
           );
         }
 
@@ -118,8 +118,8 @@ export class ServiceProvider implements IServiceProvider {
               err.message.includes("cannot be invoked without 'new'")
             ) {
               throw new Error(
-                `Class "${descriptor.implementation.name}" not registered as service (please use @injectable or ServiceRegistry)`,
-                { cause: err }
+                `Class "${descriptor.implementation.name}" not registered as service (please use @injectable or ServicesRegistry)`,
+                { cause: err },
               );
             } else {
               throw err;
@@ -131,7 +131,7 @@ export class ServiceProvider implements IServiceProvider {
       } catch (err: any) {
         throw new Error(
           `Failed to initiate service "${getNameOfServiceType(service)}":\n\r${err.message}`,
-          { cause: err }
+          { cause: err },
         );
       }
     };
@@ -163,7 +163,7 @@ export class ServiceProvider implements IServiceProvider {
 
   private hasInstanceOf<T>(
     service: ServiceType<T>,
-    descriptor: IServiceDescriptor<T>
+    descriptor: IServiceDescriptor<T>,
   ): boolean {
     for (const instance of this.instances.get(service) ?? []) {
       if (instance.descriptor === descriptor) {
@@ -176,7 +176,7 @@ export class ServiceProvider implements IServiceProvider {
 
   private getInstanceInfo<T>(
     service: ServiceType<T>,
-    descriptor: IServiceDescriptor<T>
+    descriptor: IServiceDescriptor<T>,
   ): IServiceInstanceInfo<T> | undefined {
     const instances = this.instances.get(service) ?? [];
     return instances.find((instance) => instance.descriptor === descriptor);
@@ -185,7 +185,7 @@ export class ServiceProvider implements IServiceProvider {
   private addInstance<T>(
     service: ServiceType<T>,
     descriptor: IServiceDescriptor<T>,
-    instance: T
+    instance: T,
   ): void {
     const instances = this.instances.get(service) || [];
     this.instances.set(service, [...instances, { descriptor, instance }]);
@@ -218,9 +218,9 @@ export class ServiceProvider implements IServiceProvider {
               "function"
               ? instanceInfo.instance[Symbol.asyncDispose]()
               : Promise.resolve();
-          })
-        )
-      )
+          }),
+        ),
+      ),
     );
 
     this.instances.clear();

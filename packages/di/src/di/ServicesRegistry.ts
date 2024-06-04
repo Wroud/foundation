@@ -5,9 +5,8 @@ export interface IServiceMetadata {
   dependencies: ServiceType<any>[];
 }
 
-export class ServiceRegistry {
-  private static readonly services: WeakMap<any, IServiceMetadata> =
-    new WeakMap();
+export class ServicesRegistry {
+  static readonly services: WeakMap<any, IServiceMetadata> = new WeakMap();
 
   static register(service: any, metadata: IServiceMetadata) {
     const existing = this.services.get(service);

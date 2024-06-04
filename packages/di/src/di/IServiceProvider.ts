@@ -11,4 +11,5 @@ export interface IServiceProvider {
   createAsyncScope(): IAsyncServiceScope;
   createScope(): IServiceScope;
   [Symbol.dispose](): void;
+  [Symbol.asyncDispose](): Promise<void>;
 }

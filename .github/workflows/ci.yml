@@ -72,7 +72,7 @@ jobs:
         continue-on-error: true
         with:
           coverage-summary-path: |
-            ./coverage/report.json
+            ./coverage/coverage-summary.json
           branches: '*'
           target-branch: badges
 

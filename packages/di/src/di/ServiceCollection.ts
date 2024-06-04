@@ -8,13 +8,15 @@ import type { IServiceFactory } from "./IServiceFactory.js";
 import { IServiceProvider } from "./IServiceProvider.js";
 import type { ServiceImplementation } from "./ServiceImplementation.js";
 import type { ServiceType } from "./ServiceType.js";
-import { ServiceRegistry } from "./ServicesRegistry.js";
+import { ServicesRegistry } from "./ServicesRegistry.js";
 
 export class ServiceCollection implements IServiceCollection {
   private readonly collection: Map<any, IServiceDescriptor<unknown>[]>;
   constructor() {
     this.collection = new Map();
-    this.addSingleton(IServiceProvider, () => undefined);
+    this.addSingleton(IServiceProvider, () => {
+      throw new Error("Not implemented");
+    });
   }
 
   [Symbol.iterator](): Iterator<IServiceDescriptor<unknown>, any, undefined> {
@@ -36,11 +38,11 @@ export class ServiceCollection implements IServiceCollection {
   addScoped<T>(service: ServiceType<T>, factory: IServiceFactory<T>): this;
   addScoped<T>(
     service: ServiceType<T>,
-    constructor: IServiceConstructor<T>
+    constructor: IServiceConstructor<T>,
   ): this;
   addScoped<T>(
     service: ServiceType<T>,
-    implementation: ServiceType<T> | T = service
+    implementation: ServiceType<T> | T = service,
   ): this {
     this.addService(ServiceLifetime.Scoped, service, implementation);
     return this;
@@ -50,11 +52,11 @@ export class ServiceCollection implements IServiceCollection {
   addTransient<T>(service: ServiceType<T>, factory: IServiceFactory<T>): this;
   addTransient<T>(
     service: ServiceType<T>,
-    constructor: IServiceConstructor<T>
+    constructor: IServiceConstructor<T>,
   ): this;
   addTransient<T>(
     service: ServiceType<T>,
-    implementation: ServiceType<T> | T = service
+    implementation: ServiceType<T> | T = service,
   ): this {
     this.addService(ServiceLifetime.Transient, service, implementation);
     return this;
@@ -64,12 +66,12 @@ export class ServiceCollection implements IServiceCollection {
   addSingleton<T>(service: ServiceType<T>, implementation: T): this;
   addSingleton<T>(
     service: ServiceType<T>,
-    constructor: IServiceConstructor<T>
+    constructor: IServiceConstructor<T>,
   ): this;
   addSingleton<T>(service: ServiceType<T>, factory: IServiceFactory<T>): this;
   addSingleton<T>(
     service: ServiceType<T>,
-    implementation: ServiceType<T> | T = service
+    implementation: ServiceType<T> | T = service,
   ): this {
     this.addService(ServiceLifetime.Singleton, service, implementation);
     return this;
@@ -78,7 +80,7 @@ export class ServiceCollection implements IServiceCollection {
   private addService<T>(
     lifetime: ServiceLifetime,
     service: ServiceType<T>,
-    implementation: ServiceType<T> | T
+    implementation: ServiceType<T> | T,
   ): this {
     const descriptors = this.collection.get(service) ?? [];
     this.collection.set(service, [
@@ -100,12 +102,12 @@ export class ServiceCollection implements IServiceCollection {
     const descriptors = this.getDescriptors(service);
 
     for (const descriptor of descriptors) {
-      const metadata = ServiceRegistry.get(descriptor.implementation);
+      const metadata = ServicesRegistry.get(descriptor.implementation);
 
       if (metadata) {
         if (path.includes(metadata.name!)) {
           throw new Error(
-            `Cyclic dependency detected: ${path.join(" -> ")} -> ${descriptor.service.name}`
+            `Cyclic dependency detected: ${path.join(" -> ")} -> ${descriptor.service.name}`,
           );
         }
 

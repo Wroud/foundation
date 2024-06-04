@@ -1,7 +1,7 @@
 import type { IAbstractServiceConstructor } from "./IAbstractServiceConstructor.js";
 import type { IServiceConstructor } from "./IServiceConstructor.js";
 import type { IServiceFactory } from "./IServiceFactory.js";
-import { ServiceRegistry } from "./ServicesRegistry.js";
+import { ServicesRegistry } from "./ServicesRegistry.js";
 
 type UnpackServiceType<T> = T extends
   | IServiceConstructor<any>
@@ -18,13 +18,13 @@ type MapToServices<TServices extends any[]> = {
 };
 
 export function injectable<TServices extends any[] = []>(
-  dependencies: () => [...TServices] = () => [] as any
+  dependencies: () => [...TServices] = () => [] as any,
 ) {
   return <
     TClass extends abstract new (...args: MapToServices<TServices>) => any,
   >(
     target: TClass,
-    context: ClassDecoratorContext<TClass> | undefined
+    context: ClassDecoratorContext<TClass> | undefined,
   ): TClass => {
     let name = target.name;
 
@@ -37,7 +37,7 @@ export function injectable<TServices extends any[] = []>(
       value: name,
       writable: false,
     });
-    ServiceRegistry.register(target, {
+    ServicesRegistry.register(target, {
       name,
       dependencies: dependencies(),
     });

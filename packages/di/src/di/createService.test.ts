@@ -1,6 +1,5 @@
-import { expect, it } from "@jest/globals";
+import { expect, it, describe } from "@jest/globals";
 import { createService } from "./createService.js";
-import { describe } from "node:test";
 
 describe("createService", () => {
   it("has name", () => {

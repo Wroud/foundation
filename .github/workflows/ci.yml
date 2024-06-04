@@ -50,6 +50,12 @@ jobs:
           name: code-coverage-report
           path: ./coverage-main
 
+      - uses: ArtiomTr/jest-coverage-report-action@v2
+        with:
+          coverage-file: ./coverage/report.json
+          base-coverage-file: ./coverage-main/report.json
+          prnumber: ${{ steps.findPr.outputs.number }}
+
       - name: 🔴 Delete remote badges branch
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: git push origin --delete badges
@@ -69,9 +75,3 @@ jobs:
             ./coverage/report.json
           branches: '*'
           target-branch: badges
-
-      - uses: ArtiomTr/jest-coverage-report-action@v2
-        with:
-          coverage-file: ./coverage/report.json
-          base-coverage-file: ./coverage-main/report.json
-          prnumber: ${{ steps.findPr.outputs.number }}

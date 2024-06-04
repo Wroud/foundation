@@ -1,4 +1,4 @@
-import { describe, expect, it } from "@jest/globals";
+import { describe, expect, it, jest } from "@jest/globals";
 import { ServiceContainerBuilder } from "./ServiceContainerBuilder.js";
 import { IServiceProvider } from "./IServiceProvider.js";
 import { ServicesRegistry } from "./ServicesRegistry.js";
@@ -43,14 +43,38 @@ describe("ServiceProvider", () => {
     ]);
   });
   it("should dispose scope", () => {
-    const serviceProvider = new ServiceContainerBuilder().build();
+    class Disposable {
+      [Symbol.dispose] = jest.fn();
+    }
+    ServicesRegistry.register(Disposable, {
+      name: "Disposable",
+      dependencies: [],
+    });
+    const serviceProvider = new ServiceContainerBuilder()
+      .addScoped(Disposable)
+      .build();
     const scope = serviceProvider.createScope();
+    const instance = scope.serviceProvider.getService(Disposable);
+
     scope[Symbol.dispose]();
+    expect(instance[Symbol.dispose]).toBeCalled();
   });
   it("should async dispose scope", async () => {
-    const serviceProvider = new ServiceContainerBuilder().build();
+    class Disposable {
+      [Symbol.asyncDispose] = jest.fn();
+    }
+    ServicesRegistry.register(Disposable, {
+      name: "Disposable",
+      dependencies: [],
+    });
+    const serviceProvider = new ServiceContainerBuilder()
+      .addScoped(Disposable)
+      .build();
     const scope = serviceProvider.createAsyncScope();
+    const instance = scope.serviceProvider.getService(Disposable);
+
     await scope[Symbol.asyncDispose]();
+    expect(instance[Symbol.asyncDispose]).toBeCalled();
   });
   it("should create async scope", () => {
     const serviceProvider = new ServiceContainerBuilder().build();
@@ -61,12 +85,34 @@ describe("ServiceProvider", () => {
     ]);
   });
   it("should dispose", () => {
-    const serviceProvider = new ServiceContainerBuilder().build();
+    class Disposable {
+      [Symbol.dispose] = jest.fn();
+    }
+    ServicesRegistry.register(Disposable, {
+      name: "Disposable",
+      dependencies: [],
+    });
+    const serviceProvider = new ServiceContainerBuilder()
+      .addSingleton(Disposable)
+      .build();
+    const instance = serviceProvider.getService(Disposable);
     serviceProvider[Symbol.dispose]();
+    expect(instance[Symbol.dispose]).toBeCalled();
   });
   it("should async dispose", async () => {
-    const serviceProvider = new ServiceContainerBuilder().build();
+    class Disposable {
+      [Symbol.asyncDispose] = jest.fn();
+    }
+    ServicesRegistry.register(Disposable, {
+      name: "Disposable",
+      dependencies: [],
+    });
+    const serviceProvider = new ServiceContainerBuilder()
+      .addSingleton(Disposable)
+      .build();
+    const instance = serviceProvider.getService(Disposable);
     await serviceProvider[Symbol.asyncDispose]();
+    expect(instance[Symbol.asyncDispose]).toBeCalled();
   });
   it("should throw on missing service", () => {
     const serviceProvider = new ServiceContainerBuilder().build();
@@ -122,7 +168,7 @@ describe("ServiceProvider", () => {
     }
     ServicesRegistry.register(Test, {
       name: "Test",
-      dependencies: [Number, String],
+      dependencies: [Number, String] as const,
     });
     const serviceProvider = new ServiceContainerBuilder()
       .addSingleton(Test)
@@ -213,7 +259,7 @@ describe("ServiceProvider", () => {
     }
     ServicesRegistry.register(Test, {
       name: "Test",
-      dependencies: [String, Number],
+      dependencies: [String, Number] as const,
     });
     const serviceProvider = new ServiceContainerBuilder()
       .addSingleton(Test)

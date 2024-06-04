@@ -1,14 +1,23 @@
+import type { MapToServicesType } from "./MapToServicesType.js";
 import type { ServiceType } from "./ServiceType.js";
 
-export interface IServiceMetadata {
+export interface IServiceMetadata<
+  TServices extends ServiceType<any>[] = ServiceType<any>[],
+> {
   name: string | undefined;
-  dependencies: ServiceType<any>[];
+  dependencies: TServices;
 }
 
 export class ServicesRegistry {
-  static readonly services: WeakMap<any, IServiceMetadata> = new WeakMap();
+  private static readonly services: WeakMap<any, IServiceMetadata> =
+    new WeakMap();
 
-  static register(service: any, metadata: IServiceMetadata) {
+  static register<
+    TClass extends abstract new (
+      ...args: MapToServicesType<TServices>
+    ) => any | Function,
+    TServices extends ServiceType<any>[] = [],
+  >(service: TClass, metadata: IServiceMetadata<TServices>) {
     const existing = this.services.get(service);
 
     if (existing) {

@@ -32,6 +32,6 @@
   "scripts": {
     "build": "cd packages/_aggregate && yarn build",
     "clean": "rimraf packages/*/dist",
-    "test": "yarn node --expose-gc $(yarn bin jest) ./packages/*/dist"
+    "test": "yarn node --expose-gc --experimental-vm-modules $(yarn bin jest) ./packages/*/dist"
   }
 }

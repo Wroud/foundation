@@ -1,30 +1,17 @@
-import type { IAbstractServiceConstructor } from "./IAbstractServiceConstructor.js";
-import type { IServiceConstructor } from "./IServiceConstructor.js";
-import type { IServiceFactory } from "./IServiceFactory.js";
+import type { MapToServicesType } from "./MapToServicesType.js";
 import { ServicesRegistry } from "./ServicesRegistry.js";
-
-type UnpackServiceType<T> = T extends
-  | IServiceConstructor<any>
-  | IAbstractServiceConstructor<any>
-  ? InstanceType<T>
-  : T extends IServiceFactory<any>
-    ? ReturnType<T>
-    : T;
-
-type MapToServices<TServices extends any[]> = {
-  [K in keyof TServices]: TServices[K] extends [...infer P]
-    ? { [K in keyof P]: UnpackServiceType<P[K]> }
-    : UnpackServiceType<TServices[K]>;
-};
 
 export function injectable<TServices extends any[] = []>(
   dependencies: () => [...TServices] = () => [] as any,
 ) {
   return <
-    TClass extends abstract new (...args: MapToServices<TServices>) => any,
+    TClass extends abstract new (
+      ...args: MapToServicesType<TServices>
+    ) => any | Function,
   >(
     target: TClass,
-    context: ClassDecoratorContext<TClass> | undefined,
+    context?: ClassDecoratorContext<TClass> | undefined,
+    ...rest: any[]
   ): TClass => {
     let name = target.name;
 

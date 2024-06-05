@@ -1,6 +1,6 @@
 {
   "name": "@wroud/di",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "packageManager": "yarn@4.2.2",
   "type": "module",
   "license": "MIT",
@@ -42,5 +42,22 @@
     "rimraf": "^5",
     "tslib": "^2",
     "typescript": "^5"
-  }
+  },
+  "keywords": [
+    "dependency injection",
+    "DI",
+    "JavaScript",
+    "TypeScript",
+    "ES modules",
+    "decorators",
+    "service management",
+    "inversion of control",
+    "IoC",
+    "singleton",
+    "transient",
+    "scoped",
+    "wroud",
+    "modern JS",
+    "best practices"
+  ]
 }

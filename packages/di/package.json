@@ -1,6 +1,6 @@
 {
   "name": "@wroud/di",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "packageManager": "yarn@4.2.2",
   "type": "module",
   "license": "MIT",

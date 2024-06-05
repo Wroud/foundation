@@ -13,6 +13,9 @@ hero:
     # - theme: alt
     #   text: Documentation
     #   link: /documentation
+  image:
+    src: /icon-big.svg
+    alt: Wroud Foundation
 
 features:
   - icon: 🚀

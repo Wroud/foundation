@@ -12,21 +12,21 @@ export interface IServiceCollection
   addScoped<T>(service: ServiceType<T>, factory: IServiceFactory<T>): this;
   addScoped<T>(
     service: ServiceType<T>,
-    constructor: IServiceConstructor<T>
+    constructor: IServiceConstructor<T>,
   ): this;
 
   addTransient<T>(service: ServiceImplementation<T>): this;
   addTransient<T>(service: ServiceType<T>, factory: IServiceFactory<T>): this;
   addTransient<T>(
     service: ServiceType<T>,
-    constructor: IServiceConstructor<T>
+    constructor: IServiceConstructor<T>,
   ): this;
 
   addSingleton<T>(service: ServiceImplementation<T>): this;
-  addSingleton<T>(service: ServiceType<T>, implementation: T): this;
+  addSingleton<T>(service: ServiceType<T>, factory: IServiceFactory<T>): this;
   addSingleton<T>(
     service: ServiceType<T>,
-    constructor: IServiceConstructor<T>
+    constructor: IServiceConstructor<T>,
   ): this;
-  addSingleton<T>(service: ServiceType<T>, factory: IServiceFactory<T>): this;
+  addSingleton<T>(service: ServiceType<T>, implementation: T): this;
 }

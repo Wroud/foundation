@@ -49,7 +49,7 @@ export default defineConfig({
 
     /* prettier-ignore */
     nav: [
-      { text: "guide", link: "/guide/markdown-examples", activeMatch: "/guide/" },
+      // { text: "guide", link: "/guide/markdown-examples", activeMatch: "/guide/" },
       { text: "packages", link: "/packages/overview", activeMatch: "/packages/" },
     ],
 

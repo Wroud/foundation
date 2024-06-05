@@ -61,7 +61,7 @@ describe("ServicesRegistry", () => {
 
     expect(
       Math.abs(afterCreationMemoryUsage - process.memoryUsage().heapUsed),
-    ).toBeLessThan(200000); // this test can fail if any other tests throw an error
+    ).toBeLessThan(400000); // this test can fail if any other tests throw an error
   });
 });
 

@@ -1,6 +1,6 @@
 {
   "name": "@wroud/di",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "packageManager": "yarn@4.2.2",
   "type": "module",
   "license": "MIT",
@@ -21,6 +21,14 @@
     "./src": "./src/index.ts",
     "./src/*": "./src/*"
   },
+  "files": [
+    "dist",
+    "!dist/**/*.test.js",
+    "!dist/**/*.test.d.ts",
+    "!dist/**/*.test.d.ts.map",
+    "!dist/**/*.test.js.map",
+    "!.tsbuildinfo"
+  ],
   "scripts": {
     "build": "tsc -b",
     "clean": "rimraf ./dist",

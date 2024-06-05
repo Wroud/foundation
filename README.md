@@ -12,7 +12,7 @@ The Wroud Foundation provides tools to help developers implement best practices 
 
 ### Future Tools
 
-We plan to expand our toolset with more packages to address various JavaScript development challenges. Stay tuned!
+We plan to expand our toolset with more packages to address various JavaScript development challenges.
 
 ## 📖 Documentation
 

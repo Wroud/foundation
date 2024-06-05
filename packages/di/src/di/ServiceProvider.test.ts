@@ -355,6 +355,28 @@ describe("ServiceProvider", () => {
       "Scoped services require a service scope.",
     );
   });
+  it("should not resolve singleton with scoped dependencies", () => {
+    class Test {}
+    class Test2 {
+      constructor(public test: Test) {}
+    }
+    ServicesRegistry.register(Test, {
+      name: "Test",
+      dependencies: [],
+    });
+    ServicesRegistry.register(Test2, {
+      name: "Test2",
+      dependencies: [Test],
+    });
+    const serviceProvider = new ServiceContainerBuilder()
+      .addSingleton(Test2)
+      .addScoped(Test)
+      .build();
+    const scope = serviceProvider.createScope();
+    expect(() => scope.serviceProvider.getService(Test2)).toThrowError(
+      'Scoped service "Test" cannot be resolved from singleton service.',
+    );
+  });
   it("should resolve scoped service with singleton dependencies", () => {
     class Test {}
     class Test2 {

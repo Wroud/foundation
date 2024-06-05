@@ -23,8 +23,9 @@ export default defineConfig({
 
   /* prettier-ignore */
   head: [
-    // ['link', { rel: 'icon', type: 'image/svg+xml', href: '/vitepress-logo-mini.svg' }],
+    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/icon.svg' }],
     // ['link', { rel: 'icon', type: 'image/png', href: '/vitepress-logo-mini.png' }],
+    ['link', { rel: 'icon', href: '/favicon.ico' }],
     ['meta', { name: 'theme-color', content: '#528de0' }],
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:locale', content: 'en' }],

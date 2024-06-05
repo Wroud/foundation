@@ -18,6 +18,7 @@ export class ServiceProvider implements IServiceProvider {
     ServiceType<any>,
     IServiceInstanceInfo<any>[]
   >;
+  private currentResolvingLifetime: ServiceLifetime | null;
   constructor(
     private readonly collection: ServiceCollection,
     private readonly parent?: IServiceProvider,
@@ -28,6 +29,7 @@ export class ServiceProvider implements IServiceProvider {
       collection.getDescriptors(IServiceProvider)![0]!,
       this,
     );
+    this.currentResolvingLifetime = null;
   }
 
   getServices<T>(service: ServiceType<T>): T[] {
@@ -92,8 +94,21 @@ export class ServiceProvider implements IServiceProvider {
     service: ServiceType<T>,
     descriptor: IServiceDescriptor<T>,
   ): T {
-    const initialize = () => {
-      try {
+    const inheritedLifetime = this.currentResolvingLifetime;
+    try {
+      if (this.currentResolvingLifetime !== null) {
+        if (
+          this.currentResolvingLifetime === ServiceLifetime.Singleton &&
+          descriptor.lifetime === ServiceLifetime.Scoped
+        ) {
+          throw new Error(
+            `Scoped service "${getNameOfServiceType(service)}" cannot be resolved from singleton service.`,
+          );
+        }
+      }
+      this.currentResolvingLifetime = descriptor.lifetime;
+
+      const initialize = () => {
         const metadata = ServicesRegistry.get(descriptor.implementation);
 
         if (metadata) {
@@ -128,36 +143,38 @@ export class ServiceProvider implements IServiceProvider {
         }
 
         return descriptor.implementation;
-      } catch (err: any) {
-        throw new Error(
-          `Failed to initiate service "${getNameOfServiceType(service)}":\n\r${err.message}`,
-          { cause: err },
-        );
+      };
+
+      switch (descriptor.lifetime) {
+        case ServiceLifetime.Singleton:
+          if (this.parent) {
+            return this.parent.getService(service as any);
+          } else if (!this.hasInstanceOf(service, descriptor)) {
+            this.addInstance(service, descriptor, initialize());
+          }
+
+          return this.getInstanceInfo(service, descriptor)?.instance!;
+        case ServiceLifetime.Scoped:
+          if (!this.parent) {
+            throw new Error("Scoped services require a service scope.");
+          }
+          if (!this.hasInstanceOf(service, descriptor)) {
+            this.addInstance(service, descriptor, initialize());
+          }
+          return this.getInstanceInfo(service, descriptor)?.instance!;
+        case ServiceLifetime.Transient:
+          return initialize();
+
+        default:
+          throw new Error("Invalid lifetime");
       }
-    };
-
-    switch (descriptor.lifetime) {
-      case ServiceLifetime.Singleton:
-        if (this.parent) {
-          return this.parent.getService(service as any);
-        } else if (!this.hasInstanceOf(service, descriptor)) {
-          this.addInstance(service, descriptor, initialize());
-        }
-
-        return this.getInstanceInfo(service, descriptor)?.instance!;
-      case ServiceLifetime.Scoped:
-        if (!this.parent) {
-          throw new Error("Scoped services require a service scope.");
-        }
-        if (!this.hasInstanceOf(service, descriptor)) {
-          this.addInstance(service, descriptor, initialize());
-        }
-        return this.getInstanceInfo(service, descriptor)?.instance!;
-      case ServiceLifetime.Transient:
-        return initialize();
-
-      default:
-        throw new Error("Invalid lifetime");
+    } catch (exception: any) {
+      throw new Error(
+        `Failed to initiate service "${getNameOfServiceType(service)}":\n\r${exception.message}`,
+        { cause: exception },
+      );
+    } finally {
+      this.currentResolvingLifetime = inheritedLifetime;
     }
   }
 

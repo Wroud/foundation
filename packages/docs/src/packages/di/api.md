@@ -12,37 +12,37 @@ The `ServiceContainerBuilder` class is used to register services and build the s
 
 ### Methods
 
-- **addSingleton\<T>(service: ServiceImplementation\<T>): this**
+- **`addSingleton<T>(service: ServiceImplementation<T>): this`**
   - Registers a singleton service to itself.
 
-- **addSingleton\<T>(service: ServiceType\<T>, factory: IServiceFactory\<T>): this**
+- **`addSingleton<T>(service: ServiceType<T>, factory: IServiceFactory<T>): this`**
   - Registers a singleton service with a factory implementation.
 
-- **addSingleton\<T>(service: ServiceType\<T>, constructor: IServiceConstructor\<T>): this**
+- **`addSingleton<T>(service: ServiceType<T>, constructor: IServiceConstructor<T>): this`**
   - Registers a singleton service with a constructor implementation.
 
-- **addSingleton\<T>(service: ServiceType\<T>, implementation: T): this**
+- **`addSingleton<T>(service: ServiceType<T>, implementation: T): this`**
   - Registers a singleton service with an instance as implementation.
 
-- **addTransient\<T>(service: ServiceImplementation\<T>): this**
+- **`addTransient<T>(service: ServiceImplementation<T>): this`**
   - Registers a transient service.
 
-- **addTransient\<T>(service: ServiceType\<T>, factory: IServiceFactory\<T>): this**
+- **`addTransient<T>(service: ServiceType<T>, factory: IServiceFactory<T>): this`**
   - Registers a transient service with a factory implementation.
 
-- **addTransient\<T>(service: ServiceType\<T>, constructor: IServiceConstructor\<T>): this**
+- **`addTransient<T>(service: ServiceType<T>, constructor: IServiceConstructor<T>): this`**
   - Registers a transient service with a constructor implementation.
 
-- **addScoped\<T>(service: ServiceImplementation\<T>): this**
+- **`addScoped<T>(service: ServiceImplementation<T>): this`**
   - Registers a scoped service.
 
-- **addScoped\<T>(service: ServiceType\<T>, factory: IServiceFactory\<T>): this**
+- **`addScoped<T>(service: ServiceType<T>, factory: IServiceFactory<T>): this`**
   - Registers a scoped service with a factory implementation.
 
-- **addScoped\<T>(service: ServiceType\<T>, constructor: IServiceConstructor\<T>): this**
+- **`addScoped<T>(service: ServiceType<T>, constructor: IServiceConstructor<T>): this`**
   - Registers a scoped service with a constructor implementation.
 
-- **build(): IServiceProvider**
+- **`build(): IServiceProvider`**
   - Builds and returns the service provider.
 
 ### Example
@@ -66,22 +66,22 @@ The `IServiceProvider` interface is used to resolve services.
 
 ### Methods
 
-- **getService\<T>(service: ServiceType\<T>): T**
+- **`getService<T>(service: ServiceType<T>): T`**
   - Resolves and returns an instance of the requested service.
 
-- **getServices\<T>(service: ServiceType\<T>): T[]**
+- **`getServices<T>(service: ServiceType<T>): T[]`**
   - Resolves and returns all instances of the requested service.
 
-- **createScope(): IAsyncServiceScope**
+- **`createScope(): IAsyncServiceScope`**
   - Creates and returns a new scope with `IServiceProvider` and `Symbol.dispose` function.
 
-- **createAsyncScope(): IServiceScope**
+- **`createAsyncScope(): IServiceScope`**
   - Creates and returns a new scope with `IServiceProvider` and `Symbol.asyncDispose` function.
 
-- **\[Symbol.dispose](): void**
+- **`[Symbol.dispose](): void`**
   - Disposes of the `IServiceProvider` and any services that require disposal.
 
-- **\[Symbol.asyncDispose](): Promise\<void>**
+- **`[Symbol.asyncDispose](): Promise<void>`**
   - Disposes of the `IServiceProvider` and any services that require disposal.
 
 ### Example
@@ -108,7 +108,7 @@ The `ServiceRegistry` class allows registering service metadata such as dependen
 
 ### Methods
 
-- **register(service: Class, metadata: IServiceMetadata)**
+- **`register(service: Class, metadata: IServiceMetadata)`**
   - Registers a service with its metadata.
 
 ### Example

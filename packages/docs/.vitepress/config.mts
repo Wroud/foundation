@@ -1,6 +1,7 @@
 import { defineConfig } from "vitepress";
 import { transformerTwoslash } from "@shikijs/vitepress-twoslash";
 import vite from "./vite.config";
+import { getGAHeaders } from "./tools/getGAHeaders.ts";
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
@@ -31,6 +32,7 @@ export default defineConfig({
     ['meta', { property: 'og:site_name', content: 'Wround Foundation' }],
     // ['meta', { property: 'og:image', content: 'https://vitepress.dev/vitepress-og.jpg' }],
     ['meta', { property: 'og:url', content: 'https://wroud.dev/' }],
+    ...getGAHeaders(),
   ],
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config

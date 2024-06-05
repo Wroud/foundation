@@ -8,8 +8,8 @@ The Wroud Foundation offers a suite of tools to help developers implement best p
 
 ## Available Packages
 
-- **@wroud/di**: A lightweight dependency injection library inspired by .NET's DI system. It supports modern JavaScript features, including decorators, and provides robust dependency management capabilities.
-- **Other Packages**: More tools to come, each aimed at addressing specific challenges in JavaScript development. Stay tuned for updates!
+- **@wroud/di**: A lightweight dependency injection library inspired by [.NET's DI](https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection) system. It supports modern JavaScript features, including decorators, and provides robust dependency management capabilities.
+- **Other Packages**: More tools to come, each aimed at addressing specific challenges in JavaScript development.
 
 # Navigation
 

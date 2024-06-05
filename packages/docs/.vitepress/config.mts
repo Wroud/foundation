@@ -36,6 +36,7 @@ export default defineConfig({
     ...getGAHeaders(),
   ],
   themeConfig: {
+    logo: { src: "/icon.svg", width: 24, height: 24 },
     // https://vitepress.dev/reference/default-theme-config
     search: {
       provider: "local",

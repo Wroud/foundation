@@ -16,9 +16,9 @@ export default defineConfig({
   },
   sitemap: {
     hostname: "https://wroud.dev",
-    transformItems(items) {
-      return items.filter((item) => !item.url.includes("guide"));
-    },
+    // transformItems(items) {
+    //   return items.filter((item) => !item.url.includes("guide"));
+    // },
   },
 
   /* prettier-ignore */

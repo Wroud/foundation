@@ -8,7 +8,7 @@ import type { IServiceFactory } from "./IServiceFactory.js";
 import { IServiceProvider } from "./IServiceProvider.js";
 import type { ServiceImplementation } from "./ServiceImplementation.js";
 import type { ServiceType } from "./ServiceType.js";
-import { ServicesRegistry } from "./ServicesRegistry.js";
+import { ServiceRegistry } from "./ServiceRegistry.js";
 
 export class ServiceCollection implements IServiceCollection {
   private readonly collection: Map<any, IServiceDescriptor<unknown>[]>;
@@ -102,7 +102,7 @@ export class ServiceCollection implements IServiceCollection {
     const descriptors = this.getDescriptors(service);
 
     for (const descriptor of descriptors) {
-      const metadata = ServicesRegistry.get(descriptor.implementation);
+      const metadata = ServiceRegistry.get(descriptor.implementation);
 
       if (metadata) {
         if (path.includes(metadata.name!)) {

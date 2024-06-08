@@ -4,7 +4,7 @@ export * from "./di/createService.js";
 export * from "./di/ServiceContainerBuilder.js";
 export * from "./di/IServiceProvider.js";
 export type * from "./di/IServiceCollection.js";
-export * from "./di/ServicesRegistry.js";
+export * from "./di/ServiceRegistry.js";
 export type * from "./module/IModule.js";
 export * from "./module/ModuleRegistry.js";
 export * from "./Service.js";

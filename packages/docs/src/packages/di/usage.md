@@ -142,7 +142,7 @@ If you prefer or need to use legacy decorators, you can still use `@wroud/di` wi
 
 Enable legacy decorators in your `tsconfig.json`:
 
-```json
+```json [tsconfig.json]
 {
   "compilerOptions": {
     "target": "ES5",
@@ -153,13 +153,13 @@ Enable legacy decorators in your `tsconfig.json`:
 
 ## Plain JS
 
-To use `@wroud/di` without decorators, you can manually register class dependencies using `ServicesRegistry`. This method is just as effective and allows you to manage dependencies without relying on decorators.
+To use `@wroud/di` without decorators, you can manually register class dependencies using `ServiceRegistry`. This method is just as effective and allows you to manage dependencies without relying on decorators.
 
 ```ts twoslash
 import { 
   createService,
   ServiceContainerBuilder,
-  ServicesRegistry
+  ServiceRegistry
 } from '@wroud/di';
 
 interface ILoggerService {
@@ -183,12 +183,12 @@ class CounterService {
 }
 
 function configure() {
-  ServicesRegistry.register(CounterService, {
+  ServiceRegistry.register(CounterService, {
     name: 'CounterService',
     dependencies: [ILoggerService],
   });
 
-  ServicesRegistry.register(ConsoleLoggerService, {
+  ServiceRegistry.register(ConsoleLoggerService, {
     name: 'ConsoleLoggerService',
     dependencies: [],
   });

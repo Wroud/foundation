@@ -53,20 +53,58 @@ export default defineConfig({
 
     /* prettier-ignore */
     nav: [
-      // { text: "guide", link: "/guide/markdown-examples", activeMatch: "/guide/" },
+      { text: "guide", link: "/guide/", activeMatch: "/guide/" },
       { text: "packages", link: "/packages/overview", activeMatch: "/packages/" },
     ],
 
     sidebar: {
       "/guide/": {
-        base: "/guide/",
+        base: "/guide",
         items: [
+          { text: "Introduction", link: "/" },
           {
-            text: "Examples",
+            text: "Packages",
+            base: "/guide/package/",
             collapsed: false,
             items: [
-              { text: "Markdown Examples", link: "markdown-examples" },
-              { text: "Runtime API Examples", link: "api-examples" },
+              {
+                text: "Dependency Injection",
+                link: "di/",
+                items: [
+                  {
+                    text: "Getting Started",
+                    base: "/guide/package/di/getting-started/",
+                    items: [
+                      { text: "Introduction", link: "introduction" },
+                      { text: "Installation", link: "installation" },
+                    ],
+                  },
+                  {
+                    text: "Core Concepts",
+                    base: "/guide/package/di/core-concepts/",
+                    items: [
+                      { text: "Service Container", link: "service-container" },
+                      { text: "Service Lifetimes", link: "service-lifetimes" },
+                      {
+                        text: "Dependency Injection",
+                        link: "dependency-injection",
+                      },
+                    ],
+                  },
+                  {
+                    text: "Advanced Features",
+                    base: "/guide/package/di/advanced-features/",
+                    items: [
+                      {
+                        text: "Manual Service Registration",
+                        link: "manual-service-registration",
+                      },
+                      { text: "Factory Services", link: "factory-services" },
+                      { text: "Service Disposal", link: "service-disposal" },
+                    ],
+                  },
+                ],
+              },
             ],
           },
         ],

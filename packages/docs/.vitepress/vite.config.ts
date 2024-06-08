@@ -1,3 +1,4 @@
+/// <reference types="node" />
 import { fileURLToPath } from "node:url";
 import { defineConfig } from "vite";
 import Components from "unplugin-vue-components/vite";

@@ -95,8 +95,8 @@ logger.log('Hello world!');
 const loggers = provider.getServices(Logger);
 loggers.forEach(logger => logger.log('Hello from multiple loggers!'));
 
-const scopedProvider = provider.createScope();
-const scopedLogger = scopedProvider.getService(Logger);
+const scope = provider.createScope();
+const scopedLogger = scope.serviceProvider.getService(Logger);
 scopedLogger.log('Scoped Hello world!');
 
 provider.dispose();

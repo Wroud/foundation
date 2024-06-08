@@ -10,7 +10,7 @@ import { IServiceProvider } from "./IServiceProvider.js";
 import type { IServiceScope } from "./IServiceScope.js";
 import { ServiceCollection } from "./ServiceCollection.js";
 import type { ServiceType } from "./ServiceType.js";
-import { ServicesRegistry } from "./ServicesRegistry.js";
+import { ServiceRegistry } from "./ServiceRegistry.js";
 import { getNameOfServiceType } from "./getNameOfServiceType.js";
 
 export class ServiceProvider implements IServiceProvider {
@@ -53,7 +53,7 @@ export class ServiceProvider implements IServiceProvider {
     if (descriptors.length === 0) {
       let name = getNameOfServiceType(service);
 
-      const metadata = ServicesRegistry.get(service);
+      const metadata = ServiceRegistry.get(service);
 
       if (metadata?.name) {
         name = metadata.name;
@@ -109,7 +109,7 @@ export class ServiceProvider implements IServiceProvider {
       this.currentResolvingLifetime = descriptor.lifetime;
 
       const initialize = () => {
-        const metadata = ServicesRegistry.get(descriptor.implementation);
+        const metadata = ServiceRegistry.get(descriptor.implementation);
 
         if (metadata) {
           const dependencies = metadata.dependencies.map((dependency) => {
@@ -133,7 +133,7 @@ export class ServiceProvider implements IServiceProvider {
               err.message.includes("cannot be invoked without 'new'")
             ) {
               throw new Error(
-                `Class "${descriptor.implementation.name}" not registered as service (please use @injectable or ServicesRegistry)`,
+                `Class "${descriptor.implementation.name}" not registered as service (please use @injectable or ServiceRegistry)`,
                 { cause: err },
               );
             } else {

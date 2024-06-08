@@ -9,10 +9,10 @@ hero:
   actions:
     - theme: brand
       text: Get Started
+      link: /guide/package/di/getting-started/introduction
+    - theme: alt
+      text: '@wroud/di'
       link: /packages/overview
-    # - theme: alt
-    #   text: Documentation
-    #   link: /documentation
   image:
     src: /icon-big.svg
     alt: Wroud Foundation

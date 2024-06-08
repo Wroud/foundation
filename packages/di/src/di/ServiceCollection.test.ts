@@ -2,7 +2,7 @@ import { ServiceLifetime } from "./IServiceDescriptor.js";
 import { IServiceProvider } from "./IServiceProvider.js";
 import { ServiceCollection } from "./ServiceCollection.js";
 import { describe, expect, it } from "@jest/globals";
-import { ServicesRegistry } from "./ServicesRegistry.js";
+import { ServiceRegistry } from "./ServiceRegistry.js";
 
 describe("ServiceCollection", () => {
   it("should be defined", () => {
@@ -164,11 +164,11 @@ describe("ServiceCollection", () => {
   it("should detect cyclic dependencies", () => {
     class Test1 {}
     class Test2 {}
-    ServicesRegistry.register(Test1, {
+    ServiceRegistry.register(Test1, {
       name: Test1.name,
       dependencies: [Test2],
     });
-    ServicesRegistry.register(Test2, {
+    ServiceRegistry.register(Test2, {
       name: Test2.name,
       dependencies: [Test1],
     });

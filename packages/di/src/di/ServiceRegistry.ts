@@ -8,7 +8,7 @@ export interface IServiceMetadata<
   dependencies: TServices;
 }
 
-export class ServicesRegistry {
+export class ServiceRegistry {
   private static readonly services: WeakMap<any, IServiceMetadata> =
     new WeakMap();
 

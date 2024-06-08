@@ -1,7 +1,7 @@
 import { describe, expect, it, jest } from "@jest/globals";
 import { ServiceContainerBuilder } from "./ServiceContainerBuilder.js";
 import { IServiceProvider } from "./IServiceProvider.js";
-import { ServicesRegistry } from "./ServicesRegistry.js";
+import { ServiceRegistry } from "./ServiceRegistry.js";
 
 describe("ServiceProvider", () => {
   it("should be defined", () => {
@@ -46,7 +46,7 @@ describe("ServiceProvider", () => {
     class Disposable {
       [Symbol.dispose] = jest.fn();
     }
-    ServicesRegistry.register(Disposable, {
+    ServiceRegistry.register(Disposable, {
       name: "Disposable",
       dependencies: [],
     });
@@ -63,7 +63,7 @@ describe("ServiceProvider", () => {
     class Disposable {
       [Symbol.asyncDispose] = jest.fn();
     }
-    ServicesRegistry.register(Disposable, {
+    ServiceRegistry.register(Disposable, {
       name: "Disposable",
       dependencies: [],
     });
@@ -88,7 +88,7 @@ describe("ServiceProvider", () => {
     class Disposable {
       [Symbol.dispose] = jest.fn();
     }
-    ServicesRegistry.register(Disposable, {
+    ServiceRegistry.register(Disposable, {
       name: "Disposable",
       dependencies: [],
     });
@@ -103,7 +103,7 @@ describe("ServiceProvider", () => {
     class Disposable {
       [Symbol.asyncDispose] = jest.fn();
     }
-    ServicesRegistry.register(Disposable, {
+    ServiceRegistry.register(Disposable, {
       name: "Disposable",
       dependencies: [],
     });
@@ -129,7 +129,7 @@ describe("ServiceProvider", () => {
   });
   it("should throw on missing service with name from registry", () => {
     class Test {}
-    ServicesRegistry.register(Test, {
+    ServiceRegistry.register(Test, {
       name: "Test custom name",
       dependencies: [],
     });
@@ -148,7 +148,7 @@ describe("ServiceProvider", () => {
     class Test {
       constructor(public number: Number) {}
     }
-    ServicesRegistry.register(Test, { name: "Test", dependencies: [Number] });
+    ServiceRegistry.register(Test, { name: "Test", dependencies: [Number] });
     const serviceProvider = new ServiceContainerBuilder()
       .addSingleton(Test)
       .addSingleton(Number, () => 42)
@@ -166,7 +166,7 @@ describe("ServiceProvider", () => {
         public string: String,
       ) {}
     }
-    ServicesRegistry.register(Test, {
+    ServiceRegistry.register(Test, {
       name: "Test",
       dependencies: [Number, String] as const,
     });
@@ -182,18 +182,18 @@ describe("ServiceProvider", () => {
       serviceProvider.getService(Test),
     );
   });
-  it("should not resolve class service that not registered in ServicesRegistry", () => {
+  it("should not resolve class service that not registered in ServiceRegistry", () => {
     class Test {}
     const serviceProvider = new ServiceContainerBuilder()
       .addSingleton(Test)
       .build();
     expect(() => serviceProvider.getService(Test)).toThrowError(
-      'Class "Test" not registered as service (please use @injectable or ServicesRegistry)',
+      'Class "Test" not registered as service (please use @injectable or ServiceRegistry)',
     );
   });
   it("should catch exceptions when resolving service", () => {
     class Test {}
-    ServicesRegistry.register(Test, {
+    ServiceRegistry.register(Test, {
       name: "Test",
       dependencies: [],
     });
@@ -208,7 +208,7 @@ describe("ServiceProvider", () => {
     class Test {
       constructor(public number: Number) {}
     }
-    ServicesRegistry.register(Test, {
+    ServiceRegistry.register(Test, {
       name: "Test",
       dependencies: [Number],
     });
@@ -222,7 +222,7 @@ describe("ServiceProvider", () => {
   });
   it("should resolve singleton with static implementation", () => {
     class Test {}
-    ServicesRegistry.register(Test, {
+    ServiceRegistry.register(Test, {
       name: "Test",
       dependencies: [],
     });
@@ -236,7 +236,7 @@ describe("ServiceProvider", () => {
     class Test {
       constructor(public numbers: Number[]) {}
     }
-    ServicesRegistry.register(Test, {
+    ServiceRegistry.register(Test, {
       name: "Test",
       dependencies: [[Number]],
     });
@@ -257,7 +257,7 @@ describe("ServiceProvider", () => {
         public number: Number,
       ) {}
     }
-    ServicesRegistry.register(Test, {
+    ServiceRegistry.register(Test, {
       name: "Test",
       dependencies: [String, Number] as const,
     });
@@ -277,7 +277,7 @@ describe("ServiceProvider", () => {
     class Test {
       constructor(public number: Number) {}
     }
-    ServicesRegistry.register(Test, {
+    ServiceRegistry.register(Test, {
       name: "Test",
       dependencies: [Number],
     });
@@ -295,7 +295,7 @@ describe("ServiceProvider", () => {
     class Test {
       constructor(public number: Number) {}
     }
-    ServicesRegistry.register(Test, {
+    ServiceRegistry.register(Test, {
       name: "Test",
       dependencies: [Number],
     });
@@ -311,7 +311,7 @@ describe("ServiceProvider", () => {
     class Test {
       constructor(public number: Number) {}
     }
-    ServicesRegistry.register(Test, {
+    ServiceRegistry.register(Test, {
       name: "Test",
       dependencies: [Number],
     });
@@ -333,7 +333,7 @@ describe("ServiceProvider", () => {
     class Test {
       constructor(public number: Number) {}
     }
-    ServicesRegistry.register(Test, {
+    ServiceRegistry.register(Test, {
       name: "Test",
       dependencies: [Number],
     });
@@ -360,11 +360,11 @@ describe("ServiceProvider", () => {
     class Test2 {
       constructor(public test: Test) {}
     }
-    ServicesRegistry.register(Test, {
+    ServiceRegistry.register(Test, {
       name: "Test",
       dependencies: [],
     });
-    ServicesRegistry.register(Test2, {
+    ServiceRegistry.register(Test2, {
       name: "Test2",
       dependencies: [Test],
     });
@@ -382,11 +382,11 @@ describe("ServiceProvider", () => {
     class Test2 {
       constructor(public test: Test) {}
     }
-    ServicesRegistry.register(Test, {
+    ServiceRegistry.register(Test, {
       name: "Test",
       dependencies: [],
     });
-    ServicesRegistry.register(Test2, {
+    ServiceRegistry.register(Test2, {
       name: "Test2",
       dependencies: [Test],
     });

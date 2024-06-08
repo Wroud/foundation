@@ -1,6 +1,6 @@
 import type { MapToServicesType } from "./MapToServicesType.js";
 import type { ServiceType } from "./ServiceType.js";
-import { ServicesRegistry } from "./ServicesRegistry.js";
+import { ServiceRegistry } from "./ServiceRegistry.js";
 
 function injectable(): <
   TClass extends abstract new (...args: MapToServicesType<[]>) => any,
@@ -39,7 +39,7 @@ function injectable<TServices extends ServiceType<any>[]>(
       value: name,
       writable: false,
     });
-    ServicesRegistry.register(target, {
+    ServiceRegistry.register(target, {
       name,
       dependencies: dependencies(),
     });

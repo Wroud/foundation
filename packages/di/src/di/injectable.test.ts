@@ -1,7 +1,7 @@
 import { describe, expect, it, jest } from "@jest/globals";
 
-jest.unstable_mockModule("./ServicesRegistry.js", () => ({
-  ServicesRegistry: {
+jest.unstable_mockModule("./ServiceRegistry.js", () => ({
+  ServiceRegistry: {
     register: jest.fn(),
     has: jest.fn(),
     get: jest.fn(),
@@ -9,7 +9,7 @@ jest.unstable_mockModule("./ServicesRegistry.js", () => ({
 }));
 
 const { injectable } = await import("./injectable.js");
-const { ServicesRegistry } = await import("./ServicesRegistry.js");
+const { ServiceRegistry } = await import("./ServiceRegistry.js");
 
 describe("injectable", () => {
   it("should be defined", () => {
@@ -18,7 +18,7 @@ describe("injectable", () => {
   it("should register service", () => {
     @injectable()
     class Test {}
-    expect(ServicesRegistry.register).toBeCalledWith(Test, {
+    expect(ServiceRegistry.register).toBeCalledWith(Test, {
       name: "Test",
       dependencies: [],
     });
@@ -27,7 +27,7 @@ describe("injectable", () => {
     class Dep {}
     @injectable(() => [Dep])
     class Test {}
-    expect(ServicesRegistry.register).toBeCalledWith(Test, {
+    expect(ServiceRegistry.register).toBeCalledWith(Test, {
       name: "Test",
       dependencies: [Dep],
     });
@@ -35,7 +35,7 @@ describe("injectable", () => {
   it("should register service with ts legacy decorator", () => {
     class Test {}
     injectable()(Test);
-    expect(ServicesRegistry.register).toBeCalledWith(Test, {
+    expect(ServiceRegistry.register).toBeCalledWith(Test, {
       name: "Test",
       dependencies: [],
     });

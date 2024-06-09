@@ -1,5 +1,6 @@
 import { defineConfig } from "vitepress";
 import { transformerTwoslash } from "@shikijs/vitepress-twoslash";
+import { tabsMarkdownPlugin } from "vitepress-plugin-tabs";
 import vite from "./vite.config";
 import { getGAHeaders } from "./tools/getGAHeaders.ts";
 
@@ -12,6 +13,9 @@ export default defineConfig({
   lastUpdated: true,
   vite,
   markdown: {
+    config(md) {
+      md.use(tabsMarkdownPlugin);
+    },
     codeTransformers: [transformerTwoslash()],
   },
   sitemap: {

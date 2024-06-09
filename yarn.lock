@@ -3189,6 +3189,7 @@ __metadata:
     unplugin-vue-components: "npm:^0"
     vite: "npm:^5"
     vitepress: "npm:^1"
+    vitepress-plugin-tabs: "npm:^0"
     vue: "npm:^3"
   languageName: unknown
   linkType: soft
@@ -6516,6 +6517,16 @@ __metadata:
   bin:
     vite: bin/vite.js
   checksum: 10c0/f03fdfc320adea3397df3e327029fd875f8220779f679ab183a3a994e8788b4ce531fee28f830361fb274f3cf08ed9adb9429496ecefdc3faf535b38da7ea8b1
+  languageName: node
+  linkType: hard
+
+"vitepress-plugin-tabs@npm:^0":
+  version: 0.5.0
+  resolution: "vitepress-plugin-tabs@npm:0.5.0"
+  peerDependencies:
+    vitepress: ^1.0.0-rc.27
+    vue: ^3.3.8
+  checksum: 10c0/bb3bfb1d9aadcd1f135d42890e65479ea1c2d2c9d927103764e69b1efdf132aa4a77f6430905a96a448f8ab854372b593416edf9a47f4902a7a37c00a6c79ce0
   languageName: node
   linkType: hard
 

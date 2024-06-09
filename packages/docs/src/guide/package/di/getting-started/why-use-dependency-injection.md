@@ -508,7 +508,7 @@ In this variant, we use `@wroud/di` to manage the creation and injection of depe
 
 1. **Defining Services**: Each class is decorated with `@injectable()`, making them injectable services.
 2. **Service Container Builder**: We create a `ServiceContainerBuilder` and register each service with `addSingleton`.
-3. **Resolving Dependencies**: The `ServiceContainerBuilder` automatically handles the creation and injection of dependencies.
+3. **Resolving Dependencies**: The `IServiceProvider` automatically handles the creation and injection of dependencies.
 4. **Starting the Application**: The `App` class is resolved from the container, and its dependencies are injected automatically.
 
 ### Benefits of Using Dependency Injection

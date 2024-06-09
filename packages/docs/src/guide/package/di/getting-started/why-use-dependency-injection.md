@@ -11,6 +11,100 @@ We'll start with a simple example to understand the structure and then evolve it
 ### Initial Code
 
 ```typescript
+class Logger {
+  log(message: string) {
+    console.log(message);
+  }
+}
+
+class Database {
+  constructor(private logger: Logger) {}
+  connect() {
+    this.logger.log("connected");
+  }
+  disconnect() {
+    this.logger.log("disconnected");
+  }
+}
+
+class App {
+  constructor(
+    private logger: Logger,
+    private database: Database,
+  ) {}
+  start() {
+    this.database.connect();
+    this.logger.log("started");
+  }
+  stop() {
+    this.database.disconnect();
+    this.logger.log("stopped");
+  }
+}
+```
+
+In this basic example, we have an `App` class that depends on a `Logger` and a `Database`. The `Database` also depends on the `Logger`. This setup shows how the `App` starts and stops by connecting and disconnecting the database and logging these events.
+
+::: tabs
+
+== Initialization Variant 1
+```typescript
+const logger = new Logger();// [!code ++]
+const database = new Database(logger);// [!code ++]
+const app = new App(logger, database);// [!code ++]
+app.start();
+app.stop();
+```
+
+In this initialization variant, we manually create instances of `Logger` and `Database` and pass them to the `App` constructor. This approach works but can become cumbersome as the application grows.
+
+== Initialization Variant 2
+```typescript
+class App {
+  private logger: Logger;// [!code ++]
+  private database: Database;// [!code ++]
+  constructor() {
+    this.logger = new Logger();// [!code ++]
+    this.database = new Database(this.logger);// [!code ++]
+  }
+  start() {
+    this.database.connect();
+    this.logger.log("started");
+  }
+  stop() {
+    this.database.disconnect();
+    this.logger.log("stopped");
+  }
+}
+
+const app = new App();// [!code ++]
+app.start();
+app.stop();
+```
+
+In this variant, the `App` class creates its own dependencies internally. While this approach centralizes the creation of dependencies within the `App` class, it reduces flexibility and makes it harder to manage dependencies in a larger application.
+
+== Initialization with DI
+```typescript
+@injectable()// [!code ++]
+class Logger {
+  log(message: string) {
+    console.log(message);
+  }
+}
+
+@injectable(() => [Logger])// [!code ++]
+class Database {
+  constructor(private logger: Logger) {}
+  connect() {
+    this.logger.log("connected");
+  }
+  disconnect() {
+    this.logger.log("disconnected");
+  }
+}
+
+@injectable(() => [Logger, Database])// [!code ++]
 class App {
   constructor(
     private logger: Logger,
@@ -26,63 +120,19 @@ class App {
   }
 }
 
-class Database {
-  constructor(private logger: Logger) {}
-  connect() {
-    this.logger.log("connected");
-  }
-  disconnect() {
-    this.logger.log("disconnected");
-  }
-}
+const serviceProvider = new ServiceContainerBuilder()// [!code ++]
+  .addSingleton(Logger)// [!code ++]
+  .addSingleton(App)// [!code ++]
+  .addSingleton(Database)// [!code ++]
+  .build();// [!code ++]
 
-class Logger {
-  log(message: string) {
-    console.log(message);
-  }
-}
-```
-
-In this basic example, we have an `App` class that depends on a `Logger` and a `Database`. The `Database` also depends on the `Logger`. This setup shows how the `App` starts and stops by connecting and disconnecting the database and logging these events.
-
-### Initialization Variant 1
-
-```typescript
-const logger = new Logger();
-const database = new Database(logger);
-const app = new App(logger, database);
+const app = serviceProvider.getService(App);// [!code ++]
 app.start();
 app.stop();
 ```
 
-In this initialization variant, we manually create instances of `Logger` and `Database` and pass them to the `App` constructor. This approach works but can become cumbersome as the application grows.
-
-### Initialization Variant 2
-
-```typescript
-class App {
-  private logger: Logger;
-  private database: Database;
-  constructor() {
-    this.logger = new Logger();
-    this.database = new Database(this.logger);
-  }
-  start() {
-    this.database.connect();
-    this.logger.log("started");
-  }
-  stop() {
-    this.database.disconnect();
-    this.logger.log("stopped");
-  }
-}
-
-const app = new App();
-app.start();
-app.stop();
-```
-
-In this variant, the `App` class creates its own dependencies internally. While this approach centralizes the creation of dependencies within the `App` class, it reduces flexibility and makes it harder to manage dependencies in a larger application.
+In this variant, we use `@wroud/di` to manage the creation and injection of dependencies. We decorate our classes with `@injectable` and use `ServiceContainerBuilder` to register our services.
+:::
 
 ## Example 2: Expanding the Base Application
 
@@ -91,18 +141,9 @@ Now, let's expand our base application by adding more classes and see how the in
 ### Expanded Application Code
 
 ```typescript
-class App {
-  constructor(
-    private logger: Logger,
-    private database: Database,
-  ) {}
-  start() {
-    this.database.connect();
-    this.logger.log("started");
-  }
-  stop() {
-    this.database.disconnect();
-    this.logger.log("stopped");
+class Logger {
+  log(message: string) {
+    console.log(message);
   }
 }
 
@@ -119,76 +160,84 @@ class Database {
   }
 }
 
-class Logger {
-  log(message: string) {
-    console.log(message);
-  }
-}
+class UsersManager {// [!code ++]
+  constructor(// [!code ++]
+    private logger: Logger,// [!code ++]
+    private database: Database,// [!code ++]
+  ) {}// [!code ++]
+  addUser() {// [!code ++]
+    this.database.query();// [!code ++]
+    this.logger.log("added user");// [!code ++]
+  }// [!code ++]
+}// [!code ++]
 
-class UsersManager {
+class RegistrationService {// [!code ++]
+  constructor(// [!code ++]
+    private logger: Logger,// [!code ++]
+    private usersManager: UsersManager,// [!code ++]
+  ) {}// [!code ++]
+  registerUser() {// [!code ++]
+    this.usersManager.addUser();// [!code ++]
+    this.logger.log("registered user");// [!code ++]
+  }// [!code ++]
+}// [!code ++]
+
+class App {
   constructor(
     private logger: Logger,
     private database: Database,
   ) {}
-  addUser() {
-    this.database.query();
-    this.logger.log("added user");
+  start() {
+    this.database.connect();
+    this.logger.log("started");
   }
-}
-
-class RegistrationService {
-  constructor(
-    private logger: Logger,
-    private usersManager: UsersManager,
-  ) {}
-  registerUser() {
-    this.usersManager.addUser();
-    this.logger.log("registered user");
+  stop() {
+    this.database.disconnect();
+    this.logger.log("stopped");
   }
 }
 ```
 
 In this expanded version, we added `UsersManager` and `RegistrationService` classes. These new classes also depend on `Logger` and `Database`.
 
-### Initialization Variant 1
+::: tabs
+
+== Initialization Variant 1
 
 ```typescript
 const logger = new Logger();
 const database = new Database(logger);
-const usersManager = new UsersManager(logger, database);
-const registrationService = new RegistrationService(logger, usersManager);
+const usersManager = new UsersManager(logger, database);// [!code ++]
+const registrationService = new RegistrationService(logger, usersManager);// [!code ++]
 const app = new App(logger, database);
 app.start();
-registrationService.registerUser();
+registrationService.registerUser();// [!code ++]
 app.stop();
 ```
 
 This variant demonstrates the manual creation of instances for all new classes. As the application grows, this approach quickly becomes tedious and error-prone due to the manual wiring of dependencies.
 
-### Initialization Variant 2
+== Initialization Variant 2
 
 ```typescript
-class App {
-  private logger: Logger;
-  readonly database: Database;
-  constructor() {
-    this.logger = new Logger();
-    this.database = new Database(this.logger);
+class UsersManager {
+  readonly registrationService: RegistrationService;// [!code ++]
+  constructor(
+    private logger: Logger,
+    private database: Database,
+  ) {
+    this.registrationService = new RegistrationService(this.logger, this);// [!code ++]
   }
-  start() {
-    this.database.connect();
-    this.logger.log("started");
-  }
-  stop() {
-    this.database.disconnect();
-    this.logger.log("stopped");
+  addUser() {
+    this.database.query();
+    this.logger.log("added user");
   }
 }
 
 class Database {
-  readonly usersManager: UsersManager;
+  readonly usersManager: UsersManager;// [!code ++]
   constructor(private logger: Logger) {
-    this.usersManager = new UsersManager(logger, this);
+    this.usersManager = new UsersManager(this.logger, this);// [!code ++]
   }
   connect() {
     this.logger.log("connected");
@@ -198,87 +247,20 @@ class Database {
   }
   query() {
     this.logger.log("queried");
-  }
-}
-
-class Logger {
-  log(message: string) {
-    console.log(message);
-  }
-}
-
-class UsersManager {
-  readonly registrationService: RegistrationService;
-  constructor(
-    private logger: Logger,
-    private database: Database,
-  ) {
-    this.registrationService = new RegistrationService(logger, this);
-  }
-  addUser() {
-    this.database.query();
-    this.logger.log("added user");
-  }
-}
-
-class RegistrationService {
-  constructor(
-    private logger: Logger,
-    private usersManager: UsersManager,
-  ) {}
-  registerUser() {
-    this.usersManager.addUser();
-    this.logger.log("registered user");
   }
 }
 
 const app = new App();
 app.start();
-app.database.usersManager.registrationService.registerUser();
+app.database.usersManager.registrationService.registerUser();// [!code ++]
 app.stop();
 ```
 
-In this variant, we moved some dependency creation inside the constructors of the classes that need them. While it helps to reduce the boilerplate code at the initialization point, it still tightly couples the classes, making it difficult to change or replace dependencies later.
+In this variant, we moved some dependency creation inside the constructors of the classes that need them. While it helps to reduce the boilerplate code at the initialization point, it still tightly couples the classes, making it difficult to change or replace dependencies later. Additionally, this creates a cyclic dependency between `UsersManager` and `RegistrationService`.
 
-## Example 3: Separating Concerns with Independent Services
-
-Next, we will further refactor our application by separating some functionality into independent services. This helps in managing responsibilities better.
-
-### Refactored Application Code
-
+== Initialization with DI
 ```typescript
-class App {
-  constructor(
-    private logger: Logger,
-    private connection: DatabaseConnection,
-  ) {}
-  start() {
-    this.connection.connect();
-    this.logger.log("started");
-  }
-  stop() {
-    this.connection.disconnect();
-    this.logger.log("stopped");
-  }
-}
-
-class Database {
-  constructor(
-    private logger: Logger,
-    private connection: DatabaseConnection,
-  ) {}
-  query() {
-    this.connection.rawQuery();
-    this.logger.log("queried");
-  }
-}
-
-class Logger {
-  log(message: string) {
-    console.log(message);
-  }
-}
-
+@injectable(() => [Logger, Database])// [!code ++]
 class UsersManager {
   constructor(
     private logger: Logger,
@@ -290,209 +272,7 @@ class UsersManager {
   }
 }
 
-class RegistrationService {
-  constructor(
-    private logger: Logger,
-    private usersManager: UsersManager,
-  ) {}
-  registerUser() {
-    this.usersManager.addUser();
-    this.logger.log("registered user");
-  }
-}
-
-class DatabaseConnection {
-  constructor(private logger: Logger) {}
-  rawQuery() {
-    this.logger.log("raw queried");
-  }
-  connect() {
-    this.logger.log("connected");
-  }
-  disconnect() {
-    this.logger.log("disconnected");
-  }
-}
-```
-
-In this refactoring, we introduced a new `DatabaseConnection` class to handle the actual connection logic. This separation of concerns makes the code more modular and easier to manage.
-
-### Initialization Variant 1
-
-```typescript
-const logger = new Logger();
-const databaseConnection = new DatabaseConnection(logger);
-const database = new Database(logger, databaseConnection);
-const usersManager = new UsersManager(logger, database);
-const registrationService = new RegistrationService(logger, usersManager);
-const app = new App(logger, databaseConnection);
-app.start();
-registrationService.registerUser();
-app.stop();
-```
-
-This variant shows the manual creation and wiring of all instances, including the new `DatabaseConnection` class. As expected, this can get complex and error-prone as the number of dependencies grows.
-
-### Initialization Variant 2
-
-```typescript
-class App {
-  private logger: Logger;
-  private databaseConnection: DatabaseConnection;
-  readonly database: Database;
-  constructor() {
-    this.logger = new Logger();
-    this.databaseConnection = new DatabaseConnection(this.logger);
-    this.database = new Database(this.logger, this.databaseConnection);
-  }
-  start() {
-    this.databaseConnection.connect();
-    this.logger.log("started");
-  }
-  stop() {
-    this.databaseConnection.disconnect();
-    this.logger.log("stopped");
-  }
-}
-
-class Database {
-  readonly usersManager: UsersManager;
-  constructor(private logger: Logger, private connection: DatabaseConnection) {
-    this.usersManager = new UsersManager(logger, this);
-  }
-  query() {
-    this.connection.rawQuery();
-    this.logger.log("queried");
-  }
-}
-
-class Logger {
-  log(message: string) {
-    console.log(message);
-  }
-}
-
-class UsersManager {
-  readonly registrationService: RegistrationService;
-  constructor(
-    private logger: Logger,
-    private database: Database,
-  ) {
-    this.registrationService = new RegistrationService(logger, this);
-  }
-  addUser() {
-    this.database.query();
-    this.logger.log("added user");
-  }
-}
-
-class RegistrationService {
-  constructor(
-    private logger: Logger,
-    private usersManager: UsersManager,
-  ) {}
-  registerUser() {
-    this.usersManager.addUser();
-    this.logger.log("registered user");
-  }
-}
-
-class DatabaseConnection {
-  constructor(private logger: Logger) {}
-  rawQuery() {
-    this.logger.log("raw queried");
-  }
-  connect() {
-    this.logger.log("connected");
-  }
-  disconnect() {
-    this.logger.log("disconnected");
-  }
-}
-
-const app = new App();
-app.start();
-app.database.usersManager.registrationService.registerUser();
-app.stop();
-```
-
-In this variant, the `App` class internally creates instances of `Logger`, `DatabaseConnection`, and `Database`. This approach reduces some boilerplate but still involves manual wiring inside the constructors.
-
-However, note that the logical hierarchy `app.database.usersManager.registrationService` is problematic. This is a consequence of manual dependency management. As our code evolves, dependencies need to be moved up the hierarchy to be shared with other dependencies. This makes it difficult to maintain a clean separation of concerns and manage dependencies efficiently.
-
-## Example 4: Introducing Dependency Injection
-
-Now, let's integrate the `@wroud/di` dependency injection system into our application to manage our dependencies more effectively.
-
-### Using `@wroud/di` for Dependency Management
-
-First, we need to set up the `@wroud/di` dependency injection system.
-
-```typescript
-import { ServiceContainerBuilder, injectable } from "@wroud/di";
-
-@injectable()
-class Logger {
-  log(message: string) {
-    console.log(message);
-  }
-}
-
-@injectable(() => [Logger])
-class DatabaseConnection {
-  constructor(private logger: Logger) {}
-  rawQuery() {
-    this.logger.log("raw queried");
-  }
-  connect() {
-    this.logger.log("connected");
-  }
-  disconnect() {
-    this.logger.log("disconnected");
-  }
-}
-
-@injectable(() => [Logger, DatabaseConnection])
-class App {
-  constructor(
-    private logger: Logger,
-    private connection: DatabaseConnection,
-  ) {}
-  start() {
-    this.connection.connect();
-    this.logger.log("started");
-  }
-  stop() {
-    this.connection.disconnect();
-    this.logger.log("stopped");
-  }
-}
-
-@injectable(() => [Logger, DatabaseConnection])
-class Database {
-  constructor(
-    private logger: Logger,
-    private connection: DatabaseConnection,
-  ) {}
-  query() {
-    this.connection.rawQuery();
-    this.logger.log("queried");
-  }
-}
-
-@injectable(() => [Logger, Database])
-class UsersManager {
-  constructor(
-    private logger: Logger,
-    private database: Database,
-  ) {}
-  addUser() {
-    this.database.query();
-    this.logger.log("added user");
-  }
-}
-
-@injectable(() => [Logger, UsersManager])
+@injectable(() => [Logger, UsersManager])// [!code ++]
 class RegistrationService {
   constructor(
     private logger: Logger,
@@ -506,7 +286,208 @@ class RegistrationService {
 
 const serviceProvider = new ServiceContainerBuilder()
   .addSingleton(Logger)
-  .addSingleton(DatabaseConnection)
+  .addSingleton(App)
+  .addSingleton(Database)
+  .addSingleton(UsersManager)// [!code ++]
+  .addSingleton(RegistrationService)// [!code ++]
+  .build();
+
+const app = serviceProvider.getService(App);
+const registrationService = serviceProvider.getService(RegistrationService);// [!code ++]
+app.start();
+registrationService.registerUser();// [!code ++]
+app.stop();
+```
+
+In this variant, we use `@wroud/di` to manage the creation and injection of dependencies. We decorate our classes with `@injectable` and register them with the `ServiceContainerBuilder`, which automatically handles their instantiation and dependency resolution.
+:::
+
+## Example 3: Separating Concerns with Independent Services
+
+Next, we will further refactor our application by separating some functionality into independent services. This helps in managing responsibilities better.
+
+### Refactored Application Code
+
+```typescript
+class Logger {
+  log(message: string) {
+    console.log(message);
+  }
+}
+
+class DatabaseConnection {// [!code ++]
+  constructor(private logger: Logger) {}// [!code ++]
+  rawQuery() {// [!code ++]
+    this.logger.log("raw queried");// [!code ++]
+  }// [!code ++]
+  connect() {// [!code ++]
+    this.logger.log("connected");// [!code ++]
+  }// [!code ++]
+  disconnect() {// [!code ++]
+    this.logger.log("disconnected");// [!code ++]
+  }// [!code ++]
+}
+
+class Database {
+  constructor(
+    private logger: Logger,
+    private connection: DatabaseConnection,// [!code ++]
+  ) {}
+  query() {
+    this.connection.rawQuery();// [!code ++]
+    this.logger.log("queried");
+  }
+  disconnect() {// [!code --]
+    this.logger.log("disconnected");// [!code --]
+  }// [!code --]
+  query() {// [!code --]
+    this.logger.log("queried");// [!code --]
+  }// [!code --]
+}
+
+class UsersManager {
+  constructor(
+    private logger: Logger,
+    private database: Database,
+  ) {}
+  addUser() {
+    this.database.query();
+    this.logger.log("added user");
+  }
+}
+
+class RegistrationService {
+  constructor(
+    private logger: Logger,
+    private usersManager: UsersManager,
+  ) {}
+  registerUser() {
+    this.usersManager.addUser();
+    this.logger.log("registered user");
+  }
+}
+
+class App {
+  constructor(
+    private logger: Logger,
+    private database: Database,// [!code --]
+    private connection: DatabaseConnection,// [!code ++]
+  ) {}
+  start() {
+    this.database.connect();// [!code --]
+    this.connection.connect();// [!code ++]
+    this.logger.log("started");
+  }
+  stop() {
+    this.database.disconnect();// [!code --]
+    this.connection.disconnect();// [!code ++]
+    this.logger.log("stopped");
+  }
+}
+```
+
+In this refactoring, we introduced a new `DatabaseConnection` class to handle the actual connection logic. This separation of concerns makes the code more modular and easier to manage.
+
+::: tabs
+== Initialization Variant 1
+```typescript
+const logger = new Logger();
+const databaseConnection = new DatabaseConnection(logger);// [!code ++]
+const database = new Database(logger);// [!code --]
+const database = new Database(logger, databaseConnection);// [!code ++]
+const usersManager = new UsersManager(logger, database);
+const registrationService = new RegistrationService(logger, usersManager);
+const app = new App(logger, database);// [!code --]
+const app = new App(logger, databaseConnection);// [!code ++]
+app.start();
+registrationService.registerUser();
+app.stop();
+```
+
+This variant shows the manual creation and wiring of all instances, including the new `DatabaseConnection` class. As expected, this can get complex and error-prone as the number of dependencies grows.
+
+== Initialization Variant 2
+```typescript
+class App {
+  private logger: Logger;
+  private connection: DatabaseConnection;// [!code ++]
+  readonly database: Database;
+  constructor() {
+    this.logger = new Logger();
+    this.connection = new DatabaseConnection(this.logger);// [!code ++]
+    this.database = new Database(this.logger);// [!code --]
+    this.database = new Database(this.logger, this.connection);// [!code ++]
+  }
+  start() {
+    this.connection.connect();
+    this.logger.log("started");
+  }
+  stop() {
+    this.connection.disconnect();
+    this.logger.log("stopped");
+  }
+}
+
+const app = new App();
+app.start();
+app.database.usersManager.registrationService.registerUser();
+app.stop();
+```
+
+In this variant, the `App` class internally creates instances of `Logger`, `DatabaseConnection`, and `Database`. This approach reduces some boilerplate but still involves manual wiring inside the constructors.
+
+However, note that the logical hierarchy `app.database.usersManager.registrationService` is problematic. This is a consequence of manual dependency management. As our code evolves, dependencies need to be moved up the hierarchy to be shared with other dependencies. This makes it difficult to maintain a clean separation of concerns and manage dependencies efficiently.
+
+== Initialization with DI
+
+```typescript
+@injectable(() => [Logger])// [!code ++]
+class DatabaseConnection {
+  constructor(private logger: Logger) {}
+  rawQuery() {
+    this.logger.log("raw queried");
+  }
+  connect() {
+    this.logger.log("connected");
+  }
+  disconnect() {
+    this.logger.log("disconnected");
+  }
+}
+
+@injectable(() => [Logger, Database])// [!code --]
+@injectable(() => [Logger, DatabaseConnection])// [!code ++]
+class App {
+  constructor(
+    private logger: Logger,
+    private connection: DatabaseConnection,
+  ) {}
+  start() {
+    this.connection.connect();
+    this.logger.log("started");
+  }
+  stop() {
+    this.connection.disconnect();
+    this.logger.log("stopped");
+  }
+}
+
+@injectable(() => [Logger])// [!code --]
+@injectable(() => [Logger, DatabaseConnection])// [!code ++]
+class Database {
+  constructor(
+    private logger: Logger,
+    private connection: DatabaseConnection,
+  ) {}
+  query() {
+    this.connection.rawQuery();
+    this.logger.log("queried");
+  }
+}
+
+const serviceProvider = new ServiceContainerBuilder()
+  .addSingleton(Logger)
+  .addSingleton(DatabaseConnection)// [!code ++]
   .addSingleton(App)
   .addSingleton(Database)
   .addSingleton(UsersManager)
@@ -519,6 +500,9 @@ app.start();
 registrationService.registerUser();
 app.stop();
 ```
+
+In this variant, we use `@wroud/di` to manage the creation and injection of dependencies. Note that we only made a few changes to the code to use dependency injection, without affecting the logic and without increasing complexity.
+:::
 
 ### Explanation
 

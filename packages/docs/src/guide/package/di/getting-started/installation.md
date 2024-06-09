@@ -39,50 +39,8 @@ bun add @wroud/di
 
 ## Step 2: Set Up Your Project
 
-### JavaScript
-
-If you are using plain JavaScript, you can start using @wroud/di directly after installation. Here’s a basic setup example:
-
-```javascript
-import { ServiceContainerBuilder, injectable } from '@wroud/di';
-
-// Define a service
-@injectable()
-class Logger {
-    log(message: string) {
-        console.log(message);
-    }
-}
-
-// Define another service that depends on Logger
-@injectable(() => [Logger])
-class UserService {
-    constructor(private logger: Logger) {
-        this.logger = logger;
-    }
-
-    createUser(user: { name: string }) {
-        this.logger.log(`Creating user: ${user.name}`);
-        // User creation logic
-    }
-}
-
-// Build the service container
-const containerBuilder = new ServiceContainerBuilder();
-containerBuilder.addSingleton(Logger);
-containerBuilder.addTransient(UserService);
-const serviceProvider = containerBuilder.build();
-
-// Resolve and use the UserService
-const userService = serviceProvider.getService(UserService);
-userService.createUser({ name: 'John Doe' });
-```
-
 ### TypeScript
-
-If you are using TypeScript, here's an example setup:
-
-```typescript
+```typescript twoslash
 import { ServiceContainerBuilder, injectable } from '@wroud/di';
 
 @injectable()

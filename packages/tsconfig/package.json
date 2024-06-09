@@ -1,0 +1,9 @@
+{
+  "name": "@wroud/tsconfig",
+  "private": true,
+  "packageManager": "yarn@4.2.2",
+  "devDependencies": {
+    "@tsconfig/node20": "^20",
+    "@tsconfig/strictest": "^2"
+  }
+}

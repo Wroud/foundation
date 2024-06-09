@@ -32,13 +32,14 @@
   ],
   "scripts": {
     "build": "tsc -b",
-    "clean": "rimraf ./dist",
+    "clear": "rimraf ./dist",
     "watch:tsc": "tsc -b -w",
     "dev": "concurrently \"npm:watch:*\""
   },
   "devDependencies": {
     "@jest/globals": "^29",
     "@types/node": "^20",
+    "@wroud/tsconfig": "workspace:^",
     "concurrently": "^8",
     "rimraf": "^5",
     "tslib": "^2",

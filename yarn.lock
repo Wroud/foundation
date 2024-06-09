@@ -2458,6 +2458,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@wroud/_aggregate@workspace:packages/_aggregate"
   dependencies:
+    "@wroud/tsconfig": "workspace:^"
     concurrently: "npm:^8"
     rimraf: "npm:^5"
     tslib: "npm:^2"
@@ -2471,10 +2472,20 @@ __metadata:
   dependencies:
     "@jest/globals": "npm:^29"
     "@types/node": "npm:^20"
+    "@wroud/tsconfig": "workspace:^"
     concurrently: "npm:^8"
     rimraf: "npm:^5"
     tslib: "npm:^2"
     typescript: "npm:^5"
+  languageName: unknown
+  linkType: soft
+
+"@wroud/tsconfig@workspace:^, @wroud/tsconfig@workspace:packages/tsconfig":
+  version: 0.0.0-use.local
+  resolution: "@wroud/tsconfig@workspace:packages/tsconfig"
+  dependencies:
+    "@tsconfig/node20": "npm:^20"
+    "@tsconfig/strictest": "npm:^2"
   languageName: unknown
   linkType: soft
 
@@ -3173,6 +3184,7 @@ __metadata:
     "@shikijs/vitepress-twoslash": "npm:^1"
     "@types/node": "npm:^20"
     "@wroud/di": "workspace:^"
+    "@wroud/tsconfig": "workspace:^"
     unocss: "npm:^0"
     unplugin-vue-components: "npm:^0"
     vite: "npm:^5"
@@ -3539,8 +3551,6 @@ __metadata:
   dependencies:
     "@swc/core": "npm:^1"
     "@swc/jest": "npm:^0"
-    "@tsconfig/node20": "npm:^20"
-    "@tsconfig/strictest": "npm:^2"
     jest: "npm:^29"
     prettier: "npm:^3"
     rimraf: "npm:^5"

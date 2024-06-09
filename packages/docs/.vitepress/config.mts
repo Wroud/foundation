@@ -77,6 +77,10 @@ export default defineConfig({
                     items: [
                       { text: "Introduction", link: "introduction" },
                       { text: "Installation", link: "installation" },
+                      {
+                        text: "Why DI?",
+                        link: "why-use-dependency-injection",
+                      },
                     ],
                   },
                   {

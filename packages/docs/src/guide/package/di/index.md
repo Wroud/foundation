@@ -10,6 +10,7 @@ Welcome to the @wroud/di library guides! Here you'll find comprehensive document
 
 - **[Introduction](getting-started/introduction)**: Learn about the key features and benefits of using @wroud/di in your projects.
 - **[Installation](getting-started/installation)**: Step-by-step guide to installing @wroud/di in your environment.
+- **[Why DI?](getting-started/why-use-dependency-injection)**: Understand the benefits of DI and when to use it, with practical examples.
 
 ## Core Concepts
 

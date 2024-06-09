@@ -64,10 +64,8 @@ class App {
   private logger: Logger;
   private database: Database;
   constructor() {
-    const logger = new Logger();
-    const database = new Database(logger);
-    this.logger = logger;
-    this.database = database;
+    this.logger = new Logger();
+    this.database = new Database(this.logger);
   }
   start() {
     this.database.connect();
@@ -174,10 +172,8 @@ class App {
   private logger: Logger;
   readonly database: Database;
   constructor() {
-    const logger = new Logger();
-    const database = new Database(logger);
-    this.logger = logger;
-    this.database = database;
+    this.logger = new Logger();
+    this.database = new Database(this.logger);
   }
   start() {
     this.database.connect();

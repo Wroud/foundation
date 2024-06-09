@@ -1,5 +1,5 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "@wroud/tsconfig/tsconfig.json",
   "compilerOptions": {
     "tsBuildInfoFile": "./dist/.tsbuildinfo",
     "outDir": "dist",

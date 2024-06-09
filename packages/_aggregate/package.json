@@ -9,7 +9,7 @@
   "sideEffects": [],
   "scripts": {
     "build": "tsc -b",
-    "clean": "rimraf ./dist",
+    "clear": "rimraf ./dist",
     "watch:tsc": "tsc -b -w",
     "dev": "concurrently \"npm:watch:*\""
   },
@@ -17,6 +17,7 @@
     "tslib": "^2"
   },
   "devDependencies": {
+    "@wroud/tsconfig": "workspace:^",
     "concurrently": "^8",
     "rimraf": "^5",
     "typescript": "^5"

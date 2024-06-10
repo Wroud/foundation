@@ -41,7 +41,6 @@
     "@types/d3": "^7",
     "@types/node": "^20",
     "@types/uuid": "^9",
-    "@wroud/di": "workspace:^",
     "@wroud/tsconfig": "workspace:^",
     "concurrently": "^8",
     "rimraf": "^5",
@@ -50,6 +49,7 @@
   },
   "keywords": [],
   "dependencies": {
+    "@wroud/di": "workspace:^",
     "d3": "^7",
     "uuid": "^10"
   }

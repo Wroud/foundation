@@ -22,6 +22,9 @@ onMounted(() => {
 .arrowhead {
   fill: var(--vp-c-text-1);
 }
+.links {
+  fill: none;
+}
 .link {
   stroke: var(--vp-c-text-1);
 }

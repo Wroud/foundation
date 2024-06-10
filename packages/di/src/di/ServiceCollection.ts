@@ -9,6 +9,7 @@ import { IServiceProvider } from "./IServiceProvider.js";
 import type { ServiceImplementation } from "./ServiceImplementation.js";
 import type { ServiceType } from "./ServiceType.js";
 import { ServiceRegistry } from "./ServiceRegistry.js";
+import { getNameOfServiceType } from "./getNameOfServiceType.js";
 
 export class ServiceCollection implements IServiceCollection {
   private readonly collection: Map<any, IServiceDescriptor<unknown>[]>;
@@ -102,18 +103,19 @@ export class ServiceCollection implements IServiceCollection {
     const descriptors = this.getDescriptors(service);
 
     for (const descriptor of descriptors) {
+      const name = getNameOfServiceType(descriptor.service);
       const metadata = ServiceRegistry.get(descriptor.implementation);
 
       if (metadata) {
         if (path.includes(metadata.name!)) {
           throw new Error(
-            `Cyclic dependency detected: ${path.join(" -> ")} -> ${descriptor.service.name}`,
+            `Cyclic dependency detected: ${path.join(" -> ")} -> ${name}`,
           );
         }
 
-        path = [...path, descriptor.service.name];
+        path = [...path, name];
 
-        if (descriptor.service.name !== metadata.name) {
+        if (name !== metadata.name) {
           path = [...path, metadata.name!];
         }
 

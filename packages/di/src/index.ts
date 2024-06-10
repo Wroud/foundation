@@ -1,8 +1,10 @@
 export * from "./di/ServiceContainerBuilder.js";
+export * from "./di/getNameOfServiceType.js";
 export * from "./di/injectable.js";
 export * from "./di/createService.js";
 export * from "./di/ServiceContainerBuilder.js";
 export * from "./di/IServiceProvider.js";
+export * from "./di/IServiceDescriptor.js";
 export type * from "./di/IServiceCollection.js";
 export * from "./di/ServiceRegistry.js";
 export type * from "./module/IModule.js";

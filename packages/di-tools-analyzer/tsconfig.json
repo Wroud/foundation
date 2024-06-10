@@ -12,12 +12,6 @@
   "references": [
     {
       "path": "../di"
-    },
-    {
-      "path": "../di-tools-analyzer"
-    },
-    {
-      "path": "../docs"
     }
   ]
 }

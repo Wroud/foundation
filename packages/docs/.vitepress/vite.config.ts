@@ -5,6 +5,10 @@ import Components from "unplugin-vue-components/vite";
 import UnoCSS from "unocss/vite";
 
 export default defineConfig({
+  esbuild: {
+    minifyIdentifiers: false,
+    keepNames: true,
+  },
   plugins: [
     Components({
       dirs: [fileURLToPath(new URL("./components", import.meta.url))],

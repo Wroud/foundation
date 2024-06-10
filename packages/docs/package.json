@@ -5,7 +5,9 @@
   "devDependencies": {
     "@shikijs/vitepress-twoslash": "^1",
     "@types/node": "^20",
+    "@vitejs/plugin-vue": "^5",
     "@wroud/di": "workspace:^",
+    "@wroud/di-tools-analyzer": "workspace:^",
     "@wroud/tsconfig": "workspace:^",
     "unocss": "^0",
     "unplugin-vue-components": "^0",

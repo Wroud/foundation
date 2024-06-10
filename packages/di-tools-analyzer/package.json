@@ -1,0 +1,56 @@
+{
+  "name": "@wroud/di-tools-analyzer",
+  "description": "DI Tools Analyzer is a tool that helps you to analyze the dependency injection tools in your project and generate a report for them.",
+  "version": "0.0.1",
+  "packageManager": "yarn@4.2.2",
+  "type": "module",
+  "license": "MIT",
+  "author": "Wroud",
+  "homepage": "https://wroud.dev/packages/di-tools-analyzer/overview",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Wroud/foundation",
+    "directory": "packages/di-tools-analyzer"
+  },
+  "sideEffects": [],
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./*": "./dist/*",
+    "./package.json": "./package.json",
+    "./src": "./src/index.ts",
+    "./src/*": "./src/*"
+  },
+  "files": [
+    "dist",
+    "!dist/**/*.test.js",
+    "!dist/**/*.test.d.ts",
+    "!dist/**/*.test.d.ts.map",
+    "!dist/**/*.test.js.map",
+    "!.tsbuildinfo"
+  ],
+  "scripts": {
+    "build": "tsc -b",
+    "clear": "rimraf ./dist",
+    "watch:tsc": "tsc -b -w",
+    "dev": "concurrently \"npm:watch:*\""
+  },
+  "devDependencies": {
+    "@jest/globals": "^29",
+    "@types/d3": "^7",
+    "@types/node": "^20",
+    "@types/uuid": "^9",
+    "@wroud/di": "workspace:^",
+    "@wroud/tsconfig": "workspace:^",
+    "concurrently": "^8",
+    "rimraf": "^5",
+    "tslib": "^2",
+    "typescript": "^5"
+  },
+  "keywords": [],
+  "dependencies": {
+    "d3": "^7",
+    "uuid": "^10"
+  }
+}

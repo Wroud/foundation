@@ -1,12 +1,13 @@
 {
   "extends": "@wroud/tsconfig/tsconfig.json",
   "compilerOptions": {
+    "target": "ES2022",
     "tsBuildInfoFile": "./dist/.tsbuildinfo",
     "outDir": "dist",
     "incremental": true,
     "composite": true
   },
-  "include": [],
+  "include": ["src"],
   "references": [
     {
       "path": "../di"

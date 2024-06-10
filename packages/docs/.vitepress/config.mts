@@ -2,6 +2,7 @@ import { defineConfig } from "vitepress";
 import { transformerTwoslash } from "@shikijs/vitepress-twoslash";
 import { tabsMarkdownPlugin } from "vitepress-plugin-tabs";
 import vite from "./vite.config";
+import vue from "./vue.config";
 import { getGAHeaders } from "./tools/getGAHeaders.ts";
 
 // https://vitepress.dev/reference/site-config
@@ -12,6 +13,7 @@ export default defineConfig({
   cleanUrls: true,
   lastUpdated: true,
   vite,
+  vue,
   markdown: {
     config(md) {
       md.use(tabsMarkdownPlugin);

@@ -3,7 +3,9 @@ import * as d3 from "d3";
 import type { IGraph, INode } from "./IGraph.js";
 import { ServiceLifetime } from "@wroud/di";
 
-type NodeDatum = d3.SimulationNodeDatum & INode;
+type NodeDatum = d3.SimulationNodeDatum & {
+  data: INode;
+};
 type LinkDatum = d3.SimulationLinkDatum<NodeDatum>;
 
 export function createChart(
@@ -25,7 +27,8 @@ export function createChart(
 
   const simulation = d3
     .forceSimulation<NodeDatum>()
-    .force("charge", d3.forceManyBody().strength(-700))
+    .velocityDecay(0.1)
+    .force("charge", d3.forceManyBody().strength(-700).theta(0.1))
     .force("x", d3.forceX().strength(0.1))
     .force("y", d3.forceY().strength(0.1))
     .on("tick", ticked);
@@ -63,17 +66,17 @@ export function createChart(
     .attr("fill", "black")
     .classed("arrowhead", true);
 
-  let link: d3.Selection<d3.BaseType, LinkDatum, SVGGElement, undefined> = svg
+  let link = svg
     .append("g")
     .classed("links", true)
     .attr("stroke", "#999")
-    .selectAll("line");
+    .selectAll<SVGLineElement, LinkDatum>("line");
 
-  let node: d3.Selection<d3.BaseType, NodeDatum, SVGGElement, unknown> = svg
+  let node = svg
     .append("g")
     .attr("stroke", "#fff")
     .attr("stroke-width", 1.5)
-    .selectAll("g");
+    .selectAll<SVGGElement, NodeDatum>("g");
 
   // Calculate the dimensions for the legend background
   const legendItemHeight = 20;
@@ -200,32 +203,32 @@ export function createChart(
   }
 
   return {
-    update({ nodes, links }: IGraph) {
+    update(graph: IGraph) {
       // Make a shallow copy to protect against mutation, while
       // recycling old nodes to preserve position and velocity.
-      const old = new Map(node.data().map((d) => [d.id, d]));
-      nodes = nodes.map((d) => ({ ...old.get(d.id), ...d }));
-      links = links.map((d) => ({ ...d }));
+      const old = new Map(node.data().map((d) => [d.data.id, d]));
+      const nodes = graph.nodes.map((d) => ({ ...old.get(d.id), data: d }));
+      const links = graph.links.map((d) => ({ ...d }));
 
       node = node
-        .data(nodes, (d) => d.id)
+        .data(nodes, (d) => d.data.id)
         .join((enter) =>
           enter
             .append("g")
             .classed("node", true)
             .classed(
               "node-transient",
-              (d) => d.lifetime === ServiceLifetime.Transient,
+              (d) => d.data.lifetime === ServiceLifetime.Transient,
             )
             .classed(
               "node-scoped",
-              (d) => d.lifetime === ServiceLifetime.Scoped,
+              (d) => d.data.lifetime === ServiceLifetime.Scoped,
             )
             .classed(
               "node-singleton",
-              (d) => d.lifetime === ServiceLifetime.Singleton,
+              (d) => d.data.lifetime === ServiceLifetime.Singleton,
             )
-            .classed("node-not-found", (d) => d.notFound || false)
+            .classed("node-not-found", (d) => d.data.notFound || false)
             .call(dragNode())
             .on("mouseenter", hoverNode().entered)
             .on("mouseleave", hoverNode().left),
@@ -237,18 +240,17 @@ export function createChart(
         .attr("cx", 0)
         .attr("cy", 0)
         .classed("node-circle", true)
-        .attr("fill", (d) => (d.notFound ? "#f00" : "#000"));
+        .attr("fill", (d) => (d.data.notFound ? "#f00" : "#000"));
 
       node
         .append("title")
-        .text((d) => d.name + (d.notFound ? " (not found)" : ""));
+        .text((d) => d.data.name + (d.data.notFound ? " (not found)" : ""));
 
       node
         .append("text")
-        .attr("dy", "0.31em")
-        .attr("x", 8)
-        .attr("text-anchor", "start")
-        .text((d) => d.name)
+        .attr("dy", "-16")
+        .attr("text-anchor", "middle")
+        .text((d) => d.data.name)
         .classed("node-text", true)
         .attr("stroke", "white")
         .attr("paint-order", "stroke");
@@ -266,8 +268,9 @@ export function createChart(
           "link",
           d3
             .forceLink<NodeDatum, LinkDatum>(links)
-            .id((d) => d.id)
-            .distance(50),
+            .id((d) => d.data.id)
+            .distance(50)
+            .strength(0.4),
         )
         .alpha(1)
         .restart()

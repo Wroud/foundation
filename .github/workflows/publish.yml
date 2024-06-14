@@ -18,10 +18,10 @@ jobs:
       - run: corepack enable
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          registry-url: 'https://registry.npmjs.org'
-          scope: '@wroud'
-          cache: 'yarn'
+          node-version: "20"
+          registry-url: "https://registry.npmjs.org"
+          scope: "@wroud"
+          cache: "yarn"
 
       - name: Setup .yarnrc.yml
         run: |
@@ -30,7 +30,6 @@ jobs:
           yarn config set npmAuthToken $NPM_AUTH_TOKEN
         env:
           NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          
 
       - name: Install modules
         run: yarn install --immutable
@@ -42,5 +41,4 @@ jobs:
         run: yarn test
 
       - name: Publish to npm
-        run: yarn npm publish --access public --tolerate-republish
-        working-directory: ./packages/di
+        run: yarn workspaces foreach -A --no-private npm publish --access public --tolerate-republish

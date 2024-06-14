@@ -2,6 +2,7 @@
 import * as d3 from "d3";
 import type { IGraph, INode } from "./IGraph.js";
 import { ServiceLifetime } from "@wroud/di";
+import type { IChart } from "./IChart.js";
 
 type NodeDatum = d3.SimulationNodeDatum & {
   data: INode;
@@ -12,7 +13,7 @@ export function createChart(
   svgElement: SVGSVGElement,
   width: string,
   height: string,
-) {
+): IChart {
   const CIRCLE_RADIUS = 5;
   const LINK_BASE_OPACITY = 0.3;
   const LINK_HOVER_OPACITY = 1;

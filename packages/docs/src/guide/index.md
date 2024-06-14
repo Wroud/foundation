@@ -10,11 +10,17 @@ Discover the packages offered by Wroud Foundation, designed to simplify and impr
 
 #### Dependency Injection (DI)
 
-Learn how to use the @wroud/di package to implement dependency injection in your applications. This section covers everything from basic setup to advanced usage scenarios.
+Learn how to use the `@wroud/di` package to implement dependency injection in your applications. This section covers everything from basic setup to advanced usage scenarios.
 
 - [Dependency Injection (DI)](/guide/package/di/)
 
+### DI Tools
+
+Explore the tools available for analyzing and visualizing your dependency graph.
+
+- [DI Tools](/guide/package/di-tools/)
+- [@wroud/di-tools-analyzer](/guide/package/di-tools/analyzer/introduction)
+
 ## Getting Started
 
-If you're new to Wroud Foundation, we recommend starting with the Dependency Injection (DI) guide. It provides a comprehensive overview of the @wroud/di package's capabilities and how to integrate it into your projects.
-
+If you're new to Wroud Foundation, we recommend starting with the Dependency Injection (DI) guide. It provides a comprehensive overview of the `@wroud/di` package's capabilities and how to integrate it into your projects.

@@ -1,12 +1,12 @@
 {
   "name": "@wroud/di-tools-analyzer",
   "description": "DI Tools Analyzer is a tool that helps you to analyze the dependency injection tools in your project and generate a report for them.",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "packageManager": "yarn@4.2.2",
   "type": "module",
   "license": "MIT",
   "author": "Wroud",
-  "homepage": "http://localhost:5173/guide/package/di-tools/analyzer/introduction",
+  "homepage": "https://wroud.dev/guide/package/di-tools/analyzer/introduction",
   "repository": {
     "type": "git",
     "url": "https://github.com/Wroud/foundation",
@@ -47,7 +47,14 @@
     "tslib": "^2",
     "typescript": "^5"
   },
-  "keywords": [],
+  "keywords": [
+    "dependency-injection",
+    "di",
+    "di-tools",
+    "analyzer",
+    "tools",
+    "report"
+  ],
   "dependencies": {
     "@wroud/di": "workspace:^",
     "d3": "^7",

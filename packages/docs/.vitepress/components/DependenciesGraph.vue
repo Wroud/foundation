@@ -93,6 +93,17 @@ function onPromptImport() {
   fill: var(--vp-c-bg);
   stroke: var(--vp-c-border);
 }
+.full-screen {
+  background-color: var(--vp-c-bg);
+}
+.full-screen-icon {
+  fill: var(--vp-c-text-1);
+  stroke: var(--vp-c-bg);
+}
+.full-screen-background {
+  fill: var(--vp-c-bg);
+  stroke: var(--vp-c-border);
+}
 .node-circle {
   fill: var(--vp-c-text-1);
   stroke: var(--vp-c-bg);

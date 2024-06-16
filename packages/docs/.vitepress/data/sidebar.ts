@@ -50,6 +50,17 @@ export const sidebar: DefaultTheme.Sidebar = {
                   { text: "Service Disposal", link: "service-disposal" },
                 ],
               },
+              {
+                text: "Scale",
+                base: "/guide/package/di/scaling/",
+                items: [
+                  {
+                    text: "Introduction",
+                    link: "introduction",
+                  },
+                  { text: "Integration", link: "integration" },
+                ],
+              },
             ],
           },
           {

@@ -6,31 +6,42 @@ describe("ModuleRegistry", () => {
   it("should be defined", () => {
     expect(ModuleRegistry).toBeDefined();
   });
-  it("should have register method", () => {
-    expect(ModuleRegistry).toHaveProperty("register");
+  it("should have add method", () => {
+    expect(ModuleRegistry).toHaveProperty("add");
   });
-  it("should have getModules method", () => {
-    expect(ModuleRegistry).toHaveProperty("getModules");
+  it("should have get method", () => {
+    expect(ModuleRegistry).toHaveProperty("get");
   });
   it("should have addListener method", () => {
     expect(ModuleRegistry).toHaveProperty("addListener");
   });
-  it("should register module", () => {
-    const module = createModule("test");
-    ModuleRegistry.register(module);
-    expect(ModuleRegistry.getModules()).toContain(module);
+  it("should have has method", () => {
+    expect(ModuleRegistry).toHaveProperty("has");
   });
-  it("should not register duplicate module", () => {
+  it("should have Symbol.iterator method", () => {
+    expect(Symbol.iterator in ModuleRegistry).toBeTruthy();
+  });
+  it("should iterate over modules", () => {
+    const module = createModule("test-0");
+    ModuleRegistry.add(module);
+    expect([...ModuleRegistry]).toContain(module);
+  });
+  it("should add module", () => {
+    const module = createModule("test");
+    ModuleRegistry.add(module);
+    expect(ModuleRegistry.get(module.name)).toBe(module);
+  });
+  it("should not add duplicate module", () => {
     const module = createModule("test-1");
-    ModuleRegistry.register(module);
-    expect(() => ModuleRegistry.register(createModule("test-1"))).toThrowError(
-      `Module ${module.name} is already registered.`,
+    ModuleRegistry.add(module);
+    expect(() => ModuleRegistry.add(createModule("test-1"))).toThrowError(
+      `Module ${module.name} is already added.`,
     );
   });
   it("should add listener", () => {
     const listener = jest.fn();
     ModuleRegistry.addListener(listener);
-    ModuleRegistry.register(createModule("test-2"));
+    ModuleRegistry.add(createModule("test-2"));
     expect(listener).toBeCalled();
   });
 });

@@ -15,8 +15,9 @@ export function createPaper(
       ])
       .scaleExtent([0.1, 2])
       .on("zoom", zoomed)
-      .filter((event) => {
-        const svgFocused = document.activeElement === svg.node();
+      .filter((event: D3ZoomEvent<SVGGElement, unknown>) => {
+        const svgFocused =
+          document.activeElement === svg.node() || event.type !== "wheel";
         return svgFocused;
       }),
   );

@@ -72,7 +72,7 @@ export function createFullScreenSwitch(
         }
         const { width, height } = node.getBoundingClientRect();
         const xTranslate = width / 2 - 30;
-        const yTranslate = -height / 2 + 20;
+        const yTranslate = -height / 2 + 15;
 
         return `translate(${xTranslate}, ${yTranslate})`;
       });

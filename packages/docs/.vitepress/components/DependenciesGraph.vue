@@ -45,7 +45,7 @@ watchEffect(() => {
 
   if (props.serviceCollection) {
     store.graph = getDependenciesGraph(props.serviceCollection);
-    console.log(JSON.stringify(store.graph));
+    console.info("graph json:", JSON.stringify(store.graph));
   }
 
   if (store.graph) {

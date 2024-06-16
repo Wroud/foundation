@@ -29,7 +29,7 @@ injectable(() => [])(Request);
 injectable(() => [Request, DBUsers])(Profile);
 injectable(() => [Request, SessionStore])(Session);
 injectable(() => [Database])(SessionStore);
-injectable(() => [])(GQLServer);
+injectable(() => [Request])(GQLServer);
 
 const serviceCollection = new ServiceContainerBuilder()
   .addSingleton(App)

@@ -24,6 +24,11 @@ Welcome to the @wroud/di library guides! Here you'll find comprehensive document
 - **[Factory Services](advanced-features/factory-services)**: Learn how to create and inject factory services for dynamic service creation.
 - **[Service Disposal](advanced-features/service-disposal)**: Understand how to manage and dispose of services properly.
 
+## Scaling Your Application
+
+- **[Introduction](scaling/introduction)**: Introduction to scaling your application using @wroud/di and the ModuleRegistry.
+- **[Integration](scaling/integration)**: Step-by-step guide to integrating the ModuleRegistry into your existing application for better scalability.
+
 ## API Reference
 
 - **[API Documentation](/packages/di/api)**: Detailed reference for all classes, methods, and functions provided by @wroud/di.

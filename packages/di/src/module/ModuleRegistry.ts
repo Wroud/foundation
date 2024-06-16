@@ -5,22 +5,29 @@ export interface IModuleEventListener {
 }
 
 export class ModuleRegistry {
-  private static modules: IModule[] = [];
+  static [Symbol.iterator](): IterableIterator<IModule> {
+    return this.modules.values();
+  }
+  private static modules: Map<string, IModule> = new Map();
   private static listeners: IModuleEventListener[] = [];
 
-  static register(module: IModule) {
-    if (this.modules.some((m) => m.name === module.name)) {
-      throw new Error(`Module ${module.name} is already registered.`);
+  static add(module: IModule): void {
+    if (this.has(module.name)) {
+      throw new Error(`Module ${module.name} is already added.`);
     }
-    this.modules.push(module);
+    this.modules.set(module.name, module);
     this.listeners.forEach((listener) => listener(module));
   }
 
-  static getModules() {
-    return this.modules;
+  static has(name: string): boolean {
+    return this.modules.has(name);
   }
 
-  static addListener(listener: IModuleEventListener) {
+  static get(name: string): IModule | undefined {
+    return this.modules.get(name);
+  }
+
+  static addListener(listener: IModuleEventListener): void {
     this.listeners.push(listener);
   }
 }

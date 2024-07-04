@@ -256,7 +256,7 @@ for (const module of ModuleRegistry) {
 const serviceProvider = builder.build();
 
 // Now you can resolve and use your services
-const app = serviceProvider.get(App);
+const app = serviceProvider.getService(App);
 app.start();
 ```
 

@@ -12,4 +12,12 @@ describe("ServiceContainerBuilder", () => {
   it("should have addSingleton method", () => {
     expect(new ServiceContainerBuilder()).toBeInstanceOf(ServiceCollection);
   });
+  it("should should not mutate created service providers", () => {
+    const builder = new ServiceContainerBuilder();
+    const provider = builder.build();
+    builder.addSingleton(String, "Hello");
+    expect(() => provider.getService(String)).toThrowError(
+      'No service of type "String" is registered',
+    );
+  });
 });

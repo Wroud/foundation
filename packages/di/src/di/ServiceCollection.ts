@@ -12,12 +12,14 @@ import { ServiceRegistry } from "./ServiceRegistry.js";
 import { getNameOfServiceType } from "./getNameOfServiceType.js";
 
 export class ServiceCollection implements IServiceCollection {
-  private readonly collection: Map<any, IServiceDescriptor<unknown>[]>;
-  constructor() {
-    this.collection = new Map();
-    this.addSingleton(IServiceProvider, () => {
-      throw new Error("Not implemented");
-    });
+  protected readonly collection: Map<any, IServiceDescriptor<unknown>[]>;
+  constructor(collection?: ServiceCollection) {
+    this.collection = new Map(collection?.copy() || []);
+    if (!this.collection.has(IServiceProvider)) {
+      this.addSingleton(IServiceProvider, () => {
+        throw new Error("Not implemented");
+      });
+    }
   }
 
   [Symbol.iterator](): Iterator<IServiceDescriptor<unknown>, any, undefined> {
@@ -76,6 +78,12 @@ export class ServiceCollection implements IServiceCollection {
   ): this {
     this.addService(ServiceLifetime.Singleton, service, implementation);
     return this;
+  }
+
+  protected *copy(): Iterable<[any, IServiceDescriptor<unknown>[]]> {
+    for (const [key, descriptors] of this.collection) {
+      yield [key, [...descriptors]];
+    }
   }
 
   private addService<T>(

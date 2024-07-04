@@ -8,6 +8,6 @@ export class ServiceContainerBuilder extends ServiceCollection {
   }
 
   build(): IServiceProvider {
-    return new ServiceProvider(this);
+    return new ServiceProvider(new ServiceCollection(this));
   }
 }

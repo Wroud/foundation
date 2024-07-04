@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "useDefineForClassFields": true,
+    "moduleResolution": "NodeNext",
+    "skipLibCheck": true,
+
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "tsBuildInfoFile": "./dist/.tsbuildinfo",
+    "outDir": "dist",
+    "rootDir": "src",
+    "allowJs": true,
+
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "preserveWatchOutput": true,
+    "strict": true,
+    "strictNullChecks": true,
+    "module": "NodeNext",
+    "incremental": true,
+    "noUncheckedIndexedAccess": true,
+    "noPropertyAccessFromIndexSignature": false
+  },
+  "include": ["./src/**/*.ts", "./src/**/*.js"],
+  "exclude": ["node_modules/**/*", "dist/**/*"]
+}

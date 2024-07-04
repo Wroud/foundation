@@ -17,3 +17,9 @@ coverage
 
 # build artifacts
 dist
+
+# macOS
+.DS_Store
+
+# node_modules
+node_modules

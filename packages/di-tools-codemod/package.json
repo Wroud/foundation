@@ -1,9 +1,9 @@
 {
   "name": "@wroud/di-tools-codemod",
   "description": "",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "packageManager": "yarn@4.2.2",
-  "type": "module",
+  "type": "commonjs",
   "license": "MIT",
   "author": "Wroud",
   "homepage": "https://wroud.dev",

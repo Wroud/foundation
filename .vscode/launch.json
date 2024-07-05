@@ -12,6 +12,15 @@
       "runtimeExecutable": "yarn",
       "cwd": "${workspaceFolder}/packages/di-tools-codemod",
       "runtimeArgs": ["run", "test"]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug Tests",
+      "skipFiles": ["<node_internals>/**"],
+      "runtimeExecutable": "yarn",
+      "cwd": "${workspaceFolder}",
+      "runtimeArgs": ["run", "test"]
     }
   ]
 }

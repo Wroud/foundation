@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "ESNext",
     "useDefineForClassFields": true,
-    "moduleResolution": "NodeNext",
+    // "moduleResolution": "NodeNext",
     "skipLibCheck": true,
 
     "resolveJsonModule": true,
@@ -21,7 +21,7 @@
     "preserveWatchOutput": true,
     "strict": true,
     "strictNullChecks": true,
-    "module": "NodeNext",
+    "module": "CommonJS",
     "incremental": true,
     "noUncheckedIndexedAccess": true,
     "noPropertyAccessFromIndexSignature": false

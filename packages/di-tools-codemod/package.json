@@ -1,7 +1,7 @@
 {
   "name": "@wroud/di-tools-codemod",
   "description": "",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "packageManager": "yarn@4.2.2",
   "type": "module",
   "license": "MIT",
@@ -13,9 +13,7 @@
     "directory": "packages/di-tools-codemod"
   },
   "sideEffects": [],
-  "bin": {
-    "di-tools-codemod": "./bin/di-tools-codemod.js"
-  },
+  "bin": "./bin/di-tools-codemod.js",
   "exports": {
     ".": "./dist/index.js",
     "./package.json": "./package.json"
@@ -29,8 +27,7 @@
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest watch",
-    "build": "tsc -b",
-    "install": "tsc -b"
+    "build": "tsc -b"
   },
   "devDependencies": {
     "@types/jscodeshift": "^0",

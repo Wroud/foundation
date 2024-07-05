@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
-import { run } from "jscodeshift/src/Runner";
-import path from "node:path";
-import { existsSync, readFileSync } from "node:fs";
+const { run } = require("jscodeshift/src/Runner.js");
+const path = require("node:path");
+const { existsSync, readFileSync } = require("node:fs");
 
-const transformPath = path.resolve("../dist/index.js");
+const transformPath = require.resolve("../dist/index.js");
 const paths = process.argv.slice(2);
 let migrationOptions = {};
 
@@ -17,8 +17,7 @@ if (existsSync(migrationOptionsPath)) {
   migrationOptions = JSON.parse(readFileSync(migrationOptionsPath, "utf8"));
 }
 
-const res = await run(transformPath, paths, {
+run(transformPath, paths, {
   ...migrationOptions,
   cpus: 1,
 });
-console.log(res);

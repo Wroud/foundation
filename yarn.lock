@@ -3476,7 +3476,7 @@ __metadata:
     typescript: "npm:^5"
     vitest: "npm:^1"
   bin:
-    di-tools-codemod: ./bin/di-tools-codemod.js
+    di-tools-codemod: ./bin/di-tools-codemod.cjs
   languageName: unknown
   linkType: soft
 

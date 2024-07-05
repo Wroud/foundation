@@ -17,6 +17,9 @@
       "path": "../di-tools-analyzer"
     },
     {
+      "path": "../di-tools-codemod"
+    },
+    {
       "path": "../docs"
     }
   ]

@@ -1,7 +1,7 @@
 {
   "name": "@wroud/di-tools-codemod",
   "description": "",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "packageManager": "yarn@4.2.2",
   "type": "module",
   "license": "MIT",
@@ -24,6 +24,9 @@
     "dist",
     "bin"
   ],
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest watch",
@@ -32,8 +35,10 @@
   "devDependencies": {
     "@types/jscodeshift": "^0",
     "@types/node": "^20",
-    "jscodeshift": "^0",
     "typescript": "^5",
     "vitest": "^1"
+  },
+  "dependencies": {
+    "jscodeshift": "^0"
   }
 }

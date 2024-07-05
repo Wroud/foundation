@@ -101,38 +101,43 @@ export class ServiceCollection implements IServiceCollection {
       },
     ]);
 
-    this.tryResolveService(service, []);
+    this.tryResolveService(service, new Set());
 
     return this;
   }
 
   // we will try to determine cyclic dependencies
-  private tryResolveService<T>(service: ServiceType<T>, path: string[]): void {
+  private tryResolveService<T>(
+    service: ServiceType<T>,
+    path: Set<IServiceDescriptor<any>>,
+  ): void {
     const descriptors = this.getDescriptors(service);
 
     for (const descriptor of descriptors) {
-      const name = getNameOfServiceType(descriptor.service);
+      if (path.has(descriptor)) {
+        throw new Error(
+          `Cyclic dependency detected: ${[...path, descriptor]
+            .map((descriptor) => {
+              const implementationName = getNameOfServiceType(
+                descriptor.implementation,
+              );
+              const serviceName = getNameOfServiceType(descriptor.service);
+              return implementationName === serviceName
+                ? implementationName
+                : `${implementationName} (${serviceName})`;
+            })
+            .join(" -> ")}`,
+        );
+      }
+
       const metadata = ServiceRegistry.get(descriptor.implementation);
 
       if (metadata) {
-        if (path.includes(metadata.name!)) {
-          throw new Error(
-            `Cyclic dependency detected: ${path.join(" -> ")} -> ${name}`,
-          );
-        }
-
-        path = [...path, name];
-
-        if (name !== metadata.name) {
-          path = [...path, metadata.name!];
-        }
-
         for (const dependency of metadata.dependencies) {
-          const service = Array.isArray(dependency)
-            ? dependency[0]!
-            : dependency;
-
-          this.tryResolveService(service, path);
+          this.tryResolveService(
+            Array.isArray(dependency) ? dependency[0]! : dependency,
+            new Set([...path, descriptor]),
+          );
         }
       }
     }

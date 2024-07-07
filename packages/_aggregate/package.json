@@ -9,7 +9,7 @@
   "sideEffects": [],
   "scripts": {
     "build": "tsc -b",
-    "clear": "rimraf ./dist",
+    "clear": "rimraf ./lib",
     "watch:tsc": "tsc -b -w",
     "dev": "concurrently \"npm:watch:*\""
   },

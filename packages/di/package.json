@@ -13,37 +13,44 @@
     "directory": "packages/di"
   },
   "sideEffects": [],
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "module": "./lib/index.js",
+  "types": "./lib/index.d.ts",
   "exports": {
-    ".": "./dist/index.js",
-    "./*": "./dist/*",
+    ".": "./lib/index.js",
+    "./*": "./lib/*",
     "./package.json": "./package.json",
     "./src": "./src/index.ts",
     "./src/*": "./src/*"
   },
   "files": [
-    "dist",
-    "!dist/**/*.test.js",
-    "!dist/**/*.test.d.ts",
-    "!dist/**/*.test.d.ts.map",
-    "!dist/**/*.test.js.map",
+    "LICENSE",
+    "package.json",
+    "README.md",
+    "lib",
+    "!lib/**/*.test.js",
+    "!lib/**/*.test.d.ts",
+    "!lib/**/*.test.d.ts.map",
+    "!lib/**/*.test.js.map",
     "!.tsbuildinfo"
   ],
   "scripts": {
+    "test": "tests-runner",
+    "test:ci": "CI=true yarn run test",
     "build": "tsc -b",
-    "clear": "rimraf ./dist",
     "watch:tsc": "tsc -b -w",
-    "dev": "concurrently \"npm:watch:*\""
+    "dev": "concurrently \"npm:watch:*\"",
+    "clear": "rimraf ./lib"
   },
   "devDependencies": {
-    "@jest/globals": "^29",
     "@types/node": "^20",
+    "@vitest/coverage-v8": "^1",
+    "@wroud/tests-runner": "workspace:^",
     "@wroud/tsconfig": "workspace:^",
     "concurrently": "^8",
     "rimraf": "^5",
     "tslib": "^2",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^1"
   },
   "keywords": [
     "dependency injection",

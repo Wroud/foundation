@@ -1,4 +1,4 @@
-import { describe, expect, it, jest } from "@jest/globals";
+import { describe, expect, it, vi } from "vitest";
 import { ServiceContainerBuilder } from "./ServiceContainerBuilder.js";
 import { IServiceProvider } from "./IServiceProvider.js";
 import { ServiceRegistry } from "./ServiceRegistry.js";
@@ -44,7 +44,7 @@ describe("ServiceProvider", () => {
   });
   it("should dispose scope", () => {
     class Disposable {
-      [Symbol.dispose] = jest.fn();
+      [Symbol.dispose] = vi.fn();
     }
     ServiceRegistry.register(Disposable, {
       name: "Disposable",
@@ -61,7 +61,7 @@ describe("ServiceProvider", () => {
   });
   it("should async dispose scope", async () => {
     class Disposable {
-      [Symbol.asyncDispose] = jest.fn();
+      [Symbol.asyncDispose] = vi.fn();
     }
     ServiceRegistry.register(Disposable, {
       name: "Disposable",
@@ -86,7 +86,7 @@ describe("ServiceProvider", () => {
   });
   it("should dispose", () => {
     class Disposable {
-      [Symbol.dispose] = jest.fn();
+      [Symbol.dispose] = vi.fn();
     }
     ServiceRegistry.register(Disposable, {
       name: "Disposable",
@@ -101,7 +101,7 @@ describe("ServiceProvider", () => {
   });
   it("should async dispose", async () => {
     class Disposable {
-      [Symbol.asyncDispose] = jest.fn();
+      [Symbol.asyncDispose] = vi.fn(() => Promise.resolve());
     }
     ServiceRegistry.register(Disposable, {
       name: "Disposable",

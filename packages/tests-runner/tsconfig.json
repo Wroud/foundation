@@ -1,13 +1,12 @@
 {
   "extends": "@wroud/tsconfig/tsconfig.json",
   "compilerOptions": {
-    "tsBuildInfoFile": "./lib/.tsbuildinfo",
-    "rootDir": "src",
-    "rootDirs": ["src"],
-    "outDir": "lib",
+    "target": "ESNext",
+    "types": ["node"],
+    "noEmit": true,
     "incremental": true,
     "composite": true
   },
-  "include": ["src"],
+  "include": ["vitest.config.ts"],
   "references": []
 }

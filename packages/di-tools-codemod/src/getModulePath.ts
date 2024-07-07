@@ -1,6 +1,6 @@
-import { FileInfo } from "jscodeshift";
+import type { FileInfo } from "jscodeshift";
 import path from "node:path";
-import { ITransformerOptions } from "./ITransformerOptions.js";
+import type { ITransformerOptions } from "./ITransformerOptions.js";
 
 export function getModulePath(
   file: FileInfo,

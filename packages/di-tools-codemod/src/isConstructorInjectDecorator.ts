@@ -1,5 +1,5 @@
 import { Decorator } from "jscodeshift";
-import { ISupportedPackage } from "./ISupportedPackage.js";
+import type { ISupportedPackage } from "./ISupportedPackage.js";
 
 export function isConstructorInjectDecorator(
   packages: ISupportedPackage[],

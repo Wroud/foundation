@@ -4,7 +4,7 @@ const { run } = require("jscodeshift/src/Runner.js");
 const path = require("node:path");
 const { existsSync, readFileSync } = require("node:fs");
 
-const transformPath = require.resolve("../dist/index.js");
+const transformPath = require.resolve("../commonjs/index.js");
 const paths = process.argv.slice(2);
 let migrationOptions = {};
 

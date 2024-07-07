@@ -5,27 +5,24 @@ import {
   type IServiceDescriptor,
 } from "./IServiceDescriptor.js";
 import type { IServiceFactory } from "./IServiceFactory.js";
-import type { IServiceInstanceInfo } from "./IServiceInstanceInfo.js";
 import { IServiceProvider } from "./IServiceProvider.js";
 import type { IServiceScope } from "./IServiceScope.js";
 import { ServiceCollection } from "./ServiceCollection.js";
 import type { ServiceType } from "./ServiceType.js";
 import { ServiceRegistry } from "./ServiceRegistry.js";
 import { getNameOfServiceType } from "./getNameOfServiceType.js";
+import type { IServiceInstancesStore } from "./IServiceInstancesStore.js";
+import { ServiceInstancesStore } from "./ServiceInstancesStore.js";
 
 export class ServiceProvider implements IServiceProvider {
-  private readonly instances: Map<
-    ServiceType<any>,
-    IServiceInstanceInfo<any>[]
-  >;
+  private readonly instancesStore: IServiceInstancesStore;
   private currentResolvingLifetime: ServiceLifetime | null;
   constructor(
     private readonly collection: ServiceCollection,
     private readonly parent?: IServiceProvider,
   ) {
-    this.instances = new Map();
-    this.addInstance(
-      IServiceProvider,
+    this.instancesStore = new ServiceInstancesStore();
+    this.instancesStore.addInstance(
       collection.getDescriptors(IServiceProvider)![0]!,
       this,
     );
@@ -48,24 +45,7 @@ export class ServiceProvider implements IServiceProvider {
   }
 
   getService<T>(service: ServiceType<T>): T {
-    const descriptors = this.collection.getDescriptors(service);
-
-    if (descriptors.length === 0) {
-      let name = getNameOfServiceType(service);
-
-      const metadata = ServiceRegistry.get(service);
-
-      if (metadata?.name) {
-        name = metadata.name;
-      }
-
-      throw new Error(`No service of type "${name}" is registered`);
-    }
-
-    return this.createInstanceFromDescriptor(
-      service,
-      descriptors[descriptors.length - 1]! as IServiceDescriptor<T>,
-    );
+    return this.internalGetService(service);
   }
 
   createScope(): IServiceScope {
@@ -88,6 +68,29 @@ export class ServiceProvider implements IServiceProvider {
         await serviceProvider[Symbol.asyncDispose]();
       },
     };
+  }
+
+  private internalGetService<T>(service: ServiceType<T>, requestedBy?: any): T {
+    const descriptors = this.collection.getDescriptors(service);
+
+    if (descriptors.length === 0) {
+      let name = getNameOfServiceType(service);
+
+      const metadata = ServiceRegistry.get(service);
+
+      if (metadata?.name) {
+        name = metadata.name;
+      }
+
+      throw new Error(`No service of type "${name}" is registered`);
+    }
+    const descriptor = descriptors[descriptors.length - 1]!;
+    let serviceInstance = this.instancesStore.getInstanceInfo(descriptor);
+
+    return (
+      serviceInstance?.instance ||
+      this.createInstanceFromDescriptor(service, descriptor)
+    );
   }
 
   private createInstanceFromDescriptor<T>(
@@ -149,19 +152,19 @@ export class ServiceProvider implements IServiceProvider {
         case ServiceLifetime.Singleton:
           if (this.parent) {
             return this.parent.getService(service as any);
-          } else if (!this.hasInstanceOf(service, descriptor)) {
-            this.addInstance(service, descriptor, initialize());
+          } else if (!this.instancesStore.hasInstanceOf(descriptor)) {
+            this.instancesStore.addInstance(descriptor, initialize());
           }
 
-          return this.getInstanceInfo(service, descriptor)?.instance!;
+          return this.instancesStore.getInstanceInfo(descriptor)?.instance!;
         case ServiceLifetime.Scoped:
           if (!this.parent) {
             throw new Error("Scoped services require a service scope.");
           }
-          if (!this.hasInstanceOf(service, descriptor)) {
-            this.addInstance(service, descriptor, initialize());
+          if (!this.instancesStore.hasInstanceOf(descriptor)) {
+            this.instancesStore.addInstance(descriptor, initialize());
           }
-          return this.getInstanceInfo(service, descriptor)?.instance!;
+          return this.instancesStore.getInstanceInfo(descriptor)?.instance!;
         case ServiceLifetime.Transient:
           return initialize();
 
@@ -178,68 +181,11 @@ export class ServiceProvider implements IServiceProvider {
     }
   }
 
-  private hasInstanceOf<T>(
-    service: ServiceType<T>,
-    descriptor: IServiceDescriptor<T>,
-  ): boolean {
-    for (const instance of this.instances.get(service) ?? []) {
-      if (instance.descriptor === descriptor) {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  private getInstanceInfo<T>(
-    service: ServiceType<T>,
-    descriptor: IServiceDescriptor<T>,
-  ): IServiceInstanceInfo<T> | undefined {
-    const instances = this.instances.get(service) ?? [];
-    return instances.find((instance) => instance.descriptor === descriptor);
-  }
-
-  private addInstance<T>(
-    service: ServiceType<T>,
-    descriptor: IServiceDescriptor<T>,
-    instance: T,
-  ): void {
-    const instances = this.instances.get(service) || [];
-    this.instances.set(service, [...instances, { descriptor, instance }]);
-  }
-
   [Symbol.dispose]() {
-    for (const instances of this.instances.values()) {
-      for (const instanceInfo of instances) {
-        if (instanceInfo.instance === this) {
-          continue;
-        }
-        if (typeof instanceInfo.instance[Symbol.dispose] === "function") {
-          instanceInfo.instance[Symbol.dispose]();
-        }
-      }
-    }
-    this.instances.clear();
+    this.instancesStore[Symbol.dispose]();
   }
 
   async [Symbol.asyncDispose]() {
-    await Promise.all(
-      Array.from(this.instances.values()).map((instances) =>
-        Promise.all(
-          instances.map((instanceInfo) => {
-            if (instanceInfo.instance === this) {
-              return Promise.resolve();
-            }
-
-            return typeof instanceInfo.instance[Symbol.asyncDispose] ===
-              "function"
-              ? instanceInfo.instance[Symbol.asyncDispose]()
-              : Promise.resolve();
-          }),
-        ),
-      ),
-    );
-
-    this.instances.clear();
+    await this.instancesStore[Symbol.asyncDispose]();
   }
 }

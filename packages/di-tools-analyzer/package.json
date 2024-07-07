@@ -13,31 +13,33 @@
     "directory": "packages/di-tools-analyzer"
   },
   "sideEffects": [],
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "module": "./lib/index.js",
+  "types": "./lib/index.d.ts",
   "exports": {
-    ".": "./dist/index.js",
-    "./*": "./dist/*",
+    ".": "./lib/index.js",
+    "./*": "./lib/*",
     "./package.json": "./package.json",
     "./src": "./src/index.ts",
     "./src/*": "./src/*"
   },
   "files": [
-    "dist",
-    "!dist/**/*.test.js",
-    "!dist/**/*.test.d.ts",
-    "!dist/**/*.test.d.ts.map",
-    "!dist/**/*.test.js.map",
+    "LICENSE",
+    "package.json",
+    "README.md",
+    "lib",
+    "!lib/**/*.test.js",
+    "!lib/**/*.test.d.ts",
+    "!lib/**/*.test.d.ts.map",
+    "!lib/**/*.test.js.map",
     "!.tsbuildinfo"
   ],
   "scripts": {
     "build": "tsc -b",
-    "clear": "rimraf ./dist",
+    "clear": "rimraf ./lib",
     "watch:tsc": "tsc -b -w",
     "dev": "concurrently \"npm:watch:*\""
   },
   "devDependencies": {
-    "@jest/globals": "^29",
     "@types/d3": "^7",
     "@types/node": "^20",
     "@types/uuid": "^9",

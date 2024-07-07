@@ -1,9 +1,9 @@
-import { Collection, FileInfo, JSCodeshift } from "jscodeshift";
+import type { Collection, FileInfo, JSCodeshift } from "jscodeshift";
 import { findSrcDir } from "./findSrcDir.js";
 import path from "node:path";
 import fs from "node:fs";
-import { ISupportedPackage } from "./ISupportedPackage.js";
-import { ITransformerOptions } from "./ITransformerOptions.js";
+import type { ISupportedPackage } from "./ISupportedPackage.js";
+import type { ITransformerOptions } from "./ITransformerOptions.js";
 import { getModulePath } from "./getModulePath.js";
 
 export function addServiceToModule(

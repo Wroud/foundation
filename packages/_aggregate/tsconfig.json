@@ -1,10 +1,10 @@
 {
   "extends": "@wroud/tsconfig/tsconfig.json",
   "compilerOptions": {
-    "tsBuildInfoFile": "./dist/.tsbuildinfo",
+    "tsBuildInfoFile": "./lib/.tsbuildinfo",
     "rootDir": "src",
     "rootDirs": ["src"],
-    "outDir": "dist",
+    "outDir": "lib",
     "incremental": true,
     "composite": true
   },
@@ -18,6 +18,9 @@
     },
     {
       "path": "../di-tools-codemod"
+    },
+    {
+      "path": "../di-tools-codemod/build.tsconfig.json"
     },
     {
       "path": "../docs"

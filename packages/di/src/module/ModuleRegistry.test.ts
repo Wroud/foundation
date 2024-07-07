@@ -1,4 +1,4 @@
-import { describe, expect, it, jest } from "@jest/globals";
+import { describe, expect, it, vi } from "vitest";
 import { ModuleRegistry } from "./ModuleRegistry.js";
 import type { IModule } from "./IModule.js";
 
@@ -39,7 +39,7 @@ describe("ModuleRegistry", () => {
     );
   });
   it("should add listener", () => {
-    const listener = jest.fn();
+    const listener = vi.fn();
     ModuleRegistry.addListener(listener);
     ModuleRegistry.add(createModule("test-2"));
     expect(listener).toBeCalled();

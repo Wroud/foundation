@@ -13,3 +13,7 @@ export interface IServiceProvider {
   [Symbol.dispose](): void;
   [Symbol.asyncDispose](): Promise<void>;
 }
+
+export function isServiceProvider(value: unknown): value is IServiceProvider {
+  return value === IServiceProvider;
+}

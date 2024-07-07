@@ -1,7 +1,7 @@
 import { ServiceLifetime } from "./IServiceDescriptor.js";
 import { IServiceProvider } from "./IServiceProvider.js";
 import { ServiceCollection } from "./ServiceCollection.js";
-import { describe, expect, it } from "@jest/globals";
+import { describe, expect, it } from "vitest";
 import { ServiceRegistry } from "./ServiceRegistry.js";
 
 describe("ServiceCollection", () => {
@@ -195,5 +195,21 @@ describe("ServiceCollection", () => {
     expect(() => collection.addScoped(Test1, Test2)).toThrowError(
       "Cyclic dependency detected: Test2 (Test1) -> Test2 (Test1)",
     );
+  });
+  it("should not detect cyclic dependencies between services with same name but different objects", () => {
+    const Test1 = class Test {};
+    const Test2 = class Test {};
+    ServiceRegistry.register(Test1, {
+      name: Test1.name,
+      dependencies: [Test2],
+    });
+    ServiceRegistry.register(Test2, {
+      name: Test2.name,
+      dependencies: [],
+    });
+
+    const collection = new ServiceCollection();
+    collection.addScoped(Test2);
+    expect(() => collection.addScoped(Test1)).not.toThrowError();
   });
 });

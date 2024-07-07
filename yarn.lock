@@ -3014,6 +3014,7 @@ __metadata:
     "@types/node": "npm:^20"
     "@vitest/coverage-v8": "npm:^1"
     "@wroud/tests-runner": "workspace:^"
+    "@wroud/tsconfig": "workspace:^"
     jscodeshift: "npm:^0"
     typescript: "npm:^5"
     vitest: "npm:^1"

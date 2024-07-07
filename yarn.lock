@@ -3012,7 +3012,8 @@ __metadata:
   dependencies:
     "@types/jscodeshift": "npm:^0"
     "@types/node": "npm:^20"
-    "@wroud/tsconfig": "workspace:^"
+    "@vitest/coverage-v8": "npm:^1"
+    "@wroud/tests-runner": "workspace:^"
     jscodeshift: "npm:^0"
     typescript: "npm:^5"
     vitest: "npm:^1"

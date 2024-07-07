@@ -41,6 +41,7 @@
     "@types/node": "^20",
     "@vitest/coverage-v8": "^1",
     "@wroud/tests-runner": "workspace:^",
+    "@wroud/tsconfig": "workspace:^",
     "typescript": "^5",
     "vitest": "^1"
   },

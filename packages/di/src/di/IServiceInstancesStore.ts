@@ -11,6 +11,10 @@ export interface IServiceInstancesStore
     descriptor: IServiceDescriptor<T>,
     instance: T,
   ): IServiceInstanceInfo<T>;
+  addDependent<T>(
+    instanceInfo: IServiceDescriptor<T>,
+    dependent: IServiceDescriptor<any>,
+  ): void;
   [Symbol.dispose](): void;
   [Symbol.asyncDispose](): Promise<void>;
 }

@@ -1,7 +1,9 @@
+///<reference types="@wroud/tests-runner/jest-extended.d.ts"/>
 import { describe, expect, it, vi } from "vitest";
 import { ServiceContainerBuilder } from "./ServiceContainerBuilder.js";
 import { IServiceProvider } from "./IServiceProvider.js";
 import { ServiceRegistry } from "./ServiceRegistry.js";
+import { injectable } from "./injectable.js";
 
 describe("ServiceProvider", () => {
   it("should be defined", () => {
@@ -30,26 +32,21 @@ describe("ServiceProvider", () => {
   });
   it("should resolve IServiceProvider[] to itself", () => {
     const serviceProvider = new ServiceContainerBuilder().build();
-    expect(serviceProvider.getServices(IServiceProvider)).toEqual([
-      serviceProvider,
-    ]);
+    const providers = serviceProvider.getServices(IServiceProvider);
+    expect(providers.length).toEqual(1);
+    expect(providers[0]).toBe(serviceProvider);
   });
   it("should create scope", () => {
     const serviceProvider = new ServiceContainerBuilder().build();
     const scope = serviceProvider.createScope();
     expect(scope).toBeDefined();
-    expect(scope.serviceProvider.getServices(IServiceProvider)).toEqual([
-      serviceProvider,
-    ]);
+
+    const providers = scope.serviceProvider.getServices(IServiceProvider);
+    expect(providers.length).toEqual(1);
+    expect(providers[0]).toBe(scope.serviceProvider);
   });
   it("should dispose scope", () => {
-    class Disposable {
-      [Symbol.dispose] = vi.fn();
-    }
-    ServiceRegistry.register(Disposable, {
-      name: "Disposable",
-      dependencies: [],
-    });
+    const Disposable = createSyncMockedService();
     const serviceProvider = new ServiceContainerBuilder()
       .addScoped(Disposable)
       .build();
@@ -60,13 +57,7 @@ describe("ServiceProvider", () => {
     expect(instance[Symbol.dispose]).toBeCalled();
   });
   it("should async dispose scope", async () => {
-    class Disposable {
-      [Symbol.asyncDispose] = vi.fn();
-    }
-    ServiceRegistry.register(Disposable, {
-      name: "Disposable",
-      dependencies: [],
-    });
+    const Disposable = createAsyncMockedService();
     const serviceProvider = new ServiceContainerBuilder()
       .addScoped(Disposable)
       .build();
@@ -80,18 +71,13 @@ describe("ServiceProvider", () => {
     const serviceProvider = new ServiceContainerBuilder().build();
     const scope = serviceProvider.createAsyncScope();
     expect(scope).toBeDefined();
-    expect(scope.serviceProvider.getServices(IServiceProvider)).toEqual([
-      serviceProvider,
-    ]);
+
+    const providers = scope.serviceProvider.getServices(IServiceProvider);
+    expect(providers.length).toEqual(1);
+    expect(providers[0]).toBe(scope.serviceProvider);
   });
   it("should dispose", () => {
-    class Disposable {
-      [Symbol.dispose] = vi.fn();
-    }
-    ServiceRegistry.register(Disposable, {
-      name: "Disposable",
-      dependencies: [],
-    });
+    const Disposable = createSyncMockedService();
     const serviceProvider = new ServiceContainerBuilder()
       .addSingleton(Disposable)
       .build();
@@ -99,14 +85,29 @@ describe("ServiceProvider", () => {
     serviceProvider[Symbol.dispose]();
     expect(instance[Symbol.dispose]).toBeCalled();
   });
+  it("should dispose in order", () => {
+    const A = createSyncMockedService();
+    const B = createSyncMockedService(() => [A]);
+    const C = createSyncMockedService(() => [B]);
+
+    const serviceProvider = new ServiceContainerBuilder()
+      .addSingleton(A)
+      .addSingleton(B)
+      .addSingleton(C)
+      .build();
+
+    const c = serviceProvider.getService(C);
+    const a = serviceProvider.getService(B);
+    const b = serviceProvider.getService(A);
+
+    serviceProvider[Symbol.dispose]();
+
+    expect(b[Symbol.dispose]).toHaveBeenCalledBefore(a[Symbol.dispose]);
+    expect(b[Symbol.dispose]).toHaveBeenCalledBefore(c[Symbol.dispose]);
+    expect(a[Symbol.dispose]).toHaveBeenCalledBefore(c[Symbol.dispose]);
+  });
   it("should async dispose", async () => {
-    class Disposable {
-      [Symbol.asyncDispose] = vi.fn(() => Promise.resolve());
-    }
-    ServiceRegistry.register(Disposable, {
-      name: "Disposable",
-      dependencies: [],
-    });
+    const Disposable = createAsyncMockedService();
     const serviceProvider = new ServiceContainerBuilder()
       .addSingleton(Disposable)
       .build();
@@ -145,10 +146,10 @@ describe("ServiceProvider", () => {
     expect(serviceProvider.getService(Number)).toBe(Number.NaN);
   });
   it("should resolve service with dependencies", () => {
+    @injectable(() => [Number])
     class Test {
       constructor(public number: Number) {}
     }
-    ServiceRegistry.register(Test, { name: "Test", dependencies: [Number] });
     const serviceProvider = new ServiceContainerBuilder()
       .addSingleton(Test)
       .addSingleton(Number, () => 42)
@@ -160,16 +161,13 @@ describe("ServiceProvider", () => {
     );
   });
   it("should resolve service with multiple dependencies", () => {
+    @injectable(() => [Number, String])
     class Test {
       constructor(
         public number: Number,
         public string: String,
       ) {}
     }
-    ServiceRegistry.register(Test, {
-      name: "Test",
-      dependencies: [Number, String] as const,
-    });
     const serviceProvider = new ServiceContainerBuilder()
       .addSingleton(Test)
       .addSingleton(Number, () => 42)
@@ -192,11 +190,8 @@ describe("ServiceProvider", () => {
     );
   });
   it("should catch exceptions when resolving service", () => {
+    @injectable()
     class Test {}
-    ServiceRegistry.register(Test, {
-      name: "Test",
-      dependencies: [],
-    });
     const serviceProvider = new ServiceContainerBuilder()
       .addSingleton(Test, () => {
         throw new Error("Test error");
@@ -205,13 +200,10 @@ describe("ServiceProvider", () => {
     expect(() => serviceProvider.getService(Test)).toThrowError("Test error");
   });
   it("should catch exceptions when resolving service with dependencies", () => {
+    @injectable(() => [Number])
     class Test {
       constructor(public number: Number) {}
     }
-    ServiceRegistry.register(Test, {
-      name: "Test",
-      dependencies: [Number],
-    });
     const serviceProvider = new ServiceContainerBuilder()
       .addSingleton(Test)
       .addSingleton(Number, () => {
@@ -221,11 +213,8 @@ describe("ServiceProvider", () => {
     expect(() => serviceProvider.getService(Test)).toThrowError("Test error");
   });
   it("should resolve singleton with static implementation", () => {
+    @injectable()
     class Test {}
-    ServiceRegistry.register(Test, {
-      name: "Test",
-      dependencies: [],
-    });
     const impl = new Test();
     const serviceProvider = new ServiceContainerBuilder()
       .addSingleton(Test, impl)
@@ -233,13 +222,10 @@ describe("ServiceProvider", () => {
     expect(serviceProvider.getService(Test)).toBe(impl);
   });
   it("should resolve service with array dependencies", () => {
+    @injectable(() => [[Number]])
     class Test {
       constructor(public numbers: Number[]) {}
     }
-    ServiceRegistry.register(Test, {
-      name: "Test",
-      dependencies: [[Number]],
-    });
     const serviceProvider = new ServiceContainerBuilder()
       .addSingleton(Test)
       .addSingleton(Number, () => 42)
@@ -251,16 +237,13 @@ describe("ServiceProvider", () => {
     );
   });
   it("should resolve service with multiple dependencies in reverse order", () => {
+    @injectable(() => [String, Number])
     class Test {
       constructor(
         public string: String,
         public number: Number,
       ) {}
     }
-    ServiceRegistry.register(Test, {
-      name: "Test",
-      dependencies: [String, Number] as const,
-    });
     const serviceProvider = new ServiceContainerBuilder()
       .addSingleton(Test)
       .addSingleton(Number, () => 42)
@@ -274,13 +257,10 @@ describe("ServiceProvider", () => {
     );
   });
   it("should resolve transient service", () => {
+    @injectable(() => [Number])
     class Test {
       constructor(public number: Number) {}
     }
-    ServiceRegistry.register(Test, {
-      name: "Test",
-      dependencies: [Number],
-    });
     const serviceProvider = new ServiceContainerBuilder()
       .addTransient(Test)
       .addSingleton(Number, () => 42)
@@ -292,13 +272,10 @@ describe("ServiceProvider", () => {
     );
   });
   it("should not resolve scoped service without scope", () => {
+    @injectable(() => [Number])
     class Test {
       constructor(public number: Number) {}
     }
-    ServiceRegistry.register(Test, {
-      name: "Test",
-      dependencies: [Number],
-    });
     const serviceProvider = new ServiceContainerBuilder()
       .addScoped(Test)
       .addSingleton(Number, () => 42)
@@ -308,13 +285,10 @@ describe("ServiceProvider", () => {
     );
   });
   it("should resolve scoped service with scope", () => {
+    @injectable(() => [Number])
     class Test {
       constructor(public number: Number) {}
     }
-    ServiceRegistry.register(Test, {
-      name: "Test",
-      dependencies: [Number],
-    });
     const serviceProvider = new ServiceContainerBuilder()
       .addScoped(Test)
       .addSingleton(Number, () => 42)
@@ -330,13 +304,10 @@ describe("ServiceProvider", () => {
     );
   });
   it("should resolve service in nested scope", () => {
+    @injectable(() => [Number])
     class Test {
       constructor(public number: Number) {}
     }
-    ServiceRegistry.register(Test, {
-      name: "Test",
-      dependencies: [Number],
-    });
     const serviceProvider = new ServiceContainerBuilder()
       .addScoped(Test)
       .addSingleton(Number, () => 42)
@@ -356,18 +327,12 @@ describe("ServiceProvider", () => {
     );
   });
   it("should not resolve singleton with scoped dependencies", () => {
+    @injectable()
     class Test {}
+    @injectable(() => [Test])
     class Test2 {
       constructor(public test: Test) {}
     }
-    ServiceRegistry.register(Test, {
-      name: "Test",
-      dependencies: [],
-    });
-    ServiceRegistry.register(Test2, {
-      name: "Test2",
-      dependencies: [Test],
-    });
     const serviceProvider = new ServiceContainerBuilder()
       .addSingleton(Test2)
       .addScoped(Test)
@@ -378,18 +343,12 @@ describe("ServiceProvider", () => {
     );
   });
   it("should resolve scoped service with singleton dependencies", () => {
+    @injectable()
     class Test {}
+    @injectable(() => [Test])
     class Test2 {
       constructor(public test: Test) {}
     }
-    ServiceRegistry.register(Test, {
-      name: "Test",
-      dependencies: [],
-    });
-    ServiceRegistry.register(Test2, {
-      name: "Test2",
-      dependencies: [Test],
-    });
     const serviceProvider = new ServiceContainerBuilder()
       .addScoped(Test2)
       .addSingleton(Test)
@@ -413,3 +372,19 @@ describe("ServiceProvider", () => {
     );
   });
 });
+
+function createSyncMockedService(deps: () => any[] = () => []) {
+  @injectable(deps)
+  class Disposable {
+    [Symbol.dispose] = vi.fn();
+  }
+  return Disposable;
+}
+
+function createAsyncMockedService(deps: () => any[] = () => []) {
+  @injectable(deps)
+  class Disposable {
+    [Symbol.asyncDispose] = vi.fn();
+  }
+  return Disposable;
+}

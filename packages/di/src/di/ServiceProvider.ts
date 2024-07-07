@@ -22,26 +22,11 @@ export class ServiceProvider implements IServiceProvider {
     private readonly parent?: IServiceProvider,
   ) {
     this.instancesStore = new ServiceInstancesStore();
-    this.instancesStore.addInstance(
-      collection.getDescriptors(IServiceProvider)![0]!,
-      this,
-    );
     this.currentResolvingLifetime = null;
   }
 
   getServices<T>(service: ServiceType<T>): T[] {
-    const services: T[] = [];
-
-    for (const descriptor of this.collection.getDescriptors(service)) {
-      services.push(
-        this.createInstanceFromDescriptor(
-          service,
-          descriptor as IServiceDescriptor<T>,
-        ),
-      );
-    }
-
-    return services;
+    return this.internalGetServices(service);
   }
 
   getService<T>(service: ServiceType<T>): T {
@@ -70,7 +55,32 @@ export class ServiceProvider implements IServiceProvider {
     };
   }
 
-  private internalGetService<T>(service: ServiceType<T>, requestedBy?: any): T {
+  private internalGetServices<T>(
+    service: ServiceType<T>,
+    requestedBy?: IServiceDescriptor<any>,
+  ): T[] {
+    const services: T[] = [];
+
+    for (const descriptor of this.collection.getDescriptors(service)) {
+      const serviceInstance = this.instancesStore.getInstanceInfo(descriptor);
+      if (serviceInstance) {
+        services.push(serviceInstance.instance);
+      } else {
+        services.push(this.createInstanceFromDescriptor(descriptor));
+
+        if (requestedBy) {
+          this.instancesStore.addDependent(descriptor, requestedBy);
+        }
+      }
+    }
+
+    return services;
+  }
+
+  private internalGetService<T>(
+    service: ServiceType<T>,
+    requestedBy?: IServiceDescriptor<any>,
+  ): T {
     const descriptors = this.collection.getDescriptors(service);
 
     if (descriptors.length === 0) {
@@ -85,16 +95,21 @@ export class ServiceProvider implements IServiceProvider {
       throw new Error(`No service of type "${name}" is registered`);
     }
     const descriptor = descriptors[descriptors.length - 1]!;
-    let serviceInstance = this.instancesStore.getInstanceInfo(descriptor);
+    const serviceInstance = this.instancesStore.getInstanceInfo(descriptor);
+    if (serviceInstance) {
+      return serviceInstance.instance;
+    }
 
-    return (
-      serviceInstance?.instance ||
-      this.createInstanceFromDescriptor(service, descriptor)
-    );
+    const instance = this.createInstanceFromDescriptor(descriptor);
+
+    if (requestedBy) {
+      this.instancesStore.addDependent(descriptor, requestedBy);
+    }
+
+    return instance;
   }
 
   private createInstanceFromDescriptor<T>(
-    service: ServiceType<T>,
     descriptor: IServiceDescriptor<T>,
   ): T {
     const inheritedLifetime = this.currentResolvingLifetime;
@@ -105,26 +120,30 @@ export class ServiceProvider implements IServiceProvider {
           descriptor.lifetime === ServiceLifetime.Scoped
         ) {
           throw new Error(
-            `Scoped service "${getNameOfServiceType(service)}" cannot be resolved from singleton service.`,
+            `Scoped service "${getNameOfServiceType(descriptor.service)}" cannot be resolved from singleton service.`,
           );
         }
       }
       this.currentResolvingLifetime = descriptor.lifetime;
 
-      const initialize = () => {
+      const initialize = (): T => {
         const metadata = ServiceRegistry.get(descriptor.implementation);
 
         if (metadata) {
           const dependencies = metadata.dependencies.map((dependency) => {
             if (Array.isArray(dependency)) {
-              return this.getServices(dependency[0]!);
+              return this.internalGetServices(dependency[0]!, descriptor);
             }
-            return this.getService(dependency);
+            return this.internalGetService(dependency, descriptor);
           });
 
           return new (descriptor.implementation as IServiceConstructor<T>)(
             ...dependencies,
           );
+        }
+
+        if (descriptor.service === IServiceProvider) {
+          return this as unknown as T;
         }
 
         if (typeof descriptor.implementation === "function") {
@@ -149,22 +168,27 @@ export class ServiceProvider implements IServiceProvider {
       };
 
       switch (descriptor.lifetime) {
-        case ServiceLifetime.Singleton:
-          if (this.parent) {
-            return this.parent.getService(service as any);
-          } else if (!this.instancesStore.hasInstanceOf(descriptor)) {
-            this.instancesStore.addInstance(descriptor, initialize());
+        case ServiceLifetime.Singleton: {
+          if (this.parent && descriptor.service !== IServiceProvider) {
+            return this.parent.getService(descriptor.service as any);
           }
 
-          return this.instancesStore.getInstanceInfo(descriptor)?.instance!;
-        case ServiceLifetime.Scoped:
+          const instanceInfo = this.instancesStore.addInstance(
+            descriptor,
+            initialize(),
+          );
+          return instanceInfo.instance;
+        }
+        case ServiceLifetime.Scoped: {
           if (!this.parent) {
             throw new Error("Scoped services require a service scope.");
           }
-          if (!this.instancesStore.hasInstanceOf(descriptor)) {
-            this.instancesStore.addInstance(descriptor, initialize());
-          }
-          return this.instancesStore.getInstanceInfo(descriptor)?.instance!;
+          const instanceInfo = this.instancesStore.addInstance(
+            descriptor,
+            initialize(),
+          );
+          return instanceInfo.instance;
+        }
         case ServiceLifetime.Transient:
           return initialize();
 
@@ -173,7 +197,7 @@ export class ServiceProvider implements IServiceProvider {
       }
     } catch (exception: any) {
       throw new Error(
-        `Failed to initiate service "${getNameOfServiceType(service)}":\n\r${exception.message}`,
+        `Failed to initiate service "${getNameOfServiceType(descriptor.service)}":\n\r${exception.message}`,
         { cause: exception },
       );
     } finally {

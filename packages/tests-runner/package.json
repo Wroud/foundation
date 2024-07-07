@@ -10,6 +10,7 @@
     "@types/node": "^20",
     "@vitest/coverage-v8": "^1",
     "@wroud/tsconfig": "workspace:^",
+    "jest-extended": "^4",
     "vite": "^5",
     "vitest": "^1"
   }

@@ -38,23 +38,23 @@ jobs:
       - name: Run tests
         run: yarn test:ci
 
-      - name: Archive code coverage results
-        uses: actions/upload-artifact@v4
-        with:
-          name: code-coverage-report
-          path: coverage
+      # - name: Archive code coverage results
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: code-coverage-report
+      #     path: coverage
 
-      - name: Download coverage report
-        uses: actions/download-artifact@v4
-        with:
-          name: code-coverage-report
-          path: ./coverage-main
+      # - name: Download coverage report
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: code-coverage-report
+      #     path: ./coverage-main
 
-      - uses: ArtiomTr/jest-coverage-report-action@v2
-        with:
-          coverage-file: ./coverage/coverage-summary.json
-          base-coverage-file: ./coverage-main/coverage-summary.json
-          prnumber: ${{ steps.findPr.outputs.number }}
+      # - uses: ArtiomTr/jest-coverage-report-action@v2
+      #   with:
+      #     coverage-file: ./coverage/coverage-summary.json
+      #     base-coverage-file: ./coverage-main/coverage-summary.json
+      #     prnumber: ${{ steps.findPr.outputs.number }}
 
       - name: 🔴 Delete remote badges branch
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'

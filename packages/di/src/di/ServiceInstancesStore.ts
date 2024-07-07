@@ -33,11 +33,23 @@ export class ServiceInstancesStore implements IServiceInstancesStore {
     const instanceInfo: IServiceInstanceInfo<T> = {
       descriptor,
       instance,
-      dependents: [],
+      dependents: new Set(),
       disposed: false,
     };
     this.instances.set(descriptor, instanceInfo);
     return instanceInfo;
+  }
+
+  addDependent<T>(
+    instanceInfo: IServiceDescriptor<T>,
+    dependent: IServiceDescriptor<any>,
+  ): void {
+    const instance = this.instances.get(instanceInfo);
+    const dependentInstance = this.instances.get(dependent);
+
+    if (instance && dependentInstance) {
+      instance.dependents.add(dependentInstance);
+    }
   }
 
   [Symbol.dispose]() {
@@ -89,7 +101,7 @@ export class ServiceInstancesStore implements IServiceInstancesStore {
     }
 
     await Promise.all(
-      instanceInfo.dependents.map((dependent) =>
+      [...instanceInfo.dependents].map((dependent) =>
         this.disposeInstanceAsync(dependent),
       ),
     );

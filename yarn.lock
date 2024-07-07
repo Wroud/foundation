@@ -3048,6 +3048,7 @@ __metadata:
     "@types/node": "npm:^20"
     "@vitest/coverage-v8": "npm:^1"
     "@wroud/tsconfig": "workspace:^"
+    jest-extended: "npm:^4"
     vite: "npm:^5"
     vitest: "npm:^1"
   bin:
@@ -3527,7 +3528,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chalk@npm:^4.1.2":
+"chalk@npm:^4.0.0, chalk@npm:^4.1.2":
   version: 4.1.2
   resolution: "chalk@npm:4.1.2"
   dependencies:
@@ -5124,6 +5125,40 @@ __metadata:
     "@pkgjs/parseargs":
       optional: true
   checksum: 10c0/5f1922a1ca0f19869e23f0dc4374c60d36e922f7926c76fecf8080cc6f7f798d6a9caac1b9428327d14c67731fd551bb3454cb270a5e13a0718f3b3660ec3d5d
+  languageName: node
+  linkType: hard
+
+"jest-diff@npm:^29.0.0":
+  version: 29.7.0
+  resolution: "jest-diff@npm:29.7.0"
+  dependencies:
+    chalk: "npm:^4.0.0"
+    diff-sequences: "npm:^29.6.3"
+    jest-get-type: "npm:^29.6.3"
+    pretty-format: "npm:^29.7.0"
+  checksum: 10c0/89a4a7f182590f56f526443dde69acefb1f2f0c9e59253c61d319569856c4931eae66b8a3790c443f529267a0ddba5ba80431c585deed81827032b2b2a1fc999
+  languageName: node
+  linkType: hard
+
+"jest-extended@npm:^4":
+  version: 4.0.2
+  resolution: "jest-extended@npm:4.0.2"
+  dependencies:
+    jest-diff: "npm:^29.0.0"
+    jest-get-type: "npm:^29.0.0"
+  peerDependencies:
+    jest: ">=27.2.5"
+  peerDependenciesMeta:
+    jest:
+      optional: true
+  checksum: 10c0/305fdb6885ab71755830b70690b8db6ea6fd9adca92360ea1a37c0d2fa6567a68b57178dd7707d112fc57b01ab75b66f28a1c550ed0e6b1b8628600a812c2277
+  languageName: node
+  linkType: hard
+
+"jest-get-type@npm:^29.0.0, jest-get-type@npm:^29.6.3":
+  version: 29.6.3
+  resolution: "jest-get-type@npm:29.6.3"
+  checksum: 10c0/552e7a97a983d3c2d4e412a44eb7de0430ff773dd99f7500962c268d6dfbfa431d7d08f919c9d960530e5f7f78eb47f267ad9b318265e5092b3ff9ede0db7c2b
   languageName: node
   linkType: hard
 

@@ -1,5 +1,5 @@
-import { JSCodeshift } from "jscodeshift";
-import { IInjectableDependencyInfo } from "./IInjectableDependencyInfo.js";
+import type { JSCodeshift } from "jscodeshift";
+import type { IInjectableDependencyInfo } from "./IInjectableDependencyInfo.js";
 import { CONSTANTS } from "./constants.js";
 
 export function createInjectableDecorator(

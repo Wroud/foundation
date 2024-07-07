@@ -35,7 +35,7 @@ onMounted(async () => {
         alt="Size"
     /></a>
     <img
-      :src="`https://img.shields.io/badge/${total}%25-a?logo=jest&color=32A9C3&amp;labelColor=1B3C4A&amp;&label=Coverage`"
+      :src="`https://img.shields.io/badge/${total}%25-a?logo=vitest&color=32A9C3&amp;labelColor=1B3C4A&amp;&label=Coverage`"
       alt="Coverage"
     />
     <a

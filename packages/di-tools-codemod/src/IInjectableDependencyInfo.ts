@@ -1,4 +1,4 @@
-import { Identifier } from "jscodeshift";
+import type { Identifier } from "jscodeshift";
 
 export interface IInjectableDependencyInfo {
   multiple: boolean;

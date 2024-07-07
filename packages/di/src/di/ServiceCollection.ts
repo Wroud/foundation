@@ -22,19 +22,16 @@ export class ServiceCollection implements IServiceCollection {
     }
   }
 
-  [Symbol.iterator](): Iterator<IServiceDescriptor<unknown>, any, undefined> {
-    const collection = this.collection;
-    return (function* iterator() {
-      for (const descriptors of collection.values()) {
-        for (const descriptor of descriptors) {
-          yield descriptor;
-        }
+  *[Symbol.iterator](): Iterator<IServiceDescriptor<unknown>, any, undefined> {
+    for (const descriptors of this.collection.values()) {
+      for (const descriptor of descriptors) {
+        yield descriptor;
       }
-    })();
+    }
   }
 
-  getDescriptors(service: any): IServiceDescriptor<unknown>[] {
-    return this.collection.get(service) ?? [];
+  getDescriptors<T>(service: ServiceType<T>): IServiceDescriptor<T>[] {
+    return (this.collection.get(service) ?? []) as IServiceDescriptor<T>[];
   }
 
   addScoped<T>(service: ServiceImplementation<T>): this;

@@ -17,6 +17,7 @@ coverage
 
 # build artifacts
 dist
+lib
 
 # macOS
 .DS_Store

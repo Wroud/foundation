@@ -18,18 +18,20 @@
   },
   "devDependencies": {
     "@swc/core": "^1",
-    "@swc/jest": "^0",
-    "jest": "^29",
+    "@vitest/coverage-v8": "^1",
+    "@wroud/tests-runner": "workspace:^",
     "prettier": "^3",
     "rimraf": "^5",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^1"
   },
   "dependencies": {
     "tslib": "^2"
   },
   "scripts": {
     "build": "cd packages/_aggregate && yarn build",
-    "clear": "rimraf packages/*/dist",
-    "test": "yarn node --expose-gc --experimental-vm-modules $(yarn bin jest) ./packages/*/dist"
+    "clear": "rimraf packages/*/lib",
+    "test": "tests-runner run",
+    "test:ci": "CI=true yarn run test"
   }
 }

@@ -3,7 +3,7 @@
   "description": "",
   "version": "0.0.7",
   "packageManager": "yarn@4.2.2",
-  "type": "commonjs",
+  "type": "module",
   "license": "MIT",
   "author": "Wroud",
   "homepage": "https://wroud.dev",
@@ -15,26 +15,32 @@
   "sideEffects": [],
   "bin": "./bin/di-tools-codemod.cjs",
   "exports": {
-    ".": "./dist/index.js",
+    ".": "./commonjs/index.js",
     "./package.json": "./package.json"
   },
   "files": [
-    "README.md",
+    "LICENSE",
     "package.json",
-    "dist",
-    "bin"
+    "README.md",
+    "bin",
+    "commonjs",
+    "!.tsbuildinfo"
   ],
   "engines": {
     "node": ">=20"
   },
   "scripts": {
-    "test": "vitest run",
+    "test": "tests-runner",
+    "test:ci": "CI=true yarn run test",
     "test:watch": "vitest watch",
-    "build": "tsc -b"
+    "clear": "rimraf ./lib && yarn rimraf ./commonjs",
+    "build": "tsc -b && yarn tsc -b build.tsconfig.json"
   },
   "devDependencies": {
     "@types/jscodeshift": "^0",
     "@types/node": "^20",
+    "@vitest/coverage-v8": "^1",
+    "@wroud/tests-runner": "workspace:^",
     "typescript": "^5",
     "vitest": "^1"
   },

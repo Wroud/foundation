@@ -1,10 +1,10 @@
 import {
-  ASTPath,
-  Collection,
-  JSCodeshift,
+  type ASTPath,
+  type Collection,
+  type JSCodeshift,
   ImportDeclaration,
 } from "jscodeshift";
-import { ISupportedPackage } from "./ISupportedPackage.js";
+import type { ISupportedPackage } from "./ISupportedPackage.js";
 import { isReexportPackage } from "./isReexportPackage.js";
 import { CONSTANTS } from "./constants.js";
 

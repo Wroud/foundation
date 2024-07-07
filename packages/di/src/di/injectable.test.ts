@@ -1,10 +1,10 @@
-import { describe, expect, it, jest } from "@jest/globals";
+import { describe, expect, it, vi } from "vitest";
 
-jest.unstable_mockModule("./ServiceRegistry.js", () => ({
+vi.mock("./ServiceRegistry.js", () => ({
   ServiceRegistry: {
-    register: jest.fn(),
-    has: jest.fn(),
-    get: jest.fn(),
+    register: vi.fn(),
+    has: vi.fn(),
+    get: vi.fn(),
   },
 }));
 

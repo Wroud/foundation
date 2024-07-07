@@ -1,12 +1,12 @@
 import type { IServiceConstructor } from "./IServiceConstructor.js";
-import { type IServiceDescriptor } from "./IServiceDescriptor.js";
+import type { IServiceDescriptor } from "./IServiceDescriptor.js";
 import type { IServiceFactory } from "./IServiceFactory.js";
 import type { ServiceImplementation } from "./ServiceImplementation.js";
 import type { ServiceType } from "./ServiceType.js";
 
 export interface IServiceCollection
   extends Iterable<IServiceDescriptor<unknown>> {
-  getDescriptors(service: any): IServiceDescriptor<unknown>[];
+  getDescriptors<T>(service: ServiceType<T>): IServiceDescriptor<T>[];
 
   addScoped<T>(service: ServiceImplementation<T>): this;
   addScoped<T>(service: ServiceType<T>, factory: IServiceFactory<T>): this;

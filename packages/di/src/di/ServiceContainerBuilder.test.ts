@@ -1,4 +1,4 @@
-import { expect, it, describe } from "@jest/globals";
+import { expect, it, describe } from "vitest";
 import { ServiceContainerBuilder } from "./ServiceContainerBuilder.js";
 import { ServiceCollection } from "./ServiceCollection.js";
 

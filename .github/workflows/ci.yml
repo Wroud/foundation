@@ -1,6 +1,6 @@
 name: CI
 
-on: 
+on:
   push:
     branches:
       - main
@@ -27,7 +27,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'yarn'
+          cache: "yarn"
 
       - name: Install modules
         run: yarn install --immutable
@@ -36,7 +36,7 @@ jobs:
         run: yarn build
 
       - name: Run tests
-        run: yarn test --ci --json --coverage --testLocationInResults --outputFile=coverage/report.json
+        run: yarn test:ci
 
       - name: Archive code coverage results
         uses: actions/upload-artifact@v4
@@ -52,8 +52,8 @@ jobs:
 
       - uses: ArtiomTr/jest-coverage-report-action@v2
         with:
-          coverage-file: ./coverage/report.json
-          base-coverage-file: ./coverage-main/report.json
+          coverage-file: ./coverage/coverage-summary.json
+          base-coverage-file: ./coverage-main/coverage-summary.json
           prnumber: ${{ steps.findPr.outputs.number }}
 
       - name: 🔴 Delete remote badges branch
@@ -73,7 +73,7 @@ jobs:
         with:
           coverage-summary-path: |
             ./coverage/coverage-summary.json
-          branches: '*'
+          branches: "*"
           target-branch: badges
 
       - name: ⬆️ Push badges branch

@@ -5,7 +5,7 @@ import assert from "node:assert";
 import { readFile } from "node:fs/promises";
 import { unlinkSync, writeFileSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import { IMigrationOptions } from "./IMigrationOptions.js";
+import type { IMigrationOptions } from "./IMigrationOptions.js";
 
 const buildApi = (parser: string | undefined): API => ({
   j: parser ? jscodeshift.withParser(parser) : jscodeshift,
@@ -26,7 +26,7 @@ const defaultPackageJson = JSON.stringify({
   name: "di-tools-codemod",
   version: "0.0.0",
   description: "",
-  main: "dist/index.js",
+  main: "lib/index.js",
   scripts: {
     test: 'echo "Error: no test specified" && exit 1',
   },

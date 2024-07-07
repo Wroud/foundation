@@ -1,5 +1,5 @@
-import { ITransformerOptions } from "./ITransformerOptions.js";
-import { ISupportedPackage } from "./ISupportedPackage.js";
+import type { ITransformerOptions } from "./ITransformerOptions.js";
+import type { ISupportedPackage } from "./ISupportedPackage.js";
 
 export interface IMigrationOptions {
   transformer?: ITransformerOptions;

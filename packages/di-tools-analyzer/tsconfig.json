@@ -1,10 +1,10 @@
 {
   "extends": "@wroud/tsconfig/tsconfig.json",
   "compilerOptions": {
-    "tsBuildInfoFile": "./dist/.tsbuildinfo",
+    "tsBuildInfoFile": "./lib/.tsbuildinfo",
     "rootDir": "src",
     "rootDirs": ["src"],
-    "outDir": "dist",
+    "outDir": "lib",
     "incremental": true,
     "composite": true
   },

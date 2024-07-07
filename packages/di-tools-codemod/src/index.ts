@@ -1,9 +1,9 @@
 import type { API, FileInfo } from "jscodeshift";
 import { transformDecorators } from "./transformDecorators.js";
 import { transformImports } from "./transformImports.js";
-import { ISupportedPackage } from "./ISupportedPackage.js";
+import type { ISupportedPackage } from "./ISupportedPackage.js";
 import { addServiceToModule } from "./addServiceToModule.js";
-import { IMigrationOptions } from "./IMigrationOptions.js";
+import type { IMigrationOptions } from "./IMigrationOptions.js";
 
 export const parser = "tsx";
 export default function transform(

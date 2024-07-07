@@ -1,17 +1,17 @@
 import {
   ClassPrivateMethod,
-  Collection,
+  type Collection,
   Identifier,
-  JSCodeshift,
+  type JSCodeshift,
   TSParameterProperty,
 } from "jscodeshift";
-import { IInjectableDependencyInfo } from "./IInjectableDependencyInfo.js";
-import { WithDecorators } from "./WithDecorators.js";
+import type { IInjectableDependencyInfo } from "./IInjectableDependencyInfo.js";
+import type { WithDecorators } from "./WithDecorators.js";
 import { isMultipleInjectDecorator } from "./isMultipleInjectDecorator.js";
 import { isConstructorInjectDecorator } from "./isConstructorInjectDecorator.js";
 import { isInjectableDecorator } from "./isInjectableDecorator.js";
 import { createInjectableDecorator } from "./createInjectableDecorator.js";
-import { ISupportedPackage } from "./ISupportedPackage.js";
+import type { ISupportedPackage } from "./ISupportedPackage.js";
 
 export function transformDecorators(
   j: JSCodeshift,

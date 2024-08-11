@@ -1,4 +1,4 @@
-import { ServiceLifetime } from "./IServiceDescriptor.js";
+import { ServiceLifetime } from "./ServiceLifetime.js";
 import { IServiceProvider } from "./IServiceProvider.js";
 import { ServiceCollection } from "./ServiceCollection.js";
 import { describe, expect, it } from "vitest";

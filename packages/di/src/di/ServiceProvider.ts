@@ -1,9 +1,6 @@
 import type { IAsyncServiceScope } from "./IAsyncServiceScope.js";
 import type { IServiceConstructor } from "./IServiceConstructor.js";
-import {
-  ServiceLifetime,
-  type IServiceDescriptor,
-} from "./IServiceDescriptor.js";
+import type { IServiceDescriptor } from "./IServiceDescriptor.js";
 import type { IServiceFactory } from "./IServiceFactory.js";
 import { IServiceProvider } from "./IServiceProvider.js";
 import type { IServiceScope } from "./IServiceScope.js";
@@ -13,6 +10,7 @@ import { ServiceRegistry } from "./ServiceRegistry.js";
 import { getNameOfServiceType } from "./getNameOfServiceType.js";
 import type { IServiceInstancesStore } from "./IServiceInstancesStore.js";
 import { ServiceInstancesStore } from "./ServiceInstancesStore.js";
+import { ServiceLifetime } from "./ServiceLifetime.js";
 
 export class ServiceProvider implements IServiceProvider {
   private readonly instancesStore: IServiceInstancesStore;

@@ -34,7 +34,7 @@
     "test:ci": "CI=true yarn run test",
     "test:watch": "vitest watch",
     "clear": "rimraf ./lib && yarn rimraf ./commonjs",
-    "build": "tsc -b && yarn tsc -b build.tsconfig.json"
+    "build": "tsc -b && yarn tsc -b commonjs.tsconfig.json"
   },
   "devDependencies": {
     "@types/jscodeshift": "^0",

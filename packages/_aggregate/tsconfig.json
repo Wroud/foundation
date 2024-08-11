@@ -20,7 +20,7 @@
       "path": "../di-tools-codemod"
     },
     {
-      "path": "../di-tools-codemod/build.tsconfig.json"
+      "path": "../di-tools-codemod/commonjs.tsconfig.json"
     },
     {
       "path": "../docs"

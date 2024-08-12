@@ -6,5 +6,3 @@ export type SingleServiceType<T> =
   | IServiceConstructor<T>
   | IAbstractServiceConstructor<T>
   | IServiceFactory<T>;
-
-export type ServiceType<T> = SingleServiceType<T> | SingleServiceType<T>[];

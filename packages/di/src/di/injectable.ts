@@ -1,5 +1,5 @@
-import type { MapToServicesType } from "./MapToServicesType.js";
-import type { ServiceType } from "./ServiceType.js";
+import type { MapToServicesType } from "../interfaces/MapToServicesType.js";
+import type { ServiceType } from "../interfaces/ServiceType.js";
 import { ServiceRegistry } from "./ServiceRegistry.js";
 
 function injectable(): <

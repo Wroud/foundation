@@ -1,12 +1,12 @@
 import {
   ServiceLifetime,
   ServiceRegistry,
-  getNameOfServiceType,
   type IServiceCollection,
-  type IServiceDescriptor,
 } from "@wroud/di";
 import { v4 as uuid } from "uuid";
 import type { IGraph, ILink, INode } from "./IGraph.js";
+import { getNameOfServiceType } from "@wroud/di/helpers/getNameOfServiceType.js";
+import type { IServiceDescriptor } from "@wroud/di/interfaces/IServiceDescriptor.js";
 
 export function getDependenciesGraph(
   serviceCollection: IServiceCollection,

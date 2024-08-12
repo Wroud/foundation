@@ -9,12 +9,8 @@ export interface IServiceInstancesStore
   ): IServiceInstanceInfo<T> | undefined;
   addInstance<T>(
     descriptor: IServiceDescriptor<T>,
-    instance: T,
+    requestedBy?: IServiceDescriptor<any>,
   ): IServiceInstanceInfo<T>;
-  addDependent<T>(
-    instanceInfo: IServiceDescriptor<T>,
-    dependent: IServiceDescriptor<any>,
-  ): void;
   [Symbol.dispose](): void;
   [Symbol.asyncDispose](): Promise<void>;
 }

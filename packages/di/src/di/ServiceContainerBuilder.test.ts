@@ -1,6 +1,8 @@
 import { expect, it, describe } from "vitest";
 import { ServiceContainerBuilder } from "./ServiceContainerBuilder.js";
 import { ServiceCollection } from "./ServiceCollection.js";
+import { ServiceRegistry } from "./ServiceRegistry.js";
+import { diLazy } from "./diLazy.js";
 
 describe("ServiceContainerBuilder", () => {
   it("should be defined", () => {
@@ -18,6 +20,33 @@ describe("ServiceContainerBuilder", () => {
     builder.addSingleton(String, "Hello");
     expect(() => provider.getService(String)).toThrowError(
       'No service of type "String" is registered',
+    );
+  });
+  it("should detect async cyclic dependencies", async () => {
+    class Test1 {}
+    class Test2 {}
+    ServiceRegistry.register(Test1, {
+      name: Test1.name,
+      dependencies: [Test2],
+    });
+    ServiceRegistry.register(Test2, {
+      name: Test2.name,
+      dependencies: [Test1],
+    });
+
+    const builder = new ServiceContainerBuilder();
+    builder
+      .addScoped(
+        Test1,
+        diLazy(() => Promise.resolve(Test1)),
+      )
+      .addScoped(
+        Test2,
+        diLazy(() => Promise.resolve(Test2)),
+      );
+
+    await expect(() => builder.validate()).rejects.toThrowError(
+      "Cyclic dependency detected: Test1 -> Test2 -> Test1",
     );
   });
 });

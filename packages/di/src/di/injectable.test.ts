@@ -40,4 +40,12 @@ describe("injectable", () => {
       dependencies: [],
     });
   });
+  it("should register service with ts legacy decorator and context", () => {
+    class Test {}
+    injectable()(Test, {} as any);
+    expect(ServiceRegistry.register).toBeCalledWith(Test, {
+      name: "Test",
+      dependencies: [],
+    });
+  });
 });

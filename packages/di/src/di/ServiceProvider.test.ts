@@ -1,9 +1,11 @@
 ///<reference types="@wroud/tests-runner/jest-extended.d.ts"/>
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { ServiceContainerBuilder } from "./ServiceContainerBuilder.js";
 import { IServiceProvider } from "./IServiceProvider.js";
 import { ServiceRegistry } from "./ServiceRegistry.js";
 import { injectable } from "./injectable.js";
+import { createSyncMockedService } from "../tests/createSyncMockedService.js";
+import { createService } from "./createService.js";
 
 describe("ServiceProvider", () => {
   it("should be defined", () => {
@@ -21,10 +23,6 @@ describe("ServiceProvider", () => {
   it("should have createScope method", () => {
     const serviceProvider = new ServiceContainerBuilder().build();
     expect(serviceProvider).toHaveProperty("createScope");
-  });
-  it("should have createAsyncScope method", () => {
-    const serviceProvider = new ServiceContainerBuilder().build();
-    expect(serviceProvider).toHaveProperty("createAsyncScope");
   });
   it("should resolve IServiceProvider to itself", () => {
     const serviceProvider = new ServiceContainerBuilder().build();
@@ -46,7 +44,7 @@ describe("ServiceProvider", () => {
     expect(providers[0]).toBe(scope.serviceProvider);
   });
   it("should dispose scope", () => {
-    const Disposable = createSyncMockedService();
+    const Disposable = createSyncMockedService("Disposable");
     const serviceProvider = new ServiceContainerBuilder()
       .addScoped(Disposable)
       .build();
@@ -56,28 +54,8 @@ describe("ServiceProvider", () => {
     scope[Symbol.dispose]();
     expect(instance[Symbol.dispose]).toBeCalled();
   });
-  it("should async dispose scope", async () => {
-    const Disposable = createAsyncMockedService();
-    const serviceProvider = new ServiceContainerBuilder()
-      .addScoped(Disposable)
-      .build();
-    const scope = serviceProvider.createAsyncScope();
-    const instance = scope.serviceProvider.getService(Disposable);
-
-    await scope[Symbol.asyncDispose]();
-    expect(instance[Symbol.asyncDispose]).toBeCalled();
-  });
-  it("should create async scope", () => {
-    const serviceProvider = new ServiceContainerBuilder().build();
-    const scope = serviceProvider.createAsyncScope();
-    expect(scope).toBeDefined();
-
-    const providers = scope.serviceProvider.getServices(IServiceProvider);
-    expect(providers.length).toEqual(1);
-    expect(providers[0]).toBe(scope.serviceProvider);
-  });
   it("should dispose", () => {
-    const Disposable = createSyncMockedService();
+    const Disposable = createSyncMockedService("Disposable");
     const serviceProvider = new ServiceContainerBuilder()
       .addSingleton(Disposable)
       .build();
@@ -86,9 +64,9 @@ describe("ServiceProvider", () => {
     expect(instance[Symbol.dispose]).toBeCalled();
   });
   it("should dispose in order", () => {
-    const A = createSyncMockedService();
-    const B = createSyncMockedService(() => [A]);
-    const C = createSyncMockedService(() => [B]);
+    const A = createSyncMockedService("A");
+    const B = createSyncMockedService("B", () => [A]);
+    const C = createSyncMockedService("C", () => [B]);
 
     const serviceProvider = new ServiceContainerBuilder()
       .addSingleton(A)
@@ -97,23 +75,14 @@ describe("ServiceProvider", () => {
       .build();
 
     const c = serviceProvider.getService(C);
-    const a = serviceProvider.getService(B);
-    const b = serviceProvider.getService(A);
+    const b = serviceProvider.getService(B);
+    const a = serviceProvider.getService(A);
 
     serviceProvider[Symbol.dispose]();
 
+    expect(c[Symbol.dispose]).toHaveBeenCalledBefore(b[Symbol.dispose]);
     expect(b[Symbol.dispose]).toHaveBeenCalledBefore(a[Symbol.dispose]);
-    expect(b[Symbol.dispose]).toHaveBeenCalledBefore(c[Symbol.dispose]);
-    expect(a[Symbol.dispose]).toHaveBeenCalledBefore(c[Symbol.dispose]);
-  });
-  it("should async dispose", async () => {
-    const Disposable = createAsyncMockedService();
-    const serviceProvider = new ServiceContainerBuilder()
-      .addSingleton(Disposable)
-      .build();
-    const instance = serviceProvider.getService(Disposable);
-    await serviceProvider[Symbol.asyncDispose]();
-    expect(instance[Symbol.asyncDispose]).toBeCalled();
+    expect(a[Symbol.dispose]).toBeCalled();
   });
   it("should throw on missing service", () => {
     const serviceProvider = new ServiceContainerBuilder().build();
@@ -371,20 +340,22 @@ describe("ServiceProvider", () => {
       "Scoped services require a service scope.",
     );
   });
+  it("should not initialize copy of previously resolved service when resolving multiple services", () => {
+    const A = createSyncMockedService("A");
+    const B = createSyncMockedService("B");
+    const S = createService("S");
+
+    const serviceProvider = new ServiceContainerBuilder()
+      .addSingleton(S, A)
+      .addSingleton(S, B)
+      .build();
+
+    serviceProvider.getService(S);
+    expect(A.constructorMock).toBeCalledTimes(0);
+    expect(B.constructorMock).toBeCalledTimes(1);
+
+    serviceProvider.getServices(S);
+    expect(A.constructorMock).toBeCalledTimes(1);
+    expect(B.constructorMock).toBeCalledTimes(1);
+  });
 });
-
-function createSyncMockedService(deps: () => any[] = () => []) {
-  @injectable(deps)
-  class Disposable {
-    [Symbol.dispose] = vi.fn();
-  }
-  return Disposable;
-}
-
-function createAsyncMockedService(deps: () => any[] = () => []) {
-  @injectable(deps)
-  class Disposable {
-    [Symbol.asyncDispose] = vi.fn();
-  }
-  return Disposable;
-}

@@ -17,7 +17,11 @@
       "type": "node",
       "request": "launch",
       "name": "Debug Tests",
-      "skipFiles": ["<node_internals>/**"],
+      "skipFiles": [
+        "<node_internals>/**",
+        "**/.yarn/cache/**",
+        "**/.yarn/__virtual__/**"
+      ],
       "runtimeExecutable": "yarn",
       "cwd": "${workspaceFolder}",
       "runtimeArgs": ["run", "test"]

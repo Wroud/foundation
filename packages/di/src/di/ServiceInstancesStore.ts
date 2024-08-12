@@ -1,7 +1,8 @@
-import type { IServiceDescriptor } from "./IServiceDescriptor.js";
-import type { IServiceInstanceInfo } from "./IServiceInstanceInfo.js";
-import type { IServiceInstancesStore } from "./IServiceInstancesStore.js";
-import { isServiceProvider } from "./IServiceProvider.js";
+import type { IServiceDescriptor } from "../interfaces/IServiceDescriptor.js";
+import type { IServiceInstanceInfo } from "../interfaces/IServiceInstanceInfo.js";
+import type { IServiceInstancesStore } from "../interfaces/IServiceInstancesStore.js";
+import { ServiceInstanceInfo } from "./ServiceInstanceInfo.js";
+import { isServiceProvider } from "../helpers/isServiceProvider.js";
 
 export class ServiceInstancesStore implements IServiceInstancesStore {
   private readonly instances: Map<
@@ -28,90 +29,51 @@ export class ServiceInstancesStore implements IServiceInstancesStore {
 
   addInstance<T>(
     descriptor: IServiceDescriptor<T>,
-    instance: T,
+    requestedBy?: IServiceDescriptor<any>,
   ): IServiceInstanceInfo<T> {
-    const instanceInfo: IServiceInstanceInfo<T> = {
-      descriptor,
-      instance,
-      dependents: new Set(),
-      disposed: false,
-    };
-    this.instances.set(descriptor, instanceInfo);
-    return instanceInfo;
-  }
-
-  addDependent<T>(
-    instanceInfo: IServiceDescriptor<T>,
-    dependent: IServiceDescriptor<any>,
-  ): void {
-    const instance = this.instances.get(instanceInfo);
-    const dependentInstance = this.instances.get(dependent);
-
-    if (instance && dependentInstance) {
-      instance.dependents.add(dependentInstance);
+    if (this.instances.has(descriptor)) {
+      throw new Error("Instance already exists");
     }
+
+    const instanceInfo = new ServiceInstanceInfo(descriptor);
+    this.instances.set(descriptor, instanceInfo);
+
+    if (requestedBy) {
+      this.addDependent(descriptor, requestedBy);
+    }
+    return instanceInfo;
   }
 
   [Symbol.dispose]() {
     for (const instanceInfo of this) {
-      this.disposeInstanceSync(instanceInfo);
+      if (!isServiceProvider(instanceInfo.descriptor.service)) {
+        instanceInfo.disposeSync();
+      }
     }
     this.instances.clear();
   }
 
   async [Symbol.asyncDispose]() {
     await Promise.all(
-      [...this.instances.values()].map((instanceInfo) =>
-        this.disposeInstanceAsync(instanceInfo),
-      ),
+      [...this.instances.values()].map(async (instanceInfo) => {
+        if (!isServiceProvider(instanceInfo.descriptor.service)) {
+          await instanceInfo.disposeAsync();
+        }
+      }),
     );
 
     this.instances.clear();
   }
 
-  private disposeInstanceSync(instanceInfo: IServiceInstanceInfo<any>) {
-    if (
-      isServiceProvider(instanceInfo.descriptor.service) ||
-      instanceInfo.disposed
-    ) {
-      return;
-    }
+  private addDependent<T>(
+    descriptor: IServiceDescriptor<T>,
+    dependent: IServiceDescriptor<any>,
+  ): void {
+    const instanceInfo = this.instances.get(descriptor);
+    const dependentInstanceInfo = this.instances.get(dependent);
 
-    for (const dependent of instanceInfo.dependents) {
-      this.disposeInstanceSync(dependent);
-    }
-
-    if (
-      typeof instanceInfo.instance[Symbol.dispose] === "function" &&
-      !instanceInfo.disposed
-    ) {
-      instanceInfo.instance[Symbol.dispose]();
-      instanceInfo.disposed = true;
-    }
-  }
-
-  private async disposeInstanceAsync(
-    instanceInfo: IServiceInstanceInfo<any>,
-  ): Promise<void> {
-    if (
-      isServiceProvider(instanceInfo.descriptor.service) ||
-      instanceInfo.disposed
-    ) {
-      return;
-    }
-
-    await Promise.all(
-      [...instanceInfo.dependents].map((dependent) =>
-        this.disposeInstanceAsync(dependent),
-      ),
-    );
-
-    if (
-      typeof instanceInfo.instance[Symbol.asyncDispose] === "function" &&
-      !instanceInfo.disposed
-    ) {
-      await instanceInfo.instance[Symbol.asyncDispose]();
-      instanceInfo.disposed = true;
+    if (instanceInfo && dependentInstanceInfo) {
+      instanceInfo.addDependent(dependentInstanceInfo);
     }
   }
 }

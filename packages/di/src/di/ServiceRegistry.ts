@@ -1,12 +1,6 @@
-import type { MapToServicesType } from "./MapToServicesType.js";
-import type { ServiceType } from "./ServiceType.js";
-
-export interface IServiceMetadata<
-  TServices extends ServiceType<any>[] = ServiceType<any>[],
-> {
-  name: string | undefined;
-  dependencies: TServices;
-}
+import type { IServiceMetadata } from "../interfaces/IServiceMetadata.js";
+import type { MapToServicesType } from "../interfaces/MapToServicesType.js";
+import type { ServiceType } from "../interfaces/ServiceType.js";
 
 export class ServiceRegistry {
   private static readonly services: WeakMap<any, IServiceMetadata> =

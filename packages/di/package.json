@@ -31,6 +31,7 @@
     "!lib/**/*.test.d.ts",
     "!lib/**/*.test.d.ts.map",
     "!lib/**/*.test.js.map",
+    "!lib/tests",
     "!.tsbuildinfo"
   ],
   "scripts": {

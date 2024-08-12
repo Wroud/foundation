@@ -1,8 +1,5 @@
 import type { IModule } from "./IModule.js";
-
-export interface IModuleEventListener {
-  (module: IModule): void;
-}
+import type { IModuleEventListener } from "./IModuleEventListener.js";
 
 export class ModuleRegistry {
   static [Symbol.iterator](): IterableIterator<IModule> {

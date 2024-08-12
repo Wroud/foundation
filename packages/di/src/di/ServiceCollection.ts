@@ -1,13 +1,14 @@
-import type { IServiceCollection } from "./IServiceCollection.js";
-import type { IServiceConstructor } from "./IServiceConstructor.js";
-import type { IServiceDescriptor } from "./IServiceDescriptor.js";
-import type { IServiceFactory } from "./IServiceFactory.js";
+import type { IServiceCollection } from "../interfaces/IServiceCollection.js";
+import type { IServiceConstructor } from "../interfaces/IServiceConstructor.js";
+import type { IServiceDescriptor } from "../interfaces/IServiceDescriptor.js";
+import type { IServiceFactory } from "../interfaces/IServiceFactory.js";
 import { IServiceProvider } from "./IServiceProvider.js";
-import type { ServiceImplementation } from "./ServiceImplementation.js";
-import type { ServiceType } from "./ServiceType.js";
-import { ServiceRegistry } from "./ServiceRegistry.js";
-import { getNameOfServiceType } from "./getNameOfServiceType.js";
+import type { ServiceImplementation } from "../interfaces/ServiceImplementation.js";
+import type { ServiceType } from "../interfaces/ServiceType.js";
 import { ServiceLifetime } from "./ServiceLifetime.js";
+import type { IAsyncServiceImplementationLoader } from "../interfaces/IAsyncServiceImplementationLoader.js";
+import type { IServiceImplementation } from "../interfaces/IServiceImplementation.js";
+import { tryResolveService } from "./validation/tryResolveService.js";
 
 export class ServiceCollection implements IServiceCollection {
   protected readonly collection: Map<any, IServiceDescriptor<unknown>[]>;
@@ -33,24 +34,41 @@ export class ServiceCollection implements IServiceCollection {
   }
 
   addScoped<T>(service: ServiceImplementation<T>): this;
-  addScoped<T>(service: ServiceType<T>, factory: IServiceFactory<T>): this;
   addScoped<T>(
     service: ServiceType<T>,
-    constructor: IServiceConstructor<T>,
+    factory:
+      | IServiceFactory<T>
+      | IAsyncServiceImplementationLoader<IServiceFactory<T>>,
   ): this;
   addScoped<T>(
     service: ServiceType<T>,
-    implementation: ServiceType<T> | T = service,
+    constructor:
+      | IServiceConstructor<T>
+      | IAsyncServiceImplementationLoader<IServiceConstructor<T>>,
+  ): this;
+  addScoped<T>(
+    service: ServiceType<T>,
+    implementation?: IServiceImplementation<T>,
   ): this {
+    if (implementation === undefined) {
+      implementation = service as IServiceImplementation<T>;
+    }
     this.addService(ServiceLifetime.Scoped, service, implementation);
     return this;
   }
 
   addTransient<T>(service: ServiceImplementation<T>): this;
-  addTransient<T>(service: ServiceType<T>, factory: IServiceFactory<T>): this;
   addTransient<T>(
     service: ServiceType<T>,
-    constructor: IServiceConstructor<T>,
+    factory:
+      | IServiceFactory<T>
+      | IAsyncServiceImplementationLoader<IServiceFactory<T>>,
+  ): this;
+  addTransient<T>(
+    service: ServiceType<T>,
+    constructor:
+      | IServiceConstructor<T>
+      | IAsyncServiceImplementationLoader<IServiceConstructor<T>>,
   ): this;
   addTransient<T>(
     service: ServiceType<T>,
@@ -61,12 +79,22 @@ export class ServiceCollection implements IServiceCollection {
   }
 
   addSingleton<T>(service: ServiceImplementation<T>): this;
-  addSingleton<T>(service: ServiceType<T>, implementation: T): this;
   addSingleton<T>(
     service: ServiceType<T>,
-    constructor: IServiceConstructor<T>,
+    implementation: T | IAsyncServiceImplementationLoader<T>,
   ): this;
-  addSingleton<T>(service: ServiceType<T>, factory: IServiceFactory<T>): this;
+  addSingleton<T>(
+    service: ServiceType<T>,
+    factory:
+      | IServiceFactory<T>
+      | IAsyncServiceImplementationLoader<IServiceFactory<T>>,
+  ): this;
+  addSingleton<T>(
+    service: ServiceType<T>,
+    constructor:
+      | IServiceConstructor<T>
+      | IAsyncServiceImplementationLoader<IServiceConstructor<T>>,
+  ): this;
   addSingleton<T>(
     service: ServiceType<T>,
     implementation: ServiceType<T> | T = service,
@@ -93,48 +121,12 @@ export class ServiceCollection implements IServiceCollection {
         service,
         lifetime,
         implementation,
+        loader: null,
       },
     ]);
 
-    this.tryResolveService(service, new Set());
+    tryResolveService(this, service, new Set());
 
     return this;
-  }
-
-  // we will try to determine cyclic dependencies
-  private tryResolveService<T>(
-    service: ServiceType<T>,
-    path: Set<IServiceDescriptor<any>>,
-  ): void {
-    const descriptors = this.getDescriptors(service);
-
-    for (const descriptor of descriptors) {
-      if (path.has(descriptor)) {
-        throw new Error(
-          `Cyclic dependency detected: ${[...path, descriptor]
-            .map((descriptor) => {
-              const implementationName = getNameOfServiceType(
-                descriptor.implementation,
-              );
-              const serviceName = getNameOfServiceType(descriptor.service);
-              return implementationName === serviceName
-                ? implementationName
-                : `${implementationName} (${serviceName})`;
-            })
-            .join(" -> ")}`,
-        );
-      }
-
-      const metadata = ServiceRegistry.get(descriptor.implementation);
-
-      if (metadata) {
-        for (const dependency of metadata.dependencies) {
-          this.tryResolveService(
-            Array.isArray(dependency) ? dependency[0]! : dependency,
-            new Set([...path, descriptor]),
-          );
-        }
-      }
-    }
   }
 }

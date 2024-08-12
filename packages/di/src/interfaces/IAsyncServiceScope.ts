@@ -1,4 +1,4 @@
-import type { IServiceProvider } from "./IServiceProvider.js";
+import type { IServiceProvider } from "../di/IServiceProvider.js";
 
 export interface IAsyncServiceScope {
   serviceProvider: IServiceProvider;

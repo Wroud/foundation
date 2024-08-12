@@ -11,6 +11,11 @@ export default defineConfig({
     setupFiles: [import.meta.resolve("./vitest.setup.ts")],
 
     include: ["**/lib/**/*.test.js"],
+    poolOptions: {
+      forks: {
+        execArgv: ["--expose-gc"],
+      }
+    },
     coverage: {
       enabled: true,
       all: false,

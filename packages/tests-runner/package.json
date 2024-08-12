@@ -8,10 +8,10 @@
     "@tsconfig/node20": "^20",
     "@tsconfig/strictest": "^2",
     "@types/node": "^20",
-    "@vitest/coverage-v8": "^1",
+    "@vitest/coverage-v8": "^2",
     "@wroud/tsconfig": "workspace:^",
     "jest-extended": "^4",
     "vite": "^5",
-    "vitest": "^1"
+    "vitest": "^2"
   }
 }

@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
-vi.mock("./ServiceRegistry.js", () => ({
+vi.mock(import("./ServiceRegistry.js"), () => ({
   ServiceRegistry: {
     register: vi.fn(),
     has: vi.fn(),

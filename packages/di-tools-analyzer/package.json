@@ -45,7 +45,7 @@
     "@types/uuid": "^9",
     "@wroud/tsconfig": "workspace:^",
     "concurrently": "^8",
-    "rimraf": "^5",
+    "rimraf": "^6",
     "tslib": "^2",
     "typescript": "^5"
   },

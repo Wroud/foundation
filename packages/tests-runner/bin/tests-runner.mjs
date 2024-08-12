@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import v8 from "v8";
+import v8 from "node:v8";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { startVitest, parseCLI } from "vitest/node";

@@ -44,14 +44,14 @@
   },
   "devDependencies": {
     "@types/node": "^20",
-    "@vitest/coverage-v8": "^1",
+    "@vitest/coverage-v8": "^2",
     "@wroud/tests-runner": "workspace:^",
     "@wroud/tsconfig": "workspace:^",
     "concurrently": "^8",
-    "rimraf": "^5",
+    "rimraf": "^6",
     "tslib": "^2",
     "typescript": "^5",
-    "vitest": "^1"
+    "vitest": "^2"
   },
   "keywords": [
     "dependency injection",

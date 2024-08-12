@@ -19,7 +19,7 @@
   "devDependencies": {
     "@wroud/tsconfig": "workspace:^",
     "concurrently": "^8",
-    "rimraf": "^5",
+    "rimraf": "^6",
     "typescript": "^5"
   }
 }

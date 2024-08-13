@@ -1,6 +1,7 @@
 import {
   ClassPrivateMethod,
   type Collection,
+  type Decorator,
   Identifier,
   type JSCodeshift,
   TSParameterProperty,
@@ -24,7 +25,7 @@ export function transformDecorators(
     const decorators =
       (path.node as unknown as ClassPrivateMethod).decorators || [];
 
-    const newDecorators = [
+    const newDecorators: Decorator[] = [
       ...decorators.filter(
         (decorator) => !isInjectableDecorator([replacingPackage], decorator),
       ),

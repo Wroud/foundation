@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { ServiceContainerBuilder } from "./ServiceContainerBuilder.js";
 import { IServiceProvider } from "./IServiceProvider.js";
 import { injectable } from "./injectable.js";
-import { diLazy } from "./diLazy.js";
+import { lazy } from "./lazy.js";
 import { createService } from "./createService.js";
 import { createAsyncMockedService } from "../tests/createAsyncMockedService.js";
 import { createSyncMockedService } from "../tests/createSyncMockedService.js";
@@ -44,7 +44,7 @@ describe("ServiceProvider", () => {
     const serviceProvider = new ServiceContainerBuilder()
       .addSingleton(
         AService,
-        diLazy<typeof A>(
+        lazy<typeof A>(
           () =>
             new Promise((resolve) => {
               setTimeout(() => resolve(A), 10);
@@ -53,7 +53,7 @@ describe("ServiceProvider", () => {
       )
       .addSingleton(
         BService,
-        diLazy<typeof B>(
+        lazy<typeof B>(
           () =>
             new Promise((resolve) => {
               setTimeout(() => resolve(B), 10);
@@ -62,7 +62,7 @@ describe("ServiceProvider", () => {
       )
       .addSingleton(
         CService,
-        diLazy<typeof C>(
+        lazy<typeof C>(
           () =>
             new Promise((resolve) => {
               setTimeout(() => resolve(C), 10);
@@ -92,7 +92,7 @@ describe("ServiceProvider", () => {
     const serviceProvider = new ServiceContainerBuilder()
       .addSingleton(
         AService,
-        diLazy<typeof A>(
+        lazy<typeof A>(
           () =>
             new Promise((resolve) => {
               setTimeout(() => resolve(A), 10);
@@ -101,7 +101,7 @@ describe("ServiceProvider", () => {
       )
       .addSingleton(
         BService,
-        diLazy<typeof B>(
+        lazy<typeof B>(
           () =>
             new Promise((resolve) => {
               setTimeout(() => resolve(B), 10);
@@ -110,7 +110,7 @@ describe("ServiceProvider", () => {
       )
       .addSingleton(
         CService,
-        diLazy<typeof C>(
+        lazy<typeof C>(
           () =>
             new Promise((resolve) => {
               setTimeout(() => resolve(C), 10);
@@ -139,11 +139,11 @@ describe("ServiceProvider", () => {
     const serviceProvider = new ServiceContainerBuilder()
       .addScoped(
         Test,
-        diLazy(() => Promise.resolve(Test)),
+        lazy(() => Promise.resolve(Test)),
       )
       .addSingleton(
         Number,
-        diLazy(() => Promise.resolve(42)),
+        lazy(() => Promise.resolve(42)),
       )
       .build();
     const scope = serviceProvider.createScope();
@@ -165,7 +165,7 @@ describe("ServiceProvider", () => {
     const serviceProvider = new ServiceContainerBuilder()
       .addSingleton(
         A,
-        diLazy(() => Promise.resolve(A)),
+        lazy(() => Promise.resolve(A)),
       )
       .build();
 
@@ -176,7 +176,7 @@ describe("ServiceProvider", () => {
     const serviceProvider = new ServiceContainerBuilder()
       .addSingleton(
         A,
-        diLazy(() => Promise.resolve(A)),
+        lazy(() => Promise.resolve(A)),
       )
       .build();
 
@@ -190,11 +190,11 @@ describe("ServiceProvider", () => {
     const serviceProvider = new ServiceContainerBuilder()
       .addSingleton(
         A,
-        diLazy(() => Promise.resolve(A)),
+        lazy(() => Promise.resolve(A)),
       )
       .addSingleton(
         A,
-        diLazy(() => Promise.resolve(B)),
+        lazy(() => Promise.resolve(B)),
       )
       .build();
 
@@ -210,15 +210,15 @@ describe("ServiceProvider", () => {
     const serviceProvider = new ServiceContainerBuilder()
       .addSingleton(
         A,
-        diLazy(() => Promise.resolve(A)),
+        lazy(() => Promise.resolve(A)),
       )
       .addSingleton(
         B,
-        diLazy(() => Promise.resolve(B)),
+        lazy(() => Promise.resolve(B)),
       )
       .addSingleton(
         C,
-        diLazy(() => Promise.resolve(C)),
+        lazy(() => Promise.resolve(C)),
       )
       .build();
 
@@ -243,7 +243,7 @@ describe("ServiceProvider", () => {
     const serviceProvider = new ServiceContainerBuilder()
       .addSingleton(
         A,
-        diLazy(async () => {
+        lazy(async () => {
           throw new Error("Test error");
         }),
       )
@@ -255,7 +255,7 @@ describe("ServiceProvider", () => {
   });
   it("should resolve async service synchronously if already loaded", async () => {
     const A = createSyncMockedService("A");
-    const loader = diLazy(() => Promise.resolve(A));
+    const loader = lazy(() => Promise.resolve(A));
 
     await loader.load();
 
@@ -267,7 +267,7 @@ describe("ServiceProvider", () => {
   });
   it("should resolve async service concurrently", async () => {
     const A = createSyncMockedService("A");
-    const loader = diLazy(() => Promise.resolve(A));
+    const loader = lazy(() => Promise.resolve(A));
 
     const serviceProvider = new ServiceContainerBuilder()
       .addSingleton(A, loader)
@@ -285,9 +285,9 @@ describe("ServiceProvider", () => {
   it("should throw on attempt to resolve async service implementation with circular dependency", async () => {
     const serviceB = createService("B");
     const A = createSyncMockedService("A", () => [serviceB]);
-    const loaderA = diLazy(() => Promise.resolve(A));
+    const loaderA = lazy(() => Promise.resolve(A));
     const B = createSyncMockedService("B", () => [A]);
-    const loaderB = diLazy(() => Promise.resolve(B));
+    const loaderB = lazy(() => Promise.resolve(B));
 
     const serviceProvider = new ServiceContainerBuilder()
       .addSingleton(A, loaderA)
@@ -301,7 +301,7 @@ describe("ServiceProvider", () => {
   it("should throw on attempt to resolve async service implementation with circular dependency with multiple services resolve", async () => {
     const serviceB = createService("B");
     const A = createSyncMockedService("A", () => [[serviceB]]);
-    const loaderA = diLazy(() => Promise.resolve(A));
+    const loaderA = lazy(() => Promise.resolve(A));
 
     const serviceProvider = new ServiceContainerBuilder()
       .addSingleton(serviceB, loaderA)
@@ -314,10 +314,10 @@ describe("ServiceProvider", () => {
   it("should not initialize copy of previously resolved service when resolving multiple services async", async () => {
     const A = createSyncMockedService("A");
     const B = createSyncMockedService("B");
-    const loaderA = diLazy(
+    const loaderA = lazy(
       () => new Promise((resolve) => setTimeout(() => resolve(A), 10)),
     );
-    const loaderB = diLazy(
+    const loaderB = lazy(
       () => new Promise((resolve) => setTimeout(() => resolve(B), 10)),
     );
     const S = createService("S");

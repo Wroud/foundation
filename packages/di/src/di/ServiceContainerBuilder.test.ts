@@ -2,7 +2,7 @@ import { expect, it, describe } from "vitest";
 import { ServiceContainerBuilder } from "./ServiceContainerBuilder.js";
 import { ServiceCollection } from "./ServiceCollection.js";
 import { ServiceRegistry } from "./ServiceRegistry.js";
-import { diLazy } from "./diLazy.js";
+import { lazy } from "./lazy.js";
 
 describe("ServiceContainerBuilder", () => {
   it("should be defined", () => {
@@ -38,11 +38,11 @@ describe("ServiceContainerBuilder", () => {
     builder
       .addScoped(
         Test1,
-        diLazy(() => Promise.resolve(Test1)),
+        lazy(() => Promise.resolve(Test1)),
       )
       .addScoped(
         Test2,
-        diLazy(() => Promise.resolve(Test2)),
+        lazy(() => Promise.resolve(Test2)),
       );
 
     await expect(() => builder.validate()).rejects.toThrowError(

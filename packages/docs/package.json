@@ -1,7 +1,7 @@
 {
   "name": "docs",
   "private": true,
-  "packageManager": "yarn@4.2.2",
+  "packageManager": "yarn@4.4.0",
   "devDependencies": {
     "@shikijs/vitepress-twoslash": "^1",
     "@types/node": "^20",

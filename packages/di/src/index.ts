@@ -1,5 +1,5 @@
 export * from "./di/createService.js";
-export * from "./di/diLazy.js";
+export * from "./di/lazy.js";
 export * from "./di/injectable.js";
 export * from "./di/IServiceProvider.js";
 export * from "./di/ServiceContainerBuilder.js";

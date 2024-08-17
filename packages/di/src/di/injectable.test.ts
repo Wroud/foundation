@@ -1,4 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
+import { injectable } from "./injectable.js";
+import { ServiceRegistry } from "./ServiceRegistry.js";
 
 vi.mock(import("./ServiceRegistry.js"), () => ({
   ServiceRegistry: {
@@ -7,9 +9,6 @@ vi.mock(import("./ServiceRegistry.js"), () => ({
     get: vi.fn(),
   },
 }));
-
-const { injectable } = await import("./injectable.js");
-const { ServiceRegistry } = await import("./ServiceRegistry.js");
 
 describe("injectable", () => {
   it("should be defined", () => {

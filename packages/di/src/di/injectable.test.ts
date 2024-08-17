@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { injectable } from "./injectable.js";
 import { ServiceRegistry } from "./ServiceRegistry.js";
+import { beforeEach } from "node:test";
 
 vi.mock(import("./ServiceRegistry.js"), () => ({
   ServiceRegistry: {
@@ -9,6 +10,10 @@ vi.mock(import("./ServiceRegistry.js"), () => ({
     get: vi.fn(),
   },
 }));
+
+beforeEach(() => {
+  vi.resetAllMocks();
+});
 
 describe("injectable", () => {
   it("should be defined", () => {

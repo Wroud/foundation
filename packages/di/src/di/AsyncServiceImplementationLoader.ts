@@ -12,7 +12,7 @@ export class AsyncServiceImplementationLoader<T>
     if (this.implementation === NOT_LOADED) {
       return `Service implementation not loaded, loader: ${String(this.loader)}`;
     }
-    return getNameOfServiceType(this.implementation as any);
+    return getNameOfServiceType(this.implementation);
   }
 
   private implementation: ISyncServiceImplementation<T> | typeof NOT_LOADED;

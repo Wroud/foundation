@@ -1,0 +1,317 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`injectable > should make graph for async services implementations 1`] = `
+[
+  {
+    "id": "uuid-1",
+    "lifetime": 0,
+    "name": ""AppImpl" (App)",
+    "notFound": undefined,
+  },
+  {
+    "id": "uuid-3",
+    "lifetime": 0,
+    "name": ""DatabaseConnectionImpl" (DatabaseConnection)",
+    "notFound": undefined,
+  },
+  {
+    "id": "uuid-6",
+    "lifetime": 2,
+    "name": ""DatabaseImpl" (Database)",
+    "notFound": undefined,
+  },
+  {
+    "id": "uuid-9",
+    "lifetime": 2,
+    "name": ""DBArticlesImpl" (DBArticles)",
+    "notFound": undefined,
+  },
+  {
+    "id": "uuid-10",
+    "lifetime": 2,
+    "name": ""DBCommentsImpl" (DBComments)",
+    "notFound": undefined,
+  },
+  {
+    "id": "uuid-8",
+    "lifetime": 2,
+    "name": ""DBUsersImpl" (DBUsers)",
+    "notFound": undefined,
+  },
+  {
+    "id": "uuid-4",
+    "lifetime": 0,
+    "name": ""GQLServerImpl" (GQLServer)",
+    "notFound": undefined,
+  },
+  {
+    "id": "uuid-0",
+    "lifetime": 0,
+    "name": ""IServiceProvider"",
+    "notFound": undefined,
+  },
+  {
+    "id": "uuid-11",
+    "lifetime": 1,
+    "name": ""ProfileImpl" (Profile)",
+    "notFound": undefined,
+  },
+  {
+    "id": "uuid-5",
+    "lifetime": 1,
+    "name": ""RequestImpl" (Request)",
+    "notFound": undefined,
+  },
+  {
+    "id": "uuid-12",
+    "lifetime": 1,
+    "name": ""SessionImpl" (Session)",
+    "notFound": undefined,
+  },
+  {
+    "id": "uuid-7",
+    "lifetime": 2,
+    "name": ""SessionStoreImpl" (SessionStore)",
+    "notFound": undefined,
+  },
+  {
+    "id": "uuid-2",
+    "lifetime": 2,
+    "name": "Logger",
+    "notFound": true,
+  },
+]
+`;
+
+exports[`injectable > should make graph for async services implementations 2`] = `
+[
+  {
+    "name": ""AppImpl" (App) -> Logger",
+    "source": "uuid-1",
+    "target": "uuid-2",
+  },
+  {
+    "name": ""AppImpl" (App) -> "DatabaseConnectionImpl" (DatabaseConnection)",
+    "source": "uuid-1",
+    "target": "uuid-3",
+  },
+  {
+    "name": ""AppImpl" (App) -> "GQLServerImpl" (GQLServer)",
+    "source": "uuid-1",
+    "target": "uuid-4",
+  },
+  {
+    "name": ""GQLServerImpl" (GQLServer) -> Logger",
+    "source": "uuid-4",
+    "target": "uuid-2",
+  },
+  {
+    "name": ""GQLServerImpl" (GQLServer) -> "RequestImpl" (Request)",
+    "source": "uuid-4",
+    "target": "uuid-5",
+  },
+  {
+    "name": ""DatabaseImpl" (Database) -> "DatabaseConnectionImpl" (DatabaseConnection)",
+    "source": "uuid-6",
+    "target": "uuid-3",
+  },
+  {
+    "name": ""SessionStoreImpl" (SessionStore) -> "DatabaseImpl" (Database)",
+    "source": "uuid-7",
+    "target": "uuid-6",
+  },
+  {
+    "name": ""DBUsersImpl" (DBUsers) -> "DatabaseImpl" (Database)",
+    "source": "uuid-8",
+    "target": "uuid-6",
+  },
+  {
+    "name": ""DBArticlesImpl" (DBArticles) -> "DatabaseImpl" (Database)",
+    "source": "uuid-9",
+    "target": "uuid-6",
+  },
+  {
+    "name": ""DBCommentsImpl" (DBComments) -> "DatabaseImpl" (Database)",
+    "source": "uuid-10",
+    "target": "uuid-6",
+  },
+  {
+    "name": ""ProfileImpl" (Profile) -> "RequestImpl" (Request)",
+    "source": "uuid-11",
+    "target": "uuid-5",
+  },
+  {
+    "name": ""ProfileImpl" (Profile) -> "DBUsersImpl" (DBUsers)",
+    "source": "uuid-11",
+    "target": "uuid-8",
+  },
+  {
+    "name": ""SessionImpl" (Session) -> "RequestImpl" (Request)",
+    "source": "uuid-12",
+    "target": "uuid-5",
+  },
+  {
+    "name": ""SessionImpl" (Session) -> "SessionStoreImpl" (SessionStore)",
+    "source": "uuid-12",
+    "target": "uuid-7",
+  },
+]
+`;
+
+exports[`injectable > should make graph for sync services implementations 1`] = `
+[
+  {
+    "id": "uuid-1",
+    "lifetime": 0,
+    "name": ""App"",
+    "notFound": undefined,
+  },
+  {
+    "id": "uuid-6",
+    "lifetime": 2,
+    "name": ""Database"",
+    "notFound": undefined,
+  },
+  {
+    "id": "uuid-3",
+    "lifetime": 0,
+    "name": ""DatabaseConnection"",
+    "notFound": undefined,
+  },
+  {
+    "id": "uuid-9",
+    "lifetime": 2,
+    "name": ""DBArticles"",
+    "notFound": undefined,
+  },
+  {
+    "id": "uuid-10",
+    "lifetime": 2,
+    "name": ""DBComments"",
+    "notFound": undefined,
+  },
+  {
+    "id": "uuid-8",
+    "lifetime": 2,
+    "name": ""DBUsers"",
+    "notFound": undefined,
+  },
+  {
+    "id": "uuid-4",
+    "lifetime": 0,
+    "name": ""GQLServer"",
+    "notFound": undefined,
+  },
+  {
+    "id": "uuid-0",
+    "lifetime": 0,
+    "name": ""IServiceProvider"",
+    "notFound": undefined,
+  },
+  {
+    "id": "uuid-11",
+    "lifetime": 1,
+    "name": ""Profile"",
+    "notFound": undefined,
+  },
+  {
+    "id": "uuid-5",
+    "lifetime": 1,
+    "name": ""Request"",
+    "notFound": undefined,
+  },
+  {
+    "id": "uuid-12",
+    "lifetime": 1,
+    "name": ""Session"",
+    "notFound": undefined,
+  },
+  {
+    "id": "uuid-7",
+    "lifetime": 2,
+    "name": ""SessionStore"",
+    "notFound": undefined,
+  },
+  {
+    "id": "uuid-2",
+    "lifetime": 2,
+    "name": "Logger",
+    "notFound": true,
+  },
+]
+`;
+
+exports[`injectable > should make graph for sync services implementations 2`] = `
+[
+  {
+    "name": ""App" -> Logger",
+    "source": "uuid-1",
+    "target": "uuid-2",
+  },
+  {
+    "name": ""App" -> "DatabaseConnection"",
+    "source": "uuid-1",
+    "target": "uuid-3",
+  },
+  {
+    "name": ""App" -> "GQLServer"",
+    "source": "uuid-1",
+    "target": "uuid-4",
+  },
+  {
+    "name": ""GQLServer" -> Logger",
+    "source": "uuid-4",
+    "target": "uuid-2",
+  },
+  {
+    "name": ""GQLServer" -> "Request"",
+    "source": "uuid-4",
+    "target": "uuid-5",
+  },
+  {
+    "name": ""Database" -> "DatabaseConnection"",
+    "source": "uuid-6",
+    "target": "uuid-3",
+  },
+  {
+    "name": ""SessionStore" -> "Database"",
+    "source": "uuid-7",
+    "target": "uuid-6",
+  },
+  {
+    "name": ""DBUsers" -> "Database"",
+    "source": "uuid-8",
+    "target": "uuid-6",
+  },
+  {
+    "name": ""DBArticles" -> "Database"",
+    "source": "uuid-9",
+    "target": "uuid-6",
+  },
+  {
+    "name": ""DBComments" -> "Database"",
+    "source": "uuid-10",
+    "target": "uuid-6",
+  },
+  {
+    "name": ""Profile" -> "Request"",
+    "source": "uuid-11",
+    "target": "uuid-5",
+  },
+  {
+    "name": ""Profile" -> "DBUsers"",
+    "source": "uuid-11",
+    "target": "uuid-8",
+  },
+  {
+    "name": ""Session" -> "Request"",
+    "source": "uuid-12",
+    "target": "uuid-5",
+  },
+  {
+    "name": ""Session" -> "SessionStore"",
+    "source": "uuid-12",
+    "target": "uuid-7",
+  },
+]
+`;

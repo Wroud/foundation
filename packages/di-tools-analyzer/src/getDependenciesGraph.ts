@@ -7,10 +7,12 @@ import { v4 as uuid } from "uuid";
 import type { IGraph, ILink, INode } from "./IGraph.js";
 import { getNameOfServiceType } from "@wroud/di/helpers/getNameOfServiceType.js";
 import type { IServiceDescriptor } from "@wroud/di/interfaces/IServiceDescriptor.js";
+import { loadImplementation } from "./loadImplementation.js";
+import { getNameOfDescriptor } from "@wroud/di/helpers/getNameOfDescriptor.js";
 
-export function getDependenciesGraph(
+export async function getDependenciesGraph(
   serviceCollection: IServiceCollection,
-): IGraph {
+): Promise<IGraph> {
   const nodes: Map<any, INode> = new Map();
   const links: ILink[] = [];
 
@@ -18,9 +20,9 @@ export function getDependenciesGraph(
     const node = nodes.get(service);
     if (!node) {
       const id = uuid();
-      const node = {
+      const node: INode = {
         id,
-        name: getNameOfServiceType(service) || "Unknown",
+        name: getNameOfServiceType(service),
         lifetime: ServiceLifetime.Transient,
         notFound: true,
       };
@@ -30,18 +32,18 @@ export function getDependenciesGraph(
     return node;
   }
 
-  function addDescriptorNode(
+  async function addDescriptorNode(
     descriptor: IServiceDescriptor<unknown>,
     notFound?: boolean,
   ) {
+    await loadImplementation(descriptor);
+
     const node = nodes.get(descriptor);
     if (!node) {
       const id = uuid();
-      const node = {
+      const node: INode = {
         id,
-        name:
-          getNameOfServiceType(descriptor.implementation as any) ||
-          getNameOfServiceType(descriptor.service),
+        name: getNameOfDescriptor(descriptor),
         lifetime: descriptor.lifetime,
         notFound,
       };
@@ -52,9 +54,10 @@ export function getDependenciesGraph(
   }
 
   for (const descriptor of serviceCollection) {
-    const source = addDescriptorNode(descriptor);
+    const implementation = await loadImplementation(descriptor);
+    const source = await addDescriptorNode(descriptor);
 
-    const dependencies = ServiceRegistry.get(descriptor.implementation);
+    const dependencies = ServiceRegistry.get(implementation);
     if (!dependencies) {
       continue;
     }
@@ -74,7 +77,7 @@ export function getDependenciesGraph(
       }
 
       for (const dep of descriptors) {
-        const target = addDescriptorNode(dep);
+        const target = await addDescriptorNode(dep);
         links.push({
           source: source.id,
           target: target.id,

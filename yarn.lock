@@ -2616,7 +2616,9 @@ __metadata:
     "@types/d3": "npm:^7"
     "@types/node": "npm:^20"
     "@types/uuid": "npm:^9"
+    "@vitest/coverage-v8": "npm:^2"
     "@wroud/di": "workspace:^"
+    "@wroud/tests-runner": "workspace:^"
     "@wroud/tsconfig": "workspace:^"
     concurrently: "npm:^8"
     d3: "npm:^7"
@@ -2624,6 +2626,7 @@ __metadata:
     tslib: "npm:^2"
     typescript: "npm:^5"
     uuid: "npm:^10"
+    vitest: "npm:^2"
   languageName: unknown
   linkType: soft
 

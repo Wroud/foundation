@@ -11,7 +11,7 @@ export function getNameOfDescriptor(
     if (implementation.isLoaded()) {
       implementation = implementation.getImplementation();
     } else {
-      implementation = { name: "lazy implementation" };
+      implementation = { name: "lazy(?)" };
     }
   }
 
@@ -19,6 +19,6 @@ export function getNameOfDescriptor(
   const implementationName = getNameOfServiceType(implementation);
 
   return implementationName === serviceName
-    ? `"${implementationName}"`
-    : `"${implementationName}" (${serviceName})`;
+    ? `${implementationName}`
+    : `${implementationName} (${serviceName})`;
 }

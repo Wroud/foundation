@@ -6,7 +6,7 @@ export class ServiceInstanceInfo<T> implements IServiceInstanceInfo<T> {
   get instance(): T {
     if (!this.initialized) {
       throw new Error(
-        `Service ${getNameOfDescriptor(this.descriptor)} is not initialized (circular dependency)`,
+        `Service "${getNameOfDescriptor(this.descriptor)}" is not initialized (circular dependency)`,
       );
     }
 

@@ -32,10 +32,7 @@ export async function getDependenciesGraph(
     return node;
   }
 
-  async function addDescriptorNode(
-    descriptor: IServiceDescriptor<unknown>,
-    notFound?: boolean,
-  ) {
+  async function addDescriptorNode(descriptor: IServiceDescriptor<unknown>) {
     await loadImplementation(descriptor);
 
     const node = nodes.get(descriptor);
@@ -45,7 +42,6 @@ export async function getDependenciesGraph(
         id,
         name: getNameOfDescriptor(descriptor),
         lifetime: descriptor.lifetime,
-        notFound,
       };
       nodes.set(descriptor, node);
       return node;

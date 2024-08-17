@@ -295,7 +295,7 @@ describe("ServiceProvider", () => {
       .build();
 
     await expect(() => serviceProvider.getServiceAsync(A)).rejects.toThrowError(
-      'Cyclic dependency detected: "A" -> "B" -> "A"',
+      "Cyclic dependency detected: A -> B -> A",
     );
   });
   it("should throw on attempt to resolve async service implementation with circular dependency with multiple services resolve", async () => {
@@ -309,7 +309,7 @@ describe("ServiceProvider", () => {
 
     await expect(() =>
       serviceProvider.getServicesAsync(serviceB),
-    ).rejects.toThrowError('Cyclic dependency detected: "A" (B) -> "A" (B)');
+    ).rejects.toThrowError("Cyclic dependency detected: A (B) -> A (B)");
   });
   it("should not initialize copy of previously resolved service when resolving multiple services async", async () => {
     const A = createSyncMockedService("A");

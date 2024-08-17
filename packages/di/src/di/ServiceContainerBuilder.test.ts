@@ -46,7 +46,7 @@ describe("ServiceContainerBuilder", () => {
       );
 
     await expect(() => builder.validate()).rejects.toThrowError(
-      'Cyclic dependency detected: "Test1" -> "Test2" -> "Test1"',
+      "Cyclic dependency detected: Test1 -> Test2 -> Test1",
     );
   });
 });

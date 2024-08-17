@@ -176,7 +176,7 @@ describe("ServiceCollection", () => {
     const collection = new ServiceCollection();
     collection.addScoped(Test1);
     expect(() => collection.addScoped(Test2)).toThrowError(
-      'Cyclic dependency detected: "Test2" -> "Test1" -> "Test2"',
+      "Cyclic dependency detected: Test2 -> Test1 -> Test2",
     );
   });
   it("should detect cyclic dependencies to itself", () => {
@@ -193,7 +193,7 @@ describe("ServiceCollection", () => {
 
     const collection = new ServiceCollection();
     expect(() => collection.addScoped(Test1, Test2)).toThrowError(
-      'Cyclic dependency detected: "Test2" (Test1) -> "Test2" (Test1)',
+      "Cyclic dependency detected: Test2 (Test1) -> Test2 (Test1)",
     );
   });
   it("should not detect cyclic dependencies between services with same name but different objects", () => {

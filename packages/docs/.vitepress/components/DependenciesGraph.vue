@@ -30,7 +30,7 @@ onMounted(() => {
   }
 });
 
-watchEffect(() => {
+watchEffect(async () => {
   if (!store.chart) {
     return;
   }
@@ -44,7 +44,7 @@ watchEffect(() => {
   }
 
   if (props.serviceCollection) {
-    store.graph = getDependenciesGraph(props.serviceCollection);
+    store.graph = await getDependenciesGraph(props.serviceCollection);
     console.info("graph json:", JSON.stringify(store.graph));
   }
 

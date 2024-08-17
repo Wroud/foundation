@@ -8,7 +8,7 @@ export default defineConfig({
   },
   esbuild: false,
   test: {
-    isolate: false,
+    // isolate: false,
 
     setupFiles: [import.meta.resolve("./vitest.setup.ts")],
 

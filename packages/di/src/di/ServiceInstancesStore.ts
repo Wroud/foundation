@@ -32,7 +32,7 @@ export class ServiceInstancesStore implements IServiceInstancesStore {
     requestedBy?: IServiceDescriptor<any>,
   ): IServiceInstanceInfo<T> {
     if (this.instances.has(descriptor)) {
-      throw new Error("Instance already exists");
+      throw new Error("Service instance already exists");
     }
 
     const instanceInfo = new ServiceInstanceInfo(descriptor);

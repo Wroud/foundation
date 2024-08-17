@@ -1,7 +1,7 @@
 {
   "name": "@wroud/di-tools-analyzer",
   "description": "DI Tools Analyzer is a tool that helps you to analyze the dependency injection tools in your project and generate a report for them.",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "packageManager": "yarn@4.4.0",
   "type": "module",
   "license": "MIT",
@@ -36,6 +36,7 @@
   "scripts": {
     "build": "tsc -b",
     "clear": "rimraf ./lib",
+    "test": "tests-runner",
     "watch:tsc": "tsc -b -w",
     "dev": "concurrently \"npm:watch:*\""
   },
@@ -43,11 +44,14 @@
     "@types/d3": "^7",
     "@types/node": "^20",
     "@types/uuid": "^9",
+    "@vitest/coverage-v8": "^2",
+    "@wroud/tests-runner": "workspace:^",
     "@wroud/tsconfig": "workspace:^",
     "concurrently": "^8",
     "rimraf": "^6",
     "tslib": "^2",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^2"
   },
   "keywords": [
     "dependency-injection",

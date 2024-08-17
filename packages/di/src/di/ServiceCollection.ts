@@ -15,7 +15,7 @@ export class ServiceCollection implements IServiceCollection {
   constructor(collection?: ServiceCollection) {
     this.collection = new Map(collection?.copy() || []);
     if (!this.collection.has(IServiceProvider)) {
-      this.addSingleton(IServiceProvider, () => {
+      this.addSingleton(IServiceProvider, function IServiceProvider() {
         throw new Error("Not implemented");
       });
     }

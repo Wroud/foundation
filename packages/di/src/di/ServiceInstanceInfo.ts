@@ -1,12 +1,12 @@
 import type { IServiceDescriptor } from "../interfaces/IServiceDescriptor.js";
 import type { IServiceInstanceInfo } from "../interfaces/IServiceInstanceInfo.js";
-import { getNameOfServiceType } from "../helpers/getNameOfServiceType.js";
+import { getNameOfDescriptor } from "../helpers/getNameOfDescriptor.js";
 
 export class ServiceInstanceInfo<T> implements IServiceInstanceInfo<T> {
   get instance(): T {
     if (!this.initialized) {
       throw new Error(
-        `Service "${getNameOfServiceType(this.descriptor.service)}" is not initialized (circular dependency)`,
+        `Service ${getNameOfDescriptor(this.descriptor)} is not initialized (circular dependency)`,
       );
     }
 

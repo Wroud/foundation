@@ -308,7 +308,7 @@ describe("ServiceProvider", () => {
       .build();
     const scope = serviceProvider.createScope();
     expect(() => scope.serviceProvider.getService(Test2)).toThrowError(
-      'Scoped service "Test" cannot be resolved from singleton service.',
+      `Scoped service cannot be resolved from singleton service.`,
     );
   });
   it("should resolve scoped service with singleton dependencies", () => {

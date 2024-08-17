@@ -15,6 +15,7 @@ import { isAsyncServiceImplementationLoader } from "../helpers/isAsyncServiceImp
 import type { IAsyncServiceImplementationLoader } from "../interfaces/IAsyncServiceImplementationLoader.js";
 import type { ISyncServiceImplementation } from "../interfaces/ISyncServiceImplementation.js";
 import { validateRequestPath } from "./validation/validateRequestPath.js";
+import { getNameOfDescriptor } from "../helpers/getNameOfDescriptor.js";
 
 export class ServiceProvider implements IServiceProvider {
   private readonly instancesStore: IServiceInstancesStore;
@@ -183,7 +184,7 @@ export class ServiceProvider implements IServiceProvider {
           descriptor.lifetime === ServiceLifetime.Scoped
         ) {
           throw new Error(
-            `Scoped service "${getNameOfServiceType(descriptor.service)}" cannot be resolved from singleton service.`,
+            `Scoped service cannot be resolved from singleton service.`,
           );
         }
       }
@@ -222,7 +223,7 @@ export class ServiceProvider implements IServiceProvider {
       }
     } catch (exception: any) {
       throw new Error(
-        `Failed to initiate service "${getNameOfServiceType(descriptor.service)}":\n\r${exception.message}`,
+        `Failed to initiate service ${getNameOfDescriptor(descriptor)}:\n\r${exception.message}`,
         { cause: exception },
       );
     }
@@ -329,12 +330,10 @@ export class ServiceProvider implements IServiceProvider {
         return value;
       }
 
-      const [descriptor, loader] = value;
+      const [, loader] = value;
 
       if (!loader?.isLoaded()) {
-        error = new Error(
-          `Asynchronous service loader for "${getNameOfServiceType(descriptor.service)}" cannot be resolved synchronously`,
-        );
+        error = new Error(`Lazy service cannot be resolved synchronously`);
         continue;
       }
       tempService = [loader.getImplementation()];

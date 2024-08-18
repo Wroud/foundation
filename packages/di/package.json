@@ -1,7 +1,7 @@
 {
   "name": "@wroud/di",
   "description": "A simple and lightweight dependency injection library for JavaScript and TypeScript",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "packageManager": "yarn@4.4.0",
   "type": "module",
   "license": "MIT",
@@ -13,6 +13,7 @@
     "directory": "packages/di"
   },
   "sideEffects": [],
+  "module": "./lib/production.js",
   "exports": {
     ".": {
       "development": "./lib/development.js",

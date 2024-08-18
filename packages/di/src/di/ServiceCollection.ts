@@ -9,6 +9,7 @@ import { ServiceLifetime } from "./ServiceLifetime.js";
 import type { IAsyncServiceImplementationLoader } from "../interfaces/IAsyncServiceImplementationLoader.js";
 import type { IServiceImplementation } from "../interfaces/IServiceImplementation.js";
 import { tryResolveService } from "./validation/tryResolveService.js";
+import { Debug } from "../debug.js";
 
 export class ServiceCollection implements IServiceCollection {
   protected readonly collection: Map<any, IServiceDescriptor<unknown>[]>;
@@ -125,7 +126,9 @@ export class ServiceCollection implements IServiceCollection {
       },
     ]);
 
-    tryResolveService(this, service, new Set());
+    if (Debug.extended) {
+      tryResolveService(this, service, new Set());
+    }
 
     return this;
   }

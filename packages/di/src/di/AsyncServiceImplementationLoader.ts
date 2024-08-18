@@ -2,6 +2,7 @@ import { AsyncServiceImplementationError } from "./errors/AsyncServiceImplementa
 import { getNameOfServiceType } from "../helpers/getNameOfServiceType.js";
 import type { IAsyncServiceImplementationLoader } from "../interfaces/IAsyncServiceImplementationLoader.js";
 import type { ISyncServiceImplementation } from "../interfaces/ISyncServiceImplementation.js";
+import { Debug } from "../debug.js";
 
 const NOT_LOADED = Symbol("NOT_LOADED");
 
@@ -10,7 +11,7 @@ export class AsyncServiceImplementationLoader<T>
 {
   get name(): string {
     if (this.implementation === NOT_LOADED) {
-      return `Service implementation not loaded, loader: ${String(this.loader)}`;
+      return Debug.errors.serviceNotLoaded(this.loader);
     }
     return getNameOfServiceType(this.implementation);
   }

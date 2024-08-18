@@ -16,6 +16,7 @@ import type { IAsyncServiceImplementationLoader } from "../interfaces/IAsyncServ
 import type { ISyncServiceImplementation } from "../interfaces/ISyncServiceImplementation.js";
 import { validateRequestPath } from "./validation/validateRequestPath.js";
 import { getNameOfDescriptor } from "../helpers/getNameOfDescriptor.js";
+import { Debug } from "../debug.js";
 
 export class ServiceProvider implements IServiceProvider {
   private readonly instancesStore: IServiceInstancesStore;
@@ -275,10 +276,9 @@ export class ServiceProvider implements IServiceProvider {
           err instanceof TypeError &&
           err.message.includes("cannot be invoked without 'new'")
         ) {
-          throw new Error(
-            `Class "${implementation.name}" not registered as service (please use @injectable or ServiceRegistry)`,
-            { cause: err },
-          );
+          throw new Error(Debug.errors.classNotDecorated(implementation.name), {
+            cause: err,
+          });
         } else {
           throw err;
         }

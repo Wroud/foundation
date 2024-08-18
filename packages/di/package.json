@@ -13,13 +13,17 @@
     "directory": "packages/di"
   },
   "sideEffects": [],
-  "module": "./lib/index.js",
-  "types": "./lib/index.d.ts",
   "exports": {
-    ".": "./lib/index.js",
+    ".": {
+      "development": "./lib/development.js",
+      "default": "./lib/production.js"
+    },
     "./*": "./lib/*",
     "./package.json": "./package.json",
-    "./src": "./src/index.ts",
+    "./src": {
+      "development": "./src/development.ts",
+      "default": "./src/production.ts"
+    },
     "./src/*": "./src/*"
   },
   "files": [

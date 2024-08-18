@@ -20,7 +20,16 @@ export default defineConfig({
     config(md) {
       md.use(tabsMarkdownPlugin);
     },
-    codeTransformers: [transformerTwoslash()],
+    codeTransformers: [
+      transformerTwoslash({
+        twoslashOptions: {
+          compilerOptions: {
+            module: 199,
+            moduleResolution: 99,
+          },
+        },
+      }),
+    ],
   },
   sitemap: {
     hostname: "https://wroud.dev",

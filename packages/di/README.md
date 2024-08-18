@@ -7,6 +7,7 @@
 - **Modern JavaScript**: Leverages ES modules and decorators.
 - **TypeScript**: Written in TypeScript for type safety.
 - **Flexible DI**: Supports singleton, transient, and scoped services.
+- [Pure ESM package](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c)
 
 ## Installation
 
@@ -29,7 +30,7 @@ For detailed usage and API reference, visit the [documentation site](https://wro
 ## Example
 
 ```ts
-import { ServiceContainerBuilder, injectable } from '@wroud/di';
+import { ServiceContainerBuilder, injectable } from "@wroud/di";
 
 @injectable()
 class Logger {
@@ -43,7 +44,7 @@ builder.addSingleton(Logger);
 const provider = builder.build();
 
 const logger = provider.getService(Logger);
-logger.log('Hello world!');
+logger.log("Hello world!");
 ```
 
 ## License

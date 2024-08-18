@@ -1,5 +1,6 @@
 {
   "name": "docs",
+  "type": "module",
   "private": true,
   "packageManager": "yarn@4.4.0",
   "devDependencies": {

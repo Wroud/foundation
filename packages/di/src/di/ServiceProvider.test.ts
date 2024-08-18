@@ -155,7 +155,7 @@ describe("ServiceProvider", () => {
       .addSingleton(Test)
       .build();
     expect(() => serviceProvider.getService(Test)).toThrowError(
-      'Class "Test" not registered as service (please use @injectable or ServiceRegistry)',
+      'Class "Test" not registered as service',
     );
   });
   it("should catch exceptions when resolving service", () => {

@@ -39,8 +39,6 @@ describe("AsyncServiceImplementationLoader", () => {
       Promise.resolve("implementation"),
     );
 
-    expect(asyncLoader.name).toBe(
-      'Service implementation not loaded, loader: () => Promise.resolve("implementation")',
-    );
+    expect(asyncLoader.name).toBe("Service is not loaded yet");
   });
 });

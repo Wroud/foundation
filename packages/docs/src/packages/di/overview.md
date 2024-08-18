@@ -10,8 +10,9 @@ outline: deep
 
 ## Key Features
 
-- **Small Bundle Size**: Only 5kB (minified), ensuring minimal overhead.
+- **Small Bundle Size**: Only 10kB (minified), ensuring minimal overhead.
 - **Flexible DI**: Supports multiple service injections, disposals, and various lifetimes.
+- **Asynchronous Service Loading**: Unlocks code-splitting and lazy-loading for optimized performance.
 - **Modern Decorators**: Clean and maintainable code with powerful decorators.
 - **Service Lifetimes**: Singleton, transient, and scoped lifetimes.
 - **Ease of Use**: Quick start without extensive knowledge.

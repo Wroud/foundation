@@ -63,7 +63,7 @@ import { getDependenciesGraph } from "@wroud/di-tools-analyzer";
 const builder = new ServiceContainerBuilder();
 // Register your services
 
-const data = getDependenciesGraph(builder);
+const data = await getDependenciesGraph(builder);
 ```
 
 ### Visualization
@@ -92,7 +92,7 @@ import { createChart, getDependenciesGraph } from "@wroud/di-tools-analyzer";
 const chart = createChart(htmlSvgElement, width, height); // Initialize D3.js
 const builder = new ServiceContainerBuilder();
 // Register your services
-const graph = getDependenciesGraph(builder); // Collect information about dependencies, data can be serialized with JSON.stringify()
+const graph = await getDependenciesGraph(builder); // Collect information about dependencies, data can be serialized with JSON.stringify()
 chart.update(graph); // Render graph
 ```
 

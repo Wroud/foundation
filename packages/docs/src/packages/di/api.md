@@ -13,33 +13,43 @@ The `ServiceContainerBuilder` class is used to register services and build the s
 ### Methods
 
 - **`addSingleton<T>(service: ServiceImplementation<T>): this`**
+
   - Registers a singleton service to itself.
 
 - **`addSingleton<T>(service: ServiceType<T>, factory: IServiceFactory<T>): this`**
+
   - Registers a singleton service with a factory implementation.
 
 - **`addSingleton<T>(service: ServiceType<T>, constructor: IServiceConstructor<T>): this`**
+
   - Registers a singleton service with a constructor implementation.
 
 - **`addSingleton<T>(service: ServiceType<T>, implementation: T): this`**
+
   - Registers a singleton service with an instance as implementation.
 
 - **`addTransient<T>(service: ServiceImplementation<T>): this`**
+
   - Registers a transient service.
 
 - **`addTransient<T>(service: ServiceType<T>, factory: IServiceFactory<T>): this`**
+
   - Registers a transient service with a factory implementation.
 
 - **`addTransient<T>(service: ServiceType<T>, constructor: IServiceConstructor<T>): this`**
+
   - Registers a transient service with a constructor implementation.
 
 - **`addScoped<T>(service: ServiceImplementation<T>): this`**
+
   - Registers a scoped service.
 
 - **`addScoped<T>(service: ServiceType<T>, factory: IServiceFactory<T>): this`**
+
   - Registers a scoped service with a factory implementation.
 
 - **`addScoped<T>(service: ServiceType<T>, constructor: IServiceConstructor<T>): this`**
+
   - Registers a scoped service with a constructor implementation.
 
 - **`build(): IServiceProvider`**
@@ -48,9 +58,9 @@ The `ServiceContainerBuilder` class is used to register services and build the s
 ### Example
 
 ```ts
-import { ServiceContainerBuilder } from '@wroud/di';
-import Logger from './Logger';
-import ILoggerService from './ILoggerService';
+import { ServiceContainerBuilder } from "@wroud/di";
+import Logger from "./Logger";
+import ILoggerService from "./ILoggerService";
 
 const builder = new ServiceContainerBuilder();
 builder.addSingleton(Logger);
@@ -67,18 +77,27 @@ The `IServiceProvider` interface is used to resolve services.
 ### Methods
 
 - **`getService<T>(service: ServiceType<T>): T`**
+
   - Resolves and returns an instance of the requested service.
 
-- **`getServices<T>(service: ServiceType<T>): T[]`**
-  - Resolves and returns all instances of the requested service.
+- **`getServiceAsync<T>(service: ServiceType<T>): Promise<T>`**
+
+  - Resolves and returns an instance of the requested service asynchronously.
+
+- **`getServicesAsync<T>(service: ServiceType<T>): Promise<T[]>`**
+
+  - Resolves and returns all instances of the requested service asynchronously.
 
 - **`createScope(): IAsyncServiceScope`**
+
   - Creates and returns a new scope with `IServiceProvider` and `Symbol.dispose` function.
 
 - **`createAsyncScope(): IServiceScope`**
+
   - Creates and returns a new scope with `IServiceProvider` and `Symbol.asyncDispose` function.
 
 - **`[Symbol.dispose](): void`**
+
   - Disposes of the `IServiceProvider` and any services that require disposal.
 
 - **`[Symbol.asyncDispose](): Promise<void>`**
@@ -87,20 +106,46 @@ The `IServiceProvider` interface is used to resolve services.
 ### Example
 
 ```ts
-import Logger from './Logger';
+import Logger from "./Logger";
 
 const logger = provider.getService(Logger);
-logger.log('Hello world!');
+logger.log("Hello world!");
 
 const loggers = provider.getServices(Logger);
-loggers.forEach(logger => logger.log('Hello from multiple loggers!'));
+loggers.forEach((logger) => logger.log("Hello from multiple loggers!"));
 
 const scope = provider.createScope();
 const scopedLogger = scope.serviceProvider.getService(Logger);
-scopedLogger.log('Scoped Hello world!');
+scopedLogger.log("Scoped Hello world!");
 
 provider.dispose();
 ```
+
+## lazy
+
+The `lazy` function allows you to define services that are loaded asynchronously, enabling lazy-loading within your application. This function wraps the dynamic `import` statement, ensuring that the service is only loaded when first requested.
+
+### Usage
+
+To use the `lazy` function, wrap your service's dynamic `import` statement within `lazy`, and register the service as usual.
+
+### Example
+
+```ts
+import { lazy, ServiceContainerBuilder } from "@wroud/di";
+import { IAdministration } from "./Administration/IAdministration";
+
+const builder = new ServiceContainerBuilder();
+
+builder.addSingleton(
+  IAdministration,
+  lazy(() =>
+    import("./Administration/Administration").then((m) => m.Administration),
+  ),
+);
+```
+
+In this example, the `IAdministration` service is registered to be loaded asynchronously. The service will only be resolved when accessed using the `getServiceAsync` or `getServicesAsync` methods of `IServiceProvider`.
 
 ## ServiceRegistry
 
@@ -114,11 +159,11 @@ The `ServiceRegistry` class allows registering service metadata such as dependen
 ### Example
 
 ```ts
-import Logger from './Logger';
+import Logger from "./Logger";
 
 ServiceRegistry.register(Logger, {
-  name: 'Logger',
-  dependencies: []
+  name: "Logger",
+  dependencies: [],
 });
 ```
 
@@ -129,7 +174,7 @@ The `createService` function creates a token that can be used to resolve service
 ### Example
 
 ```ts
-const ILoggerService = createService<ILoggerService>('ILoggerService');
+const ILoggerService = createService<ILoggerService>("ILoggerService");
 ```
 
 ## injectable
@@ -147,7 +192,7 @@ The `injectable` decorator marks a class as injectable and registers its depende
 ### Example
 
 ```ts
-import { injectable } from '@wroud/di';
+import { injectable } from "@wroud/di";
 
 @injectable()
 class Logger {
@@ -158,20 +203,23 @@ class Logger {
 
 @injectable(() => [Logger])
 class Service {
-  constructor(private readonly logger: Logger) { }
+  constructor(private readonly logger: Logger) {}
 
   action() {
-    this.logger.log('Action executed');
+    this.logger.log("Action executed");
   }
 }
 
 @injectable(() => [Logger, [Service]])
 class AnotherService {
-  constructor(private readonly logger: Logger, private readonly services: Service[]) { }
+  constructor(
+    private readonly logger: Logger,
+    private readonly services: Service[],
+  ) {}
 
   anotherAction() {
-    this.services.forEach(service => service.action());
-    this.logger.log('Another action executed');
+    this.services.forEach((service) => service.action());
+    this.logger.log("Another action executed");
   }
 }
 ```

@@ -4,7 +4,7 @@
 
 ## Features
 
-- **Modern JavaScript**: Leverages ES modules and decorators.
+- **Modern JavaScript**: Leverages ES modules, decorators, and asynchronous service loading for advanced performance optimizations.
 - **TypeScript**: Written in TypeScript for type safety.
 - **Flexible DI**: Supports singleton, transient, and scoped services.
 - [Pure ESM package](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c)

@@ -43,6 +43,10 @@ export const sidebar: DefaultTheme.Sidebar = {
                 base: "/guide/package/di/advanced-features/",
                 items: [
                   {
+                    text: "Code Splitting",
+                    link: "code-splitting",
+                  },
+                  {
                     text: "Manual Service Registration",
                     link: "manual-service-registration",
                   },

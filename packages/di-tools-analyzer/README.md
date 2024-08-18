@@ -34,7 +34,7 @@ const builder = new ServiceContainerBuilder();
 // Register your services
 
 // Collect dependencies graph
-const data = getDependenciesGraph(builder);
+const data = await getDependenciesGraph(builder);
 
 // Serialize the data if needed
 const jsonData = JSON.stringify(data);

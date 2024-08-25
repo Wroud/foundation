@@ -1,7 +1,7 @@
 import { drag, type Selection, type SimulationNodeDatum } from "d3";
 import type { INode } from "../IGraph.js";
-import { ServiceLifetime } from "@wroud/di";
 import { Layout } from "./Layout.js";
+import { ServiceLifetime } from "@wroud/di/di/ServiceLifetime.js";
 
 export type INodeDatum = SimulationNodeDatum & {
   data: INode;

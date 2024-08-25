@@ -1,4 +1,4 @@
-import type { ServiceLifetime } from "@wroud/di";
+import type { ServiceLifetime } from "@wroud/di/di/ServiceLifetime.js";
 
 export interface INode {
   id: string;

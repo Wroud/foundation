@@ -1,4 +1,4 @@
-import type { IServiceDescriptor } from "../interfaces/IServiceDescriptor.js";
+import type { IServiceDescriptor } from "../types/index.js";
 import { getNameOfServiceType } from "./getNameOfServiceType.js";
 import { isAsyncServiceImplementationLoader } from "./isAsyncServiceImplementationLoader.js";
 

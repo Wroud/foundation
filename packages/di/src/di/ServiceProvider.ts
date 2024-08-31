@@ -1,24 +1,40 @@
-import type { IAsyncServiceScope } from "../interfaces/IAsyncServiceScope.js";
-import type { IServiceConstructor } from "../interfaces/IServiceConstructor.js";
-import type { IServiceDescriptor } from "../interfaces/IServiceDescriptor.js";
-import type { IServiceFactory } from "../interfaces/IServiceFactory.js";
 import { IServiceProvider } from "./IServiceProvider.js";
-import type { IServiceScope } from "../interfaces/IServiceScope.js";
 import { ServiceCollection } from "./ServiceCollection.js";
-import type { ServiceType } from "../interfaces/ServiceType.js";
 import { ServiceRegistry } from "./ServiceRegistry.js";
 import { getNameOfServiceType } from "../helpers/getNameOfServiceType.js";
-import type { IServiceInstancesStore } from "../interfaces/IServiceInstancesStore.js";
 import { ServiceInstancesStore } from "./ServiceInstancesStore.js";
 import { ServiceLifetime } from "./ServiceLifetime.js";
 import { isAsyncServiceImplementationLoader } from "../helpers/isAsyncServiceImplementationLoader.js";
-import type { IAsyncServiceImplementationLoader } from "../interfaces/IAsyncServiceImplementationLoader.js";
-import type { ISyncServiceImplementation } from "../interfaces/ISyncServiceImplementation.js";
 import { validateRequestPath } from "./validation/validateRequestPath.js";
 import { getNameOfDescriptor } from "../helpers/getNameOfDescriptor.js";
 import { Debug } from "../debug.js";
+import type {
+  IAsyncServiceImplementationLoader,
+  IAsyncServiceScope,
+  IServiceConstructor,
+  IServiceDescriptor,
+  IServiceFactory,
+  IServiceInstancesStore,
+  IServiceScope,
+  ISyncServiceImplementation,
+  ServiceType,
+} from "../types/index.js";
 
 export class ServiceProvider implements IServiceProvider {
+  static getDescriptor<T>(
+    provider: IServiceProvider,
+    service: ServiceType<T>,
+  ): IServiceDescriptor<T> {
+    return (provider as ServiceProvider).getDescriptor(service);
+  }
+
+  static getDescriptors<T>(
+    provider: IServiceProvider,
+    service: ServiceType<T>,
+  ): IServiceDescriptor<T>[] {
+    return (provider as ServiceProvider).collection.getDescriptors(service);
+  }
+
   private readonly instancesStore: IServiceInstancesStore;
   constructor(
     private readonly collection: ServiceCollection,

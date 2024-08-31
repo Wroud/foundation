@@ -1,7 +1,6 @@
-import type { IServiceDescriptor } from "../../interfaces/IServiceDescriptor.js";
+import type { IServiceDescriptor, ServiceType } from "../../types/index.js";
 import type { ServiceCollection } from "../ServiceCollection.js";
 import { ServiceRegistry } from "../ServiceRegistry.js";
-import type { ServiceType } from "../../interfaces/ServiceType.js";
 import { validateRequestPath } from "./validateRequestPath.js";
 
 export function tryResolveService<T>(

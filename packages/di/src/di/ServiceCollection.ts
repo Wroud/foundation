@@ -1,13 +1,15 @@
-import type { IServiceCollection } from "../interfaces/IServiceCollection.js";
-import type { IServiceConstructor } from "../interfaces/IServiceConstructor.js";
-import type { IServiceDescriptor } from "../interfaces/IServiceDescriptor.js";
-import type { IServiceFactory } from "../interfaces/IServiceFactory.js";
+import type {
+  IAsyncServiceImplementationLoader,
+  IServiceCollection,
+  IServiceConstructor,
+  IServiceDescriptor,
+  IServiceFactory,
+  IServiceImplementation,
+  ServiceImplementation,
+  ServiceType,
+} from "../types/index.js";
 import { IServiceProvider } from "./IServiceProvider.js";
-import type { ServiceImplementation } from "../interfaces/ServiceImplementation.js";
-import type { ServiceType } from "../interfaces/ServiceType.js";
 import { ServiceLifetime } from "./ServiceLifetime.js";
-import type { IAsyncServiceImplementationLoader } from "../interfaces/IAsyncServiceImplementationLoader.js";
-import type { IServiceImplementation } from "../interfaces/IServiceImplementation.js";
 import { tryResolveService } from "./validation/tryResolveService.js";
 import { Debug } from "../debug.js";
 

@@ -1,7 +1,9 @@
 import { AsyncServiceImplementationError } from "./errors/AsyncServiceImplementationError.js";
 import { getNameOfServiceType } from "../helpers/getNameOfServiceType.js";
-import type { IAsyncServiceImplementationLoader } from "../interfaces/IAsyncServiceImplementationLoader.js";
-import type { ISyncServiceImplementation } from "../interfaces/ISyncServiceImplementation.js";
+import type {
+  IAsyncServiceImplementationLoader,
+  ISyncServiceImplementation,
+} from "../types/index.js";
 import { Debug } from "../debug.js";
 
 const NOT_LOADED = Symbol("NOT_LOADED");

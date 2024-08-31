@@ -19,12 +19,14 @@
       "development": "./lib/development.js",
       "default": "./lib/production.js"
     },
+    "./types": "./lib/types/index.js",
     "./*": "./lib/*",
     "./package.json": "./package.json",
     "./src": {
       "development": "./src/development.ts",
       "default": "./src/production.ts"
     },
+    "./src/types": "./src/types/index.js",
     "./src/*": "./src/*"
   },
   "files": [

@@ -18,8 +18,10 @@
   },
   "devDependencies": {
     "@swc/core": "^1",
+    "@testing-library/dom": "^10",
     "@vitest/coverage-v8": "^2",
     "@wroud/tests-runner": "workspace:^",
+    "happy-dom": "^15",
     "prettier": "^3",
     "rimraf": "^6",
     "typescript": "^5",

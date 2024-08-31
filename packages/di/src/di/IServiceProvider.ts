@@ -1,6 +1,8 @@
-import type { IAsyncServiceScope } from "../interfaces/IAsyncServiceScope.js";
-import type { IServiceScope } from "../interfaces/IServiceScope.js";
-import type { ServiceType } from "../interfaces/ServiceType.js";
+import type {
+  IAsyncServiceScope,
+  IServiceScope,
+  ServiceType,
+} from "../types/index.js";
 import { createService } from "./createService.js";
 
 export const IServiceProvider =

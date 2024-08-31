@@ -1,5 +1,7 @@
-import type { IServiceDescriptor } from "../interfaces/IServiceDescriptor.js";
-import type { IServiceInstanceInfo } from "../interfaces/IServiceInstanceInfo.js";
+import type {
+  IServiceDescriptor,
+  IServiceInstanceInfo,
+} from "../types/index.js";
 import { getNameOfDescriptor } from "../helpers/getNameOfDescriptor.js";
 
 export class ServiceInstanceInfo<T> implements IServiceInstanceInfo<T> {

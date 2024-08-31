@@ -1,4 +1,4 @@
-import type { IServiceConstructor } from "../interfaces/IServiceConstructor.js";
+import type { IServiceConstructor } from "../types/index.js";
 
 export function createService<T>(name: string): IServiceConstructor<T> {
   const obj = {

@@ -1,4 +1,4 @@
-import type { IAsyncServiceImplementationLoader } from "../interfaces/IAsyncServiceImplementationLoader.js";
+import type { IAsyncServiceImplementationLoader } from "../types/index.js";
 
 export function isAsyncServiceImplementationLoader<T>(
   value: any,

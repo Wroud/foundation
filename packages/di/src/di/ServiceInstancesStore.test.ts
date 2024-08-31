@@ -2,7 +2,7 @@
 
 import { describe, expect, it } from "vitest";
 import { ServiceInstancesStore } from "./ServiceInstancesStore.js";
-import type { IServiceDescriptor } from "../interfaces/IServiceDescriptor.js";
+import type { IServiceDescriptor } from "../types/IServiceDescriptor.js";
 import { ServiceLifetime } from "./ServiceLifetime.js";
 
 describe("ServiceInstancesStore", () => {

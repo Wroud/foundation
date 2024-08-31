@@ -1,6 +1,8 @@
-import type { IServiceDescriptor } from "../interfaces/IServiceDescriptor.js";
-import type { IServiceInstanceInfo } from "../interfaces/IServiceInstanceInfo.js";
-import type { IServiceInstancesStore } from "../interfaces/IServiceInstancesStore.js";
+import type {
+  IServiceDescriptor,
+  IServiceInstanceInfo,
+  IServiceInstancesStore,
+} from "../types/index.js";
 import { ServiceInstanceInfo } from "./ServiceInstanceInfo.js";
 import { isServiceProvider } from "../helpers/isServiceProvider.js";
 

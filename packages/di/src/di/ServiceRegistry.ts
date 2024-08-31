@@ -1,6 +1,8 @@
-import type { IServiceMetadata } from "../interfaces/IServiceMetadata.js";
-import type { MapToServicesType } from "../interfaces/MapToServicesType.js";
-import type { ServiceType } from "../interfaces/ServiceType.js";
+import type {
+  IServiceMetadata,
+  MapToServicesType,
+  ServiceType,
+} from "../types/index.js";
 
 export class ServiceRegistry {
   private static readonly services: WeakMap<any, IServiceMetadata> =

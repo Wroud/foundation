@@ -1,4 +1,4 @@
-import type { IServiceCollection } from "../interfaces/IServiceCollection.js";
+import type { IServiceCollection } from "../types/index.js";
 
 export interface IModule {
   name: string;

@@ -3,7 +3,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { ServiceLifetime } from "./ServiceLifetime.js";
 import { ServiceInstanceInfo } from "./ServiceInstanceInfo.js";
-import type { IServiceDescriptor } from "../interfaces/IServiceDescriptor.js";
+import type { IServiceDescriptor } from "../types/IServiceDescriptor.js";
 
 describe("ServiceInstanceInfo", () => {
   it("should not replace instance", async () => {

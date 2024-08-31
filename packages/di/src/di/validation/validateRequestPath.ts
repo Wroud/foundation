@@ -1,4 +1,4 @@
-import type { IServiceDescriptor } from "../../interfaces/IServiceDescriptor.js";
+import type { IServiceDescriptor } from "../../types/IServiceDescriptor.js";
 import { getNameOfDescriptor } from "../../helpers/getNameOfDescriptor.js";
 
 export function validateRequestPath<T>(

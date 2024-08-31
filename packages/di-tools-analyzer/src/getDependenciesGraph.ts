@@ -2,7 +2,7 @@ import { ServiceRegistry, type IServiceCollection } from "@wroud/di";
 import { v4 as uuid } from "uuid";
 import type { IGraph, ILink, INode } from "./IGraph.js";
 import { getNameOfServiceType } from "@wroud/di/helpers/getNameOfServiceType.js";
-import type { IServiceDescriptor } from "@wroud/di/interfaces/IServiceDescriptor.js";
+import type { IServiceDescriptor } from "@wroud/di/types";
 import { loadImplementation } from "./loadImplementation.js";
 import { getNameOfDescriptor } from "@wroud/di/helpers/getNameOfDescriptor.js";
 import { ServiceLifetime } from "@wroud/di/di/ServiceLifetime.js";

@@ -1,6 +1,6 @@
 import { Debug } from "./debug.js";
 import { getNameOfServiceType } from "./helpers/getNameOfServiceType.js";
-import type { IServiceDescriptor } from "./interfaces/IServiceDescriptor.js";
+import type { IServiceDescriptor } from "./types/index.js";
 
 Debug.extended = true;
 Debug.errors = {

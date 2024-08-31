@@ -1,5 +1,4 @@
-import type { IServiceImplementation } from "../interfaces/IServiceImplementation.js";
-import type { ServiceType } from "../interfaces/ServiceType.js";
+import type { IServiceImplementation, ServiceType } from "../types/index.js";
 
 export function getNameOfServiceType(
   service: ServiceType<any> | IServiceImplementation<any>,

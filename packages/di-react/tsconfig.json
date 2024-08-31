@@ -5,6 +5,7 @@
     "rootDir": "src",
     "rootDirs": ["src"],
     "outDir": "lib",
+    "jsx": "react-jsx",
     "incremental": true,
     "composite": true
   },
@@ -12,21 +13,6 @@
   "references": [
     {
       "path": "../di"
-    },
-    {
-      "path": "../di-react"
-    },
-    {
-      "path": "../di-tools-analyzer"
-    },
-    {
-      "path": "../di-tools-codemod"
-    },
-    {
-      "path": "../di-tools-codemod/commonjs.tsconfig.json"
-    },
-    {
-      "path": "../docs"
     }
   ]
 }

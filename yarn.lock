@@ -2750,7 +2750,6 @@ __metadata:
     rimraf: "npm:^6"
     tslib: "npm:^2"
     typescript: "npm:^5"
-    uuid: "npm:^10"
     vitest: "npm:^2"
   peerDependencies:
     react: ">=18.0.0"

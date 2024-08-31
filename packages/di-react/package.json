@@ -1,0 +1,76 @@
+{
+  "name": "@wroud/di-react",
+  "description": "A simple and lightweight dependency injection library for React",
+  "version": "0.0.1",
+  "packageManager": "yarn@4.4.0",
+  "type": "module",
+  "license": "MIT",
+  "author": "Wroud",
+  "homepage": "https://wroud.dev/guide/package/di-bindings/react/introduction",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Wroud/foundation",
+    "directory": "packages/di-react"
+  },
+  "sideEffects": [],
+  "module": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "exports": {
+    ".": "./lib/index.js",
+    "./*": "./lib/*",
+    "./package.json": "./package.json",
+    "./src": "./src/index.ts",
+    "./src/*": "./src/*"
+  },
+  "files": [
+    "LICENSE",
+    "package.json",
+    "README.md",
+    "lib",
+    "!lib/**/*.test.js",
+    "!lib/**/*.test.d.ts",
+    "!lib/**/*.test.d.ts.map",
+    "!lib/**/*.test.js.map",
+    "!lib/tests",
+    "!.tsbuildinfo"
+  ],
+  "scripts": {
+    "build": "tsc -b",
+    "clear": "rimraf ./lib",
+    "test": "tests-runner",
+    "watch:tsc": "tsc -b -w",
+    "dev": "concurrently \"npm:watch:*\""
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6",
+    "@testing-library/react": "^16",
+    "@testing-library/user-event": "^14",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "@types/uuid": "^9",
+    "@vitest/coverage-v8": "^2",
+    "@wroud/tests-runner": "workspace:^",
+    "@wroud/tsconfig": "workspace:^",
+    "concurrently": "^8",
+    "happy-dom": "^15",
+    "react": "^18",
+    "react-dom": "^18",
+    "rimraf": "^6",
+    "tslib": "^2",
+    "typescript": "^5",
+    "vitest": "^2"
+  },
+  "keywords": [
+    "dependency-injection",
+    "di",
+    "react"
+  ],
+  "dependencies": {
+    "@wroud/di": "workspace:^"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0"
+  }
+}

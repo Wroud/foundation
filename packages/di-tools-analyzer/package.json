@@ -44,7 +44,7 @@
   "devDependencies": {
     "@types/d3": "^7",
     "@types/node": "^20",
-    "@types/uuid": "^9",
+    "@types/uuid": "^10",
     "@vitest/coverage-v8": "^2",
     "@wroud/tests-runner": "workspace:^",
     "@wroud/tsconfig": "workspace:^",

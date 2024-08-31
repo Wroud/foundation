@@ -46,6 +46,6 @@
     "vitest": "^2"
   },
   "dependencies": {
-    "jscodeshift": "^0"
+    "jscodeshift": "^17"
   }
 }

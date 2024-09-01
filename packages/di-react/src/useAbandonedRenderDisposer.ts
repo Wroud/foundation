@@ -4,7 +4,7 @@ export function useAbandonedRenderDisposer(dispose: () => any) {
   const tracker = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   if (tracker.current === null) {
-    tracker.current = setTimeout(dispose, 5 * 60 * 1000);
+    tracker.current = setTimeout(dispose, 5 * 1000);
   }
 
   useEffect(() => {

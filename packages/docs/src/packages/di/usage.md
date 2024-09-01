@@ -63,29 +63,20 @@ To use stage 3 decorators, ensure you have TypeScript version 5.0.0 or higher. U
 ```
 
 ::: details Vite config
-esbuild is not support stage 3 decorators yet so you need to switch from `@vitejs/plugin-react` to `unplugin-swc` with next configuration:
+[Browsers is not supporting decorators](https://caniuse.com/decorators) yet so you need to downgrade target to es2023 or lower to run it in dev.
 
 ```diff
-import { defineConfig } from "vite";
--import react from '@vitejs/plugin-react';
-+import swc from "unplugin-swc";
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
 
+// https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [
--    react()
-+    swc.vite({
-+      jsc: {
-+        parser: {
-+          syntax: "typescript",
-+          decorators: true,
-+        },
-+        transform: {
-+          decoratorVersion: "2022-03",
-+        },
-+      },
-+    }),
-  ],
++  esbuild:{
++    target: "es2023"
++  },
+  plugins: [react()],
 });
+
 ```
 
 :::

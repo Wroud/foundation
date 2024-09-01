@@ -7,17 +7,13 @@ outline: deep
 This guide will show you how to use the `@wroud/di` library in different setups: with [decorators (stage 3)](https://github.com/tc39/proposal-decorators), legacy decorators (stage 2), and plain JavaScript. Each section provides configuration tips and example code to help you get started quickly.
 
 ```ts twoslash
-import {
-  injectable,
-  createService,
-  ServiceContainerBuilder
-} from '@wroud/di';
+import { injectable, createService, ServiceContainerBuilder } from "@wroud/di";
 
 interface ILoggerService {
   log(message: string): void;
 }
 
-const ILoggerService = createService<ILoggerService>('ILoggerService');
+const ILoggerService = createService<ILoggerService>("ILoggerService");
 
 @injectable()
 class ConsoleLoggerService implements ILoggerService {
@@ -28,10 +24,10 @@ class ConsoleLoggerService implements ILoggerService {
 
 @injectable(() => [ILoggerService])
 class CounterService {
-  constructor(private logger: ILoggerService) { }
+  constructor(private logger: ILoggerService) {}
 
   action() {
-    this.logger.log('Action executed');
+    this.logger.log("Action executed");
   }
 }
 
@@ -67,28 +63,27 @@ To use stage 3 decorators, ensure you have TypeScript version 5.0.0 or higher. U
 ```
 
 ::: details Vite config
+esbuild is not support stage 3 decorators yet so you need to switch from `@vitejs/plugin-react` to `unplugin-swc` with next configuration:
 
-```ts
+```diff
 import { defineConfig } from "vite";
-import swc from "unplugin-swc";
+-import react from '@vitejs/plugin-react';
++import swc from "unplugin-swc";
 
 export default defineConfig({
   plugins: [
-    swc.vite({
-      jsc: {
-        parser: {
-          syntax: "typescript",
-          decorators: true,
-        },
-        transform: {
-          decoratorMetadata: true,
-          decoratorVersion: "2022-03",
-          react: {
-            runtime: "automatic",
-          },
-        },
-      },
-    }),
+-    react()
++    swc.vite({
++      jsc: {
++        parser: {
++          syntax: "typescript",
++          decorators: true,
++        },
++        transform: {
++          decoratorVersion: "2022-03",
++        },
++      },
++    }),
   ],
 });
 ```
@@ -156,17 +151,17 @@ Enable legacy decorators in your `tsconfig.json`:
 To use `@wroud/di` without decorators, you can manually register class dependencies using `ServiceRegistry`. This method is just as effective and allows you to manage dependencies without relying on decorators.
 
 ```ts twoslash
-import { 
+import {
   createService,
   ServiceContainerBuilder,
-  ServiceRegistry
-} from '@wroud/di';
+  ServiceRegistry,
+} from "@wroud/di";
 
 interface ILoggerService {
   log(message: string): void;
 }
 
-const ILoggerService = createService<ILoggerService>('ILoggerService');
+const ILoggerService = createService<ILoggerService>("ILoggerService");
 
 class ConsoleLoggerService implements ILoggerService {
   log(message: string) {
@@ -175,21 +170,21 @@ class ConsoleLoggerService implements ILoggerService {
 }
 
 class CounterService {
-  constructor(private logger: ILoggerService) { }
+  constructor(private logger: ILoggerService) {}
 
   action() {
-    this.logger.log('Action executed');
+    this.logger.log("Action executed");
   }
 }
 
 function configure() {
   ServiceRegistry.register(CounterService, {
-    name: 'CounterService',
+    name: "CounterService",
     dependencies: [ILoggerService],
   });
 
   ServiceRegistry.register(ConsoleLoggerService, {
-    name: 'ConsoleLoggerService',
+    name: "ConsoleLoggerService",
     dependencies: [],
   });
 
@@ -200,7 +195,6 @@ function configure() {
 
   const counter = serviceProvider.getService(CounterService);
 }
-
 ```
 
 [Try it in the Playground](https://stackblitz.com/edit/wroud-di-no-decorators?file=src%2Fcounter.ts)

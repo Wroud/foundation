@@ -14,7 +14,7 @@
 
 You can install `@wroud/di-react` using npm, yarn, pnpm, or bun:
 
-### npm
+Install via npm:
 
 ```sh
 npm install @wroud/di-react

@@ -2963,7 +2963,7 @@ __metadata:
   resolution: "@wroud/ci@workspace:packages/ci"
   dependencies:
     "@tsconfig/node20": "npm:^20"
-    conventional-changelog-conventionalcommits: "npm:^8.0.0"
+    conventional-changelog-conventionalcommits: "npm:^8"
     conventional-recommended-bump: "npm:^10"
   bin:
     get-version: ./bin/getVersion.js

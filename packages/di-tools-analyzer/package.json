@@ -39,7 +39,8 @@
     "clear": "rimraf ./lib",
     "test": "tests-runner",
     "watch:tsc": "tsc -b -w",
-    "dev": "concurrently \"npm:watch:*\""
+    "dev": "concurrently \"npm:watch:*\"",
+    "ci:prepublish": ""
   },
   "devDependencies": {
     "@types/d3": "^7",

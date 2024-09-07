@@ -51,3 +51,26 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: yarn workspaces foreach -A --no-private npm publish --access public --tolerate-republish
+
+      # - name: 🔴 Delete remote badges branch
+      #   if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      #   run: git push origin --delete badges
+      #   continue-on-error: true
+
+      # - name: ➕ Create badges branch
+      #   if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      #   run: git checkout -b badges
+      #   continue-on-error: true
+
+      # - name: ⚙️ Generating coverage badges
+      #   if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      #   uses: jpb06/coverage-badges-action@latest
+      #   continue-on-error: true
+      #   with:
+      #     coverage-summary-path: |
+      #       ./coverage/coverage-summary.json
+      #     branches: "*"
+      #     target-branch: badges
+
+      # - name: ⬆️ Push badges branch
+      #   run: git push origin badges

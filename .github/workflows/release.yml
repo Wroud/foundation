@@ -47,6 +47,9 @@ jobs:
       - name: Run tests
         run: yarn test:ci
 
+      - name: Run prepublish
+        run: yarn workspaces foreach -A --no-private run prepublish
+
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

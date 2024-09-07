@@ -41,3 +41,4 @@ jobs:
         uses: davelosert/vitest-coverage-report-action@v2
         with:
           json-summary-compare-path: coverage-main/coverage-summary.json
+          vite-config-path: ${working-directory}/packages/tests-runner/vite[st].config.{t|mt|ct|j|mj|cj}s

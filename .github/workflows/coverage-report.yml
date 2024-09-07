@@ -20,7 +20,7 @@ jobs:
         id: sanitize_branch
         run: |
           # Replace invalid characters with a dash '-'
-          SANITIZED_BRANCH=$(echo "${{ github.head_ref }}" | sed 's/[\/\\:*?"<>|]/-/g')
+          SANITIZED_BRANCH=$(echo "${{ github.event.workflow_run.head_branch }}" | sed 's/[\/\\:*?"<>|]/-/g')
           echo "SANITIZED_BRANCH=$SANITIZED_BRANCH" >> $GITHUB_ENV
 
       - uses: actions/download-artifact@v4

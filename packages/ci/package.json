@@ -1,0 +1,14 @@
+{
+  "name": "@wroud/ci",
+  "private": true,
+  "type": "module",
+  "packageManager": "yarn@4.4.0",
+  "bin": {
+    "get-version": "./bin/getVersion.js"
+  },
+  "devDependencies": {
+    "@tsconfig/node20": "^20",
+    "conventional-changelog-conventionalcommits": "^8",
+    "conventional-recommended-bump": "^10"
+  }
+}

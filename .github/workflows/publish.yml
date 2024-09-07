@@ -40,5 +40,8 @@ jobs:
       - name: Run tests
         run: yarn test
 
+      - name: Run prepublish
+        run: yarn workspaces foreach -A --no-private run prepublish
+
       - name: Publish to npm
         run: yarn workspaces foreach -A --no-private npm publish --access public --tolerate-republish

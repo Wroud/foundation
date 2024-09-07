@@ -1,3 +1,4 @@
+## [0.3.1](https://github.com/Wroud/foundation/compare/di-v0.3.0...di-v0.3.1) (2024-09-07)
 ## 0.3.0 (2024-09-07)
 
 ### Features

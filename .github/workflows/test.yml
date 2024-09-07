@@ -41,8 +41,15 @@ jobs:
       - name: Run tests
         run: yarn test:ci
 
+      - name: Sanitize branch name
+        id: sanitize_branch
+        run: |
+          # Replace invalid characters with a dash '-'
+          SANITIZED_BRANCH=$(echo "${{ matrix.branch }}" | sed 's/[\/\\:*?"<>|]/-/g')
+          echo "SANITIZED_BRANCH=$SANITIZED_BRANCH" >> $GITHUB_ENV
+
       - name: Archive code coverage results
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-${{ matrix.branch }}
+          name: coverage-${{ env.SANITIZED_BRANCH }}
           path: coverage

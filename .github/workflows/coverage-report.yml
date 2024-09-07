@@ -15,12 +15,21 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Sanitize branch name
+        id: sanitize_branch
+        run: |
+          # Replace invalid characters with a dash '-'
+          SANITIZED_BRANCH=$(echo "${{ github.head_ref }}" | sed 's/[\/\\:*?"<>|]/-/g')
+          echo "SANITIZED_BRANCH=$SANITIZED_BRANCH" >> $GITHUB_ENV
+
       - uses: actions/download-artifact@v4
         with:
-          name: coverage-${{ github.head_ref }} # github.event.workflow_run.head_branch
+          name: coverage-${{ env.SANITIZED_BRANCH }} # github.event.workflow_run.head_branch
           path: coverage
           github-token: ${{ secrets.GITHUB_TOKEN }}
           run-id: ${{ github.event.workflow_run.id }}
+
       - uses: actions/download-artifact@v4
         with:
           name: coverage-main

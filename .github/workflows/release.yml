@@ -51,8 +51,8 @@ jobs:
           git config user.name github-actions
           git config user.email github-actions@github.com
 
-      - name: Run prepublish
-        run: yarn workspaces foreach -A --no-private run prepublish
+      - name: Run ci:prepublish
+        run: yarn workspaces foreach -A --no-private run ci:prepublish
 
       - name: Release
         env:

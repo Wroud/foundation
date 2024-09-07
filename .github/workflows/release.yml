@@ -1,0 +1,76 @@
+name: Release
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read # for checkout
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+      id-token: write # to enable use of OIDC for npm provenance
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - run: corepack enable
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "lts/*"
+          registry-url: "https://registry.npmjs.org"
+          scope: "@wroud"
+          cache: "yarn"
+
+      - name: Setup .yarnrc.yml
+        run: |
+          yarn config set npmAlwaysAuth true
+          yarn config set npmPublishRegistry "https://registry.npmjs.org"
+          yarn config set npmAuthToken $NPM_AUTH_TOKEN
+        env:
+          NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Install modules
+        run: yarn install --immutable
+
+      - name: Build modules
+        run: yarn build
+
+      - name: Run tests
+        run: yarn test:ci
+
+      - name: Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: yarn workspaces foreach -A --no-private npm publish --access public --tolerate-republish
+
+      # - name: 🔴 Delete remote badges branch
+      #   if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      #   run: git push origin --delete badges
+      #   continue-on-error: true
+
+      # - name: ➕ Create badges branch
+      #   if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      #   run: git checkout -b badges
+      #   continue-on-error: true
+
+      # - name: ⚙️ Generating coverage badges
+      #   if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      #   uses: jpb06/coverage-badges-action@latest
+      #   continue-on-error: true
+      #   with:
+      #     coverage-summary-path: |
+      #       ./coverage/coverage-summary.json
+      #     branches: "*"
+      #     target-branch: badges
+
+      # - name: ⬆️ Push badges branch
+      #   run: git push origin badges

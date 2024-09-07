@@ -1,0 +1,55 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  linux:
+    name: Linux
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    strategy:
+      matrix:
+        branch:
+          - ${{ github.head_ref }}
+          - "main"
+    steps:
+      - uses: actions/checkout@v4
+
+      - run: corepack enable
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "yarn"
+
+      - name: Install modules
+        run: yarn install --immutable
+
+      - name: Build modules
+        run: yarn build
+
+      - name: Run tests
+        run: yarn test:ci
+
+      - name: Sanitize branch name
+        id: sanitize_branch
+        run: |
+          # Replace invalid characters with a dash '-'
+          SANITIZED_BRANCH=$(echo "${{ matrix.branch }}" | sed 's/[\/\\:*?"<>|]/-/g')
+          echo "SANITIZED_BRANCH=$SANITIZED_BRANCH" >> $GITHUB_ENV
+
+      - name: Archive code coverage results
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-${{ env.SANITIZED_BRANCH }}
+          path: coverage

@@ -42,6 +42,10 @@
     "!.tsbuildinfo"
   ],
   "scripts": {
+    "ci:version": "yarn version $(yarn conventional-recommended-bump -p conventionalcommits -t di-v --commit-path .)",
+    "ci:changelog": "conventional-changelog -p conventionalcommits -i CHANGELOG.md -s -t di-v --commit-path .",
+    "ci:tag": "VERSION=$(grep '\"version\"' package.json | awk -F '\"' '{print $4}') && git add package.json CHANGELOG.md && git commit -m \"Release v$VERSION\" && git tag -a \"di-v$VERSION\" -m \"Release version $VERSION\" && git push",
+    "prepublish": "yarn run ci:version && yarn run ci:changelog && yarn run ci:tag",
     "test": "tests-runner",
     "test:ci": "CI=true yarn run test",
     "build": "tsc -b",
@@ -55,6 +59,9 @@
     "@wroud/tests-runner": "workspace:^",
     "@wroud/tsconfig": "workspace:^",
     "concurrently": "^8",
+    "conventional-changelog-cli": "^5",
+    "conventional-changelog-conventionalcommits": "^8",
+    "conventional-recommended-bump": "^10",
     "rimraf": "^6",
     "tslib": "^2",
     "typescript": "^5",

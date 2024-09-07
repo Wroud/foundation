@@ -1,0 +1,43 @@
+name: Report Coverage
+
+on:
+  workflow_run:
+    workflows: ["Test"]
+    types:
+      - completed
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+
+    permissions:
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Sanitize branch name
+        id: sanitize_branch
+        run: |
+          # Replace invalid characters with a dash '-'
+          SANITIZED_BRANCH=$(echo "${{ github.head_ref }}" | sed 's/[\/\\:*?"<>|]/-/g')
+          echo "SANITIZED_BRANCH=$SANITIZED_BRANCH" >> $GITHUB_ENV
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: coverage-${{ env.SANITIZED_BRANCH }} # github.event.workflow_run.head_branch
+          path: coverage
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: coverage-main
+          path: coverage-main
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+
+      - name: "Report Coverage"
+        uses: davelosert/vitest-coverage-report-action@v2
+        with:
+          json-summary-compare-path: coverage-main/coverage-summary.json

@@ -17,11 +17,19 @@
     ]
   },
   "devDependencies": {
+    "@commitlint/cli": "^19",
+    "@commitlint/config-conventional": "^19",
     "@swc/core": "^1",
     "@testing-library/dom": "^10",
     "@vitest/coverage-v8": "^2",
     "@wroud/tests-runner": "workspace:^",
+    "commitizen": "^4",
+    "conventional-changelog-conventionalcommits": "^8",
+    "cz-conventional-changelog": "^3",
     "happy-dom": "^15",
+    "husky": "^9",
+    "is-ci": "^3",
+    "pinst": "^3",
     "prettier": "^3",
     "rimraf": "^6",
     "typescript": "^5",
@@ -31,9 +39,15 @@
     "tslib": "^2"
   },
   "scripts": {
+    "prepare": "is-ci || husky",
     "build": "cd packages/_aggregate && yarn build",
     "clear": "rimraf packages/*/lib",
     "test": "tests-runner run",
     "test:ci": "CI=true yarn run test"
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
   }
 }

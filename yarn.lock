@@ -2958,6 +2958,18 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@wroud/ci@workspace:^, @wroud/ci@workspace:packages/ci":
+  version: 0.0.0-use.local
+  resolution: "@wroud/ci@workspace:packages/ci"
+  dependencies:
+    "@tsconfig/node20": "npm:^20"
+    conventional-changelog-conventionalcommits: "npm:^8.0.0"
+    conventional-recommended-bump: "npm:^10"
+  bin:
+    get-version: ./bin/getVersion.js
+  languageName: unknown
+  linkType: soft
+
 "@wroud/di-react@workspace:packages/di-react":
   version: 0.0.0-use.local
   resolution: "@wroud/di-react@workspace:packages/di-react"
@@ -3031,12 +3043,12 @@ __metadata:
   dependencies:
     "@types/node": "npm:^20"
     "@vitest/coverage-v8": "npm:^2"
+    "@wroud/ci": "workspace:^"
     "@wroud/tests-runner": "workspace:^"
     "@wroud/tsconfig": "workspace:^"
     concurrently: "npm:^8"
     conventional-changelog-cli: "npm:^5"
     conventional-changelog-conventionalcommits: "npm:^8"
-    conventional-recommended-bump: "npm:^10"
     rimraf: "npm:^6"
     tslib: "npm:^2"
     typescript: "npm:^5"

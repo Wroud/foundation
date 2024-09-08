@@ -52,6 +52,8 @@ jobs:
           git config user.email github-actions@github.com
 
       - name: Run ci:prepublish
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: yarn workspaces foreach -A --no-private run ci:prepublish
 
       - name: Release

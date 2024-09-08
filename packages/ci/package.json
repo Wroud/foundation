@@ -7,8 +7,19 @@
     "get-version": "./bin/getVersion.js"
   },
   "devDependencies": {
-    "@tsconfig/node20": "^20",
+    "@tsconfig/node20": "^20"
+  },
+  "exports": {
+    "./gulp": "./gulp/index.js"
+  },
+  "dependencies": {
+    "conventional-changelog": "^6",
+    "conventional-changelog-cli": "^5",
     "conventional-changelog-conventionalcommits": "^8",
-    "conventional-recommended-bump": "^10"
+    "conventional-github-releaser": "^3",
+    "conventional-recommended-bump": "^10",
+    "execa": "^9",
+    "gulp": "^5",
+    "tempy": "^3"
   }
 }

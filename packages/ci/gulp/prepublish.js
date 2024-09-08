@@ -1,7 +1,7 @@
 import { task } from "gulp";
 import { execa } from "execa";
 import { temporaryFile } from "tempy";
-import { rename } from "fs/promises";
+import { rename, readFile } from "fs/promises";
 import conventionalGithubReleaser from "conventional-github-releaser";
 import conventionalChangelog from "conventional-changelog";
 import createPreset from "conventional-changelog-conventionalcommits";
@@ -34,9 +34,9 @@ async function bumpVersion(preset) {
     stdio,
   });
 
-  const { stdout } = await execa`grep '"version"' package.json`
-    .pipe`awk -F '"' '{print $4}'`;
-  return stdout;
+  return await readFile("package.json", "utf8").then(
+    (content) => content.version,
+  );
 }
 
 async function changelog(preset, version) {

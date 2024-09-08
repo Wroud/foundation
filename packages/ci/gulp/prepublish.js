@@ -15,6 +15,7 @@ const commitPath = ".";
 const changeLogFile = "CHANGELOG.md";
 // print output of commands into the terminal
 const stdio = "inherit";
+const commitsConfig = { path: commitPath, ignore: /^chore: release/ };
 
 async function bumpVersion(preset) {
   const bumper = new RestrictEmptyCommits(process.cwd())
@@ -22,7 +23,7 @@ async function bumpVersion(preset) {
     .tag({
       prefix: tagPrefix,
     })
-    .commits({ path: commitPath });
+    .commits(commitsConfig);
 
   const recommendation = await bumper.bump();
 
@@ -46,7 +47,7 @@ async function changelog(preset, version) {
       tagPrefix,
     },
     undefined,
-    { path: commitPath },
+    commitsConfig,
   );
 
   const combinedStream = combineStreams(
@@ -70,11 +71,13 @@ async function commitTagPush(version) {
   await execa("git", ["push", "--follow-tags"], { stdio });
 }
 
-async function githubRelease() {
+async function githubRelease(preset) {
   await new Promise((resolve, reject) => {
     conventionalGithubReleaser(
       { type: "oauth", token: process.env.GITHUB_TOKEN },
-      { preset, tagPrefix, commitPath },
+      { config: preset, tagPrefix },
+      undefined,
+      commitsConfig,
       (err, success) => {
         if (err) {
           reject(err);
@@ -96,5 +99,5 @@ task("ci:prepublish", async () => {
 
   await changelog(preset, version);
   await commitTagPush(version);
-  await githubRelease();
+  await githubRelease(preset);
 });

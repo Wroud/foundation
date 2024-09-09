@@ -73,11 +73,10 @@ async function commitTagPush(version: string) {
   const commitMsg = `chore: release ${version}`;
   await execa("git", ["add", "package.json", "CHANGELOG.md"], { stdio });
   await execa("git", ["commit", "--message", commitMsg], { stdio });
-  await execa("git", ["tag", `${tagPrefix}${version}`], { stdio });
-  await execa("git", ["push"], { stdio });
-  await execa("git", ["push", "origin", "tag", `${tagPrefix}${version}`], {
+  await execa("git", ["tag", "-a", `${tagPrefix}${version}`, "-m", commitMsg], {
     stdio,
   });
+  await execa("git", ["push", "--follow-tags"], { stdio });
 }
 
 async function publishGithubRelease(preset: Preset) {

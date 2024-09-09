@@ -55,7 +55,7 @@ export async function githubRelease<
   const octokit = new Octokit({ auth: auth.token });
 
   changelogOpts = {
-    transform,
+    transform: transform.bind(null, changelogOpts.tagPrefix ?? "v") as any,
     releaseCount: 1,
     ...changelogOpts,
   };
@@ -106,7 +106,7 @@ export async function githubRelease<
             const options = {
               owner,
               repo: repository,
-              tag_name: version,
+              tag_name: chunk.keyCommit["tag"],
               name: version,
               body: chunk.log,
               draft: false,

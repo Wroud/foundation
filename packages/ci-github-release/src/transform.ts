@@ -1,8 +1,9 @@
 import type { Commit } from "conventional-commits-parser";
 import type { Options } from "conventional-changelog-core";
-import semverRegex from "semver-regex";
+import { semverRegex } from "./semverRegex.js";
 
 export function transform<T extends Commit = Commit>(
+  prefix: string,
   chunk: Commit,
   cb: Options.Transform.Callback<T>,
 ) {
@@ -10,7 +11,12 @@ export function transform<T extends Commit = Commit>(
 
   const gitTags = chunk["gitTags"];
   if (typeof gitTags === "string") {
-    chunk["version"] = (gitTags.match(semverRegex()) || [])[0];
+    const tag = /tag:\s([^,)]+)/gi.exec(gitTags)?.[1];
+
+    if (tag) {
+      chunk["tag"] = tag;
+      chunk["version"] = (tag.match(semverRegex(prefix)) || [])[0];
+    }
   }
 
   if (chunk["committerDate"]) {

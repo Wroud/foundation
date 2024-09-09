@@ -24,7 +24,6 @@
     "conventional-changelog": "^6",
     "conventional-changelog-conventionalcommits": "^8",
     "git-semver-tags": "^8",
-    "semver": "^7",
-    "semver-regex": "^4"
+    "semver": "^7"
   }
 }

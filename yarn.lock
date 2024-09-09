@@ -3287,7 +3287,6 @@ __metadata:
     conventional-changelog-conventionalcommits: "npm:^8"
     git-semver-tags: "npm:^8"
     semver: "npm:^7"
-    semver-regex: "npm:^4"
     typescript: "npm:^5"
   languageName: unknown
   linkType: soft
@@ -8783,13 +8782,6 @@ __metadata:
   dependencies:
     sver: "npm:^1.8.3"
   checksum: 10c0/7376dd0a56c72f22b27d0a266eb58b4a15cd4a8b726b2e9a654e29bb88c9b0d1a44a9492ee6867b5cd623d36fe0a8cec689ac4545206ddecb80fd466fdbd43dc
-  languageName: node
-  linkType: hard
-
-"semver-regex@npm:^4":
-  version: 4.0.5
-  resolution: "semver-regex@npm:4.0.5"
-  checksum: 10c0/c270eda133691dfaab90318df995e96222e4c26c47b17f7c8bd5e5fe88b81ed67b59695fe27546e0314b0f0423c7faed1f93379ad9db47c816df2ddf770918ff
   languageName: node
   linkType: hard
 

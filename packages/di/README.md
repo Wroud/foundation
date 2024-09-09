@@ -59,6 +59,10 @@ const logger = provider.getService(Logger);
 logger.log("Hello world!");
 ```
 
+## Changelog
+
+All notable changes to this project will be documented in the [CHANGELOG](./CHANGELOG.md) file.
+
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](./LICENSE) file for details.

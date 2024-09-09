@@ -71,9 +71,11 @@ export async function githubRelease<
     throw new Error("No semver tags found");
   }
 
-  const { releaseCount = 1 } = changelogOpts;
-  if (releaseCount !== 0) {
-    gitRawCommitsOpts = { from: tags[releaseCount], ...gitRawCommitsOpts };
+  if (changelogOpts.releaseCount) {
+    gitRawCommitsOpts = {
+      from: tags[changelogOpts.releaseCount],
+      ...gitRawCommitsOpts,
+    };
   }
 
   gitRawCommitsOpts.to = gitRawCommitsOpts.to || tags[0];

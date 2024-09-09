@@ -1,7 +1,7 @@
 {
   "name": "@wroud/di",
   "description": "A simple and lightweight dependency injection library for JavaScript and TypeScript",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "packageManager": "yarn@4.4.0",
   "type": "module",
   "license": "MIT",

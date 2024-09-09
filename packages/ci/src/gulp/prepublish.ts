@@ -18,6 +18,7 @@ const changeLogFile = "CHANGELOG.md";
 // print output of commands into the terminal
 const stdio = "inherit";
 const commitsConfig = { path: commitPath, ignore: /^chore: release/ };
+const commitsConfig = { path: commitPath, ignore: /^chore: release/ };
 
 async function bumpVersion(preset: Preset): Promise<string | null> {
   const bumper = new RestrictEmptyCommits(process.cwd())
@@ -25,6 +26,7 @@ async function bumpVersion(preset: Preset): Promise<string | null> {
     .tag({
       prefix: tagPrefix,
     })
+    .commits(commitsConfig);
     .commits(commitsConfig);
 
   const recommendation = await bumper.bump();

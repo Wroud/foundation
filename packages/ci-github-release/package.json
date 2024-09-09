@@ -1,6 +1,7 @@
 {
-  "name": "@wroud/ci",
+  "name": "@wroud/ci-github-release",
   "private": true,
+  "version": "0.0.1",
   "type": "module",
   "packageManager": "yarn@4.4.0",
   "devDependencies": {
@@ -9,21 +10,21 @@
     "@types/conventional-changelog-core": "^4",
     "@types/conventional-changelog-writer": "^4",
     "@types/conventional-commits-parser": "^5",
-    "@types/gulp": "^4",
+    "@types/git-semver-tags": "^7",
     "@types/node": "^20",
+    "@types/semver": "^7",
     "@wroud/tsconfig": "workspace:^",
     "typescript": "^5"
   },
   "exports": {
-    "./gulp": "./lib/gulp/index.js"
+    ".": "./lib/github-release.js"
   },
   "dependencies": {
-    "@wroud/ci-github-release": "workspace:^",
+    "@octokit/rest": "^21",
     "conventional-changelog": "^6",
     "conventional-changelog-conventionalcommits": "^8",
-    "conventional-recommended-bump": "^10",
-    "execa": "^9",
-    "gulp": "^5",
-    "tempy": "^3"
+    "git-semver-tags": "^8",
+    "semver": "^7",
+    "semver-regex": "^4"
   }
 }

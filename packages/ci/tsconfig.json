@@ -5,32 +5,12 @@
     "rootDir": "src",
     "rootDirs": ["src"],
     "outDir": "lib",
+    "types": ["node"],
     "incremental": true,
     "composite": true
   },
   "include": ["src"],
   "references": [
-    {
-      "path": "../di"
-    },
-    {
-      "path": "../di-react"
-    },
-    {
-      "path": "../di-tools-analyzer"
-    },
-    {
-      "path": "../di-tools-codemod"
-    },
-    {
-      "path": "../di-tools-codemod/commonjs.tsconfig.json"
-    },
-    {
-      "path": "../docs"
-    },
-    {
-      "path": "../ci"
-    },
     {
       "path": "../ci-github-release"
     }

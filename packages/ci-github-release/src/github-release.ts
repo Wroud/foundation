@@ -27,6 +27,7 @@ type Options<
 /**
  * Create a GitHub release for the latest version in the repository.
  *
+ * @param packageName - The name of the package.
  * @param auth - The authentication options for the GitHub API.
  * @param changelogOpts - Options for the changelog generation.
  * @param context - The context object with owner and repository.
@@ -38,6 +39,7 @@ export async function githubRelease<
   TCommit extends Commit = Commit,
   TContext extends WriterContext = Context,
 >(
+  packageName: string,
   auth: IAuthOptions,
   changelogOpts: Options<TCommit, TContext> = {},
   context: Partial<TContext> = {},
@@ -105,7 +107,7 @@ export async function githubRelease<
               owner,
               repo: repository,
               tag_name: chunk.keyCommit["tag"],
-              name: version,
+              name: `${packageName}@${version}`,
               body: chunk.log,
               draft: false,
               prerelease: (semver.parse(version)?.prerelease || []).length > 0,

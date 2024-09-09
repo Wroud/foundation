@@ -12,6 +12,7 @@ import { combineStreams } from "./combineStreams.js";
 import { createReadStream, createWriteStream, existsSync } from "fs";
 import { githubRelease } from "@wroud/ci-github-release";
 import { releaseCommitRegex } from "./releaseCommitRegex.js";
+import type { IPackageJson } from "./IPackageJson.js";
 
 const tagPrefix = "di-v";
 const commitPath = ".";
@@ -19,6 +20,12 @@ const changeLogFile = "CHANGELOG.md";
 // print output of commands into the terminal
 const stdio = "inherit";
 const commitsConfig = { path: commitPath /*, ignore: releaseCommitRegex*/ };
+
+async function readPackageJson(): Promise<IPackageJson> {
+  return await readFile("package.json", "utf8").then((data) =>
+    JSON.parse(data),
+  );
+}
 
 async function bumpVersion(preset: Preset): Promise<string | null> {
   const bumper = new RestrictEmptyCommits(process.cwd())
@@ -38,9 +45,7 @@ async function bumpVersion(preset: Preset): Promise<string | null> {
     stdio,
   });
 
-  return await readFile("package.json", "utf8")
-    .then((data) => JSON.parse(data))
-    .then((content) => content.version);
+  return await readPackageJson().then((content) => content.version || null);
 }
 
 async function changelog(preset: Preset, version: string) {
@@ -70,8 +75,8 @@ async function changelog(preset: Preset, version: string) {
   return version;
 }
 
-async function commitTagPush(version: string) {
-  const commitMsg = `chore: release ${version}`;
+async function commitTagPush(version: string, packageName: string) {
+  const commitMsg = `chore: release ${packageName}@${version}`;
   await execa("git", ["add", "package.json", "CHANGELOG.md"], { stdio });
   await execa("git", ["commit", "--message", commitMsg], { stdio });
   await execa("git", ["tag", "-a", `${tagPrefix}${version}`, "-m", commitMsg], {
@@ -80,7 +85,7 @@ async function commitTagPush(version: string) {
   await execa("git", ["push", "--follow-tags"], { stdio });
 }
 
-async function publishGithubRelease(preset: Preset) {
+async function publishGithubRelease(preset: Preset, packageName: string) {
   const token = process.env["GITHUB_TOKEN"];
   const [owner, repository] =
     process.env["GITHUB_REPOSITORY"]?.split("/") || [];
@@ -90,6 +95,7 @@ async function publishGithubRelease(preset: Preset) {
   }
 
   await githubRelease(
+    packageName,
     { type: "oauth", token },
     { config: preset, tagPrefix },
     { owner, repository },
@@ -98,6 +104,7 @@ async function publishGithubRelease(preset: Preset) {
 }
 
 task("ci:prepublish", async () => {
+  const packageJson = await readPackageJson();
   const preset = await createPreset();
   const version = await bumpVersion(preset);
 
@@ -107,6 +114,6 @@ task("ci:prepublish", async () => {
   }
 
   await changelog(preset, version);
-  await commitTagPush(version);
-  await publishGithubRelease(preset);
+  await commitTagPush(version, packageJson.name);
+  await publishGithubRelease(preset, packageJson.name);
 });

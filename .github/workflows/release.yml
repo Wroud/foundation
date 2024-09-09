@@ -48,8 +48,8 @@ jobs:
         run: yarn test:ci
 
       - run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
 
       - name: Run ci:prepublish
         env:

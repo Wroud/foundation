@@ -1,10 +1,9 @@
 // @vitest-environment happy-dom
 
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { renderHook } from "@testing-library/react";
 import "./tests/testingLibrary.js";
 import { useAbandonedRenderDisposer } from "./useAbandonedRenderDisposer.js";
-import { afterEach } from "node:test";
 
 describe("useAbandonedRenderDisposer", () => {
   afterEach(() => {

@@ -1,6 +1,15 @@
 // @vitest-environment happy-dom
 
-import { describe, expect, it, vi } from "vitest";
+import {
+  afterAll,
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+  type MockInstance,
+} from "vitest";
 import { renderHook, screen } from "@testing-library/react";
 import "./tests/testingLibrary.js";
 import { useServiceAsync } from "./useServiceAsync.js";
@@ -12,16 +21,28 @@ import {
 } from "@wroud/di";
 import { ServiceProvider } from "./ServiceProvider.js";
 import { Suspense } from "react";
-import { afterEach } from "node:test";
 
 describe("useServiceAsync", () => {
+  let consoleWarn: MockInstance<
+    (message?: any, ...optionalParams: any[]) => void
+  >;
+
+  beforeEach(() => {
+    consoleWarn = vi.spyOn(console, "warn");
+    consoleWarn.mockImplementation(() => {});
+  });
+
   afterEach(() => {
     vi.restoreAllMocks();
     vi.useRealTimers();
+    consoleWarn.mockReset();
   });
+
+  afterAll(() => {
+    consoleWarn.mockReset();
+  });
+
   it("should resolve single service", async () => {
-    const consoleWarn = vi.spyOn(console, "warn");
-    consoleWarn.mockImplementation(() => {});
     const builder = new ServiceContainerBuilder();
 
     @injectable()
@@ -62,8 +83,6 @@ describe("useServiceAsync", () => {
     );
   });
   it("should resolve service with deps", async () => {
-    const consoleWarn = vi.spyOn(console, "warn");
-    consoleWarn.mockImplementation(() => {});
     const builder = new ServiceContainerBuilder();
 
     @injectable()

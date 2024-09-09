@@ -3,7 +3,7 @@
 [![ESM-only package][package]][package-url]
 [![NPM version][npm]][npm-url]
 
-<!-- [![Install size][size]][size-url] test -->
+<!-- [![Install size][size]][size-url] -->
 
 [package]: https://img.shields.io/badge/package-ESM--only-ffe536.svg
 [package-url]: https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c

@@ -88,8 +88,6 @@ export async function githubRelease<
       parserOpts,
       writerOpts,
     )
-      .on("error", reject)
-      .on("end", resolve)
       .pipe(
         new Transform({
           objectMode: true,
@@ -119,6 +117,8 @@ export async function githubRelease<
               .catch(callback);
           },
         }),
-      );
+      )
+      .on("error", reject)
+      .on("end", resolve);
   });
 }

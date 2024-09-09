@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
 
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { renderHook, screen } from "@testing-library/react";
 import "./tests/testingLibrary.js";
 import { useServicesAsync } from "./useServicesAsync.js";
@@ -12,7 +12,6 @@ import {
 } from "@wroud/di";
 import { ServiceProvider } from "./ServiceProvider.js";
 import { Suspense } from "react";
-import { afterEach } from "node:test";
 
 describe("useServicesAsync", () => {
   afterEach(() => {

@@ -27,6 +27,12 @@
     },
     {
       "path": "../docs"
+    },
+    {
+      "path": "../ci"
+    },
+    {
+      "path": "../ci-github-release"
     }
   ]
 }

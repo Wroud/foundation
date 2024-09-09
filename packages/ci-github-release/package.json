@@ -1,0 +1,30 @@
+{
+  "name": "@wroud/ci-github-release",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "packageManager": "yarn@4.4.0",
+  "devDependencies": {
+    "@tsconfig/node20": "^20",
+    "@types/conventional-changelog": "^3",
+    "@types/conventional-changelog-core": "^4",
+    "@types/conventional-changelog-writer": "^4",
+    "@types/conventional-commits-parser": "^5",
+    "@types/git-semver-tags": "^7",
+    "@types/node": "^20",
+    "@types/semver": "^7",
+    "@wroud/tsconfig": "workspace:^",
+    "typescript": "^5"
+  },
+  "exports": {
+    ".": "./lib/github-release.js"
+  },
+  "dependencies": {
+    "@octokit/rest": "^21",
+    "conventional-changelog": "^6",
+    "conventional-changelog-conventionalcommits": "^8",
+    "git-semver-tags": "^8",
+    "semver": "^7",
+    "semver-regex": "^4"
+  }
+}

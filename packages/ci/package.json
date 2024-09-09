@@ -3,20 +3,24 @@
   "private": true,
   "type": "module",
   "packageManager": "yarn@4.4.0",
-  "bin": {
-    "get-version": "./bin/getVersion.js"
-  },
   "devDependencies": {
-    "@tsconfig/node20": "^20"
+    "@tsconfig/node20": "^20",
+    "@types/conventional-changelog": "^3",
+    "@types/conventional-changelog-core": "^4",
+    "@types/conventional-changelog-writer": "^4",
+    "@types/conventional-commits-parser": "^5",
+    "@types/gulp": "^4",
+    "@types/node": "^20",
+    "@wroud/tsconfig": "workspace:^",
+    "typescript": "^5"
   },
   "exports": {
-    "./gulp": "./gulp/index.js"
+    "./gulp": "./lib/gulp/index.js"
   },
   "dependencies": {
+    "@wroud/ci-github-release": "workspace:^",
     "conventional-changelog": "^6",
-    "conventional-changelog-cli": "^5",
     "conventional-changelog-conventionalcommits": "^8",
-    "conventional-github-releaser": "^3",
     "conventional-recommended-bump": "^10",
     "execa": "^9",
     "gulp": "^5",

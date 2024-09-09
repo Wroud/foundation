@@ -1,0 +1,18 @@
+{
+  "extends": "@wroud/tsconfig/tsconfig.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "./lib/.tsbuildinfo",
+    "rootDir": "src",
+    "rootDirs": ["src"],
+    "outDir": "lib",
+    "types": ["node"],
+    "incremental": true,
+    "composite": true
+  },
+  "include": ["src"],
+  "references": [
+    {
+      "path": "../ci-github-release"
+    }
+  ]
+}

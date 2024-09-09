@@ -54,8 +54,7 @@ jobs:
       - name: Run ci:prepublish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
-          GITHUB_REPOSITORY_NAME: ${{ github.repository }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
         run: yarn workspaces foreach -A --no-private run ci:prepublish
 
       - name: Release

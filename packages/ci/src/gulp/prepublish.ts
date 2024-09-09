@@ -11,13 +11,14 @@ import { pipeline } from "stream/promises";
 import { combineStreams } from "./combineStreams.js";
 import { createReadStream, createWriteStream, existsSync } from "fs";
 import { githubRelease } from "@wroud/ci-github-release";
+import { releaseCommitRegex } from "./releaseCommitRegex.js";
 
 const tagPrefix = "di-v";
 const commitPath = ".";
 const changeLogFile = "CHANGELOG.md";
 // print output of commands into the terminal
 const stdio = "inherit";
-const commitsConfig = { path: commitPath, ignore: /^chore: release/ };
+const commitsConfig = { path: commitPath /*, ignore: releaseCommitRegex*/ };
 
 async function bumpVersion(preset: Preset): Promise<string | null> {
   const bumper = new RestrictEmptyCommits(process.cwd())
@@ -25,7 +26,7 @@ async function bumpVersion(preset: Preset): Promise<string | null> {
     .tag({
       prefix: tagPrefix,
     })
-    .commits(commitsConfig);
+    .commits({ ...commitsConfig, ignore: releaseCommitRegex });
 
   const recommendation = await bumper.bump();
 
@@ -81,8 +82,8 @@ async function commitTagPush(version: string) {
 
 async function publishGithubRelease(preset: Preset) {
   const token = process.env["GITHUB_TOKEN"];
-  const owner = process.env["GITHUB_REPOSITORY_OWNER"];
-  const repository = process.env["GITHUB_REPOSITORY_NAME"];
+  const [owner, repository] =
+    process.env["GITHUB_REPOSITORY"]?.split("/") || [];
 
   if (!token) {
     throw new Error("Expected GITHUB_TOKEN environment variable");

@@ -1,0 +1,21 @@
+{
+  "name": "@wroud/semver-bump",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "packageManager": "yarn@4.4.0",
+  "devDependencies": {
+    "@tsconfig/node20": "^20",
+    "@types/node": "^20",
+    "@wroud/tsconfig": "workspace:^",
+    "conventional-commits-parser": "^6",
+    "typescript": "^5"
+  },
+  "exports": {
+    ".": "./lib/getBump.js"
+  },
+  "dependencies": {
+    "@conventional-changelog/git-client": "^1",
+    "conventional-commits-filter": "^5"
+  }
+}

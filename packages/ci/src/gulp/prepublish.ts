@@ -6,20 +6,22 @@ import conventionalChangelog from "conventional-changelog";
 import createPreset, {
   type Preset,
 } from "conventional-changelog-conventionalcommits";
-import { RestrictEmptyCommits } from "./RestrictEmptyCommits.js";
 import { pipeline } from "stream/promises";
 import { combineStreams } from "./combineStreams.js";
 import { createReadStream, createWriteStream, existsSync } from "fs";
 import { githubRelease } from "@wroud/ci-github-release";
-import { releaseCommitRegex } from "./releaseCommitRegex.js";
 import type { IPackageJson } from "./IPackageJson.js";
+import { getBump } from "@wroud/semver-bump";
+import type { GetCommitsParams } from "@conventional-changelog/git-client";
 
 const tagPrefix = "di-v";
 const commitPath = ".";
 const changeLogFile = "CHANGELOG.md";
 // print output of commands into the terminal
 const stdio = "inherit";
-const commitsConfig = { path: commitPath /*, ignore: releaseCommitRegex*/ };
+const commitsConfig: GetCommitsParams = {
+  path: commitPath,
+};
 
 async function readPackageJson(): Promise<IPackageJson> {
   return await readFile("package.json", "utf8").then((data) =>
@@ -28,20 +30,16 @@ async function readPackageJson(): Promise<IPackageJson> {
 }
 
 async function bumpVersion(preset: Preset): Promise<string | null> {
-  const bumper = new RestrictEmptyCommits(process.cwd())
-    .loadPreset(preset)
-    .tag({
-      prefix: tagPrefix,
-    })
-    .commits({ ...commitsConfig, ignore: releaseCommitRegex });
+  const bump = await getBump(
+    { prefix: tagPrefix },
+    { ...preset.commits, ...commitsConfig },
+  );
 
-  const recommendation = await bumper.bump();
-
-  if (!recommendation.releaseType) {
+  if (!bump) {
     return null;
   }
 
-  await execa("yarn", ["version", recommendation.releaseType], {
+  await execa("yarn", ["version", bump], {
     stdio,
   });
 
@@ -59,7 +57,7 @@ async function changelog(preset: Preset, version: string) {
       tagPrefix,
     },
     undefined,
-    commitsConfig,
+    { path: commitPath },
   );
 
   const combinedStream = combineStreams(
@@ -99,7 +97,7 @@ async function publishGithubRelease(preset: Preset, packageName: string) {
     { type: "oauth", token },
     { config: preset, tagPrefix },
     { owner, repository },
-    commitsConfig,
+    { path: commitPath },
   );
 }
 

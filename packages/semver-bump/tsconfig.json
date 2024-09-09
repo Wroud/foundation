@@ -10,12 +10,5 @@
     "composite": true
   },
   "include": ["src"],
-  "references": [
-    {
-      "path": "../ci-github-release"
-    },
-    {
-      "path": "../semver-bump"
-    }
-  ]
+  "references": []
 }

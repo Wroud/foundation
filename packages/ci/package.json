@@ -4,6 +4,7 @@
   "type": "module",
   "packageManager": "yarn@4.4.0",
   "devDependencies": {
+    "@conventional-changelog/git-client": "^1",
     "@tsconfig/node20": "^20",
     "@types/conventional-changelog": "^3",
     "@types/conventional-changelog-core": "^4",
@@ -19,9 +20,9 @@
   },
   "dependencies": {
     "@wroud/ci-github-release": "workspace:^",
+    "@wroud/semver-bump": "workspace:^",
     "conventional-changelog": "^6",
     "conventional-changelog-conventionalcommits": "^8",
-    "conventional-recommended-bump": "^10",
     "execa": "^9",
     "gulp": "^5",
     "tempy": "^3"

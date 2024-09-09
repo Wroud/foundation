@@ -1,3 +1,4 @@
+## [0.8.3](https://github.com/Wroud/foundation/compare/di-v0.8.2...di-v0.8.3) (2024-09-09)
 ## [0.8.2](https://github.com/Wroud/foundation/compare/di-v0.8.1...di-v0.8.2) (2024-09-09)
 ## [0.8.1](https://github.com/Wroud/foundation/compare/di-v0.8.0...di-v0.8.1) (2024-09-09)
 ## 0.8.0 (2024-09-09)

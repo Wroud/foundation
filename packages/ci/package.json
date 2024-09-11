@@ -2,7 +2,7 @@
   "name": "@wroud/ci",
   "private": true,
   "type": "module",
-  "packageManager": "yarn@4.4.0",
+  "packageManager": "yarn@4.4.1",
   "devDependencies": {
     "@conventional-changelog/git-client": "^1",
     "@tsconfig/node20": "^20",
@@ -12,15 +12,15 @@
     "@types/conventional-commits-parser": "^5",
     "@types/gulp": "^4",
     "@types/node": "^20",
-    "@wroud/tsconfig": "workspace:^",
+    "@wroud/tsconfig": "workspace:*",
     "typescript": "^5"
   },
   "exports": {
     "./gulp": "./lib/gulp/index.js"
   },
   "dependencies": {
-    "@wroud/ci-github-release": "workspace:^",
-    "@wroud/semver-bump": "workspace:^",
+    "@wroud/ci-github-release": "workspace:^0",
+    "@wroud/semver-bump": "workspace:^0",
     "conventional-changelog": "^6",
     "conventional-changelog-conventionalcommits": "^8",
     "execa": "^9",

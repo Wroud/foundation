@@ -111,30 +111,26 @@ describe("test", () => {
 });
 
 async function testFixture(names: string[], options?: IMigrationOptions) {
+  const fixturesFolder = join(__dirname, "..", "..", "__testfixtures__");
   for (const name of names) {
     const INPUT = await readFile(
-      join(__dirname, "..", `__testfixtures__/${name}.input.ts`),
+      join(fixturesFolder, `${name}.input.ts`),
       "utf-8",
     );
     const OUTPUT = await readFile(
-      join(__dirname, "..", `__testfixtures__/${name}.output.ts`),
+      join(fixturesFolder, `${name}.output.ts`),
       "utf-8",
     );
 
-    const moduleFixturePath = join(
-      __dirname,
-      "..",
-      `__testfixtures__/${name}.module.output.ts`,
-    );
+    const moduleFixturePath = join(fixturesFolder, `${name}.module.output.ts`);
     let OUTPUT_MODULE = undefined;
     try {
       OUTPUT_MODULE = await readFile(moduleFixturePath, "utf-8");
     } catch {}
 
     const packageJSONFixturePath = join(
-      __dirname,
-      "..",
-      `__testfixtures__/${name}.package_json.output.ts`,
+      fixturesFolder,
+      `${name}.package_json.output.ts`,
     );
     let OUTPUT_PACKAGE_JSON = undefined;
     try {

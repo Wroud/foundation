@@ -2,7 +2,7 @@
   "name": "foundation",
   "private": true,
   "version": "0.0.1",
-  "packageManager": "yarn@4.4.0",
+  "packageManager": "yarn@4.4.1",
   "type": "module",
   "license": "MIT",
   "author": "Wroud",
@@ -22,7 +22,7 @@
     "@swc/core": "^1",
     "@testing-library/dom": "^10",
     "@vitest/coverage-v8": "^2",
-    "@wroud/tests-runner": "workspace:^",
+    "@wroud/tests-runner": "workspace:*",
     "commitizen": "^4",
     "cz-conventional-changelog": "^3",
     "happy-dom": "^15",
@@ -40,7 +40,7 @@
   "scripts": {
     "prepare": "is-ci || husky",
     "build": "cd packages/_aggregate && yarn build",
-    "clear": "rimraf packages/*/lib",
+    "clear": "rimraf --glob 'packages/*/lib' 'packages/*/node_modules' coverage node_modules",
     "test": "tests-runner run",
     "test:ci": "CI=true yarn run test"
   },

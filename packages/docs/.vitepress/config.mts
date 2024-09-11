@@ -11,6 +11,7 @@ import { nav } from "./data/nav.ts";
 export default defineConfig({
   title: "Wroud Foundation",
   description: "Tools for modern js",
+  outDir: "./lib",
   srcDir: "./src",
   cleanUrls: true,
   lastUpdated: true,

@@ -1,9 +1,12 @@
 name: Release
+
 on:
-  workflow_dispatch:
-  push:
-    branches:
-      - main
+  workflow_call:
+    inputs:
+      build-run-id:
+        description: "The run ID of the build job"
+        required: true
+        type: string
 
 permissions:
   contents: read # for checkout
@@ -26,6 +29,39 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "lts/*"
+          cache: "yarn"
+
+      - name: Install modules
+        run: yarn install --immutable
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ inputs.build-run-id }}
+
+      - run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+
+      - name: Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: yarn workspaces foreach -A --topological-dev --no-private run ci:prepublish
+
+  publish-npm:
+    needs: release
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      id-token: write # to enable use of OIDC for npm provenance
+    steps:
+      - uses: actions/checkout@v4
+      - run: corepack enable
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "lts/*"
           registry-url: "https://registry.npmjs.org"
           scope: "@wroud"
           cache: "yarn"
@@ -41,26 +77,16 @@ jobs:
       - name: Install modules
         run: yarn install --immutable
 
-      - name: Build modules
-        run: yarn build
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+          run-id: ${{ inputs.build-run-id }}
 
-      - name: Run tests
-        run: yarn test:ci
-
-      - run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email 'github-actions[bot]@users.noreply.github.com'
-
-      - name: Run ci:prepublish
+      - name: Publish to npm
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
-        run: yarn workspaces foreach -A --no-private run ci:prepublish
-
-      - name: Release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: yarn workspaces foreach -A --no-private npm publish --access public --tolerate-republish
+        run: yarn workspaces foreach -A --topological-dev --no-private npm publish --access public --tolerate-republish
 
       # - name: 🔴 Delete remote badges branch
       #   if: github.event_name == 'push' && github.ref == 'refs/heads/main'

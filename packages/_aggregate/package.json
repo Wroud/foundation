@@ -2,7 +2,7 @@
   "name": "@wroud/_aggregate",
   "version": "0.0.1",
   "private": true,
-  "packageManager": "yarn@4.4.0",
+  "packageManager": "yarn@4.4.1",
   "type": "module",
   "license": "MIT",
   "author": "Wroud",
@@ -17,7 +17,7 @@
     "tslib": "^2"
   },
   "devDependencies": {
-    "@wroud/tsconfig": "workspace:^",
+    "@wroud/tsconfig": "workspace:*",
     "concurrently": "^8",
     "rimraf": "^6",
     "typescript": "^5"

@@ -1,0 +1,38 @@
+name: Build
+
+on:
+  workflow_call:
+    outputs:
+      run-id:
+        value: ${{ jobs.build-and-test.outputs.run-id }}
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    permissions:
+      contents: read
+
+    outputs:
+      run-id: ${{ github.run_id }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "lts/*"
+          cache: "yarn"
+
+      - name: Build and test modules
+        run: |
+          yarn install --immutable
+          yarn build
+          yarn test:ci
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: |
+            packages/*/lib/**
+            coverage/**

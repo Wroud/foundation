@@ -16,8 +16,8 @@
 coverage
 
 # build artifacts
-dist
-lib
+packages/**/dist
+packages/**/lib
 
 # macOS
 .DS_Store

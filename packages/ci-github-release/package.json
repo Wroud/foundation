@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.1",
   "type": "module",
-  "packageManager": "yarn@4.4.0",
+  "packageManager": "yarn@4.4.1",
   "devDependencies": {
     "@tsconfig/node20": "^20",
     "@types/conventional-changelog": "^3",
@@ -13,7 +13,7 @@
     "@types/git-semver-tags": "^7",
     "@types/node": "^20",
     "@types/semver": "^7",
-    "@wroud/tsconfig": "workspace:^",
+    "@wroud/tsconfig": "workspace:*",
     "typescript": "^5"
   },
   "exports": {

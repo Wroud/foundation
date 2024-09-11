@@ -1,10 +1,10 @@
 {
   "extends": "@wroud/tsconfig/tsconfig.json",
   "compilerOptions": {
-    "tsBuildInfoFile": "./lib/.tsbuildinfo",
+    "tsBuildInfoFile": "./lib/esm/.tsbuildinfo",
     "rootDir": "src",
     "rootDirs": ["src"],
-    "outDir": "lib",
+    "outDir": "lib/esm",
     "incremental": true,
     "composite": true
   },

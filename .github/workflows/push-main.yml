@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-main
+  cancel-in-progress: false
+
+jobs:
+  build:
+    uses: ./.github/workflows/build.yml
+
+  release:
+    needs: build
+    uses: ./.github/workflows/release.yml
+    with:
+      build-run-id: ${{ needs.build.outputs.run-id }}
+
+  build-docs:
+    needs: build
+    uses: ./.github/workflows/build-docs.yml
+    with:
+      build-run-id: ${{ needs.build.outputs.run-id }}

@@ -2,7 +2,7 @@
   "name": "@wroud/di-tools-codemod",
   "description": "",
   "version": "0.1.0",
-  "packageManager": "yarn@4.4.0",
+  "packageManager": "yarn@4.4.1",
   "type": "module",
   "license": "MIT",
   "author": "Wroud",
@@ -15,7 +15,7 @@
   "sideEffects": [],
   "bin": "./bin/di-tools-codemod.cjs",
   "exports": {
-    ".": "./commonjs/index.js",
+    ".": "./lib/cjs/index.js",
     "./package.json": "./package.json"
   },
   "files": [
@@ -23,7 +23,7 @@
     "package.json",
     "README.md",
     "bin",
-    "commonjs",
+    "lib",
     "!.tsbuildinfo"
   ],
   "engines": {
@@ -41,8 +41,8 @@
     "@types/jscodeshift": "^0",
     "@types/node": "^20",
     "@vitest/coverage-v8": "^2",
-    "@wroud/tests-runner": "workspace:^",
-    "@wroud/tsconfig": "workspace:^",
+    "@wroud/tests-runner": "workspace:*",
+    "@wroud/tsconfig": "workspace:*",
     "typescript": "^5",
     "vitest": "^2"
   },

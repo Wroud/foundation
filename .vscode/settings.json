@@ -9,13 +9,10 @@
   "typescript.preferences.importModuleSpecifierEnding": "js",
   "editor.tabSize": 2,
   "prettier.prettierPath": ".yarn/sdks/prettier/index.cjs",
-
   "editor.formatOnSave": true,
   "typescript.tsc.autoDetect": "off",
-
   "npm.autoDetect": "off",
   "npm.packageManager": "yarn",
-
   "explorer.fileNesting.enabled": true,
   "explorer.fileNesting.expand": false,
   "explorer.fileNesting.patterns": {
@@ -28,6 +25,8 @@
     "tsconfig.json": "tsconfig.*.json, *.tsbuildinfo",
     "package.json": "package-lock.json, yarn.lock, pnpm-lock.yaml"
   },
-
-  "cSpell.words": ["tsbuildinfo", "Wroud"]
+  "cSpell.words": [
+    "tsbuildinfo",
+    "Wroud"
+  ]
 }

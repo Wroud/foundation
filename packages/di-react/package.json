@@ -2,7 +2,7 @@
   "name": "@wroud/di-react",
   "description": "A simple and lightweight dependency injection library for React",
   "version": "0.0.3",
-  "packageManager": "yarn@4.4.0",
+  "packageManager": "yarn@4.4.1",
   "type": "module",
   "license": "MIT",
   "author": "Wroud",
@@ -51,8 +51,8 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "@vitest/coverage-v8": "^2",
-    "@wroud/tests-runner": "workspace:^",
-    "@wroud/tsconfig": "workspace:^",
+    "@wroud/tests-runner": "workspace:*",
+    "@wroud/tsconfig": "workspace:*",
     "concurrently": "^8",
     "happy-dom": "^15",
     "react": "^18",
@@ -68,7 +68,7 @@
     "react"
   ],
   "dependencies": {
-    "@wroud/di": "workspace:^"
+    "@wroud/di": "workspace:^0"
   },
   "peerDependencies": {
     "react": ">=18.0.0",

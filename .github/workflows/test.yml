@@ -30,11 +30,10 @@ jobs:
       - name: Install modules
         run: yarn install --immutable
 
-      - name: Build modules
-        run: yarn build
-
-      - name: Run tests
-        run: yarn test:ci
+      - name: Build and test modules
+        run: |
+          yarn build
+          yarn test:ci
 
       - name: Sanitize branch name
         id: sanitize_branch

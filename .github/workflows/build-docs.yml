@@ -36,12 +36,13 @@ jobs:
         uses: actions/configure-pages@v4
 
       - name: Install modules
-        run: yarn instal --immutable
+        run: yarn install --immutable
 
       - name: Download build artifacts
         uses: actions/download-artifact@v4
         with:
           name: build-artifacts
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           run-id: ${{ inputs.build-run-id }}
 
       - name: Build

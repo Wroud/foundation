@@ -101,17 +101,24 @@ async function publishGithubRelease(preset: Preset, packageName: string) {
   );
 }
 
-task("ci:prepublish", async () => {
-  const packageJson = await readPackageJson();
-  const preset = await createPreset();
-  const version = await bumpVersion(preset);
+task("ci:prepublish", async (done) => {
+  try {
+    const packageJson = await readPackageJson();
+    const preset = await createPreset();
+    const version = await bumpVersion(preset);
 
-  if (version === null) {
-    console.log("No new version to release");
-    return;
+    if (version === null) {
+      console.log("No new version to release");
+      done();
+      return;
+    }
+
+    await changelog(preset, version);
+    await commitTagPush(version, packageJson.name);
+    await publishGithubRelease(preset, packageJson.name);
+
+    done();
+  } catch (error: any) {
+    done(error);
   }
-
-  await changelog(preset, version);
-  await commitTagPush(version, packageJson.name);
-  await publishGithubRelease(preset, packageJson.name);
 });

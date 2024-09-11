@@ -1,3 +1,24 @@
+## 0.9.0 (2024-09-11)
+
+### Features
+
+* @wroud/di-tools-codemod ([1c4c04c](https://github.com/Wroud/foundation/commit/1c4c04c9cb891cce15f8d737dbd9fd38f6ae8130))
+* add di analyzer ([5ce1124](https://github.com/Wroud/foundation/commit/5ce1124d770dac7b578b4a353666ca64979bbeab))
+* add github pages ([f193d85](https://github.com/Wroud/foundation/commit/f193d8537d6d9f36d8f88faf02b0e2b055f387b4))
+* add module and types ([5ebef39](https://github.com/Wroud/foundation/commit/5ebef397420298ccc34e9923b4eb2ffb038a8cb8))
+* add strict types to ServicesRegistry.register ([6d43540](https://github.com/Wroud/foundation/commit/6d4354052a9eb1166ddd4823167086ff883ffa6c))
+* init workspace ([1306e07](https://github.com/Wroud/foundation/commit/1306e07b7e93270aec66e51576d23f6bd70f3d57))
+* lazy implementation loading ([792d6b6](https://github.com/Wroud/foundation/commit/792d6b6cb8ef8eb69a6f1250d9018c6d355f9fec))
+
+### Bug Fixes
+
+* add version ([ae35e9f](https://github.com/Wroud/foundation/commit/ae35e9fcab4d5077c764c2c8af723ac61d735f5a))
+* adjust memory threshold for GC ([10c7455](https://github.com/Wroud/foundation/commit/10c7455384549e7cf6becda65a367ea8e565b945))
+* ci-cd ([d5ac8c0](https://github.com/Wroud/foundation/commit/d5ac8c08446c8994740982ca74f035b1e9f54640))
+* cyclic dependencies detection ([0c7228a](https://github.com/Wroud/foundation/commit/0c7228af1ca44aa0fef839d49b0b510d0dadeed5))
+* proper error message while resolving scoped dependency for singleton service ([b6a45ff](https://github.com/Wroud/foundation/commit/b6a45ff17ea33c2309486d12e423838f2775ad81))
+* remove dist ([a8879c6](https://github.com/Wroud/foundation/commit/a8879c6e7f8bbf943cb3af66fa6270e7a33d567d))
+* update types ([ff3238e](https://github.com/Wroud/foundation/commit/ff3238e9c755a8171ed69d551a160b35da67e76b))
 ## [0.8.5](https://github.com/Wroud/foundation/compare/di-v0.8.4...di-v0.8.5) (2024-09-09)
 ## [0.8.4](https://github.com/Wroud/foundation/compare/di-v0.8.3...di-v0.8.4) (2024-09-09)
 ## [0.8.3](https://github.com/Wroud/foundation/compare/di-v0.8.2...di-v0.8.3) (2024-09-09)

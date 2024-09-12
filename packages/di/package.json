@@ -30,8 +30,8 @@
     "./src/*": "./src/*"
   },
   "files": [
-    "LICENSE",
     "package.json",
+    "LICENSE",
     "README.md",
     "CHANGELOG.md",
     "lib",

@@ -23,9 +23,10 @@
     "./src/*": "./src/*"
   },
   "files": [
-    "LICENSE",
     "package.json",
+    "LICENSE",
     "README.md",
+    "CHANGELOG.md",
     "lib",
     "!lib/**/*.test.js",
     "!lib/**/*.test.d.ts",
@@ -35,18 +36,25 @@
     "!.tsbuildinfo"
   ],
   "scripts": {
-    "build": "tsc -b",
-    "clear": "rimraf ./lib",
+    "ci:prepublish": "yarn gulp ci:prepublish",
     "test": "tests-runner",
+    "test:ci": "CI=true yarn run test",
+    "build": "tsc -b",
     "watch:tsc": "tsc -b -w",
     "dev": "concurrently \"npm:watch:*\"",
-    "ci:prepublish": ""
+    "clear": "rimraf ./lib"
+  },
+  "dependencies": {
+    "@wroud/di": "workspace:^0",
+    "d3": "^7",
+    "uuid": "^10"
   },
   "devDependencies": {
     "@types/d3": "^7",
     "@types/node": "^20",
     "@types/uuid": "^10",
     "@vitest/coverage-v8": "^2",
+    "@wroud/ci": "workspace:*",
     "@wroud/tests-runner": "workspace:*",
     "@wroud/tsconfig": "workspace:*",
     "concurrently": "^8",
@@ -62,10 +70,5 @@
     "analyzer",
     "tools",
     "report"
-  ],
-  "dependencies": {
-    "@wroud/di": "workspace:^0",
-    "d3": "^7",
-    "uuid": "^10"
-  }
+  ]
 }

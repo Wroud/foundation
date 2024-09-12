@@ -21,8 +21,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0 # Not needed if lastUpdated is not enabled
 
@@ -32,11 +31,8 @@ jobs:
           node-version: "lts/*"
           cache: "yarn"
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-
-      - name: Install modules
-        run: yarn install --immutable
+      - uses: actions/configure-pages@v4
+      - run: yarn install --immutable
 
       - name: Download build artifacts
         uses: actions/download-artifact@v4
@@ -47,7 +43,6 @@ jobs:
 
       - name: Build
         run: yarn run docs:build
-        working-directory: ./packages/docs
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
@@ -61,8 +56,6 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     needs: build
     runs-on: ubuntu-latest
-    name: Deploy
     steps:
-      - name: Deploy to GitHub Pages
+      - uses: actions/deploy-pages@v4
         id: deployment
-        uses: actions/deploy-pages@v4

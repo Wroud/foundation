@@ -13,7 +13,6 @@ permissions:
 
 jobs:
   release:
-    name: Release
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
@@ -25,14 +24,14 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
       - run: corepack enable
       - uses: actions/setup-node@v4
         with:
           node-version: "lts/*"
           cache: "yarn"
 
-      - name: Install modules
-        run: yarn install --immutable
+      - run: yarn install --immutable
 
       - name: Download build artifacts
         uses: actions/download-artifact@v4
@@ -75,8 +74,7 @@ jobs:
           yarn config set npmPublishRegistry "https://registry.npmjs.org"
           yarn config set npmAuthToken $NPM_AUTH_TOKEN
 
-      - name: Install modules
-        run: yarn install --immutable
+      - run: yarn install --immutable
 
       - name: Download build artifacts
         uses: actions/download-artifact@v4

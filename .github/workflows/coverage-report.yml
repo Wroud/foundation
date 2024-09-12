@@ -17,7 +17,6 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Sanitize branch name
-        id: sanitize_branch
         run: |
           # Replace invalid characters with a dash '-'
           SANITIZED_BRANCH=$(echo "${{ github.event.workflow_run.head_branch }}" | sed 's/[\/\\:*?"<>|]/-/g')

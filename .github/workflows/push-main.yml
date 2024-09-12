@@ -20,7 +20,7 @@ jobs:
     with:
       build-run-id: ${{ needs.build.outputs.run-id }}
 
-  build-docs:
+  docs:
     needs: build
     uses: ./.github/workflows/build-docs.yml
     secrets: inherit

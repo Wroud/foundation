@@ -1,3 +1,8 @@
+## [0.9.1](https://github.com/Wroud/foundation/compare/di-v0.9.0...di-v0.9.1) (2024-09-12)
+
+### Bug Fixes
+
+* add automated releases ([26768a0](https://github.com/Wroud/foundation/commit/26768a060e134aedf6a7142f00683989936bddb0))
 ## 0.9.0 (2024-09-11)
 
 ### Features

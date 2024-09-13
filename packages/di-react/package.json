@@ -36,7 +36,7 @@
     "!.tsbuildinfo"
   ],
   "scripts": {
-    "ci:prepublish": "yarn gulp ci:prepublish",
+    "ci:prepublish": "",
     "test": "tests-runner",
     "test:ci": "CI=true yarn run test",
     "build": "tsc -b",

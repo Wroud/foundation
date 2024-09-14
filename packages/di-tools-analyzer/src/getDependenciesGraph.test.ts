@@ -15,7 +15,7 @@ const mockImpl = vi.hoisted(() => {
   };
 });
 
-vi.mock(import("uuid"), () => mockImpl);
+vi.mock(import("uuid"), () => mockImpl as any);
 
 describe.sequential("injectable", () => {
   beforeEach(() => {

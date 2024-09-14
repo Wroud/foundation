@@ -7,7 +7,7 @@ vi.mock(import("./ServiceRegistry.js"), () => ({
     register: vi.fn(),
     has: vi.fn(),
     get: vi.fn(),
-  },
+  } as any,
 }));
 
 beforeEach(() => {

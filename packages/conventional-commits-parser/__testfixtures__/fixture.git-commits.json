@@ -1,0 +1,1550 @@
+[
+  {
+    "hash": "1dfaff1",
+    "tags": ["v1.0.5", "v1.0.1"],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "test(git): test commit with something",
+    "body": "some long description\n",
+    "trailers": [
+      {
+        "token": "BREAKING CHANGE",
+        "value": "Some breaky change"
+      },
+      {
+        "token": "fix",
+        "value": "#123"
+      }
+    ]
+  },
+  {
+    "hash": "5a84e8d",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore!: disable auto release",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "cde6098",
+    "tags": ["di-v0.9.1"],
+    "authorName": "github-actions[bot]",
+    "authorEmail": "github-actions[bot]@users.noreply.github.com",
+    "subject": "chore: release @wroud/di@0.9.1",
+    "body": "",
+    "trailers": [{ "token": "BREAKING-CHANGE", "value": "Some breaky change" }]
+  },
+  {
+    "hash": "26768a0",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "fix: add automated releases",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "ca0db97",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "feat: update github workflows",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "d9774d6",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "ci: inherit secrets in workflows",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "afa7fd3",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore: fix readme",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "1624c31",
+    "tags": ["di-v0.9.0"],
+    "authorName": "github-actions[bot]",
+    "authorEmail": "github-actions[bot]@users.noreply.github.com",
+    "subject": "chore: release @wroud/di@0.9.0",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "0848e0a",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "ci: fix workflows",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "82e92ef",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "ci: enable corepack",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "3e25589",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore: remove yarn cache",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "2c35601",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "ci: update dependencies and github workflows",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "0c0e299",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore: remove test from readme",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "02df602",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "ci: rewrite bump resolver",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "e801bdb",
+    "tags": [],
+    "authorName": "github-actions[bot]",
+    "authorEmail": "github-actions[bot]@users.noreply.github.com",
+    "subject": "chore: release @wroud/di@0.8.5",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "d824036",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "ci: add package name to releases",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "01e09a8",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "ci: properly handle errors",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "c3378cc",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "ci: commit as github actions bot",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "041d000",
+    "tags": [],
+    "authorName": "github-actions",
+    "authorEmail": "github-actions@github.com",
+    "subject": "chore: release 0.8.4",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "cc0fe8a",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "ci: trigger update",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "b58a7dd",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "ci: configure publishing github releases",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "e514809",
+    "tags": [],
+    "authorName": "github-actions",
+    "authorEmail": "github-actions@github.com",
+    "subject": "chore: release 0.8.3",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "48cc6f1",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "ci: filter release commit only for bump check",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "a80b948",
+    "tags": [],
+    "authorName": "github-actions",
+    "authorEmail": "github-actions@github.com",
+    "subject": "chore: release 0.8.2",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "4262c3b",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore: push annotated tags",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "a251066",
+    "tags": [],
+    "authorName": "github-actions",
+    "authorEmail": "github-actions@github.com",
+    "subject": "chore: release 0.8.1",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "fc02a0d",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore: trigger release",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "9ff54fc",
+    "tags": [],
+    "authorName": "github-actions",
+    "authorEmail": "github-actions@github.com",
+    "subject": "chore: release 0.8.0",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "a9443ec",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "ci: push fixed tag",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "55a315c",
+    "tags": [],
+    "authorName": "github-actions",
+    "authorEmail": "github-actions@github.com",
+    "subject": "chore: release 0.7.0",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "4a6430d",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore: add changelog for di",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "5a14585",
+    "tags": [],
+    "authorName": "github-actions",
+    "authorEmail": "github-actions@github.com",
+    "subject": "chore: release 0.6.0",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "f9f8224",
+    "tags": [],
+    "authorName": "Alexey",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore: rebase (#15)",
+    "body": "* chore: rebase\n\n* test: fix tests",
+    "trailers": []
+  },
+  {
+    "hash": "d2ea47b",
+    "tags": [],
+    "authorName": "Alexey",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "Ci/configure gulp for ci (#14)",
+    "body": "* ci: configure gulp\n\n* ci: read package version directly\n\n* ci: skip release commits\n\n* ci: enable github releases\n\n* ci: remove changelog",
+    "trailers": []
+  },
+  {
+    "hash": "e0dd0e5",
+    "tags": [],
+    "authorName": "github-actions",
+    "authorEmail": "github-actions@github.com",
+    "subject": "chore: release undefined",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "5b43fb0",
+    "tags": [],
+    "authorName": "Alexey",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "Ci/configure gulp for ci (#13)",
+    "body": "* ci: configure gulp\n\n* ci: read package version directly\n\n* ci: skip release commits",
+    "trailers": []
+  },
+  {
+    "hash": "dc0f7d0",
+    "tags": [],
+    "authorName": "github-actions",
+    "authorEmail": "github-actions@github.com",
+    "subject": "chore: release undefined",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "3ef2856",
+    "tags": [],
+    "authorName": "Alexey",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "Ci/configure gulp for ci (#12)",
+    "body": "* ci: configure gulp\n\n* ci: read package version directly",
+    "trailers": []
+  },
+  {
+    "hash": "f6d4755",
+    "tags": [],
+    "authorName": "Alexey",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "ci: configure gulp (#11)",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "cf5ef0c",
+    "tags": [],
+    "authorName": "Alexey",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "ci: add empty placeholder command ci:prepublish (#10)",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "d8a8ebe",
+    "tags": [],
+    "authorName": "github-actions",
+    "authorEmail": "github-actions@github.com",
+    "subject": "Release di-v0.5.0",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "71d3bf2",
+    "tags": [],
+    "authorName": "Alexey",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "ci: fail on empty commits (#9)",
+    "body": "* ci: fail on empty commits\n\n* ci: commit lockfile",
+    "trailers": []
+  },
+  {
+    "hash": "bd5311a",
+    "tags": [],
+    "authorName": "github-actions",
+    "authorEmail": "github-actions@github.com",
+    "subject": "Release v0.4.3",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "ff36f54",
+    "tags": [],
+    "authorName": "github-actions",
+    "authorEmail": "github-actions@github.com",
+    "subject": "Release v0.4.2",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "231a0aa",
+    "tags": [],
+    "authorName": "github-actions",
+    "authorEmail": "github-actions@github.com",
+    "subject": "Release v0.4.1",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "5dfac88",
+    "tags": [],
+    "authorName": "github-actions",
+    "authorEmail": "github-actions@github.com",
+    "subject": "Release v0.4.0",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "e839687",
+    "tags": [],
+    "authorName": "Alexey",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "ci: run prepublish scripts",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "c15cea7",
+    "tags": [],
+    "authorName": "github-actions",
+    "authorEmail": "github-actions@github.com",
+    "subject": "Release v0.3.1",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "5591856",
+    "tags": [],
+    "authorName": "github-actions",
+    "authorEmail": "github-actions@github.com",
+    "subject": "Release v0.3.0",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "6bf7753",
+    "tags": [],
+    "authorName": "Alexey",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "Ci/run prepublish scripts (#7)",
+    "body": "* ci: run prepublish scripts\n\n* ci: use different method for brunch detection\n\n* ci: fix release workflow\n\n* ci: setup path to vitest config\n\n* ci: configure github actions commit",
+    "trailers": []
+  },
+  {
+    "hash": "82d6875",
+    "tags": [],
+    "authorName": "Alexey",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "Ci/run prepublish scripts (#6)",
+    "body": "* ci: run prepublish scripts\n\n* ci: use different method for brunch detection\n\n* ci: fix release workflow\n\n* ci: setup path to vitest config",
+    "trailers": []
+  },
+  {
+    "hash": "b24e2c2",
+    "tags": [],
+    "authorName": "Alexey",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "ci: run prepublish scripts (#5)",
+    "body": "* ci: run prepublish scripts\n\n* ci: use different method for brunch detection",
+    "trailers": []
+  },
+  {
+    "hash": "c5af8e3",
+    "tags": [],
+    "authorName": "Alexey",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "ci: add changelog and automatic releases (#4)",
+    "body": "* ci: add changelog and automatic releases\n\n* ci: coverage report fix\n\n* ci: sanitize branch name in github workflows",
+    "trailers": []
+  },
+  {
+    "hash": "d31ce7b",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore(di-react): optimize useAbandonedRenderDisposer timeout",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "ccfac38",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore(react): update readme",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "dedfddd",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore: update docs",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "717c44e",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore: update docs for di",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "0a79da6",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore: Update @wroud/di-react package version to 0.0.2 and add React bindings for DI",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "65698ad",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore: Update package versions for @wroud/di-tools-analyzer, @wroud/di-tools-codemod, and @wroud/di to 0.1.0, 0.1.0, and 0.2.0 respectively",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "fcf6004",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore: update deps",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "5cb14f4",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore(di-react): add react bindings for di",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "30807d4",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore(di): reorganize exports",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "8615243",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore: update imports for di-tools-analyzer",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "4e236f3",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore: update exports",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "74656a2",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore: add documentation about lazy",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "0a74691",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore: Update @wroud/di package to version 0.1.5 and include production module",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "392170e",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore: Bump @wroud/di version to 0.1.4",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "1023ebc",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore: add better debugging and optimized production build",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "8e5da34",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore: Fix import in injectable.test.ts",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "6c78545",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore: update unit tests",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "2f82db3",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore: Update @wroud/di to version 0.1.3",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "0e80287",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore: Exclude test files from package build",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "6357a3a",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore: Update @wroud/di to version 0.1.2",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "e7c2505",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore: update dependencies",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "258b0ec",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore: bump version @wroud/di to 0.1.1",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "0d861be",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore: rename diLazy -> lazy",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "b3fb16c",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore: update vitest to 2 version",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "5d407ee",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore: bump version @wroud/di to 0.1.0",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "792d6b6",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "feat: lazy implementation loading",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "387a1fc",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore: rename IServiceImplementation to ISyncServiceImplementation",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "65bf5af",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore: split logic",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "7dbff6d",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore: rename configs",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "d5ac8c0",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "fix: ci-cd",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "dcf424a",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "fix: tsconfig",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "802ee0c",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore: update yarn.lock",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "412907f",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore: migrate to vitest",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "0c7228a",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "fix: cyclic dependencies detection",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "43a43b5",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "fix: change package type",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "6773df2",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore: change output to commonjs",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "4672641",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "fix: run as common js module",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "6ed140b",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore: update dependencies",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "b392ebf",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore: update bin",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "b65f7e9",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "fix: exports",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "1c4c04c",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "feat: @wroud/di-tools-codemod",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "712d055",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore: bump `@wroud/di-tools-analyzer` version",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "e5142e0",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "docs: ModuleRegistry api",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "d7ef251",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "feat: add full screen mode for di analyzer",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "52276d5",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "docs: add documentation for @wroud/di-tools-analyzer",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "5e5e195",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "fix: robots.txt name",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "19bdf3b",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "feat: add robots.txt",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "f40e2f7",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore: tune layout",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "3aa1529",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "fix: graph example",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "6379e3f",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "feat: move graph to another page",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "5ce1124",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "feat: add di analyzer",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "cf852fa",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "docs: remove extra",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "5f55b1c",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "docs: make examples simpler",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "f76c015",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "docs: simplify samples",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "33c7dd4",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "docs: add \"Why DI?\" page",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "2f89822",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore: move tsconfig to separate package",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "84543ee",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore: remove example from source code",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "851d0eb",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore: add package description",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "e7759c1",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "docs: update docs",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "9b0bc81",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore: remove template pages",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "4d04ec9",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "fix: docs sitemap filter",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "d117ac4",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore: filter test pages from sitemap",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "95b1979",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore: add keywords",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "1da9a4e",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore: add license and readme for @wroud/di",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "10c7455",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "fix: adjust memory threshold for GC",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "3037269",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore: add logo",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "201aba6",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "feat: adjust SEO in docs",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "c5ff8f6",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "fix: docs logo styles in light theme",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "0a14136",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "feat: add logo to docs",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "cdb9148",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore: update docs and add GA",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "1eef8d6",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore: bump version",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "5286029",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "docs: complete base articles",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "eceb0c4",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore: update version",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "b6a45ff",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "fix: proper error message while resolving scoped dependency for singleton service",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "61c73bf",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore: specify files list",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "ff3238e",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "fix: update types",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "93c4640",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore: update version",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "d7517cc",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "fix: version lazy loading leads to incorrect badge on first render",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "f98f7b1",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "docs: collect jest statistic for provided package",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "6d43540",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "feat: add strict types to ServicesRegistry.register",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "25845a7",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "fix(tests): add logs to console",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "ea20107",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore(tests): increase memory threshold",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "013ed92",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore: add coverage badge",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "1a8cd2f",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "fix: ci-cd",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "d95c6d4",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "fix: ci-cd",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "57eee77",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "fix: ci-cd",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "b931c2c",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "fix: ci-cd",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "ab52910",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "fix: workflow",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "2d55876",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "tests: add json-summary reporter",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "1dca2b4",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "tests: add some tests and badges",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "7720341",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "fix: build docs separately",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "193d9c3",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore: update build process",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "6fb62f9",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "docs: add installation section",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "83012a5",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "fix(docs): link to the di overview page",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "07932df",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore: update version",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "45d8572",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore: add homepage and repository to package.json",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "beca909",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore: update exports",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "fc9ef0f",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "docs: add dependency injection overview page",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "83d3093",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "fix: pages deploy workflow",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "f193d85",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "feat: add github pages",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "83108bd",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "fix: return publish package dir",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "e3c1a3b",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "chore: bump version",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "5ebef39",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "feat: add module and types",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "ae35e9f",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "fix: add version",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "ee089fa",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "fix: publish workflow",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "8a420ab",
+    "tags": [],
+    "authorName": "Alexey",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "Merge pull request #3 from Wroud/fix/add-cleanup",
+    "body": "feat: add cache cleanup action",
+    "trailers": []
+  },
+  {
+    "hash": "0c4a86d",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "feat: add cache cleanup action",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "9d0965e",
+    "tags": [],
+    "authorName": "Alexey",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "Merge pull request #2 from Wroud/feat/github-workflows",
+    "body": "feat: add github workflows",
+    "trailers": []
+  },
+  {
+    "hash": "41d0e01",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "fix: codecov ci",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "62aec5f",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "fix: collect coverage",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "cf9454d",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "feat: configure code coverage",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "0d675f9",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "feat: enable zero installs",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "a8879c6",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "fix: remove dist",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "c27dbf0",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "fix: configure ci",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "e92166a",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "feat: add github workflows",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "9777ef5",
+    "tags": [],
+    "authorName": "Alexey",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "Merge pull request #1 from Wroud/feat/init-workspace",
+    "body": "feat: init workspace",
+    "trailers": []
+  },
+  {
+    "hash": "1306e07",
+    "tags": [],
+    "authorName": "Aleksei Potsetsuev",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "feat: init workspace",
+    "body": "",
+    "trailers": []
+  },
+  {
+    "hash": "efd26d4",
+    "tags": [],
+    "authorName": "Alexey",
+    "authorEmail": "wrouds@gmail.com",
+    "subject": "Initial commit",
+    "body": "",
+    "trailers": []
+  }
+]

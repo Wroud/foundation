@@ -40,9 +40,10 @@
   "scripts": {
     "prepare": "is-ci || husky",
     "build": "cd packages/_aggregate && yarn build",
-    "clear": "rimraf --glob 'packages/*/lib' 'packages/*/node_modules' coverage node_modules",
-    "test": "tests-runner run",
-    "test:ci": "CI=true yarn run test"
+    "dev": "cd packages/_aggregate && yarn dev",
+    "clear": "rimraf --glob 'packages/*/lib' 'packages/*/node_modules' 'packages/*/coverage' coverage node_modules",
+    "test": "tests-runner",
+    "test:ci": "CI=true yarn run test run"
   },
   "config": {
     "commitizen": {

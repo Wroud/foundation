@@ -1,0 +1,28 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`createChangelogHeader > default 1`] = `
+[
+  "# Changelog",
+  "",
+  "All notable changes to this project will be documented in this file.",
+  "",
+]
+`;
+
+exports[`createChangelogHeader > with custom description 1`] = `
+[
+  "# Release notes",
+  "",
+  "This is a description",
+  "",
+]
+`;
+
+exports[`createChangelogHeader > with custom title 1`] = `
+[
+  "# Release notes",
+  "",
+  "All notable changes to this project will be documented in this file.",
+  "",
+]
+`;

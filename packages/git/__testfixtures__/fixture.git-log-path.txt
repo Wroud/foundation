@@ -1,0 +1,12 @@
+1dfaff1
+ (HEAD -> main, tag: v1.0.5, tag: v1.0.1)
+Aleksei Potsetsuev
+wrouds@gmail.com
+test(git): test commit with something
+some long description
+
+BREAKING CHANGE: Some breaky change
+
+fix #123
+
+===end===

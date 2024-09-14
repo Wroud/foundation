@@ -1,0 +1,50 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`getGithubTrailers > empty 1`] = `[]`;
+
+exports[`getGithubTrailers > lowercase  1`] = `
+[
+  {
+    "email": "email",
+    "name": "name",
+  },
+]
+`;
+
+exports[`getGithubTrailers > missing email 1`] = `
+[
+  {
+    "name": "name",
+  },
+]
+`;
+
+exports[`getGithubTrailers > missing name 1`] = `[]`;
+
+exports[`getGithubTrailers > missing name and email 1`] = `[]`;
+
+exports[`getGithubTrailers > multiple 1`] = `
+[
+  {
+    "email": "email1",
+    "name": "name1",
+  },
+  {
+    "email": "email2",
+    "name": "name2",
+  },
+]
+`;
+
+exports[`getGithubTrailers > multiple with other trailers 1`] = `
+[
+  {
+    "email": "email1",
+    "name": "name1",
+  },
+  {
+    "email": "email2",
+    "name": "name2",
+  },
+]
+`;

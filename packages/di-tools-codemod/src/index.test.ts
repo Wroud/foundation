@@ -111,7 +111,12 @@ describe("test", () => {
 });
 
 async function testFixture(names: string[], options?: IMigrationOptions) {
-  const fixturesFolder = join(__dirname, "..", "..", "__testfixtures__");
+  const fixturesFolder = join(
+    import.meta.dirname,
+    "..",
+    "..",
+    "__testfixtures__",
+  );
   for (const name of names) {
     const INPUT = await readFile(
       join(fixturesFolder, `${name}.input.ts`),

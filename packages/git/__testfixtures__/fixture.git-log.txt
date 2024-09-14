@@ -1,0 +1,1240 @@
+1dfaff1
+ (HEAD -> main, tag: v1.0.5, tag: v1.0.1)
+Aleksei Potsetsuev
+wrouds@gmail.com
+test(git): test commit with something
+some long description
+
+BREAKING CHANGE: Some breaky change
+
+fix #123
+
+===end===
+5a84e8d
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: disable auto release
+
+===end===
+cde6098
+ (tag: di-v0.9.1, origin/main, origin/HEAD)
+github-actions[bot]
+github-actions[bot]@users.noreply.github.com
+chore: release @wroud/di@0.9.1
+
+===end===
+26768a0
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+fix: add automated releases
+
+===end===
+ca0db97
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+feat: update github workflows
+
+===end===
+d9774d6
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+ci: inherit secrets in workflows
+
+===end===
+afa7fd3
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: fix readme
+
+===end===
+1624c31
+ (tag: di-v0.9.0)
+github-actions[bot]
+github-actions[bot]@users.noreply.github.com
+chore: release @wroud/di@0.9.0
+
+===end===
+0848e0a
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+ci: fix workflows
+
+===end===
+82e92ef
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+ci: enable corepack
+
+===end===
+3e25589
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: remove yarn cache
+
+===end===
+2c35601
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+ci: update dependencies and github workflows
+
+===end===
+0c0e299
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: remove test from readme
+
+===end===
+02df602
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+ci: rewrite bump resolver
+
+===end===
+e801bdb
+
+github-actions[bot]
+github-actions[bot]@users.noreply.github.com
+chore: release @wroud/di@0.8.5
+
+===end===
+d824036
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+ci: add package name to releases
+
+===end===
+01e09a8
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+ci: properly handle errors
+
+===end===
+c3378cc
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+ci: commit as github actions bot
+
+===end===
+041d000
+
+github-actions
+github-actions@github.com
+chore: release 0.8.4
+
+===end===
+cc0fe8a
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+ci: trigger update
+
+===end===
+b58a7dd
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+ci: configure publishing github releases
+
+===end===
+e514809
+
+github-actions
+github-actions@github.com
+chore: release 0.8.3
+
+===end===
+48cc6f1
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+ci: filter release commit only for bump check
+
+===end===
+a80b948
+
+github-actions
+github-actions@github.com
+chore: release 0.8.2
+
+===end===
+4262c3b
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: push annotated tags
+
+===end===
+a251066
+
+github-actions
+github-actions@github.com
+chore: release 0.8.1
+
+===end===
+fc02a0d
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: trigger release
+
+===end===
+9ff54fc
+
+github-actions
+github-actions@github.com
+chore: release 0.8.0
+
+===end===
+a9443ec
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+ci: push fixed tag
+
+===end===
+55a315c
+
+github-actions
+github-actions@github.com
+chore: release 0.7.0
+
+===end===
+4a6430d
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: add changelog for di
+
+===end===
+5a14585
+
+github-actions
+github-actions@github.com
+chore: release 0.6.0
+
+===end===
+f9f8224
+
+Alexey
+wrouds@gmail.com
+chore: rebase (#15)
+* chore: rebase
+
+* test: fix tests
+===end===
+d2ea47b
+
+Alexey
+wrouds@gmail.com
+Ci/configure gulp for ci (#14)
+* ci: configure gulp
+
+* ci: read package version directly
+
+* ci: skip release commits
+
+* ci: enable github releases
+
+* ci: remove changelog
+===end===
+e0dd0e5
+
+github-actions
+github-actions@github.com
+chore: release undefined
+
+===end===
+5b43fb0
+
+Alexey
+wrouds@gmail.com
+Ci/configure gulp for ci (#13)
+* ci: configure gulp
+
+* ci: read package version directly
+
+* ci: skip release commits
+===end===
+dc0f7d0
+
+github-actions
+github-actions@github.com
+chore: release undefined
+
+===end===
+3ef2856
+
+Alexey
+wrouds@gmail.com
+Ci/configure gulp for ci (#12)
+* ci: configure gulp
+
+* ci: read package version directly
+===end===
+f6d4755
+
+Alexey
+wrouds@gmail.com
+ci: configure gulp (#11)
+
+===end===
+cf5ef0c
+
+Alexey
+wrouds@gmail.com
+ci: add empty placeholder command ci:prepublish (#10)
+
+===end===
+d8a8ebe
+
+github-actions
+github-actions@github.com
+Release di-v0.5.0
+
+===end===
+71d3bf2
+
+Alexey
+wrouds@gmail.com
+ci: fail on empty commits (#9)
+* ci: fail on empty commits
+
+* ci: commit lockfile
+===end===
+bd5311a
+
+github-actions
+github-actions@github.com
+Release v0.4.3
+
+===end===
+ff36f54
+
+github-actions
+github-actions@github.com
+Release v0.4.2
+
+===end===
+231a0aa
+
+github-actions
+github-actions@github.com
+Release v0.4.1
+
+===end===
+5dfac88
+
+github-actions
+github-actions@github.com
+Release v0.4.0
+
+===end===
+e839687
+
+Alexey
+wrouds@gmail.com
+ci: run prepublish scripts
+
+===end===
+c15cea7
+
+github-actions
+github-actions@github.com
+Release v0.3.1
+
+===end===
+5591856
+
+github-actions
+github-actions@github.com
+Release v0.3.0
+
+===end===
+6bf7753
+
+Alexey
+wrouds@gmail.com
+Ci/run prepublish scripts (#7)
+* ci: run prepublish scripts
+
+* ci: use different method for brunch detection
+
+* ci: fix release workflow
+
+* ci: setup path to vitest config
+
+* ci: configure github actions commit
+===end===
+82d6875
+
+Alexey
+wrouds@gmail.com
+Ci/run prepublish scripts (#6)
+* ci: run prepublish scripts
+
+* ci: use different method for brunch detection
+
+* ci: fix release workflow
+
+* ci: setup path to vitest config
+===end===
+b24e2c2
+
+Alexey
+wrouds@gmail.com
+ci: run prepublish scripts (#5)
+* ci: run prepublish scripts
+
+* ci: use different method for brunch detection
+===end===
+c5af8e3
+
+Alexey
+wrouds@gmail.com
+ci: add changelog and automatic releases (#4)
+* ci: add changelog and automatic releases
+
+* ci: coverage report fix
+
+* ci: sanitize branch name in github workflows
+===end===
+d31ce7b
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore(di-react): optimize useAbandonedRenderDisposer timeout
+
+===end===
+ccfac38
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore(react): update readme
+
+===end===
+dedfddd
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: update docs
+
+===end===
+717c44e
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: update docs for di
+
+===end===
+0a79da6
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: Update @wroud/di-react package version to 0.0.2 and add React bindings for DI
+
+===end===
+65698ad
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: Update package versions for @wroud/di-tools-analyzer, @wroud/di-tools-codemod, and @wroud/di to 0.1.0, 0.1.0, and 0.2.0 respectively
+
+===end===
+fcf6004
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: update deps
+
+===end===
+5cb14f4
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore(di-react): add react bindings for di
+
+===end===
+30807d4
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore(di): reorganize exports
+
+===end===
+8615243
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: update imports for di-tools-analyzer
+
+===end===
+4e236f3
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: update exports
+
+===end===
+74656a2
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: add documentation about lazy
+
+===end===
+0a74691
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: Update @wroud/di package to version 0.1.5 and include production module
+
+===end===
+392170e
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: Bump @wroud/di version to 0.1.4
+
+===end===
+1023ebc
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: add better debugging and optimized production build
+
+===end===
+8e5da34
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: Fix import in injectable.test.ts
+
+===end===
+6c78545
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: update unit tests
+
+===end===
+2f82db3
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: Update @wroud/di to version 0.1.3
+
+===end===
+0e80287
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: Exclude test files from package build
+
+===end===
+6357a3a
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: Update @wroud/di to version 0.1.2
+
+===end===
+e7c2505
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: update dependencies
+
+===end===
+258b0ec
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: bump version @wroud/di to 0.1.1
+
+===end===
+0d861be
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: rename diLazy -> lazy
+
+===end===
+b3fb16c
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: update vitest to 2 version
+
+===end===
+5d407ee
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: bump version @wroud/di to 0.1.0
+
+===end===
+792d6b6
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+feat: lazy implementation loading
+
+===end===
+387a1fc
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: rename IServiceImplementation to ISyncServiceImplementation
+
+===end===
+65bf5af
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: split logic
+
+===end===
+7dbff6d
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: rename configs
+
+===end===
+d5ac8c0
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+fix: ci-cd
+
+===end===
+dcf424a
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+fix: tsconfig
+
+===end===
+802ee0c
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: update yarn.lock
+
+===end===
+412907f
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: migrate to vitest
+
+===end===
+0c7228a
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+fix: cyclic dependencies detection
+
+===end===
+43a43b5
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+fix: change package type
+
+===end===
+6773df2
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: change output to commonjs
+
+===end===
+4672641
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+fix: run as common js module
+
+===end===
+6ed140b
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: update dependencies
+
+===end===
+b392ebf
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: update bin
+
+===end===
+b65f7e9
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+fix: exports
+
+===end===
+1c4c04c
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+feat: @wroud/di-tools-codemod
+
+===end===
+712d055
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: bump `@wroud/di-tools-analyzer` version
+
+===end===
+e5142e0
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+docs: ModuleRegistry api
+
+===end===
+d7ef251
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+feat: add full screen mode for di analyzer
+
+===end===
+52276d5
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+docs: add documentation for @wroud/di-tools-analyzer
+
+===end===
+5e5e195
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+fix: robots.txt name
+
+===end===
+19bdf3b
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+feat: add robots.txt
+
+===end===
+f40e2f7
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: tune layout
+
+===end===
+3aa1529
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+fix: graph example
+
+===end===
+6379e3f
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+feat: move graph to another page
+
+===end===
+5ce1124
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+feat: add di analyzer
+
+===end===
+cf852fa
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+docs: remove extra
+
+===end===
+5f55b1c
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+docs: make examples simpler
+
+===end===
+f76c015
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+docs: simplify samples
+
+===end===
+33c7dd4
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+docs: add "Why DI?" page
+
+===end===
+2f89822
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: move tsconfig to separate package
+
+===end===
+84543ee
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: remove example from source code
+
+===end===
+851d0eb
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: add package description
+
+===end===
+e7759c1
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+docs: update docs
+
+===end===
+9b0bc81
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: remove template pages
+
+===end===
+4d04ec9
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+fix: docs sitemap filter
+
+===end===
+d117ac4
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: filter test pages from sitemap
+
+===end===
+95b1979
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: add keywords
+
+===end===
+1da9a4e
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: add license and readme for @wroud/di
+
+===end===
+10c7455
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+fix: adjust memory threshold for GC
+
+===end===
+3037269
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: add logo
+
+===end===
+201aba6
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+feat: adjust SEO in docs
+
+===end===
+c5ff8f6
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+fix: docs logo styles in light theme
+
+===end===
+0a14136
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+feat: add logo to docs
+
+===end===
+cdb9148
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: update docs and add GA
+
+===end===
+1eef8d6
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: bump version
+
+===end===
+5286029
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+docs: complete base articles
+
+===end===
+eceb0c4
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: update version
+
+===end===
+b6a45ff
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+fix: proper error message while resolving scoped dependency for singleton service
+
+===end===
+61c73bf
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: specify files list
+
+===end===
+ff3238e
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+fix: update types
+
+===end===
+93c4640
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: update version
+
+===end===
+d7517cc
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+fix: version lazy loading leads to incorrect badge on first render
+
+===end===
+f98f7b1
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+docs: collect jest statistic for provided package
+
+===end===
+6d43540
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+feat: add strict types to ServicesRegistry.register
+
+===end===
+25845a7
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+fix(tests): add logs to console
+
+===end===
+ea20107
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore(tests): increase memory threshold
+
+===end===
+013ed92
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: add coverage badge
+
+===end===
+1a8cd2f
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+fix: ci-cd
+
+===end===
+d95c6d4
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+fix: ci-cd
+
+===end===
+57eee77
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+fix: ci-cd
+
+===end===
+b931c2c
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+fix: ci-cd
+
+===end===
+ab52910
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+fix: workflow
+
+===end===
+2d55876
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+tests: add json-summary reporter
+
+===end===
+1dca2b4
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+tests: add some tests and badges
+
+===end===
+7720341
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+fix: build docs separately
+
+===end===
+193d9c3
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: update build process
+
+===end===
+6fb62f9
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+docs: add installation section
+
+===end===
+83012a5
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+fix(docs): link to the di overview page
+
+===end===
+07932df
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: update version
+
+===end===
+45d8572
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: add homepage and repository to package.json
+
+===end===
+beca909
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: update exports
+
+===end===
+fc9ef0f
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+docs: add dependency injection overview page
+
+===end===
+83d3093
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+fix: pages deploy workflow
+
+===end===
+f193d85
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+feat: add github pages
+
+===end===
+83108bd
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+fix: return publish package dir
+
+===end===
+e3c1a3b
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: bump version
+
+===end===
+5ebef39
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+feat: add module and types
+
+===end===
+ae35e9f
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+fix: add version
+
+===end===
+ee089fa
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+fix: publish workflow
+
+===end===
+8a420ab
+
+Alexey
+wrouds@gmail.com
+Merge pull request #3 from Wroud/fix/add-cleanup
+feat: add cache cleanup action
+===end===
+0c4a86d
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+feat: add cache cleanup action
+
+===end===
+9d0965e
+
+Alexey
+wrouds@gmail.com
+Merge pull request #2 from Wroud/feat/github-workflows
+feat: add github workflows
+===end===
+41d0e01
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+fix: codecov ci
+
+===end===
+62aec5f
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+fix: collect coverage
+
+===end===
+cf9454d
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+feat: configure code coverage
+
+===end===
+0d675f9
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+feat: enable zero installs
+
+===end===
+a8879c6
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+fix: remove dist
+
+===end===
+c27dbf0
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+fix: configure ci
+
+===end===
+e92166a
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+feat: add github workflows
+
+===end===
+9777ef5
+
+Alexey
+wrouds@gmail.com
+Merge pull request #1 from Wroud/feat/init-workspace
+feat: init workspace
+===end===
+1306e07
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+feat: init workspace
+
+===end===
+efd26d4
+
+Alexey
+wrouds@gmail.com
+Initial commit
+
+===end===

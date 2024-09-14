@@ -1,0 +1,17 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`createConventionalChangelogHeader > default 1`] = `
+[
+  "## 1.0.0",
+  "",
+]
+`;
+
+exports[`createConventionalChangelogHeader > with compare URL 1`] = `
+[
+  "## 1.0.0",
+  "",
+  "[Compare changes](https://example.com)",
+  "",
+]
+`;

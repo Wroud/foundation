@@ -36,6 +36,18 @@
     },
     {
       "path": "../ci-github-release"
+    },
+    {
+      "path": "../conventional-commits-changelog"
+    },
+    {
+      "path": "../conventional-commits-parser"
+    },
+    {
+      "path": "../git"
+    },
+    {
+      "path": "../github"
     }
   ]
 }

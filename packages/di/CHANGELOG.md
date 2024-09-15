@@ -1,3 +1,15 @@
+<!-- header -->
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+<!-- version:0.10.0 -->
+## 0.10.0
+
+### ✨ Features
+
+- automated releases (5b14fdb)
+
 ## [0.9.1](https://github.com/Wroud/foundation/compare/di-v0.9.0...di-v0.9.1) (2024-09-12)
 
 ### Bug Fixes

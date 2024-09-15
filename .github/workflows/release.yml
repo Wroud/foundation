@@ -47,8 +47,6 @@ jobs:
       - name: Release
         run: |
           yarn workspaces foreach -A --topological-dev --no-private run ci:release
-          yarn build
-          yarn test:ci
           git commit -m "chore: release" || true
 
       - name: Tag

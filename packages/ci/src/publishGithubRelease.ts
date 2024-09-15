@@ -39,15 +39,21 @@ export async function publishGithubRelease({
   if (dryRun) {
     console.log(`Checking release for tag ${tag}`);
   } else {
-    const release = await octokit.repos.getReleaseByTag({
-      owner,
-      repo: repository,
-      tag,
-    });
+    try {
+      const release = await octokit.repos.getReleaseByTag({
+        owner,
+        repo: repository,
+        tag,
+      });
 
-    if (release.status === 200) {
-      console.log(`Release ${tag} already exists`);
-      return;
+      if (release.status === 200) {
+        console.log(`Release ${tag} already exists`);
+        return;
+      }
+    } catch (e: any) {
+      if (e.status !== 404) {
+        throw e;
+      }
     }
   }
 

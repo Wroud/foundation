@@ -1,9 +1,10 @@
 {
-  "name": "@wroud/git",
-  "private": true,
+  "name": "@wroud/conventional-commits-bump",
   "version": "0.0.1",
+  "private": true,
   "type": "module",
   "packageManager": "yarn@4.4.1",
+  "bin": "./lib/cli.js",
   "exports": {
     ".": "./lib/index.js"
   },
@@ -17,14 +18,11 @@
     "clear": "rimraf ./lib"
   },
   "dependencies": {
-    "execa": "^9",
-    "semver-regex": "^4",
-    "uuid": "^10"
+    "@wroud/conventional-commits-parser": "workspace:^0"
   },
   "devDependencies": {
     "@tsconfig/node20": "^20",
     "@types/node": "^20",
-    "@types/uuid": "^10",
     "@vitest/coverage-v8": "^2",
     "@wroud/tests-runner": "workspace:*",
     "@wroud/tsconfig": "workspace:*",

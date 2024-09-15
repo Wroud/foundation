@@ -1,11 +1,11 @@
-export interface ICreateConventionalChangelogOptions {
+export interface ICreateConventionalChangelogHeaderOptions {
   headlineLevel?: string;
 }
 
 export function* createConventionalChangelogHeader(
   version: string,
   compareUrl?: string,
-  options: ICreateConventionalChangelogOptions = {},
+  options: ICreateConventionalChangelogHeaderOptions = {},
 ): Generator<string> {
   const { headlineLevel: hl = "##" } = options;
 

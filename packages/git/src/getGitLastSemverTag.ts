@@ -1,6 +1,7 @@
 import { execa } from "execa";
 import semverRegex from "semver-regex";
 import { validateGitEnvironment } from "./validateGitEnvironment.js";
+import { defaultTagPrefix } from "./defaultTagPrefix.js";
 
 interface IGitGetLastTagOptions {
   to?: string;
@@ -9,7 +10,7 @@ interface IGitGetLastTagOptions {
 
 export async function getGitLastSemverTag({
   to = "HEAD",
-  prefix = "v",
+  prefix = defaultTagPrefix,
 }: IGitGetLastTagOptions = {}): Promise<string | null> {
   await validateGitEnvironment();
   try {

@@ -36,7 +36,9 @@
     "!.tsbuildinfo"
   ],
   "scripts": {
-    "ci:prepublish": "",
+    "ci:release": "yarn ci release --prefix di-react-v",
+    "ci:git-tag": "yarn ci git-tag --prefix di-react-v",
+    "ci:release-github": "yarn ci release-github --prefix di-react-v",
     "test": "tests-runner",
     "test:ci": "CI=true yarn run test",
     "build": "tsc -b",

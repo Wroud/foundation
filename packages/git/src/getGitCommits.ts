@@ -8,7 +8,7 @@ import type { IGitTrailer } from "./IGitTrailer.js";
 const linesPerCommit = 6;
 
 interface IGitGetCommitsOptions {
-  from?: string;
+  from?: string | null;
   to?: string;
   path?: string;
   maxCommits?: number;
@@ -25,7 +25,7 @@ const tagsRegex = /tag: ([^,]+)[,)]/g;
 export async function* getGitCommits({
   from,
   to = "HEAD",
-  path,
+  path = ".",
   maxCommits,
   includeTags = true,
   includeTrailers = true,
@@ -70,65 +70,67 @@ export async function* getGitCommits({
       let bodyLinesCopy: (string | null)[] = [...bodyLines];
 
       const trailers: IGitTrailer[] = [];
-      let currentTrailer: IGitTrailer | null = null;
-      let canStartTrailer = false;
 
-      let lineIndex = 0;
-      for (const line of bodyLines) {
-        if (line === "") {
-          canStartTrailer = true;
-        }
-
-        let foundTrailer: IGitTrailer | null = null;
-
-        for (const customTrailer of customTrailers) {
-          const match = line.match(customTrailer);
-
-          if (match) {
-            const token = match.groups!["token"]!;
-            const value = match.groups!["value"]!;
-            foundTrailer = { token, value };
-            break;
+      if (includeTrailers) {
+        let currentTrailer: IGitTrailer | null = null;
+        let canStartTrailer = false;
+        let lineIndex = 0;
+        for (const line of bodyLines) {
+          if (line === "") {
+            canStartTrailer = true;
           }
-        }
 
-        if (!foundTrailer) {
-          const match = line.match(trailerRegex);
-          if (match) {
-            const token = match[1]!;
-            const value = (match[2] || match[3])!;
-            foundTrailer = { token, value };
-          }
-        }
+          let foundTrailer: IGitTrailer | null = null;
 
-        if (canStartTrailer && foundTrailer) {
-          if (currentTrailer) {
-            trailers.push(currentTrailer);
-          }
-          currentTrailer = foundTrailer;
-        } else {
-          if (currentTrailer) {
-            const match = line.match(trailerMultilineValueRegex);
+          for (const customTrailer of customTrailers) {
+            const match = line.match(customTrailer);
+
             if (match) {
-              currentTrailer.value += "\n" + match.groups!["value"];
-            } else {
-              trailers.push(currentTrailer);
-              currentTrailer = null;
+              const token = match.groups!["token"]!;
+              const value = match.groups!["value"]!;
+              foundTrailer = { token, value };
+              break;
             }
           }
+
+          if (!foundTrailer) {
+            const match = line.match(trailerRegex);
+            if (match) {
+              const token = match[1]!;
+              const value = (match[2] || match[3])!;
+              foundTrailer = { token, value };
+            }
+          }
+
+          if (canStartTrailer && foundTrailer) {
+            if (currentTrailer) {
+              trailers.push(currentTrailer);
+            }
+            currentTrailer = foundTrailer;
+          } else {
+            if (currentTrailer) {
+              const match = line.match(trailerMultilineValueRegex);
+              if (match) {
+                currentTrailer.value += "\n" + match.groups!["value"];
+              } else {
+                trailers.push(currentTrailer);
+                currentTrailer = null;
+              }
+            }
+          }
+
+          if (
+            bodyLinesCopy.length >= lineIndex &&
+            (currentTrailer || trailers.length > 0)
+          ) {
+            bodyLinesCopy.splice(lineIndex);
+          }
+          lineIndex++;
         }
 
-        if (
-          bodyLinesCopy.length >= lineIndex &&
-          (currentTrailer || trailers.length > 0)
-        ) {
-          bodyLinesCopy.splice(lineIndex);
+        if (currentTrailer) {
+          trailers.push(currentTrailer);
         }
-        lineIndex++;
-      }
-
-      if (currentTrailer) {
-        trailers.push(currentTrailer);
       }
 
       const commitInfo: IGitCommitInfo = {

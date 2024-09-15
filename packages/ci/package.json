@@ -3,28 +3,40 @@
   "private": true,
   "type": "module",
   "packageManager": "yarn@4.4.1",
-  "devDependencies": {
-    "@conventional-changelog/git-client": "^1",
-    "@tsconfig/node20": "^20",
-    "@types/conventional-changelog": "^3",
-    "@types/conventional-changelog-core": "^4",
-    "@types/conventional-changelog-writer": "^4",
-    "@types/conventional-commits-parser": "^5",
-    "@types/gulp": "^4",
-    "@types/node": "^20",
-    "@wroud/tsconfig": "workspace:*",
-    "typescript": "^5"
-  },
-  "exports": {
-    "./gulp": "./lib/gulp/index.js"
+  "bin": "./lib/cli.js",
+  "scripts": {
+    "ci:prepublish": "",
+    "test": "tests-runner",
+    "test:ci": "CI=true yarn run test",
+    "build": "tsc -b",
+    "watch:tsc": "tsc -b -w",
+    "dev": "concurrently \"npm:watch:*\"",
+    "clear": "rimraf ./lib"
   },
   "dependencies": {
-    "@wroud/ci-github-release": "workspace:^0",
-    "@wroud/semver-bump": "workspace:^0",
-    "conventional-changelog": "^6",
-    "conventional-changelog-conventionalcommits": "^8",
+    "@octokit/auth-action": "^5",
+    "@octokit/rest": "^21",
+    "@wroud/conventional-commits-bump": "workspace:*",
+    "@wroud/conventional-commits-changelog": "workspace:*",
+    "@wroud/conventional-commits-parser": "workspace:*",
+    "@wroud/git": "workspace:*",
+    "@wroud/github": "workspace:*",
+    "@wroud/tests-runner": "workspace:*",
     "execa": "^9",
-    "gulp": "^5",
-    "tempy": "^3"
+    "semver": "^7",
+    "tempy": "^3",
+    "yargs": "^17"
+  },
+  "devDependencies": {
+    "@tsconfig/node20": "^20",
+    "@types/node": "^20",
+    "@types/semver": "^7",
+    "@types/yargs": "^17",
+    "@vitest/coverage-v8": "^2",
+    "@wroud/tsconfig": "workspace:*",
+    "concurrently": "^8",
+    "rimraf": "^6",
+    "typescript": "^5",
+    "vitest": "^2"
   }
 }

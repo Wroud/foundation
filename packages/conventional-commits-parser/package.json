@@ -16,18 +16,18 @@
     "dev": "concurrently \"npm:watch:*\"",
     "clear": "rimraf ./lib"
   },
+  "dependencies": {
+    "@wroud/git": "workspace:^0"
+  },
   "devDependencies": {
     "@tsconfig/node20": "^20",
     "@types/node": "^20",
     "@vitest/coverage-v8": "^2",
-    "@wroud/tests-runner": "workspace:^",
-    "@wroud/tsconfig": "workspace:^",
+    "@wroud/tests-runner": "workspace:*",
+    "@wroud/tsconfig": "workspace:*",
     "concurrently": "^8",
     "rimraf": "^6",
     "typescript": "^5",
     "vitest": "^2"
-  },
-  "dependencies": {
-    "@wroud/git": "workspace:^"
   }
 }

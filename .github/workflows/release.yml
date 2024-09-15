@@ -45,10 +45,40 @@ jobs:
           git config user.email 'github-actions[bot]@users.noreply.github.com'
 
       - name: Release
+        run: |
+          yarn workspaces foreach -A --topological-dev --no-private run ci:release
+          git commit -m "chore: release"
+
+      - name: Tag
+        run: |
+          yarn workspaces foreach -A --topological-dev --no-private run ci:git-tag
+          git push --follow-tags
+
+  publish-github:
+    needs: release
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - run: corepack enable
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "lts/*"
+          cache: "yarn"
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+          run-id: ${{ inputs.build-run-id }}
+
+      - run: yarn install --immutable
+
+      - name: Release github
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
-        run: yarn workspaces foreach -A --topological-dev --no-private run ci:prepublish
+        run: yarn workspaces foreach -A --topological-dev --no-private run ci:release-github
 
   publish-npm:
     needs: release

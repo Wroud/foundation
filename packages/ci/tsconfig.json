@@ -12,10 +12,19 @@
   "include": ["src"],
   "references": [
     {
-      "path": "../ci-github-release"
+      "path": "../conventional-commits-bump"
     },
     {
-      "path": "../semver-bump"
+      "path": "../conventional-commits-changelog"
+    },
+    {
+      "path": "../conventional-commits-parser"
+    },
+    {
+      "path": "../git"
+    },
+    {
+      "path": "../github"
     }
   ]
 }

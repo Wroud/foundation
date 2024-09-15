@@ -43,7 +43,9 @@
     "!.tsbuildinfo"
   ],
   "scripts": {
-    "ci:prepublish": "yarn gulp ci:prepublish",
+    "ci:release": "yarn ci release --prefix di-v",
+    "ci:git-tag": "yarn ci git-tag --prefix di-v",
+    "ci:release-github": "yarn ci release-github --prefix di-v",
     "test": "tests-runner",
     "test:ci": "CI=true yarn run test",
     "build": "tsc -b",
@@ -58,7 +60,6 @@
     "@wroud/tests-runner": "workspace:*",
     "@wroud/tsconfig": "workspace:*",
     "concurrently": "^8",
-    "gulp": "^5",
     "rimraf": "^6",
     "tslib": "^2",
     "typescript": "^5",

@@ -35,9 +35,6 @@
       "path": "../semver-bump"
     },
     {
-      "path": "../ci-github-release"
-    },
-    {
       "path": "../conventional-commits-changelog"
     },
     {

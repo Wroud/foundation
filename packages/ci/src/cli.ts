@@ -98,7 +98,7 @@ await yargs(hideBin(process.argv))
       let authStrategy;
 
       if (!dryRun) {
-        authStrategy = createActionAuth();
+        authStrategy = createActionAuth;
       } else {
         authStrategy = undefined;
       }

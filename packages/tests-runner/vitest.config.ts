@@ -2,7 +2,7 @@ import { existsSync } from "fs";
 import path from "path";
 import { defineConfig, coverageConfigDefaults } from "vitest/config";
 
-export default defineConfig(({ command }) => ({
+export default defineConfig({
   build: {
     target: "esnext",
   },
@@ -46,10 +46,7 @@ export default defineConfig(({ command }) => ({
         "**/lib/tests/**",
         "**/src/tests/**",
       ],
-      reporter:
-        command === "serve"
-          ? ["text", "text-summary"]
-          : ["json", "json-summary", "text", "text-summary"],
+      reporter: ["json", "json-summary", "text", "text-summary"],
     },
   },
-}));
+});

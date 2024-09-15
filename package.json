@@ -23,8 +23,6 @@
     "@testing-library/dom": "^10",
     "@vitest/coverage-v8": "^2",
     "@wroud/tests-runner": "workspace:*",
-    "commitizen": "^4",
-    "cz-conventional-changelog": "^3",
     "happy-dom": "^15",
     "husky": "^9",
     "is-ci": "^3",
@@ -44,10 +42,5 @@
     "clear": "rimraf --glob 'packages/*/lib' 'packages/*/node_modules' 'packages/*/coverage' coverage node_modules",
     "test": "tests-runner",
     "test:ci": "CI=true yarn run test run"
-  },
-  "config": {
-    "commitizen": {
-      "path": "cz-conventional-changelog"
-    }
   }
 }

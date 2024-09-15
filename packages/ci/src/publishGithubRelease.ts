@@ -6,6 +6,7 @@ import { readChangelogForVersion } from "./readChangelogForVersion.js";
 
 export interface IPublishGithubReleaseOptions {
   auth?: any;
+  authStrategy?: any;
   prefix?: string;
   owner: string;
   repository: string;
@@ -14,6 +15,7 @@ export interface IPublishGithubReleaseOptions {
 
 export async function publishGithubRelease({
   auth,
+  authStrategy,
   prefix,
   owner,
   repository,
@@ -22,6 +24,7 @@ export async function publishGithubRelease({
   console.log(`Creating GitHub release for ${owner}/${repository}`);
   const octokit = new Octokit({
     auth,
+    authStrategy,
   });
 
   const tag = await getGitLastSemverTag({

@@ -88,25 +88,23 @@ await yargs(hideBin(process.argv))
       const dryRun = argv.dryRun;
 
       const [owner, repository] =
-        process.env["GITHUB_REPOSITORY"]?.split("/") || dryRun
-          ? ["owner", "repo"]
-          : [];
+        process.env["GITHUB_REPOSITORY"]?.split("/") ??
+        (dryRun ? ["owner", "repo"] : []);
 
       if (!owner || !repository) {
         throw new Error("GITHUB_REPOSITORY environment variable is required");
       }
 
-      let auth;
+      let authStrategy;
 
       if (!dryRun) {
-        const actionAuthStrategy = createActionAuth();
-        auth = await actionAuthStrategy();
+        authStrategy = createActionAuth();
       } else {
-        auth = undefined;
+        authStrategy = undefined;
       }
 
       await publishGithubRelease({
-        auth,
+        authStrategy,
         owner,
         repository,
         prefix: argv.prefix,

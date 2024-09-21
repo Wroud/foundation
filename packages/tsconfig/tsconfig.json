@@ -1,34 +1,35 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "extends": ["@tsconfig/strictest/tsconfig.json"],
   "include": [],
   "compilerOptions": {
     "target": "ES2022",
-    "useDefineForClassFields": true,
     "lib": ["esnext"],
     "module": "nodenext",
     "skipLibCheck": true,
 
     "moduleResolution": "NodeNext",
     "resolveJsonModule": true,
-    "isolatedModules": true,
     "importHelpers": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
 
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
-    "forceConsistentCasingInFileNames": true,
     "exactOptionalPropertyTypes": false,
-
-    /* Emit decorators */
     "verbatimModuleSyntax": true,
+    "checkJs": true,
+    "allowUnusedLabels": false,
+    "allowUnreachableCode": false,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noUncheckedIndexedAccess": true,
 
     /* Source maps */
     "sourceMap": true,
+
+    /* project references */
     "declarationMap": true
   }
 }

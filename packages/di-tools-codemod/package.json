@@ -2,7 +2,7 @@
   "name": "@wroud/di-tools-codemod",
   "description": "",
   "version": "0.1.0",
-  "packageManager": "yarn@4.4.1",
+  "packageManager": "yarn@4.5.0",
   "type": "module",
   "license": "MIT",
   "author": "Wroud",

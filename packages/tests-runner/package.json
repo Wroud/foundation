@@ -2,7 +2,7 @@
   "name": "@wroud/tests-runner",
   "private": true,
   "type": "module",
-  "packageManager": "yarn@4.4.1",
+  "packageManager": "yarn@4.5.0",
   "bin": "./bin/tests-runner.mjs",
   "devDependencies": {
     "@tsconfig/node20": "^20",

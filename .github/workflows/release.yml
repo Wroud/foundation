@@ -53,7 +53,7 @@ jobs:
           yarn workspaces foreach -A --topological-dev --no-private run ci:git-tag
           git push --follow-tags
 
-  publish-github:
+  publish-github-release:
     needs: release
     runs-on: ubuntu-latest
     timeout-minutes: 10

@@ -21,7 +21,7 @@ export async function publishGithubRelease({
   repository,
   dryRun,
 }: IPublishGithubReleaseOptions): Promise<void> {
-  console.log(`Creating GitHub release for ${owner}/${repository}`);
+  console.log(`Creating GitHub release for ${owner}/${repository} ${prefix}`);
   const octokit = new Octokit({
     auth,
     authStrategy,
@@ -29,6 +29,7 @@ export async function publishGithubRelease({
 
   const tag = await getGitLastSemverTag({
     prefix,
+    to: "origin/HEAD",
   });
 
   if (!tag) {

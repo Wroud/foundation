@@ -19,6 +19,8 @@ jobs:
       contents: write
       issues: write
       pull-requests: write
+    outputs:
+      no-changes: ${{ steps.check-changes.outputs.no-changes }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -44,12 +46,21 @@ jobs:
           git config user.email 'github-actions[bot]@users.noreply.github.com'
 
       - name: Release
+        run: yarn workspaces foreach -A --topological-dev --no-private run ci:release
+
+      - name: Check for changes
+        id: check-changes
         run: |
-          yarn workspaces foreach -A --topological-dev --no-private run ci:release
-          git commit -m "chore: release" || true
+          if git diff --quiet HEAD..origin/main -- .; then
+            echo "no-changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "no-changes=false" >> $GITHUB_OUTPUT
+          fi
 
       - name: Tag
+        if: steps.check-changes.outputs.no-changes != 'true'
         run: |
+          git commit -m "chore: release"
           yarn workspaces foreach -A --topological-dev --no-private run ci:git-tag
           git push --follow-tags
 
@@ -61,6 +72,7 @@ jobs:
       contents: write
       issues: write
       pull-requests: write
+    if: needs.release.outputs.no-changes != 'true'
     steps:
       - uses: actions/checkout@v4
         with:
@@ -91,6 +103,7 @@ jobs:
     timeout-minutes: 10
     permissions:
       id-token: write # to enable use of OIDC for npm provenance
+    if: needs.release.outputs.no-changes != 'true'
     steps:
       - uses: actions/checkout@v4
       - run: corepack enable

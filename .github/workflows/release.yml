@@ -72,7 +72,7 @@ jobs:
       contents: write
       issues: write
       pull-requests: write
-    if: needs.release.outputs.no-changes != 'true'
+    # if: needs.release.outputs.no-changes != 'true'
     steps:
       - uses: actions/checkout@v4
         with:
@@ -103,7 +103,7 @@ jobs:
     timeout-minutes: 10
     permissions:
       id-token: write # to enable use of OIDC for npm provenance
-    if: needs.release.outputs.no-changes != 'true'
+    # if: needs.release.outputs.no-changes != 'true'
     steps:
       - uses: actions/checkout@v4
       - run: corepack enable

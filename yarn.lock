@@ -3338,6 +3338,7 @@ __metadata:
     "@types/node": "npm:^20"
     "@types/uuid": "npm:^10"
     "@vitest/coverage-v8": "npm:^2"
+    "@wroud/ci": "workspace:*"
     "@wroud/tests-runner": "workspace:*"
     "@wroud/tsconfig": "workspace:*"
     concurrently: "npm:^8"

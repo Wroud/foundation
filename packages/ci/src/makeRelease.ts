@@ -4,7 +4,11 @@ import {
   parseConventionalCommit,
   type IConventionalCommit,
 } from "@wroud/conventional-commits-parser";
-import { getGitCommits, getGitLastSemverTag } from "@wroud/git";
+import {
+  getGitCommits,
+  getGitLastSemverTag,
+  getGitPrefixedTag,
+} from "@wroud/git";
 import { execa } from "execa";
 import {
   createReadStream,
@@ -108,7 +112,7 @@ export async function makeRelease({
   }
 
   await pipeline(
-    Readable.from(changelogHead(version, commits, lastRelease)).map(
+    Readable.from(changelogHead(version, commits, lastRelease, prefix)).map(
       (line) => line + "\n",
     ),
     mockWritableStream(dryRun, () =>
@@ -168,12 +172,13 @@ async function* changelogHead(
   version: string,
   commits: IConventionalCommit[],
   previousVersion?: string | null,
+  tagPrefix?: string,
 ): AsyncGenerator<string> {
   yield* createChangelogHeader();
 
   yield* createConventionalChangelogHeader(
     version,
-    getCompareUrl(version, previousVersion),
+    getCompareUrl(getGitPrefixedTag(version, tagPrefix), previousVersion),
   );
   yield* createConventionalChangelog(commits, {
     getMetadata: async (commit) => {

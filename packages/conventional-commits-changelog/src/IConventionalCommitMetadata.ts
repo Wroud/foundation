@@ -2,5 +2,6 @@ import type { IConventionalCommitCoAuthor } from "./IConventionalCommitCoAuthor.
 
 export interface IConventionalCommitMetadata {
   url?: string;
-  coAuthors: IConventionalCommitCoAuthor[];
+  coAuthors?: IConventionalCommitCoAuthor[];
+  formatter?: (message: string) => string;
 }

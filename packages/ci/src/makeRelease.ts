@@ -14,6 +14,7 @@ import {
 } from "fs";
 import { rename, writeFile } from "fs/promises";
 import {
+  conventionalChangelogMarkers,
   createChangelogHeader,
   createConventionalChangelog,
   createConventionalChangelogHeader,
@@ -22,11 +23,12 @@ import { pipeline } from "stream/promises";
 import { Readable, Transform, Writable } from "stream";
 import { temporaryFile } from "tempy";
 import { createInterface } from "readline";
-import { markdownMarkers } from "./markdownMarkers.js";
 import semver from "semver";
 import { stdout } from "process";
 import { readPackageJson } from "./readPackageJson.js";
 import { defaultChangelogFile } from "./defaultChangelogFile.js";
+import { getGithubLink, gitGithubLinks, GithubURL } from "@wroud/github";
+import { REPOSITORY } from "./REPOSITORY.js";
 
 export interface IMakeReleaseOptions {
   changeLogFile?: string;
@@ -55,6 +57,7 @@ export async function makeRelease({
     path,
     from: lastRelease,
     customTrailers: [...gitTrailersConventionalCommits],
+    customLinks: [...gitGithubLinks],
   })) {
     const conventionalCommit = parseConventionalCommit(commit);
 
@@ -105,7 +108,9 @@ export async function makeRelease({
   }
 
   await pipeline(
-    Readable.from(changelogHead(version, commits)).map((line) => line + "\n"),
+    Readable.from(changelogHead(version, commits, lastRelease)).map(
+      (line) => line + "\n",
+    ),
     mockWritableStream(dryRun, () =>
       createWriteStream(tmpFile, { flags: "w" }),
     ),
@@ -121,14 +126,14 @@ export async function makeRelease({
     new Transform({
       transform(chunk, encoding, callback) {
         const line = chunk.toString();
-        if (line === markdownMarkers.header) {
+        if (line === conventionalChangelogMarkers.header) {
           skipping = true;
         }
 
         if (
           skipping &&
-          (!markdownMarkers.isVersionMarker(line.toString()) ||
-            markdownMarkers.version(version) === line)
+          (!conventionalChangelogMarkers.isVersionMarker(line.toString()) ||
+            conventionalChangelogMarkers.version(version) === line)
         ) {
           callback(null, "");
         } else {
@@ -162,12 +167,32 @@ export async function makeRelease({
 async function* changelogHead(
   version: string,
   commits: IConventionalCommit[],
+  previousVersion?: string | null,
 ): AsyncGenerator<string> {
-  yield markdownMarkers.header;
   yield* createChangelogHeader();
-  yield markdownMarkers.version(version);
-  yield* createConventionalChangelogHeader(version);
-  yield* createConventionalChangelog(commits);
+
+  yield* createConventionalChangelogHeader(
+    version,
+    getCompareUrl(version, previousVersion),
+  );
+  yield* createConventionalChangelog(commits, {
+    getMetadata: async (commit) => {
+      return {
+        url: GithubURL.commit(REPOSITORY, commit.commitInfo.hash),
+        formatter(message) {
+          for (const [token, link] of Object.entries(commit.commitInfo.links)) {
+            const githubLink = getGithubLink(link, REPOSITORY);
+
+            if (githubLink) {
+              message = message.replaceAll(token, `[${token}](${githubLink})`);
+            }
+          }
+
+          return message;
+        },
+      };
+    },
+  });
 }
 
 function mockWritableStream<T extends WriteStream>(
@@ -183,4 +208,14 @@ function mockWritableStream<T extends WriteStream>(
   } else {
     return createWritableStream();
   }
+}
+
+function getCompareUrl(
+  version: string,
+  previousVersion?: string | null,
+): string | undefined {
+  if (!previousVersion) {
+    return undefined;
+  }
+  return `https://github.com/Wroud/foundation/compare/${previousVersion}...${version}`;
 }

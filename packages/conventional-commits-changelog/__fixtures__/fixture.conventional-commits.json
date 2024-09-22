@@ -88,7 +88,7 @@
       "tags": [],
       "authorName": "Aleksei Potsetsuev",
       "authorEmail": "wrouds@gmail.com",
-      "subject": "feat: update github workflows",
+      "subject": "feat: update github workflows owner/repo#123",
       "body": "",
       "trailers": []
     },
@@ -102,7 +102,7 @@
       "tags": [],
       "authorName": "Aleksei Potsetsuev",
       "authorEmail": "wrouds@gmail.com",
-      "subject": "ci: inherit secrets in workflows",
+      "subject": "ci: inherit secrets in workflows GH-123",
       "body": "",
       "trailers": []
     },
@@ -116,7 +116,7 @@
       "tags": [],
       "authorName": "Aleksei Potsetsuev",
       "authorEmail": "wrouds@gmail.com",
-      "subject": "chore: fix readme",
+      "subject": "chore: fix readme #123",
       "body": "",
       "trailers": []
     },

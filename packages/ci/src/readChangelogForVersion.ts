@@ -1,7 +1,7 @@
 import { createInterface } from "readline";
 import { defaultChangelogFile } from "./defaultChangelogFile.js";
 import { createReadStream } from "fs";
-import { markdownMarkers } from "./markdownMarkers.js";
+import { conventionalChangelogMarkers } from "@wroud/conventional-commits-changelog";
 
 export interface IReadChangelogForVersionOptions {
   version: string;
@@ -21,11 +21,11 @@ export async function readChangelogForVersion({
     }),
   )) {
     if (reading) {
-      if (markdownMarkers.isVersionMarker(line)) {
+      if (conventionalChangelogMarkers.isVersionMarker(line)) {
         break;
       }
       data += line + "\n";
-    } else if (line === markdownMarkers.version(version)) {
+    } else if (line === conventionalChangelogMarkers.version(version)) {
       reading = true;
     }
   }

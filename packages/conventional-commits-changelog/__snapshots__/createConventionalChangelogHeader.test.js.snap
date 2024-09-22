@@ -2,14 +2,16 @@
 
 exports[`createConventionalChangelogHeader > default 1`] = `
 [
-  "## 1.0.0",
+  "<!-- version:1.0.0 -->",
+  "## 1.0.0 (2000-02-23)",
   "",
 ]
 `;
 
 exports[`createConventionalChangelogHeader > with compare URL 1`] = `
 [
-  "## 1.0.0",
+  "<!-- version:1.0.0 -->",
+  "## 1.0.0 (2000-02-23)",
   "",
   "[Compare changes](https://example.com)",
   "",

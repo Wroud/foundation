@@ -1,3 +1,4 @@
+export * from "./conventionalChangelogMarkers.js";
 export * from "./createChangelogHeader.js";
 export * from "./createConventionalChangelogHeader.js";
 export * from "./createConventionalChangelog.js";

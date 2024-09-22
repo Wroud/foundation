@@ -2,6 +2,7 @@
 
 exports[`createChangelogHeader > default 1`] = `
 [
+  "<!-- header -->",
   "# Changelog",
   "",
   "All notable changes to this project will be documented in this file.",
@@ -11,6 +12,7 @@ exports[`createChangelogHeader > default 1`] = `
 
 exports[`createChangelogHeader > with custom description 1`] = `
 [
+  "<!-- header -->",
   "# Release notes",
   "",
   "This is a description",
@@ -20,6 +22,7 @@ exports[`createChangelogHeader > with custom description 1`] = `
 
 exports[`createChangelogHeader > with custom title 1`] = `
 [
+  "<!-- header -->",
   "# Release notes",
   "",
   "All notable changes to this project will be documented in this file.",

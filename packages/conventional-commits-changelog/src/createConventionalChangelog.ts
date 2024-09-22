@@ -59,7 +59,10 @@ export async function* createConventionalChangelog(
 
     if (getMetadata) {
       commitWithMetadata.metadata = await getMetadata(commit);
-      contributors.push(...commitWithMetadata.metadata.coAuthors);
+
+      if (commitWithMetadata.metadata.coAuthors) {
+        contributors.push(...commitWithMetadata.metadata.coAuthors);
+      }
     }
 
     group.push(commitWithMetadata);
@@ -113,7 +116,11 @@ function* createChangesList(
   commits: IConventionalCommitWithMetadata[],
 ): Generator<string> {
   for (const commit of commits) {
-    let message = `- ${commit.description}`;
+    let message = `- `;
+
+    message += commit.metadata?.formatter
+      ? commit.metadata.formatter(commit.description)
+      : commit.description;
 
     if (commit.metadata?.url) {
       message += ` ([${commit.commitInfo.hash}](${commit.metadata.url}))`;
@@ -124,7 +131,11 @@ function* createChangesList(
     yield message;
 
     for (const breakingChange of commit.breakingChanges) {
-      const lines = formatMessage(breakingChange);
+      const lines = formatMessage(
+        commit.metadata?.formatter
+          ? commit.metadata.formatter(breakingChange)
+          : breakingChange,
+      );
       yield `  - ${lines.shift()}`;
 
       for (const line of lines) {

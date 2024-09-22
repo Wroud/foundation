@@ -1,3 +1,5 @@
+import { conventionalChangelogMarkers } from "./conventionalChangelogMarkers.js";
+
 export interface ICreateChangelogHeaderOptions {
   headlineLevel?: string;
 }
@@ -9,6 +11,7 @@ export function* createChangelogHeader(
 ): Generator<string> {
   const { headlineLevel: hl = "#" } = options;
 
+  yield conventionalChangelogMarkers.header;
   yield `${hl} ${title}`;
   yield "";
 

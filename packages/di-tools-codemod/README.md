@@ -1,4 +1,4 @@
-# @wroud/di-tools-codemod <!--t-->
+# @wroud/di-tools-codemod
 
 Welcome to `@wroud/di-tools-codemod`, a tool designed to help you migrate your codebase from Inversify to `@wroud/di` effortlessly. This codemod automates the transformation process, ensuring a smooth transition to `@wroud/di`.
 

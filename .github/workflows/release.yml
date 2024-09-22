@@ -51,7 +51,7 @@ jobs:
       - name: Check for changes
         id: check-changes
         run: |
-          if git diff --quiet HEAD..origin/main -- .; then
+          if git diff --cached --quiet; then
             echo "no-changes=true" >> $GITHUB_OUTPUT
           else
             echo "no-changes=false" >> $GITHUB_OUTPUT

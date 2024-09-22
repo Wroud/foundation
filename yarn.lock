@@ -3303,6 +3303,7 @@ __metadata:
     "@types/jscodeshift": "npm:^0"
     "@types/node": "npm:^20"
     "@vitest/coverage-v8": "npm:^2"
+    "@wroud/ci": "workspace:*"
     "@wroud/tests-runner": "workspace:*"
     "@wroud/tsconfig": "workspace:*"
     jscodeshift: "npm:^17"

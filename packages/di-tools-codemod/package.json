@@ -1,9 +1,9 @@
 {
   "name": "@wroud/di-tools-codemod",
-  "description": "",
+  "description": "@wroud/di-tools-codemod is a codemod utility that automates the migration of your codebase from Inversify to @wroud/di. It streamlines the transformation process, allowing for effortless and customizable transitions through configuration support.",
   "version": "0.1.0",
-  "packageManager": "yarn@4.5.0",
   "type": "module",
+  "packageManager": "yarn@4.5.0",
   "license": "MIT",
   "author": "Wroud",
   "homepage": "https://wroud.dev",
@@ -19,17 +19,26 @@
     "./package.json": "./package.json"
   },
   "files": [
-    "LICENSE",
     "package.json",
+    "LICENSE",
     "README.md",
-    "bin",
+    "CHANGELOG.md",
     "lib",
+    "bin",
+    "!lib/**/*.test.js",
+    "!lib/**/*.test.d.ts",
+    "!lib/**/*.test.d.ts.map",
+    "!lib/**/*.test.js.map",
+    "!lib/tests",
     "!.tsbuildinfo"
   ],
   "engines": {
     "node": ">=20"
   },
   "scripts": {
+    "ci:release": "yarn ci release --prefix di-v",
+    "ci:git-tag": "yarn ci git-tag --prefix di-v",
+    "ci:release-github": "yarn ci release-github --prefix di-v",
     "test": "tests-runner",
     "test:ci": "CI=true yarn run test",
     "test:watch": "vitest watch",
@@ -40,6 +49,7 @@
     "@types/jscodeshift": "^0",
     "@types/node": "^20",
     "@vitest/coverage-v8": "^2",
+    "@wroud/ci": "workspace:*",
     "@wroud/tests-runner": "workspace:*",
     "@wroud/tsconfig": "workspace:*",
     "typescript": "^5",
@@ -47,5 +57,17 @@
   },
   "dependencies": {
     "jscodeshift": "^17"
-  }
+  },
+  "keywords": [
+    "codemod",
+    "migration",
+    "inversify",
+    "@wroud/di",
+    "dependency injection",
+    "automated migration",
+    "code transformation",
+    "refactoring tool",
+    "di-tools",
+    "transformer"
+  ]
 }

@@ -83,3 +83,11 @@ export class NotificationService {
   ) {}
 }
 ```
+
+## Changelog
+
+All notable changes to this project will be documented in the [CHANGELOG](./CHANGELOG.md) file.
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](./LICENSE) file for details.

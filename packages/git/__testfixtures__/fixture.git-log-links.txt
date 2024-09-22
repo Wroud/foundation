@@ -1,0 +1,44 @@
+1dfaff1
+ (HEAD -> main, tag: v1.0.5, tag: v1.0.1)
+Aleksei Potsetsuev
+wrouds@gmail.com
+test(git): test commit with something
+some long description
+
+BREAKING CHANGE: Some breaky change
+
+fix #123
+
+===end===
+5a84e8d
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+chore: disable auto release #22
+
+===end===
+cde6098
+ (tag: di-v0.9.1, origin/main, origin/HEAD)
+github-actions[bot]
+github-actions[bot]@users.noreply.github.com
+chore: release @wroud/di@0.9.1 Wroud/foundation#41
+
+===end===
+26768a0
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+fix: add automated releases
+
+some changes in #11
+
+===end===
+26768a0
+
+Aleksei Potsetsuev
+wrouds@gmail.com
+fix: add automated releases
+
+some changes in GH-15
+
+===end===

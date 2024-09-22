@@ -1,14 +1,42 @@
 {
   "name": "@wroud/git",
-  "private": true,
+  "description": "A lightweight toolset for working with local git, including utilities for retrieving git commits and tags, ideal for CI/CD pipelines and automated release workflows.",
   "version": "0.0.1",
   "type": "module",
   "packageManager": "yarn@4.5.0",
-  "exports": {
-    ".": "./lib/index.js"
+  "license": "MIT",
+  "author": "Wroud",
+  "homepage": "https://wroud.dev/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Wroud/foundation",
+    "directory": "packages/git"
   },
+  "sideEffects": [],
+  "module": "./lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./*": "./lib/*",
+    "./package.json": "./package.json",
+    "./src/*": "./src/*"
+  },
+  "files": [
+    "package.json",
+    "LICENSE",
+    "README.md",
+    "CHANGELOG.md",
+    "lib",
+    "!lib/**/*.test.js",
+    "!lib/**/*.test.d.ts",
+    "!lib/**/*.test.d.ts.map",
+    "!lib/**/*.test.js.map",
+    "!lib/tests",
+    "!.tsbuildinfo"
+  ],
   "scripts": {
-    "ci:prepublish": "",
+    "ci:release": "yarn ci release --prefix git-v",
+    "ci:git-tag": "yarn ci git-tag --prefix git-v",
+    "ci:release-github": "yarn ci release-github --prefix git-v",
     "test": "tests-runner",
     "test:ci": "CI=true yarn run test",
     "build": "tsc -b",
@@ -32,5 +60,22 @@
     "rimraf": "^6",
     "typescript": "^5",
     "vitest": "^2"
-  }
+  },
+  "keywords": [
+    "git",
+    "commits",
+    "tags",
+    "semver",
+    "ci",
+    "cd",
+    "automation",
+    "release",
+    "conventional-commits",
+    "git-tools",
+    "git-history",
+    "git-commits",
+    "git-tags",
+    "node",
+    "esm"
+  ]
 }

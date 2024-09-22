@@ -1,3 +1,4 @@
+import type { IGitLink } from "./IGitLink.js";
 import type { IGitTrailer } from "./IGitTrailer.js";
 
 export interface IGitCommitInfo {
@@ -8,4 +9,5 @@ export interface IGitCommitInfo {
   subject: string;
   body: string;
   trailers: IGitTrailer[];
+  links: Record<string, IGitLink>;
 }

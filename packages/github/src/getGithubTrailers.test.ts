@@ -10,6 +10,7 @@ describe("getGithubTrailers", () => {
       hash: "",
       subject: "",
       tags: [],
+      links: {},
       trailers: [],
     });
 
@@ -23,6 +24,7 @@ describe("getGithubTrailers", () => {
       hash: "",
       subject: "",
       tags: [],
+      links: {},
       trailers: [{ token: "co-authored-by", value: "name <email>" }],
     });
 
@@ -36,6 +38,7 @@ describe("getGithubTrailers", () => {
       hash: "",
       subject: "",
       tags: [],
+      links: {},
       trailers: [{ token: "Co-authored-by", value: "<email>" }],
     });
 
@@ -49,6 +52,7 @@ describe("getGithubTrailers", () => {
       hash: "",
       subject: "",
       tags: [],
+      links: {},
       trailers: [{ token: "Co-authored-by", value: "name" }],
     });
 
@@ -62,6 +66,7 @@ describe("getGithubTrailers", () => {
       hash: "",
       subject: "",
       tags: [],
+      links: {},
       trailers: [{ token: "Co-authored-by", value: "" }],
     });
 
@@ -75,6 +80,7 @@ describe("getGithubTrailers", () => {
       hash: "",
       subject: "",
       tags: [],
+      links: {},
       trailers: [
         { token: "Co-authored-by", value: "name1 <email1>" },
         { token: "Co-authored-by", value: "name2 <email2>" },
@@ -91,6 +97,7 @@ describe("getGithubTrailers", () => {
       hash: "",
       subject: "",
       tags: [],
+      links: {},
       trailers: [
         { token: "Co-authored-by", value: "name1 <email1>" },
         { token: "Co-authored-by", value: "name2 <email2>" },

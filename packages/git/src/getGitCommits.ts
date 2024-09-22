@@ -4,6 +4,7 @@ import type { IGitCommitInfo } from "./IGitCommitInfo.js";
 import { v4 as uuidv4 } from "uuid";
 import { validateGitEnvironment } from "./validateGitEnvironment.js";
 import type { IGitTrailer } from "./IGitTrailer.js";
+import type { IGitLink } from "./IGitLink.js";
 
 const linesPerCommit = 6;
 
@@ -15,6 +16,7 @@ interface IGitGetCommitsOptions {
   includeTags?: boolean;
   includeTrailers?: boolean;
   customTrailers?: RegExp[];
+  customLinks?: RegExp[];
 }
 
 const trailerRegex =
@@ -30,6 +32,7 @@ export async function* getGitCommits({
   includeTags = true,
   includeTrailers = true,
   customTrailers = [],
+  customLinks = [],
 }: IGitGetCommitsOptions = {}): AsyncGenerator<IGitCommitInfo> {
   await validateGitEnvironment();
   /**
@@ -133,6 +136,24 @@ export async function* getGitCommits({
         }
       }
 
+      const links: Record<string, IGitLink> = {};
+
+      for (const link of customLinks) {
+        for (const line of [subject, ...bodyLines]) {
+          if (line) {
+            const matches = line.matchAll(link);
+            for (const match of matches) {
+              const token = match.groups?.["token"]!;
+              links[token] = {
+                token,
+                link: match.groups?.["link"]!,
+                ...match.groups,
+              };
+            }
+          }
+        }
+      }
+
       const commitInfo: IGitCommitInfo = {
         hash: hash!,
         tags: [],
@@ -141,6 +162,7 @@ export async function* getGitCommits({
         subject: subject!,
         body: bodyLinesCopy.join("\n"),
         trailers,
+        links,
       };
 
       if (includeTags) {

@@ -82,4 +82,21 @@ describe("getGitCommits", () => {
     }
     expect(commits).toMatchSnapshot();
   });
+  it("parse custom links", async () => {
+    if (vi.isMockFunction(execa)) {
+      execa.mockImplementation(execaMock("fixture.git-log-links.txt"));
+    }
+
+    const commits = [];
+    for await (const commit of getGitCommits({
+      customLinks: [
+        /[^\w](?<token>#(?<link>\d+))/gi,
+        /[^\w](?<token>GH-(?<link>\d+))/gi,
+        /[^\w](?<token>(?<repository>\w+\/\w+)#(?<link>\d+))/gi,
+      ],
+    })) {
+      commits.push(commit);
+    }
+    expect(commits).toMatchSnapshot();
+  });
 });

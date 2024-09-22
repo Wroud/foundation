@@ -4,9 +4,8 @@ import type {
   IServiceConstructor,
   IServiceDescriptor,
   IServiceFactory,
-  IServiceImplementation,
-  ServiceImplementation,
-  ServiceType,
+  SingleServiceImplementation,
+  SingleServiceType,
 } from "../types/index.js";
 import { IServiceProvider } from "./IServiceProvider.js";
 import { ServiceLifetime } from "./ServiceLifetime.js";
@@ -32,75 +31,87 @@ export class ServiceCollection implements IServiceCollection {
     }
   }
 
-  getDescriptors<T>(service: ServiceType<T>): IServiceDescriptor<T>[] {
+  getDescriptors<T>(service: SingleServiceType<T>): IServiceDescriptor<T>[] {
     return (this.collection.get(service) ?? []) as IServiceDescriptor<T>[];
   }
 
-  addScoped<T>(service: ServiceImplementation<T>): this;
+  addScoped<T>(service: SingleServiceImplementation<T>): this;
   addScoped<T>(
-    service: ServiceType<T>,
+    service: SingleServiceType<T>,
     factory:
       | IServiceFactory<T>
       | IAsyncServiceImplementationLoader<IServiceFactory<T>>,
   ): this;
   addScoped<T>(
-    service: ServiceType<T>,
+    service: SingleServiceType<T>,
     constructor:
       | IServiceConstructor<T>
       | IAsyncServiceImplementationLoader<IServiceConstructor<T>>,
   ): this;
   addScoped<T>(
-    service: ServiceType<T>,
-    implementation?: IServiceImplementation<T>,
+    service: SingleServiceType<T>,
+    implementation:
+      | SingleServiceImplementation<T>
+      | IAsyncServiceImplementationLoader<IServiceFactory<T>>
+      | IAsyncServiceImplementationLoader<
+          IServiceConstructor<T>
+        > = service as SingleServiceImplementation<T>,
   ): this {
-    if (implementation === undefined) {
-      implementation = service as IServiceImplementation<T>;
-    }
     this.addService(ServiceLifetime.Scoped, service, implementation);
     return this;
   }
 
-  addTransient<T>(service: ServiceImplementation<T>): this;
+  addTransient<T>(service: SingleServiceImplementation<T>): this;
   addTransient<T>(
-    service: ServiceType<T>,
+    service: SingleServiceType<T>,
     factory:
       | IServiceFactory<T>
       | IAsyncServiceImplementationLoader<IServiceFactory<T>>,
   ): this;
   addTransient<T>(
-    service: ServiceType<T>,
+    service: SingleServiceType<T>,
     constructor:
       | IServiceConstructor<T>
       | IAsyncServiceImplementationLoader<IServiceConstructor<T>>,
   ): this;
   addTransient<T>(
-    service: ServiceType<T>,
-    implementation: ServiceType<T> | T = service,
+    service: SingleServiceType<T>,
+    implementation:
+      | SingleServiceImplementation<T>
+      | IAsyncServiceImplementationLoader<IServiceFactory<T>>
+      | IAsyncServiceImplementationLoader<
+          IServiceConstructor<T>
+        > = service as SingleServiceImplementation<T>,
   ): this {
     this.addService(ServiceLifetime.Transient, service, implementation);
     return this;
   }
 
-  addSingleton<T>(service: ServiceImplementation<T>): this;
+  addSingleton<T>(service: SingleServiceImplementation<T>): this;
   addSingleton<T>(
-    service: ServiceType<T>,
+    service: SingleServiceType<T>,
     implementation: T | IAsyncServiceImplementationLoader<T>,
   ): this;
   addSingleton<T>(
-    service: ServiceType<T>,
+    service: SingleServiceType<T>,
     factory:
       | IServiceFactory<T>
       | IAsyncServiceImplementationLoader<IServiceFactory<T>>,
   ): this;
   addSingleton<T>(
-    service: ServiceType<T>,
+    service: SingleServiceType<T>,
     constructor:
       | IServiceConstructor<T>
       | IAsyncServiceImplementationLoader<IServiceConstructor<T>>,
   ): this;
   addSingleton<T>(
-    service: ServiceType<T>,
-    implementation: ServiceType<T> | T = service,
+    service: SingleServiceType<T>,
+    implementation:
+      | SingleServiceImplementation<T>
+      | IAsyncServiceImplementationLoader<T>
+      | IAsyncServiceImplementationLoader<IServiceFactory<T>>
+      | IAsyncServiceImplementationLoader<IServiceConstructor<T>>
+      | T = service as SingleServiceImplementation<T>,
   ): this {
     this.addService(ServiceLifetime.Singleton, service, implementation);
     return this;
@@ -114,8 +125,13 @@ export class ServiceCollection implements IServiceCollection {
 
   private addService<T>(
     lifetime: ServiceLifetime,
-    service: ServiceType<T>,
-    implementation: ServiceType<T> | T,
+    service: SingleServiceType<T>,
+    implementation:
+      | SingleServiceImplementation<T>
+      | IAsyncServiceImplementationLoader<T>
+      | IAsyncServiceImplementationLoader<IServiceFactory<T>>
+      | IAsyncServiceImplementationLoader<IServiceConstructor<T>>
+      | T,
   ): this {
     const descriptors = this.collection.get(service) ?? [];
     this.collection.set(service, [
@@ -124,7 +140,6 @@ export class ServiceCollection implements IServiceCollection {
         service,
         lifetime,
         implementation,
-        loader: null,
       },
     ]);
 

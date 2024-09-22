@@ -16,15 +16,15 @@ The `ServiceContainerBuilder` class is used to register services and build the s
 
   - Registers a singleton service to itself.
 
-- **`addSingleton<T>(service: ServiceType<T>, factory: IServiceFactory<T>): this`**
+- **`addSingleton<T>(service: SingleServiceType<T>, factory: IServiceFactory<T>): this`**
 
   - Registers a singleton service with a factory implementation.
 
-- **`addSingleton<T>(service: ServiceType<T>, constructor: IServiceConstructor<T>): this`**
+- **`addSingleton<T>(service: SingleServiceType<T>, constructor: IServiceConstructor<T>): this`**
 
   - Registers a singleton service with a constructor implementation.
 
-- **`addSingleton<T>(service: ServiceType<T>, implementation: T): this`**
+- **`addSingleton<T>(service: SingleServiceType<T>, implementation: T): this`**
 
   - Registers a singleton service with an instance as implementation.
 
@@ -32,11 +32,11 @@ The `ServiceContainerBuilder` class is used to register services and build the s
 
   - Registers a transient service.
 
-- **`addTransient<T>(service: ServiceType<T>, factory: IServiceFactory<T>): this`**
+- **`addTransient<T>(service: SingleServiceType<T>, factory: IServiceFactory<T>): this`**
 
   - Registers a transient service with a factory implementation.
 
-- **`addTransient<T>(service: ServiceType<T>, constructor: IServiceConstructor<T>): this`**
+- **`addTransient<T>(service: SingleServiceType<T>, constructor: IServiceConstructor<T>): this`**
 
   - Registers a transient service with a constructor implementation.
 
@@ -44,11 +44,11 @@ The `ServiceContainerBuilder` class is used to register services and build the s
 
   - Registers a scoped service.
 
-- **`addScoped<T>(service: ServiceType<T>, factory: IServiceFactory<T>): this`**
+- **`addScoped<T>(service: SingleServiceType<T>, factory: IServiceFactory<T>): this`**
 
   - Registers a scoped service with a factory implementation.
 
-- **`addScoped<T>(service: ServiceType<T>, constructor: IServiceConstructor<T>): this`**
+- **`addScoped<T>(service: SingleServiceType<T>, constructor: IServiceConstructor<T>): this`**
 
   - Registers a scoped service with a constructor implementation.
 
@@ -76,15 +76,15 @@ The `IServiceProvider` interface is used to resolve services.
 
 ### Methods
 
-- **`getService<T>(service: ServiceType<T>): T`**
+- **`getService<T>(service: SingleServiceType<T>): T`**
 
   - Resolves and returns an instance of the requested service.
 
-- **`getServiceAsync<T>(service: ServiceType<T>): Promise<T>`**
+- **`getServiceAsync<T>(service: SingleServiceType<T>): Promise<T>`**
 
   - Resolves and returns an instance of the requested service asynchronously.
 
-- **`getServicesAsync<T>(service: ServiceType<T>): Promise<T[]>`**
+- **`getServicesAsync<T>(service: SingleServiceType<T>): Promise<T[]>`**
 
   - Resolves and returns all instances of the requested service asynchronously.
 

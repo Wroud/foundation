@@ -34,6 +34,7 @@ export function getGithubTrailers(
         }
 
         if (options?.loadGithubUserNames) {
+          throw new Error("Not implemented");
         }
 
         coAuthors.push(coAuthor);

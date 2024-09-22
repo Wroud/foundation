@@ -33,15 +33,19 @@ export class ServiceInstancesStore implements IServiceInstancesStore {
     descriptor: IServiceDescriptor<T>,
     requestedBy?: IServiceDescriptor<any>,
   ): IServiceInstanceInfo<T> {
-    if (this.instances.has(descriptor)) {
-      throw new Error("Service instance already exists");
+    let instanceInfo = this.getInstanceInfo(descriptor);
+
+    if (!instanceInfo) {
+      instanceInfo = new ServiceInstanceInfo(descriptor);
+      this.instances.set(descriptor, instanceInfo);
     }
 
-    const instanceInfo = new ServiceInstanceInfo(descriptor);
-    this.instances.set(descriptor, instanceInfo);
-
     if (requestedBy) {
-      this.addDependent(descriptor, requestedBy);
+      const dependentInstanceInfo = this.getInstanceInfo(requestedBy);
+
+      if (dependentInstanceInfo) {
+        instanceInfo.addDependent(dependentInstanceInfo);
+      }
     }
     return instanceInfo;
   }
@@ -65,17 +69,5 @@ export class ServiceInstancesStore implements IServiceInstancesStore {
     );
 
     this.instances.clear();
-  }
-
-  private addDependent<T>(
-    descriptor: IServiceDescriptor<T>,
-    dependent: IServiceDescriptor<any>,
-  ): void {
-    const instanceInfo = this.instances.get(descriptor);
-    const dependentInstanceInfo = this.instances.get(dependent);
-
-    if (instanceInfo && dependentInstanceInfo) {
-      instanceInfo.addDependent(dependentInstanceInfo);
-    }
   }
 }

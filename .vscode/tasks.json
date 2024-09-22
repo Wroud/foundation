@@ -14,7 +14,8 @@
     {
       "label": "clear: all",
       "type": "npm",
-      "script": "clear"
+      "script": "clear",
+      "problemMatcher": []
     },
     {
       "label": "test: all",

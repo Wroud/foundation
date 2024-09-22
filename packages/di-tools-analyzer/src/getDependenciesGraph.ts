@@ -6,6 +6,7 @@ import type { IServiceDescriptor } from "@wroud/di/types";
 import { loadImplementation } from "./loadImplementation.js";
 import { getNameOfDescriptor } from "@wroud/di/helpers/getNameOfDescriptor.js";
 import { ServiceLifetime } from "@wroud/di/di/ServiceLifetime.js";
+import { getServiceTypeFromDependency } from "@wroud/di/helpers/getServiceTypeFromDependency.js";
 
 export async function getDependenciesGraph(
   serviceCollection: IServiceCollection,
@@ -56,7 +57,7 @@ export async function getDependenciesGraph(
     }
 
     for (const dependency of dependencies.dependencies) {
-      const service = Array.isArray(dependency) ? dependency[0]! : dependency;
+      const service = getServiceTypeFromDependency(dependency);
 
       const descriptors = serviceCollection.getDescriptors(service);
       if (descriptors.length === 0) {

@@ -1,12 +1,16 @@
-import type { IServiceDescriptor, ServiceType } from "../../types/index.js";
+import type {
+  IServiceDescriptor,
+  SingleServiceType,
+} from "../../types/index.js";
 import type { ServiceCollection } from "../ServiceCollection.js";
 import { ServiceRegistry } from "../ServiceRegistry.js";
 import { isAsyncServiceImplementationLoader } from "../../helpers/isAsyncServiceImplementationLoader.js";
 import { validateRequestPath } from "./validateRequestPath.js";
+import { getServiceTypeFromDependency } from "../../helpers/getServiceTypeFromDependency.js";
 
 export async function tryResolveServiceAsync<T>(
   collection: ServiceCollection,
-  service: ServiceType<T>,
+  service: SingleServiceType<T>,
   path: Set<IServiceDescriptor<any>>,
 ): Promise<void> {
   const descriptors = collection.getDescriptors(service);
@@ -26,7 +30,7 @@ export async function tryResolveServiceAsync<T>(
       for (const dependency of metadata.dependencies) {
         await tryResolveServiceAsync(
           collection,
-          Array.isArray(dependency) ? dependency[0]! : dependency,
+          getServiceTypeFromDependency(dependency),
           new Set([...path, descriptor]),
         );
       }

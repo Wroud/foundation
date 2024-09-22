@@ -1,7 +1,10 @@
-import type { IServiceImplementation, ServiceType } from "../types/index.js";
+import type {
+  IServiceImplementation,
+  SingleServiceType,
+} from "../types/index.js";
 
 export function getNameOfServiceType(
-  service: ServiceType<any> | IServiceImplementation<any>,
+  service: SingleServiceType<any> | IServiceImplementation<any>,
 ): string {
   if (!["object", "function"].includes(typeof service) || service === null) {
     return String(service);

@@ -1,10 +1,9 @@
 import type { IServiceImplementation } from "./IServiceImplementation.js";
 import type { ServiceLifetime } from "../di/ServiceLifetime.js";
-import type { ServiceType } from "./ServiceType.js";
+import type { SingleServiceType } from "./SingleServiceType.js";
 
 export interface IServiceDescriptor<T> {
   lifetime: ServiceLifetime;
-  service: ServiceType<T>;
+  service: SingleServiceType<T>;
   implementation: IServiceImplementation<T>;
-  loader: Promise<T> | null;
 }

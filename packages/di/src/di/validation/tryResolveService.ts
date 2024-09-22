@@ -1,11 +1,15 @@
-import type { IServiceDescriptor, ServiceType } from "../../types/index.js";
+import { getServiceTypeFromDependency } from "../../helpers/getServiceTypeFromDependency.js";
+import type {
+  IServiceDescriptor,
+  SingleServiceType,
+} from "../../types/index.js";
 import type { ServiceCollection } from "../ServiceCollection.js";
 import { ServiceRegistry } from "../ServiceRegistry.js";
 import { validateRequestPath } from "./validateRequestPath.js";
 
 export function tryResolveService<T>(
   collection: ServiceCollection,
-  service: ServiceType<T>,
+  service: SingleServiceType<T>,
   path: Set<IServiceDescriptor<any>>,
 ): void {
   const descriptors = collection.getDescriptors(service);
@@ -21,7 +25,7 @@ export function tryResolveService<T>(
       for (const dependency of metadata.dependencies) {
         tryResolveService(
           collection,
-          Array.isArray(dependency) ? dependency[0]! : dependency,
+          getServiceTypeFromDependency(dependency),
           new Set([...path, descriptor]),
         );
       }

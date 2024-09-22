@@ -8,19 +8,19 @@ import type { IServiceDescriptor } from "../types/IServiceDescriptor.js";
 describe("ServiceInstanceInfo", () => {
   it("should not replace instance", async () => {
     const instanceInfo = new ServiceInstanceInfo(mockDescriptor());
-
-    expect(() => instanceInfo.addInstance({} as any)).not.toThrow();
-    expect(() => instanceInfo.addInstance({} as any)).toThrow(
-      "Instance already initialized",
-    );
+    instanceInfo.initialize(() => ({}) as any);
+    const inst1 = instanceInfo.instance;
+    instanceInfo.initialize(() => ({}) as any);
+    const inst2 = instanceInfo.instance;
+    expect(inst1).toBe(inst2);
   });
   it("should not dispose instance twice", async () => {
     const instanceInfo = new ServiceInstanceInfo(mockDescriptor());
     const dispose = vi.fn();
 
-    instanceInfo.addInstance({
+    instanceInfo.initialize(() => ({
       [Symbol.dispose]: dispose,
-    });
+    }));
 
     instanceInfo.disposeSync();
     expect(() => instanceInfo.disposeSync()).not.toThrow();
@@ -30,9 +30,9 @@ describe("ServiceInstanceInfo", () => {
     const instanceInfo = new ServiceInstanceInfo(mockDescriptor());
     const dispose = vi.fn();
 
-    instanceInfo.addInstance({
+    instanceInfo.initialize(() => ({
       [Symbol.asyncDispose]: dispose,
-    });
+    }));
 
     await instanceInfo.disposeAsync();
     await instanceInfo.disposeAsync();
@@ -44,9 +44,9 @@ describe("ServiceInstanceInfo", () => {
       throw new Error();
     });
 
-    instanceInfo.addInstance({
+    instanceInfo.initialize(() => ({
       [Symbol.dispose]: dispose,
-    });
+    }));
 
     expect(() => instanceInfo.disposeSync()).toThrow();
     expect(() => instanceInfo.disposeSync()).toThrow();
@@ -57,9 +57,9 @@ describe("ServiceInstanceInfo", () => {
       throw new Error();
     });
 
-    instanceInfo.addInstance({
+    instanceInfo.initialize(() => ({
       [Symbol.asyncDispose]: dispose,
-    });
+    }));
 
     await expect(instanceInfo.disposeAsync()).rejects.toThrow();
     await expect(instanceInfo.disposeAsync()).rejects.toThrow();
@@ -76,13 +76,13 @@ describe("ServiceInstanceInfo", () => {
     const disposeA = vi.fn();
     const disposeDependent = vi.fn();
 
-    instanceInfo.addInstance({
+    instanceInfo.initialize(() => ({
       [Symbol.dispose]: disposeA,
-    });
+    }));
     instanceInfo.addDependent(dependent);
-    dependent.addInstance({
+    dependent.initialize(() => ({
       [Symbol.dispose]: disposeDependent,
-    });
+    }));
 
     instanceInfo.disposeSync();
     expect(disposeA).toHaveBeenCalledTimes(1);
@@ -99,13 +99,13 @@ describe("ServiceInstanceInfo", () => {
       () => new Promise((resolve) => setTimeout(resolve, 10)),
     );
 
-    instanceInfo.addInstance({
+    instanceInfo.initialize(() => ({
       [Symbol.asyncDispose]: disposeA,
-    });
+    }));
     instanceInfo.addDependent(dependent);
-    dependent.addInstance({
+    dependent.initialize(() => ({
       [Symbol.asyncDispose]: disposeDependent,
-    });
+    }));
 
     await instanceInfo.disposeAsync();
     expect(disposeA).toHaveBeenCalledTimes(1);
@@ -122,13 +122,13 @@ describe("ServiceInstanceInfo", () => {
       () => new Promise((resolve) => setTimeout(resolve, 10)),
     );
 
-    instanceInfo.addInstance({
+    instanceInfo.initialize(() => ({
       [Symbol.asyncDispose]: disposeA,
-    });
+    }));
     instanceInfo.addDependent(dependent);
-    dependent.addInstance({
+    dependent.initialize(() => ({
       [Symbol.dispose]: disposeDependent,
-    });
+    }));
 
     await instanceInfo.disposeAsync();
     expect(disposeA).toHaveBeenCalledTimes(1);
@@ -143,13 +143,13 @@ describe("ServiceInstanceInfo", () => {
       () => new Promise((resolve) => setTimeout(resolve, 10)),
     );
 
-    instanceInfo.addInstance({
+    instanceInfo.initialize(() => ({
       [Symbol.dispose]: disposeA,
-    });
+    }));
     instanceInfo.addDependent(dependent);
-    dependent.addInstance({
+    dependent.initialize(() => ({
       [Symbol.asyncDispose]: disposeDependent,
-    });
+    }));
 
     instanceInfo.disposeSync();
     expect(disposeA).toHaveBeenCalledTimes(1);
@@ -162,6 +162,5 @@ function mockDescriptor<T>(): IServiceDescriptor<T> {
     service: {} as any,
     implementation: {} as any,
     lifetime: ServiceLifetime.Singleton,
-    loader: null,
   };
 }

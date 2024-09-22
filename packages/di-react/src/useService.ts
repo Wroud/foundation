@@ -1,7 +1,6 @@
-import type { ServiceType } from "@wroud/di";
-import { useServiceProvider } from "./useServiceProvider.js";
+import type { SingleServiceType } from "@wroud/di/types";
+import { useServiceIterator } from "./useServiceIterator.js";
 
-export function useService<T>(type: ServiceType<T>): T {
-  const provider = useServiceProvider();
-  return provider.getService(type);
+export function useService<T>(type: SingleServiceType<T>): T {
+  return useServiceIterator(type);
 }

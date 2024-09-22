@@ -12,14 +12,11 @@ describe("ServiceInstancesStore", () => {
       service: {} as any,
       implementation: {} as any,
       lifetime: ServiceLifetime.Singleton,
-      loader: null,
     };
     const instance1 = {};
 
     const instanceInfo = store.addInstance(descriptor);
-    instanceInfo.addInstance(instance1);
-    expect(() => {
-      store.addInstance(descriptor);
-    }).toThrow();
+    instanceInfo.initialize(() => instance1);
+    expect(store.addInstance(descriptor)).toBe(instanceInfo);
   });
 });

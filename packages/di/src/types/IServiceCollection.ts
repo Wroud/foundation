@@ -2,56 +2,56 @@ import type { IAsyncServiceImplementationLoader } from "./IAsyncServiceImplement
 import type { IServiceConstructor } from "./IServiceConstructor.js";
 import type { IServiceDescriptor } from "./IServiceDescriptor.js";
 import type { IServiceFactory } from "./IServiceFactory.js";
-import type { ServiceImplementation } from "./ServiceImplementation.js";
-import type { ServiceType } from "./ServiceType.js";
+import type { SingleServiceImplementation } from "./ServiceImplementation.js";
+import type { SingleServiceType } from "./SingleServiceType.js";
 
 export interface IServiceCollection
   extends Iterable<IServiceDescriptor<unknown>> {
-  getDescriptors<T>(service: ServiceType<T>): IServiceDescriptor<T>[];
+  getDescriptors<T>(service: SingleServiceType<T>): IServiceDescriptor<T>[];
 
-  addScoped<T>(service: ServiceImplementation<T>): this;
+  addScoped<T>(service: SingleServiceImplementation<T>): this;
   addScoped<T>(
-    service: ServiceType<T>,
+    service: SingleServiceType<T>,
     factory:
       | IServiceFactory<T>
       | IAsyncServiceImplementationLoader<IServiceFactory<T>>,
   ): this;
   addScoped<T>(
-    service: ServiceType<T>,
+    service: SingleServiceType<T>,
     constructor:
       | IServiceConstructor<T>
       | IAsyncServiceImplementationLoader<IServiceConstructor<T>>,
   ): this;
 
-  addTransient<T>(service: ServiceImplementation<T>): this;
+  addTransient<T>(service: SingleServiceImplementation<T>): this;
   addTransient<T>(
-    service: ServiceType<T>,
+    service: SingleServiceType<T>,
     factory:
       | IServiceFactory<T>
       | IAsyncServiceImplementationLoader<IServiceFactory<T>>,
   ): this;
   addTransient<T>(
-    service: ServiceType<T>,
+    service: SingleServiceType<T>,
     constructor:
       | IServiceConstructor<T>
       | IAsyncServiceImplementationLoader<IServiceConstructor<T>>,
   ): this;
 
-  addSingleton<T>(service: ServiceImplementation<T>): this;
+  addSingleton<T>(service: SingleServiceImplementation<T>): this;
   addSingleton<T>(
-    service: ServiceType<T>,
+    service: SingleServiceType<T>,
     factory:
       | IServiceFactory<T>
       | IAsyncServiceImplementationLoader<IServiceFactory<T>>,
   ): this;
   addSingleton<T>(
-    service: ServiceType<T>,
+    service: SingleServiceType<T>,
     constructor:
       | IServiceConstructor<T>
       | IAsyncServiceImplementationLoader<IServiceConstructor<T>>,
   ): this;
   addSingleton<T>(
-    service: ServiceType<T>,
+    service: SingleServiceType<T>,
     implementation: T | IAsyncServiceImplementationLoader<T>,
   ): this;
 }

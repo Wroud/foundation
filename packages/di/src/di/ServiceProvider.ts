@@ -9,30 +9,61 @@ import { validateRequestPath } from "./validation/validateRequestPath.js";
 import { getNameOfDescriptor } from "../helpers/getNameOfDescriptor.js";
 import { Debug } from "../debug.js";
 import type {
-  IAsyncServiceImplementationLoader,
   IAsyncServiceScope,
   IServiceConstructor,
   IServiceDescriptor,
   IServiceFactory,
   IServiceInstancesStore,
   IServiceScope,
-  ISyncServiceImplementation,
   ServiceType,
+  SingleServiceType,
 } from "../types/index.js";
 
 export class ServiceProvider implements IServiceProvider {
-  static getDescriptor<T>(
+  static internalGetService<T>(
+    provider: IServiceProvider,
+    service: SingleServiceType<T>,
+    requestedBy: Set<IServiceDescriptor<any>>,
+  ): Generator<Promise<unknown>, T, unknown>;
+  static internalGetService<T>(
+    provider: IServiceProvider,
+    service: SingleServiceType<T>[],
+    requestedBy: Set<IServiceDescriptor<any>>,
+  ): Generator<Promise<unknown>, T[], unknown>;
+  static internalGetService<T>(
     provider: IServiceProvider,
     service: ServiceType<T>,
+    requestedBy: Set<IServiceDescriptor<any>>,
+  ): Generator<Promise<unknown>, T | T[], unknown>;
+  static internalGetService<T>(
+    provider: IServiceProvider,
+    service: ServiceType<T>,
+    requestedBy: Set<IServiceDescriptor<any>>,
+  ): Generator<Promise<unknown>, T | T[], unknown> {
+    if (!(provider instanceof ServiceProvider)) {
+      throw new Error("provider must be an instance of ServiceProvider");
+    }
+    return provider.internalGetService(service, requestedBy);
+  }
+
+  static getDescriptor<T>(
+    provider: IServiceProvider,
+    service: SingleServiceType<T>,
   ): IServiceDescriptor<T> {
-    return (provider as ServiceProvider).getDescriptor(service);
+    if (!(provider instanceof ServiceProvider)) {
+      throw new Error("provider must be an instance of ServiceProvider");
+    }
+    return provider.getDescriptor(service);
   }
 
   static getDescriptors<T>(
     provider: IServiceProvider,
-    service: ServiceType<T>,
+    service: SingleServiceType<T>,
   ): IServiceDescriptor<T>[] {
-    return (provider as ServiceProvider).collection.getDescriptors(service);
+    if (!(provider instanceof ServiceProvider)) {
+      throw new Error("provider must be an instance of ServiceProvider");
+    }
+    return provider.collection.getDescriptors(service);
   }
 
   private readonly instancesStore: IServiceInstancesStore;
@@ -43,27 +74,27 @@ export class ServiceProvider implements IServiceProvider {
     this.instancesStore = new ServiceInstancesStore();
   }
 
-  getServices<T>(service: ServiceType<T>): T[] {
+  getServices<T>(service: SingleServiceType<T>): T[] {
     return this.resolveGeneratorSync(
-      this.internalGetServices(service, new Set()),
+      this.internalGetService([service], new Set()),
     );
   }
 
-  getServiceAsync<T>(service: ServiceType<T>): Promise<T> {
+  getServiceAsync<T>(service: SingleServiceType<T>): Promise<T> {
     return this.resolveGeneratorAsync(
       this.internalGetService(service, new Set()),
     );
   }
 
-  getService<T>(service: ServiceType<T>): T {
+  getService<T>(service: SingleServiceType<T>): T {
     return this.resolveGeneratorSync(
       this.internalGetService(service, new Set()),
     );
   }
 
-  getServicesAsync<T>(service: ServiceType<T>): Promise<T[]> {
+  getServicesAsync<T>(service: SingleServiceType<T>): Promise<T[]> {
     return this.resolveGeneratorAsync(
-      this.internalGetServices(service, new Set()),
+      this.internalGetService([service], new Set()),
     );
   }
 
@@ -89,17 +120,30 @@ export class ServiceProvider implements IServiceProvider {
     };
   }
 
-  private *internalGetServices<T>(
+  private internalGetService<T>(
+    service: SingleServiceType<T>,
+    requestedBy: Set<IServiceDescriptor<any>>,
+  ): Generator<Promise<unknown>, T, unknown>;
+  private internalGetService<T>(
+    service: SingleServiceType<T>[],
+    requestedBy: Set<IServiceDescriptor<any>>,
+  ): Generator<Promise<unknown>, T[], unknown>;
+  private internalGetService<T>(
     service: ServiceType<T>,
     requestedBy: Set<IServiceDescriptor<any>>,
-  ): Generator<
-    [IServiceDescriptor<T>, IAsyncServiceImplementationLoader<T> | null],
-    T[],
-    ISyncServiceImplementation<T>
-  > {
+  ): Generator<Promise<unknown>, T | T[], unknown>;
+  private *internalGetService<T>(
+    service: ServiceType<T>,
+    requestedBy: Set<IServiceDescriptor<any>>,
+  ): Generator<Promise<unknown>, T | T[], unknown> {
+    const isAllServices = Array.isArray(service);
+    const descriptors = isAllServices
+      ? this.collection.getDescriptors(service[0]!)
+      : [this.getDescriptor(service)];
+
     const services: T[] = [];
 
-    for (const descriptor of this.collection.getDescriptors(service)) {
+    for (const descriptor of descriptors) {
       services.push(
         yield* this.internalGetDescriptorImplementation(
           descriptor,
@@ -108,91 +152,35 @@ export class ServiceProvider implements IServiceProvider {
       );
     }
 
-    return services;
-  }
-
-  private *internalGetService<T>(
-    service: ServiceType<T>,
-    requestedBy: Set<IServiceDescriptor<any>>,
-  ): Generator<
-    [IServiceDescriptor<T>, IAsyncServiceImplementationLoader<T> | null],
-    T,
-    ISyncServiceImplementation<T>
-  > {
-    const descriptor = this.getDescriptor(service);
-
-    return yield* this.internalGetDescriptorImplementation(
-      descriptor,
-      requestedBy,
-    );
+    if (isAllServices) {
+      return services;
+    }
+    return services[0] as T;
   }
 
   private *internalGetDescriptorImplementation<T>(
     descriptor: IServiceDescriptor<T>,
     requestedBy: Set<IServiceDescriptor<any>>,
-  ): Generator<
-    [IServiceDescriptor<T>, IAsyncServiceImplementationLoader<T> | null],
-    T,
-    ISyncServiceImplementation<T>
-  > {
+  ): Generator<Promise<unknown>, T, unknown> {
     if (
       descriptor.lifetime === ServiceLifetime.Singleton &&
       this.parent &&
       descriptor.service !== IServiceProvider
     ) {
-      return yield* (this.parent as ServiceProvider).internalGetService(
-        descriptor.service as any,
-        requestedBy,
-      );
+      return yield* (
+        this.parent as ServiceProvider
+      ).internalGetDescriptorImplementation(descriptor, requestedBy);
     }
 
     validateRequestPath(requestedBy, descriptor);
 
-    if (descriptor.loader) {
-      return (yield [descriptor, null]) as T;
-    }
-
-    const serviceInstance = this.instancesStore.getInstanceInfo(descriptor);
-    if (serviceInstance) {
-      return serviceInstance.instance;
-    }
-
-    let resolve: (value: T | PromiseLike<T>) => void;
-    let reject: (reason?: any) => void;
-    descriptor.loader = new Promise<T>((res, rej) => {
-      resolve = res;
-      reject = rej;
-    });
-    descriptor.loader.catch(() => {});
-
-    let instance: T;
-    try {
-      instance = yield* this.createInstanceFromDescriptor(
-        descriptor,
-        requestedBy,
-      );
-    } catch (err: any) {
-      reject!(err);
-      throw err;
-    } finally {
-      descriptor.loader = null;
-    }
-
-    try {
-      return instance;
-    } finally {
-      resolve!(instance);
-    }
+    return yield* this.createInstanceFromDescriptor(descriptor, requestedBy);
   }
 
   private *createInstanceFromDescriptor<T>(
     descriptor: IServiceDescriptor<T>,
     requestedBy: Set<IServiceDescriptor<any>>,
-  ): Generator<
-    [IServiceDescriptor<T>, IAsyncServiceImplementationLoader<T> | null],
-    T,
-    ISyncServiceImplementation<T>
-  > {
+  ): Generator<Promise<unknown>, T, unknown> {
     try {
       const lastRequestedBy = [...requestedBy].pop();
       if (lastRequestedBy?.lifetime !== undefined) {
@@ -207,36 +195,28 @@ export class ServiceProvider implements IServiceProvider {
       }
 
       switch (descriptor.lifetime) {
+        // @ts-expect-error
+        case ServiceLifetime.Scoped:
+          if (!this.parent) {
+            throw new Error("Scoped services require a service scope.");
+          }
         case ServiceLifetime.Singleton: {
           const instanceInfo = this.instancesStore.addInstance(
             descriptor,
             lastRequestedBy,
           );
 
-          instanceInfo.addInstance(
-            yield* this.initializeService(descriptor, requestedBy),
-          );
-
-          return instanceInfo.instance;
-        }
-        case ServiceLifetime.Scoped: {
-          if (!this.parent) {
-            throw new Error("Scoped services require a service scope.");
-          }
-
-          const instanceInfo = this.instancesStore.addInstance(
-            descriptor,
-            lastRequestedBy,
-          );
-
-          instanceInfo.addInstance(
-            yield* this.initializeService(descriptor, requestedBy),
+          instanceInfo.initialize(
+            yield* this.createServiceInitializer(descriptor, requestedBy),
           );
 
           return instanceInfo.instance;
         }
         case ServiceLifetime.Transient:
-          return yield* this.initializeService(descriptor, requestedBy);
+          return (yield* this.createServiceInitializer(
+            descriptor,
+            requestedBy,
+          ))();
       }
     } catch (exception: any) {
       throw new Error(
@@ -246,65 +226,66 @@ export class ServiceProvider implements IServiceProvider {
     }
   }
 
-  private *initializeService<T>(
+  private *createServiceInitializer<T>(
     descriptor: IServiceDescriptor<T>,
     requestedBy: Set<IServiceDescriptor<any>>,
-  ): Generator<
-    [IServiceDescriptor<T>, IAsyncServiceImplementationLoader<T> | null],
-    T,
-    ISyncServiceImplementation<T>
-  > {
+  ): Generator<Promise<unknown>, () => T, unknown> {
     let implementation = descriptor.implementation;
 
     if (isAsyncServiceImplementationLoader(implementation)) {
-      implementation = yield [descriptor, implementation];
+      if (!implementation.isLoaded()) {
+        yield implementation.load();
+      }
+      implementation = implementation.getImplementation();
     }
 
     const metadata = ServiceRegistry.get(implementation);
 
     if (metadata) {
-      const dependencies = [];
+      const dependencies: any[] = [];
       requestedBy = new Set([...requestedBy, descriptor]);
       for (const dependency of metadata.dependencies) {
-        if (Array.isArray(dependency)) {
-          dependencies.push(
-            yield* this.internalGetServices(dependency[0]!, requestedBy),
-          );
-        } else {
-          dependencies.push(
-            yield* this.internalGetService(dependency, requestedBy),
-          );
-        }
+        dependencies.push(
+          yield* this.internalGetService(dependency, requestedBy),
+        );
       }
 
-      return new (implementation as IServiceConstructor<T>)(...dependencies);
+      return () =>
+        new (implementation as IServiceConstructor<T>)(...dependencies);
     }
 
     if (descriptor.service === IServiceProvider) {
-      return this as unknown as T;
+      return () => this as unknown as T;
     }
 
     if (typeof implementation === "function") {
-      try {
-        return (implementation as IServiceFactory<T>)(this);
-      } catch (err) {
-        if (
-          err instanceof TypeError &&
-          err.message.includes("cannot be invoked without 'new'")
-        ) {
-          throw new Error(Debug.errors.classNotDecorated(implementation.name), {
-            cause: err,
-          });
-        } else {
-          throw err;
+      return () => {
+        try {
+          return (implementation as IServiceFactory<T>)(this);
+        } catch (err) {
+          if (
+            err instanceof TypeError &&
+            err.message.includes("cannot be invoked without 'new'")
+          ) {
+            throw new Error(
+              Debug.errors.classNotDecorated(implementation.name),
+              {
+                cause: err,
+              },
+            );
+          } else {
+            throw err;
+          }
         }
-      }
+      };
     }
 
-    return implementation;
+    return () => implementation;
   }
 
-  private getDescriptor<T>(service: ServiceType<T>): IServiceDescriptor<T> {
+  private getDescriptor<T>(
+    service: SingleServiceType<T>,
+  ): IServiceDescriptor<T> {
     const descriptors = this.collection.getDescriptors(service);
 
     if (descriptors.length === 0) {
@@ -323,75 +304,27 @@ export class ServiceProvider implements IServiceProvider {
   }
 
   private resolveGeneratorSync<T, TResult>(
-    iterator: Generator<
-      [IServiceDescriptor<T>, IAsyncServiceImplementationLoader<T> | null],
-      TResult,
-      ISyncServiceImplementation<T>
-    >,
+    iterator: Generator<Promise<unknown>, TResult, unknown>,
   ) {
-    let tempService: [any] | [] = [];
-    let error: Error | null = null;
-    while (true) {
-      let result = null;
+    let result: IteratorResult<Promise<unknown>, TResult>;
 
-      if (error) {
-        result = iterator.throw(error);
-        error = null;
-      } else {
-        result = iterator.next(...tempService);
-      }
-
-      const { value, done } = result;
-      if (done) {
-        return value;
-      }
-
-      const [, loader] = value;
-
-      if (!loader?.isLoaded()) {
-        error = new Error(`Lazy service cannot be resolved synchronously`);
-        continue;
-      }
-      tempService = [loader.getImplementation()];
+    while (!(result = iterator.next()).done) {
+      throw new Error(`Lazy service cannot be resolved synchronously`);
     }
+
+    return result.value;
   }
 
   private async resolveGeneratorAsync<T, TResult>(
-    iterator: Generator<
-      [IServiceDescriptor<T>, IAsyncServiceImplementationLoader<T> | null],
-      TResult,
-      ISyncServiceImplementation<T>
-    >,
+    iterator: Generator<Promise<unknown>, TResult, unknown>,
   ) {
-    let tempService: [any] | [] = [];
-    let error: Error | null = null;
-    while (true) {
-      let result = null;
+    let result: IteratorResult<Promise<unknown>, TResult>;
 
-      if (error) {
-        result = iterator.throw(error);
-        error = null;
-      } else {
-        result = iterator.next(...tempService);
-      }
-
-      try {
-        const { value, done } = result;
-        if (done) {
-          return value;
-        }
-
-        const [descriptor, loader] = value;
-
-        if (loader) {
-          tempService = [await loader.load()];
-        } else {
-          tempService = [await descriptor.loader];
-        }
-      } catch (err: any) {
-        error = err;
-      }
+    while (!(result = iterator.next()).done) {
+      await result.value;
     }
+
+    return result.value;
   }
 
   [Symbol.dispose]() {

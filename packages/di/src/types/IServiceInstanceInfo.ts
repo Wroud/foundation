@@ -6,7 +6,7 @@ export interface IServiceInstanceInfo<T> {
   dependents: Set<IServiceInstanceInfo<any>>;
   initialized: boolean;
   disposed: boolean;
-  addInstance(instance: T): void;
+  initialize(creator: () => T): void;
   addDependent(dependent: IServiceInstanceInfo<any>): void;
   disposeSync(): void;
   disposeAsync(): Promise<void>;

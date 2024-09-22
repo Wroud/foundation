@@ -25,11 +25,11 @@ export class ServiceInstanceInfo<T> implements IServiceInstanceInfo<T> {
     this.dependents = new Set();
   }
 
-  addInstance(instance: T): void {
+  initialize(creator: () => T): void {
     if (this.initialized) {
-      throw new Error("Instance already initialized");
+      return;
     }
-    this._instance = instance;
+    this._instance = creator();
     this.initialized = true;
   }
 

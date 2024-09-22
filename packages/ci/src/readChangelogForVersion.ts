@@ -14,19 +14,25 @@ export async function readChangelogForVersion({
 }: IReadChangelogForVersionOptions): Promise<string> {
   let data = "";
 
+  let header = false;
   let reading = false;
   for await (const line of createInterface(
     createReadStream(changeLogFile, {
       flags: "r",
     }),
   )) {
-    if (reading) {
+    if (header) {
+      if (line === conventionalChangelogMarkers.changelog) {
+        header = false;
+        reading = true;
+      }
+    } else if (reading) {
       if (conventionalChangelogMarkers.isVersionMarker(line)) {
         break;
       }
       data += line + "\n";
     } else if (line === conventionalChangelogMarkers.version(version)) {
-      reading = true;
+      header = true;
     }
   }
 

@@ -3,6 +3,15 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.1.1 -->
+## 0.1.1 (2024-09-22)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/git-v0.1.0...0.1.1)
+
+### 🩹 Fixes
+
+- commits lookup ([a116e59](https://github.com/Wroud/foundation/commit/a116e59))
+
 <!-- version:0.1.0 -->
 ## 0.1.0 (2024-09-22)
 

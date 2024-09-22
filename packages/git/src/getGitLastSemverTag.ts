@@ -9,19 +9,19 @@ interface IGitGetLastTagOptions {
 }
 
 export async function getGitLastSemverTag({
-  to = "HEAD",
+  to,
   prefix = defaultTagPrefix,
 }: IGitGetLastTagOptions = {}): Promise<string | null> {
   await validateGitEnvironment();
   try {
-    for await (const tag of execa("git", [
-      "tag",
-      "--list",
-      `${prefix}*`,
-      "--merged",
-      to,
-      "--sort=-v:refname", // Sort tags in descending version order
-    ])) {
+    const args = ["tag", "--list", `${prefix}*`];
+
+    if (to) {
+      args.push("--merged", to);
+    }
+
+    args.push("--sort=-v:refname");
+    for await (const tag of execa("git", args)) {
       if (
         tag.startsWith(prefix) &&
         semverRegex().test(tag.slice(prefix.length))

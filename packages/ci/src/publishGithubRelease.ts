@@ -29,7 +29,6 @@ export async function publishGithubRelease({
 
   const tag = await getGitLastSemverTag({
     prefix,
-    to: "origin/HEAD",
   });
 
   if (!tag) {

@@ -26,7 +26,7 @@ const tagsRegex = /tag: ([^,]+)[,)]/g;
 
 export async function* getGitCommits({
   from,
-  to = "HEAD",
+  to,
   path = ".",
   maxCommits,
   includeTags = true,
@@ -49,7 +49,7 @@ export async function* getGitCommits({
   const args = [
     "--no-pager",
     "log",
-    [from, to].filter(Boolean).join(".."),
+    `${from ? `${from}...` : ""}${to}`,
     `--pretty=format:%h%n%d%n%an%n%ae%n%s%n%b%n${endMarker}`,
   ];
 

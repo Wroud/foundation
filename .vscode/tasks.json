@@ -18,6 +18,13 @@
       "problemMatcher": []
     },
     {
+      "label": "dev: docs",
+      "type": "npm",
+      "path": "packages/docs",
+      "script": "dev",
+      "problemMatcher": []
+    },
+    {
       "label": "test: all",
       "type": "npm",
       "script": "test"

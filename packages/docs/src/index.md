@@ -11,8 +11,11 @@ hero:
       text: Get Started
       link: /guide/package/di/getting-started/introduction
     - theme: alt
-      text: '@wroud/di'
+      text: "@wroud/di"
       link: /packages/overview
+    - theme: alt
+      text: "@wroud/di-react"
+      link: packages/di/integrations/react/overview
   image:
     src: /icon-big.svg
     alt: Wroud Foundation
@@ -39,4 +42,3 @@ features:
     title: Simple by Default
     details: Get started quickly without needing extensive knowledge, thanks to straightforward and intuitive design.
 ---
-

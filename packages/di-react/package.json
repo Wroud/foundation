@@ -6,7 +6,7 @@
   "type": "module",
   "license": "MIT",
   "author": "Wroud",
-  "homepage": "https://wroud.dev/guide/package/di-bindings/react/introduction",
+  "homepage": "https://wroud.dev/packages/di/integrations/react/overview",
   "repository": {
     "type": "git",
     "url": "https://github.com/Wroud/foundation",

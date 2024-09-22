@@ -3244,7 +3244,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wroud/di-react@workspace:packages/di-react":
+"@wroud/di-react@workspace:*, @wroud/di-react@workspace:packages/di-react":
   version: 0.0.0-use.local
   resolution: "@wroud/di-react@workspace:packages/di-react"
   dependencies:
@@ -4556,10 +4556,15 @@ __metadata:
   dependencies:
     "@shikijs/vitepress-twoslash": "npm:^1"
     "@types/node": "npm:^20"
+    "@types/react": "npm:^18"
+    "@types/react-dom": "npm:^18"
     "@vitejs/plugin-vue": "npm:^5"
     "@wroud/di": "workspace:*"
+    "@wroud/di-react": "workspace:*"
     "@wroud/di-tools-analyzer": "workspace:*"
     "@wroud/tsconfig": "workspace:*"
+    react: "npm:^18"
+    react-dom: "npm:^18"
     unocss: "npm:^0"
     unplugin-vue-components: "npm:^0"
     vite: "npm:^5"

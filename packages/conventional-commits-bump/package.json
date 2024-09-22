@@ -9,7 +9,6 @@
     ".": "./lib/index.js"
   },
   "scripts": {
-    "ci:prepublish": "",
     "test": "tests-runner",
     "test:ci": "CI=true yarn run test",
     "build": "tsc -b",

@@ -2,6 +2,7 @@ import type { IConventionalCommit } from "@wroud/conventional-commits-parser";
 import type { IConventionalCommitMetadata } from "./IConventionalCommitMetadata.js";
 import type { IConventionalCommitCoAuthor } from "./IConventionalCommitCoAuthor.js";
 import type { IConventionalCommitWithMetadata } from "./IConventionalCommitWithMetadata.js";
+import { conventionalChangelogMarkers } from "./conventionalChangelogMarkers.js";
 
 export interface ICreateConventionalChangelogOptions {
   headlineLevel?: string;
@@ -16,6 +17,7 @@ export async function* createConventionalChangelog(
 ): AsyncGenerator<string> {
   const { headlineLevel: hl = "###", getMetadata } = options;
 
+  let changeLogEmpty = true;
   const features: IConventionalCommitWithMetadata[] = [];
   const fixes: IConventionalCommitWithMetadata[] = [];
   const breakingChanges: IConventionalCommitWithMetadata[] = [];
@@ -53,6 +55,7 @@ export async function* createConventionalChangelog(
       continue;
     }
 
+    changeLogEmpty = false;
     const commitWithMetadata: IConventionalCommitWithMetadata = {
       ...commit,
     };
@@ -66,6 +69,14 @@ export async function* createConventionalChangelog(
     }
 
     group.push(commitWithMetadata);
+  }
+
+  yield conventionalChangelogMarkers.changelog;
+
+  if (changeLogEmpty) {
+    yield "This release has no user-facing changes.";
+    yield "";
+    return;
   }
 
   if (features.length > 0) {

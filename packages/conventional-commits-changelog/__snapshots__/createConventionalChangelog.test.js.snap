@@ -2,6 +2,7 @@
 
 exports[`createConventionalChangelog > default 1`] = `
 [
+  "<!-- changelog -->",
   "### ✨ Features",
   "",
   "- update github workflows (ca0db97)",
@@ -84,6 +85,7 @@ exports[`createConventionalChangelog > default 1`] = `
 
 exports[`createConventionalChangelog > with metadata co-authors 1`] = `
 [
+  "<!-- changelog -->",
   "### ✨ Features",
   "",
   "- update github workflows (ca0db97)",
@@ -174,6 +176,7 @@ exports[`createConventionalChangelog > with metadata co-authors 1`] = `
 
 exports[`createConventionalChangelog > with metadata formatter 1`] = `
 [
+  "<!-- changelog -->",
   "### ✨ Features",
   "",
   "- (ca0db97) update github workflows (ca0db97)",
@@ -256,6 +259,7 @@ exports[`createConventionalChangelog > with metadata formatter 1`] = `
 
 exports[`createConventionalChangelog > with metadata url 1`] = `
 [
+  "<!-- changelog -->",
   "### ✨ Features",
   "",
   "- update github workflows ([ca0db97](https://example.com/ca0db97))",

@@ -1,18 +1,17 @@
 {
-  "search.exclude": {
-    "**/.yarn": true,
-    "**/.pnp.*": true
-  },
+  "prettier.prettierPath": ".yarn/sdks/prettier/index.cjs",
+
+  "typescript.tsc.autoDetect": "off",
   "typescript.tsdk": ".yarn/sdks/typescript/lib",
-  "typescript.tsserver.experimental.useVsCodeWatcher": false, // issue: https://github.com/yarnpkg/berry/issues/6270
   "typescript.enablePromptUseWorkspaceTsdk": true,
   "typescript.preferences.importModuleSpecifierEnding": "js",
+
   "editor.tabSize": 2,
-  "prettier.prettierPath": ".yarn/sdks/prettier/index.cjs",
   "editor.formatOnSave": true,
-  "typescript.tsc.autoDetect": "off",
+
   "npm.autoDetect": "off",
   "npm.packageManager": "yarn",
+
   "explorer.fileNesting.enabled": true,
   "explorer.fileNesting.expand": false,
   "explorer.fileNesting.patterns": {
@@ -25,8 +24,18 @@
     "tsconfig.json": "tsconfig.*.json, *.tsbuildinfo",
     "package.json": "package-lock.json, yarn.lock, pnpm-lock.yaml"
   },
-  "cSpell.words": [
-    "tsbuildinfo",
-    "Wroud"
-  ]
+
+  "files.exclude": {
+    "**/.yarn": true,
+    "**/.pnp.*": true,
+    "**/node_modules": true,
+    "**/coverage": true,
+    "**/lib": true,
+    "**/components.d.ts": true
+  },
+
+  "search.exclude": {
+    "**/.yarn": true,
+    "**/.pnp.*": true
+  }
 }

@@ -32,9 +32,6 @@
       "path": "../ci"
     },
     {
-      "path": "../semver-bump"
-    },
-    {
       "path": "../conventional-commits-changelog"
     },
     {

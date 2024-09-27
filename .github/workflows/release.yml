@@ -106,6 +106,8 @@ jobs:
     # if: needs.release.outputs.no-changes != 'true'
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main
       - run: corepack enable
       - uses: actions/setup-node@v4
         with:

@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.10.2 -->
+## 0.10.2 (2024-09-27)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/di-v0.10.1...di-v0.10.2)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- createService result type ([91765ea](https://github.com/Wroud/foundation/commit/91765ea))
+
 <!-- version:0.10.1 -->
 ## 0.10.1
 

@@ -1,23 +1,26 @@
 {
-  "name": "@wroud/di-tools-analyzer",
-  "description": "DI Tools Analyzer is a tool that helps you to analyze the dependency injection tools in your project and generate a report for them.",
-  "version": "0.2.1",
+  "name": "@wroud/ts-project-linker",
+  "description": "",
+  "version": "0.0.1",
   "packageManager": "yarn@4.5.0",
-  "type": "module",
   "license": "MIT",
   "author": "Wroud",
-  "homepage": "https://wroud.dev/guide/package/di-tools/analyzer/introduction",
+  "homepage": "https://wroud.dev/",
   "repository": {
     "type": "git",
     "url": "https://github.com/Wroud/foundation",
-    "directory": "packages/di-tools-analyzer"
+    "directory": "packages/ts-project-linker"
   },
+  "type": "module",
   "sideEffects": [],
+  "bin": {
+    "ts-link": "./lib/cli.js",
+    "ts-project-linker": "./lib/cli.js"
+  },
   "module": "./lib/index.js",
-  "types": "./lib/index.d.ts",
   "exports": {
     ".": "./lib/index.js",
-    "./*.js": "./lib/*.js",
+    "./*": "./lib/*.js",
     "./package.json": "./package.json"
   },
   "files": [
@@ -34,9 +37,6 @@
     "!.tsbuildinfo"
   ],
   "scripts": {
-    "ci:release": "yarn ci release --prefix di-tools-analyzer-v",
-    "ci:git-tag": "yarn ci git-tag --prefix di-tools-analyzer-v",
-    "ci:release-github": "yarn ci release-github --prefix di-tools-analyzer-v",
     "test": "tests-runner",
     "test:ci": "CI=true yarn run test",
     "build": "tsc -b",
@@ -45,30 +45,23 @@
     "clear": "rimraf ./lib"
   },
   "dependencies": {
-    "@wroud/di": "workspace:^0",
-    "d3": "^7",
-    "uuid": "^10"
+    "comment-json": "^4",
+    "execa": "^9",
+    "fast-glob": "^3",
+    "picocolors": "^1",
+    "yargs": "^17"
   },
   "devDependencies": {
-    "@types/d3": "^7",
+    "@tsconfig/node20": "^20",
     "@types/node": "^20",
-    "@types/uuid": "^10",
+    "@types/yargs": "^17",
     "@vitest/coverage-v8": "^2",
-    "@wroud/ci": "workspace:*",
     "@wroud/tests-runner": "workspace:*",
     "@wroud/tsconfig": "workspace:*",
     "concurrently": "^8",
     "rimraf": "^6",
-    "tslib": "^2",
     "typescript": "^5",
     "vitest": "^2"
   },
-  "keywords": [
-    "dependency-injection",
-    "di",
-    "di-tools",
-    "analyzer",
-    "tools",
-    "report"
-  ]
+  "keywords": []
 }

@@ -17,10 +17,8 @@
   "types": "./lib/index.d.ts",
   "exports": {
     ".": "./lib/index.js",
-    "./*": "./lib/*",
-    "./package.json": "./package.json",
-    "./src": "./src/index.ts",
-    "./src/*": "./src/*"
+    "./*.js": "./lib/*.js",
+    "./package.json": "./package.json"
   },
   "files": [
     "package.json",

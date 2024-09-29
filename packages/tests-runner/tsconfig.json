@@ -2,11 +2,15 @@
   "extends": "@wroud/tsconfig/tsconfig.json",
   "compilerOptions": {
     "target": "ESNext",
-    "types": ["node"],
+    "types": [
+      "node"
+    ],
     "noEmit": true,
     "incremental": true,
     "composite": true
   },
-  "include": ["vitest.config.ts", "jest-extended.d.ts"],
-  "references": []
+  "include": [
+    "vitest.config.ts",
+    "jest-extended.d.ts"
+  ]
 }

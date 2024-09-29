@@ -3,14 +3,14 @@
   "include": [],
   "compilerOptions": {
     "target": "ES2022",
-    "lib": ["esnext"],
+    "lib": [
+      "esnext"
+    ],
     "module": "nodenext",
     "skipLibCheck": true,
-
     "moduleResolution": "NodeNext",
     "resolveJsonModule": true,
     "importHelpers": true,
-
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
@@ -25,10 +25,8 @@
     "noImplicitReturns": true,
     "noPropertyAccessFromIndexSignature": true,
     "noUncheckedIndexedAccess": true,
-
     /* Source maps */
     "sourceMap": true,
-
     /* project references */
     "declarationMap": true
   }

@@ -3,13 +3,17 @@
   "compilerOptions": {
     "tsBuildInfoFile": "./lib/.tsbuildinfo",
     "rootDir": "src",
-    "rootDirs": ["src"],
+    "rootDirs": [
+      "src"
+    ],
     "outDir": "lib",
     "jsx": "react-jsx",
     "incremental": true,
     "composite": true
   },
-  "include": ["src"],
+  "include": [
+    "src"
+  ],
   "references": [
     {
       "path": "../di"

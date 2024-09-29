@@ -3,13 +3,20 @@
   "compilerOptions": {
     "tsBuildInfoFile": "./lib/.tsbuildinfo",
     "rootDir": "src",
-    "rootDirs": ["src"],
+    "rootDirs": [
+      "src"
+    ],
     "outDir": "lib",
-    "types": ["node"],
+    "types": [
+      "node"
+    ],
+    "declarationMap": false,
     "incremental": true,
-    "composite": true
+    "composite": false
   },
-  "include": ["src"],
+  "include": [
+    "src"
+  ],
   "references": [
     {
       "path": "../conventional-commits-bump"

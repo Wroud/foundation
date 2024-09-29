@@ -3,13 +3,19 @@
   "compilerOptions": {
     "tsBuildInfoFile": "./lib/.tsbuildinfo",
     "rootDir": "src",
-    "rootDirs": ["src"],
+    "rootDirs": [
+      "src"
+    ],
     "outDir": "lib",
-    "types": ["node"],
+    "types": [
+      "node"
+    ],
     "incremental": true,
     "composite": true
   },
-  "include": ["src"],
+  "include": [
+    "src"
+  ],
   "references": [
     {
       "path": "../conventional-commits-parser"

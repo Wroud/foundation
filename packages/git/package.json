@@ -16,9 +16,8 @@
   "module": "./lib/index.js",
   "exports": {
     ".": "./lib/index.js",
-    "./*": "./lib/*",
-    "./package.json": "./package.json",
-    "./src/*": "./src/*"
+    "./*.js": "./lib/*.js",
+    "./package.json": "./package.json"
   },
   "files": [
     "package.json",

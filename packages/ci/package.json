@@ -20,7 +20,6 @@
     "@wroud/conventional-commits-parser": "workspace:*",
     "@wroud/git": "workspace:*",
     "@wroud/github": "workspace:*",
-    "@wroud/tests-runner": "workspace:*",
     "execa": "^9",
     "semver": "^7",
     "tempy": "^3",

@@ -3,15 +3,14 @@
   "compilerOptions": {
     "tsBuildInfoFile": "./lib/.tsbuildinfo",
     "rootDir": "src",
-    "rootDirs": ["src"],
+    "rootDirs": [
+      "src"
+    ],
     "outDir": "lib",
     "incremental": true,
     "composite": true
   },
-  "include": ["src"],
-  "references": [
-    {
-      "path": "../ci"
-    }
+  "include": [
+    "src"
   ]
 }

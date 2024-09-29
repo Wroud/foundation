@@ -3,13 +3,23 @@
   "compilerOptions": {
     "tsBuildInfoFile": "./lib/.tsbuildinfo",
     "rootDir": "src",
-    "rootDirs": ["src"],
+    "rootDirs": [
+      "src"
+    ],
     "outDir": "lib",
     "incremental": true,
     "composite": true
   },
-  "include": ["src"],
+  "include": [
+    "src"
+  ],
   "references": [
+    {
+      "path": "../conventional-commits-changelog"
+    },
+    {
+      "path": "../conventional-commits-parser"
+    },
     {
       "path": "../di"
     },
@@ -29,19 +39,13 @@
       "path": "../docs"
     },
     {
-      "path": "../ci"
-    },
-    {
-      "path": "../conventional-commits-changelog"
-    },
-    {
-      "path": "../conventional-commits-parser"
-    },
-    {
       "path": "../git"
     },
     {
       "path": "../github"
+    },
+    {
+      "path": "../ts-project-linker"
     }
   ]
 }

@@ -7,10 +7,18 @@
     "incremental": true,
     "composite": true
   },
-  "include": ["src"],
+  "include": [
+    "src"
+  ],
   "references": [
     {
       "path": "../di"
+    },
+    {
+      "path": "../di-react"
+    },
+    {
+      "path": "../di-tools-analyzer"
     }
   ]
 }

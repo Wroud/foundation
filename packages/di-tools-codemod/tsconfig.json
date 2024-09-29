@@ -3,11 +3,14 @@
   "compilerOptions": {
     "tsBuildInfoFile": "./lib/esm/.tsbuildinfo",
     "rootDir": "src",
-    "rootDirs": ["src"],
+    "rootDirs": [
+      "src"
+    ],
     "outDir": "lib/esm",
     "incremental": true,
     "composite": true
   },
-  "include": ["src"],
-  "references": []
+  "include": [
+    "src"
+  ]
 }

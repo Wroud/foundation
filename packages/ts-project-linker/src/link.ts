@@ -74,7 +74,7 @@ export async function link(
 
   for (const [
     ,
-    { directory, tsConfig, tsConfigPath, packageInfo: packageJson },
+    { directory, tsConfig, tsConfigPath, packageInfo },
   ] of packages) {
     try {
       let noEmitRefs: string[] = [];
@@ -101,7 +101,7 @@ export async function link(
               noEmitRefs.push(ref.path);
               return false;
             }
-            const isRef = project.packageInfo.name in packageJson.dependencies;
+            const isRef = project.packageInfo.name in packageInfo.dependencies;
 
             if (!isRef) {
               removedRefs.push(project.packageInfo.name);
@@ -114,7 +114,7 @@ export async function link(
           return true;
         });
 
-      for (const dep of Object.keys(packageJson.dependencies)) {
+      for (const dep of Object.keys(packageInfo.dependencies)) {
         const project = packages.get(dep);
 
         if (
@@ -140,50 +140,53 @@ export async function link(
         removedRefs.length ||
         notCompositeRefs.length
       ) {
-        console.log(colors.dim(">"), colors.dim(tsConfigPath));
+        console.log(
+          colors.dim(packageInfo.name + " ·"),
+          colors.dim(relative(process.cwd(), tsConfigPath)),
+        );
       }
 
       if (newRefs.length) {
-        console.log(colors.greenBright(colors.dim(`Added references:`)));
+        console.log(colors.greenBright(colors.dim(`  Added references:`)));
 
         for (const ref of newRefs) {
-          console.log(colors.greenBright(`  - ${ref}`));
+          console.log(colors.greenBright(`    ${ref}`));
         }
       }
 
       if (removedRefs.length) {
-        console.log(colors.dim(colors.red(`Removed references:`)));
+        console.log(colors.dim(colors.red(`  Removed references:`)));
 
         for (const ref of removedRefs) {
-          console.log(colors.dim(`  - ${ref}`));
+          console.log(colors.dim(`    ${ref}`));
         }
       }
 
       if (noEmitRefs.length) {
         console.log(
-          colors.dim(colors.red(`Removed references with noEmit set:`)),
+          colors.dim(colors.red(`  Removed references with noEmit set:`)),
         );
 
         for (const ref of noEmitRefs) {
-          console.log(colors.dim(`  - ${ref}`));
+          console.log(colors.dim(`    ${ref}`));
         }
       }
 
       if (notCompositeRefs.length) {
         console.log(
-          colors.dim(colors.red(`Removed references with no composite set:`)),
+          colors.dim(colors.red(`  Removed references with no composite set:`)),
         );
 
         for (const ref of notCompositeRefs) {
-          console.log(colors.dim(`  - ${ref}`));
+          console.log(colors.dim(`    ${ref}`));
         }
       }
 
       if (notFoundRefs.length) {
-        console.warn(`References not found:`);
+        console.warn(`  References not found:`);
 
         for (const ref of notFoundRefs) {
-          console.log(colors.dim(`  - ${ref}`));
+          console.log(colors.dim(`    ${ref}`));
         }
       }
 

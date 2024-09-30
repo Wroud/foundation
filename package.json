@@ -43,10 +43,6 @@
     "dev": "cd packages/_aggregate && yarn dev",
     "clear": "rimraf --glob 'packages/*/lib' 'packages/*/node_modules' 'packages/*/coverage' coverage node_modules",
     "test": "tests-runner",
-    "test:ci": "CI=true yarn run test run",
-    "postinstall:build-ci": "cd packages/ci && yarn build",
-    "postinstall:build-ts-project-linker": "cd packages/ts-project-linker && yarn build",
-    "link-projects": "ts-link ./packages/*",
-    "postinstall": "is-ci || yarn conc \"npm:postinstall:*\" --success first --kill-others-on-fail && yarn link-projects"
+    "test:ci": "CI=true yarn run test run"
   }
 }

@@ -18,7 +18,10 @@ interface IPackageJson {
   dependencies: Record<string, string>;
 }
 
-export async function link(...paths: string[]): Promise<void> {
+export async function link(
+  options: { immutable?: boolean } = {},
+  ...paths: string[]
+): Promise<void> {
   const projects = new Map<string, IPackageInfo>();
   const packages = new Map<string, IPackageInfo>();
 
@@ -67,6 +70,8 @@ export async function link(...paths: string[]): Promise<void> {
     }
   }
 
+  let mutated = false;
+
   for (const [
     ,
     { directory, tsConfig, tsConfigPath, packageInfo: packageJson },
@@ -76,6 +81,7 @@ export async function link(...paths: string[]): Promise<void> {
       let notCompositeRefs: string[] = [];
       let notFoundRefs: string[] = [];
       let newRefs: string[] = [];
+      let removedRefs: string[] = [];
 
       const references = (tsConfig?.references || [])
         .map((ref) => ({
@@ -95,7 +101,13 @@ export async function link(...paths: string[]): Promise<void> {
               noEmitRefs.push(ref.path);
               return false;
             }
-            return project.packageInfo.name in packageJson.dependencies;
+            const isRef = project.packageInfo.name in packageJson.dependencies;
+
+            if (!isRef) {
+              removedRefs.push(project.packageInfo.name);
+            }
+
+            return isRef;
           }
 
           notFoundRefs.push(ref.path);
@@ -125,6 +137,7 @@ export async function link(...paths: string[]): Promise<void> {
         newRefs.length ||
         notFoundRefs.length ||
         noEmitRefs.length ||
+        removedRefs.length ||
         notCompositeRefs.length
       ) {
         console.log(colors.dim(">"), colors.dim(tsConfigPath));
@@ -135,6 +148,14 @@ export async function link(...paths: string[]): Promise<void> {
 
         for (const ref of newRefs) {
           console.log(colors.greenBright(`  - ${ref}`));
+        }
+      }
+
+      if (removedRefs.length) {
+        console.log(colors.dim(colors.red(`Removed references:`)));
+
+        for (const ref of removedRefs) {
+          console.log(colors.dim(`  - ${ref}`));
         }
       }
 
@@ -166,6 +187,18 @@ export async function link(...paths: string[]): Promise<void> {
         }
       }
 
+      if (options.immutable) {
+        if (
+          newRefs.length ||
+          noEmitRefs.length ||
+          notCompositeRefs.length ||
+          removedRefs.length
+        ) {
+          mutated = true;
+        }
+        continue;
+      }
+
       assign(tsConfig, {
         references: references.sort((a, b) => a.path.localeCompare(b.path)),
       });
@@ -176,7 +209,10 @@ export async function link(...paths: string[]): Promise<void> {
 
       await writeFile(tsConfigPath, stringify(tsConfig, null, 2) + "\n");
     } catch (error) {
-      console.warn(`Error reading tsconfig.json at ${tsConfigPath}, skipping`);
+      console.warn(
+        `Error reading tsconfig.json at ${tsConfigPath}, skipping`,
+        error,
+      );
       continue;
     }
   }
@@ -187,4 +223,9 @@ export async function link(...paths: string[]): Promise<void> {
       colors.greenBright(`Linked ${linked} package${linked === 1 ? "" : "s"}`),
     ),
   );
+
+  if (mutated) {
+    console.error("Immutable mode is enabled, please fix the issues manually");
+    process.exit(1);
+  }
 }

@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "moduleResolution": "Node16",
+    "module": "NodeNext",
+    "target": "ES2021",
+    "lib": [
+      "ES2021"
+    ]
+  },
+  "include": [
+    "src/**/*.mts"
+  ],
+  "references": [
+    {
+      "path": "../ts-project-linker"
+    }
+  ]
+}

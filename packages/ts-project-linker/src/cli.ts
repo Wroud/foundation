@@ -29,7 +29,7 @@ await yargs(hideBin(process.argv))
         console.error("Error: No paths found");
         process.exit(1);
       }
-      await link(...paths);
+      await link({}, ...paths);
     },
   )
   .command(
@@ -47,7 +47,7 @@ await yargs(hideBin(process.argv))
         console.error("Error: No paths provided");
         process.exit(1);
       }
-      await link(...argv.paths);
+      await link({}, ...argv.paths);
     },
   )
   .strict()

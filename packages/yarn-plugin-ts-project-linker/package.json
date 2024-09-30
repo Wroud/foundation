@@ -1,0 +1,36 @@
+{
+  "name": "yarn-plugin-ts-project-linker",
+  "private": true,
+  "main": "./src/index.mts",
+  "exports": {
+    ".": "./src/index.mts",
+    "./package.json": "./package.json"
+  },
+  "dependencies": {
+    "@wroud/ts-project-linker": "workspace:^",
+    "@yarnpkg/cli": "^4",
+    "@yarnpkg/core": "^4",
+    "clipanion": "^4.0.0-rc.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@yarnpkg/builder": "^4",
+    "rimraf": "5",
+    "typescript": "^5"
+  },
+  "scripts": {
+    "build": "builder build plugin",
+    "build:dev": "builder build plugin --no-minify",
+    "clean": "rimraf bundles",
+    "prepack": "run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com/wroud/foundation.git",
+    "directory": "packages/yarn-plugin-ts-project-linker"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "stableVersion": "4.1.0"
+}

@@ -8,10 +8,12 @@
   "author": "Wroud",
   "sideEffects": [],
   "scripts": {
-    "build": "tsc -b",
+    "build:ci": "cd ../ci && yarn build",
+    "build:tsc": "tsc -b",
+    "build": "conc \"npm:build:*\"",
     "clear": "rimraf ./lib",
     "watch:tsc": "tsc -b -w",
-    "dev": "concurrently \"npm:watch:*\""
+    "dev": "conc \"npm:watch:*\""
   },
   "dependencies": {
     "tslib": "^2"

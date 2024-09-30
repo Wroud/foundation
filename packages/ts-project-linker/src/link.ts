@@ -4,6 +4,7 @@ import { readFile, writeFile } from "fs/promises";
 import colors from "picocolors";
 import commentJson, { assign, stringify } from "comment-json";
 import type { TsConfigDef } from "./TsConfigDef.js";
+import { existsSync } from "fs";
 
 interface IPackageInfo {
   directory: string;
@@ -36,6 +37,10 @@ export async function link(...paths: string[]): Promise<void> {
         continue;
       }
 
+      if (!existsSync(tsConfigPath)) {
+        continue;
+      }
+
       const tsConfig = commentJson.parse(
         await readFile(tsConfigPath, "utf-8"),
       ) as TsConfigDef;
@@ -47,8 +52,8 @@ export async function link(...paths: string[]): Promise<void> {
         packageInfo: {
           name: packageJson.name,
           dependencies: {
-            ...packageJson.dependencies,
-            ...packageJson.devDependencies,
+            ...(packageJson.dependencies || {}),
+            ...(packageJson.devDependencies || {}),
           },
         },
       };

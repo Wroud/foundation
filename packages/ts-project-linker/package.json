@@ -1,6 +1,6 @@
 {
   "name": "@wroud/ts-project-linker",
-  "description": "",
+  "description": "A CLI tool that synchronizes TypeScript project references with package dependencies, supporting sub configurations like tsconfig.*.json.",
   "version": "0.0.1",
   "packageManager": "yarn@4.5.0",
   "license": "MIT",
@@ -48,6 +48,7 @@
     "comment-json": "^4",
     "execa": "^9",
     "fast-glob": "^3",
+    "globby": "^14",
     "picocolors": "^1",
     "yargs": "^17"
   },
@@ -63,5 +64,18 @@
     "typescript": "^5",
     "vitest": "^2"
   },
-  "keywords": []
+  "keywords": [
+    "typescript",
+    "project references",
+    "dependencies",
+    "cli",
+    "cli tool",
+    "tool",
+    "tsconfig",
+    "monorepo",
+    "typescript linker",
+    "typescript project references",
+    "sub configs",
+    "package dependencies"
+  ]
 }

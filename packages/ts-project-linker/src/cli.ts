@@ -23,10 +23,13 @@ await yargs(hideBin(process.argv))
             description:
               "Do not modify the tsconfig.json files, will exit with 1 if changes are needed",
           },
+          verbose: {
+            type: "boolean",
+            description: "Print verbose output",
+          },
         });
     },
-    async (argv) => {
-      const { patterns, immutable } = argv;
+    async ({ patterns, immutable, verbose }) => {
       if (!patterns) {
         console.error("Error: No glob pattern provided");
         process.exit(1);
@@ -38,7 +41,7 @@ await yargs(hideBin(process.argv))
         console.error("Error: No paths found");
         process.exit(1);
       }
-      await link({ immutable }, ...paths);
+      await link({ immutable, verbose }, ...paths);
     },
   )
   .command(
@@ -57,14 +60,18 @@ await yargs(hideBin(process.argv))
             description:
               "Do not modify the tsconfig.json files, will exit with 1 if changes are needed",
           },
+          verbose: {
+            type: "boolean",
+            description: "Print verbose output",
+          },
         });
     },
-    async (argv) => {
-      if (!argv.paths || argv.paths.length === 0) {
+    async ({ paths, immutable, verbose }) => {
+      if (!paths || paths.length === 0) {
         console.error("Error: No paths provided");
         process.exit(1);
       }
-      await link({ immutable: argv.immutable }, ...argv.paths);
+      await link({ immutable, verbose }, ...paths);
     },
   )
   .strict()

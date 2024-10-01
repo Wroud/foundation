@@ -1,15 +1,20 @@
-import { join, relative, resolve } from "path";
+import { join, relative } from "path";
 import { getProjectPaths } from "./getProjectPaths.js";
 import { readFile, writeFile } from "fs/promises";
 import colors from "picocolors";
 import commentJson, { assign, stringify } from "comment-json";
-import type { TsConfigDef } from "./TsConfigDef.js";
+import { globby } from "globby";
+import {
+  TsConfigResolver,
+  type TSConfig,
+  type TSConfigReference,
+} from "./TsConfigResolver.js";
 import { existsSync } from "fs";
+import { isRootTsConfig } from "./isRootTsConfig.js";
 
 interface IPackageInfo {
   directory: string;
-  tsConfig: TsConfigDef;
-  tsConfigPath: string;
+  tsConfigPaths: string[];
   packageInfo: IPackageJson;
 }
 
@@ -18,15 +23,30 @@ interface IPackageJson {
   dependencies: Record<string, string>;
 }
 
+interface IRemovedRefInfo {
+  name: string;
+  noEmit?: boolean;
+  notComposite?: boolean;
+  notFound?: boolean;
+  referencedInRoot?: boolean;
+}
+
+export interface ILinkOptions {
+  immutable?: boolean;
+  verbose?: boolean;
+}
+
 export async function link(
-  options: { immutable?: boolean } = {},
+  options: ILinkOptions = {},
   ...paths: string[]
 ): Promise<void> {
+  const tsConfigResolver = new TsConfigResolver();
   const projects = new Map<string, IPackageInfo>();
   const packages = new Map<string, IPackageInfo>();
 
   for (const path of paths) {
-    const { directory, packageJsonPath, tsConfigPath } = getProjectPaths(path);
+    const { directory, packageJsonPath, tsConfigPatterns } =
+      getProjectPaths(path);
 
     try {
       const packageJson = await readFile(packageJsonPath, "utf-8").then(
@@ -40,18 +60,14 @@ export async function link(
         continue;
       }
 
-      if (!existsSync(tsConfigPath)) {
+      const tsConfigPaths = await globby(tsConfigPatterns);
+      if (tsConfigPaths.length === 0) {
         continue;
       }
 
-      const tsConfig = commentJson.parse(
-        await readFile(tsConfigPath, "utf-8"),
-      ) as TsConfigDef;
-
       const packageInfo: IPackageInfo = {
         directory,
-        tsConfig,
-        tsConfigPath,
+        tsConfigPaths,
         packageInfo: {
           name: packageJson.name,
           dependencies: {
@@ -63,6 +79,10 @@ export async function link(
 
       packages.set(packageJson.name, packageInfo);
       projects.set(directory, packageInfo);
+
+      for (const tsConfigPath of tsConfigPaths) {
+        projects.set(tsConfigPath, packageInfo);
+      }
     } catch (error) {
       console.warn(
         `Error reading package.json at ${packageJsonPath}, skipping`,
@@ -72,163 +92,216 @@ export async function link(
 
   let mutated = false;
 
-  for (const [
-    ,
-    { directory, tsConfig, tsConfigPath, packageInfo },
-  ] of packages) {
-    try {
-      let noEmitRefs: string[] = [];
-      let notCompositeRefs: string[] = [];
-      let notFoundRefs: string[] = [];
-      let newRefs: string[] = [];
-      let removedRefs: string[] = [];
+  for (const [, { directory, tsConfigPaths, packageInfo }] of packages) {
+    for (const tsConfigPath of tsConfigPaths) {
+      try {
+        const resolvedTsConfig = await tsConfigResolver.resolve(tsConfigPath);
+        let unknownRefs = new Set<string>();
+        let newRefs = new Set<string>();
+        let removedRefs: IRemovedRefInfo[] = [];
 
-      const references = (tsConfig?.references || [])
-        .map((ref) => ({
-          ...ref,
-          path: relative(directory, join(directory, ref.path)),
-        }))
-        .filter((ref) => {
-          const projectPath = resolve(directory, ref.path);
+        const references = new Set<string>();
+
+        for (const ref of resolvedTsConfig.references || []) {
+          const projectPath = ref.path.endsWith(".json")
+            ? ref.path
+            : join(ref.path, "tsconfig.json");
           const project = projects.get(projectPath);
 
           if (project) {
-            if (!project.tsConfig.compilerOptions?.composite) {
-              notCompositeRefs.push(ref.path);
-              return false;
-            }
-            if (project.tsConfig.compilerOptions.noEmit) {
-              noEmitRefs.push(ref.path);
-              return false;
-            }
-            const isRef = project.packageInfo.name in packageInfo.dependencies;
+            const referencedInRoot =
+              await tsConfigResolver.isReferencedInRootConfig(projectPath);
 
-            if (!isRef) {
-              removedRefs.push(project.packageInfo.name);
+            if (referencedInRoot && !isRootTsConfig(tsConfigPath)) {
+              removedRefs.push({
+                name: relative(directory, ref.path),
+                referencedInRoot: true,
+              });
+              continue;
             }
 
-            return isRef;
+            const resolvedTsConfig =
+              await tsConfigResolver.resolve(projectPath);
+            const notComposite = !resolvedTsConfig?.compilerOptions?.composite;
+            const noEmit = resolvedTsConfig?.compilerOptions?.noEmit;
+            const isDependency =
+              project.packageInfo.name in packageInfo.dependencies ||
+              project.directory === directory;
+
+            if (!isDependency || notComposite || noEmit) {
+              removedRefs.push({
+                name: project.packageInfo.name,
+                notComposite,
+                noEmit,
+              });
+              continue;
+            }
+          } else {
+            if (existsSync(projectPath)) {
+              unknownRefs.add(relative(directory, ref.path));
+            } else {
+              removedRefs.push({
+                name: relative(directory, ref.path),
+                notFound: true,
+              });
+              continue;
+            }
           }
 
-          notFoundRefs.push(ref.path);
-          return true;
-        });
+          references.add(relative(directory, ref.path));
+        }
 
-      for (const dep of Object.keys(packageInfo.dependencies)) {
-        const project = packages.get(dep);
+        for (const dep of Object.keys(packageInfo.dependencies)) {
+          const project = packages.get(dep);
 
-        if (
-          !project ||
-          !project.tsConfig.compilerOptions?.composite ||
-          project.tsConfig.compilerOptions?.noEmit
-        ) {
+          if (!project) {
+            continue;
+          }
+
+          for (const tsConfigPath of project.tsConfigPaths) {
+            const referencedInRoot =
+              await tsConfigResolver.isReferencedInRootConfig(tsConfigPath);
+
+            if (referencedInRoot) {
+              continue;
+            }
+
+            const resolvedTsConfig =
+              await tsConfigResolver.resolve(tsConfigPath);
+            if (
+              !resolvedTsConfig.compilerOptions?.composite ||
+              resolvedTsConfig.compilerOptions?.noEmit
+            ) {
+              continue;
+            }
+
+            const ref = relative(
+              directory,
+              tsConfigPath.replace("tsconfig.json", ""),
+            );
+
+            if (!references.has(ref)) {
+              references.add(ref);
+              newRefs.add(dep);
+            }
+          }
+        }
+
+        if (newRefs.size || unknownRefs.size || removedRefs.length) {
+          console.log(
+            colorizePackageName(packageInfo.name) + colors.dim(" ·"),
+            colors.dim(relative(process.cwd(), tsConfigPath)),
+          );
+        }
+
+        if (newRefs.size) {
+          for (const ref of newRefs) {
+            console.log(colors.greenBright(`  + `) + colors.dim(`${ref}`));
+          }
+        }
+
+        if (removedRefs.length) {
+          for (const ref of removedRefs) {
+            let reason = "";
+
+            if (options.verbose) {
+              if (ref.noEmit) {
+                reason += " (noEmit: true)";
+              }
+
+              if (ref.notComposite) {
+                reason += " (composite: false)";
+              }
+
+              if (ref.notFound) {
+                reason += " (not found)";
+              }
+
+              if (ref.referencedInRoot) {
+                reason += " (referenced in root tsconfig.json)";
+              }
+            }
+
+            console.log(
+              colors.redBright(`  - `) + colors.dim(`${ref.name}${reason}`),
+            );
+          }
+        }
+
+        if (unknownRefs.size) {
+          for (const ref of unknownRefs) {
+            console.log(colors.yellowBright(`  ? `) + colors.dim(`${ref}`));
+          }
+        }
+
+        if (options.immutable) {
+          if (newRefs.size || removedRefs.length) {
+            mutated = true;
+          }
           continue;
         }
 
-        const ref = relative(directory, project.directory);
-
-        if (!references.find((r) => r.path === ref)) {
-          references.push({ path: ref });
-          newRefs.push(dep);
-        }
-      }
-
-      if (
-        newRefs.length ||
-        notFoundRefs.length ||
-        noEmitRefs.length ||
-        removedRefs.length ||
-        notCompositeRefs.length
-      ) {
-        console.log(
-          colors.dim(packageInfo.name + " ·"),
-          colors.dim(relative(process.cwd(), tsConfigPath)),
-        );
-      }
-
-      if (newRefs.length) {
-        console.log(colors.greenBright(colors.dim(`  Added references:`)));
-
-        for (const ref of newRefs) {
-          console.log(colors.greenBright(`    ${ref}`));
-        }
-      }
-
-      if (removedRefs.length) {
-        console.log(colors.dim(colors.red(`  Removed references:`)));
-
-        for (const ref of removedRefs) {
-          console.log(colors.dim(`    ${ref}`));
-        }
-      }
-
-      if (noEmitRefs.length) {
-        console.log(
-          colors.dim(colors.red(`  Removed references with noEmit set:`)),
+        const tsConfig = await readFile(tsConfigPath, "utf-8").then(
+          (data) => commentJson.parse(data) as TSConfig,
         );
 
-        for (const ref of noEmitRefs) {
-          console.log(colors.dim(`    ${ref}`));
-        }
-      }
+        const newReferences: TSConfigReference[] =
+          tsConfig.references?.filter((ref) => references.has(ref.path)) || [];
 
-      if (notCompositeRefs.length) {
-        console.log(
-          colors.dim(colors.red(`  Removed references with no composite set:`)),
+        for (const ref of references) {
+          if (newReferences.some((r) => r.path === ref)) {
+            continue;
+          }
+          newReferences.push({
+            path: ref,
+          });
+        }
+
+        assign(tsConfig, {
+          references: newReferences.sort((a, b) =>
+            a.path.localeCompare(b.path),
+          ),
+        });
+
+        if (tsConfig.references?.length === 0) {
+          delete tsConfig.references;
+        }
+
+        await writeFile(tsConfigPath, stringify(tsConfig, null, 2) + "\n");
+      } catch (error) {
+        console.warn(
+          `Error reading tsconfig.json at ${tsConfigPath}, skipping`,
+          error,
         );
-
-        for (const ref of notCompositeRefs) {
-          console.log(colors.dim(`    ${ref}`));
-        }
-      }
-
-      if (notFoundRefs.length) {
-        console.warn(`  References not found:`);
-
-        for (const ref of notFoundRefs) {
-          console.log(colors.dim(`    ${ref}`));
-        }
-      }
-
-      if (options.immutable) {
-        if (
-          newRefs.length ||
-          noEmitRefs.length ||
-          notCompositeRefs.length ||
-          removedRefs.length
-        ) {
-          mutated = true;
-        }
         continue;
       }
-
-      assign(tsConfig, {
-        references: references.sort((a, b) => a.path.localeCompare(b.path)),
-      });
-
-      if (tsConfig.references?.length === 0) {
-        delete tsConfig.references;
-      }
-
-      await writeFile(tsConfigPath, stringify(tsConfig, null, 2) + "\n");
-    } catch (error) {
-      console.warn(
-        `Error reading tsconfig.json at ${tsConfigPath}, skipping`,
-        error,
-      );
-      continue;
     }
   }
 
-  const linked = packages.size;
-  console.log(
-    colors.dim(
-      colors.greenBright(`Linked ${linked} package${linked === 1 ? "" : "s"}`),
-    ),
-  );
+  if (options.verbose) {
+    const linked = packages.size;
+    console.log(
+      colors.dim(
+        colors.greenBright(
+          `Linked ${linked} package${linked === 1 ? "" : "s"}`,
+        ),
+      ),
+    );
+  }
 
   if (mutated) {
     console.error("Immutable mode is enabled, please fix the issues manually");
     process.exit(1);
   }
+}
+
+function colorizePackageName(name: string): string {
+  const darkOrange = "\x1b[38;2;200;85;15m";
+  const lightOrange = "\x1b[38;2;200;130;90m";
+  return name.replace(
+    /^(@[^\/]+\/)?(.*?)$/,
+    (match, org, name) =>
+      `${darkOrange}${org || ""}${lightOrange}${name}${darkOrange}` +
+      colors.reset(""),
+  );
 }

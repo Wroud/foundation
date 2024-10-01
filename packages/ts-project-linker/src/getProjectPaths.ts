@@ -3,25 +3,28 @@ import { join, resolve } from "path";
 export interface IProjectPaths {
   directory: string;
   packageJsonPath: string;
-  tsConfigPath: string;
+  tsConfigPatterns: string[];
 }
 
 export function getProjectPaths(path: string): IProjectPaths {
   let packageJsonPath = path;
-  let tsConfigPath = path;
+  let tsConfigPatterns = [path];
 
   if (path.endsWith(".json")) {
-    tsConfigPath = path;
+    tsConfigPatterns = [path];
     packageJsonPath = join(path, "..", "package.json");
     path = join(path, "..");
   } else {
-    tsConfigPath = join(path, "tsconfig.json");
+    tsConfigPatterns = [
+      join(path, "tsconfig.json"),
+      join(path, "tsconfig.*.json"),
+    ];
     packageJsonPath = join(path, "package.json");
   }
 
   return {
     directory: resolve(path),
     packageJsonPath,
-    tsConfigPath,
+    tsConfigPatterns,
   };
 }

@@ -33,7 +33,7 @@
       "path": "../di-tools-codemod"
     },
     {
-      "path": "../di-tools-codemod/commonjs.tsconfig.json"
+      "path": "../di-tools-codemod/tsconfig.commonjs.json"
     },
     {
       "path": "../docs"

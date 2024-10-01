@@ -3,7 +3,6 @@
     "target": "ESNext",
     "useDefineForClassFields": true,
     "skipLibCheck": true,
-
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
@@ -13,7 +12,6 @@
     "outDir": "lib/cjs",
     "rootDir": "src",
     "allowJs": true,
-
     "noFallthroughCasesInSwitch": true,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
@@ -21,11 +19,15 @@
     "strict": true,
     "strictNullChecks": true,
     "module": "CommonJS",
+    "composite": true,
     "incremental": true,
     "noUncheckedIndexedAccess": true,
     "noPropertyAccessFromIndexSignature": false
   },
-  "include": ["./src/**/*.ts", "./src/**/*.js"],
+  "include": [
+    "./src/**/*.ts",
+    "./src/**/*.js"
+  ],
   "exclude": [
     "node_modules/**/*",
     "lib/cjs/**/*",

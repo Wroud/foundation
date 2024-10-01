@@ -42,7 +42,7 @@
     "test": "tests-runner",
     "test:ci": "CI=true yarn run test",
     "test:watch": "vitest watch",
-    "clear": "rimraf ./lib && yarn rimraf ./commonjs",
+    "clear": "rimraf ./lib",
     "build": "tsc -b && yarn tsc -b commonjs.tsconfig.json"
   },
   "devDependencies": {

@@ -79,7 +79,7 @@ describe("ServiceProvider", () => {
 
     expect(b.deps).toEqual([a]);
     expect(c.deps).toEqual([b]);
-    expect(a).toEqual(serviceProvider.getService(AService));
+    expect(a).toEqual(await serviceProvider.getServiceAsync(AService));
   });
   it("should dispose in order async services", async () => {
     const A = createSyncMockedService("A");
@@ -253,7 +253,7 @@ describe("ServiceProvider", () => {
       "Test error",
     );
   });
-  it("should resolve async service synchronously if already loaded", async () => {
+  it("should not resolve async service synchronously if already loaded", async () => {
     const A = createSyncMockedService("A");
     const loader = lazy(() => Promise.resolve(A));
 
@@ -263,7 +263,9 @@ describe("ServiceProvider", () => {
       .addSingleton(A, loader)
       .build();
 
-    expect(serviceProvider.getService(A)).toBeInstanceOf(A);
+    expect(() => serviceProvider.getService(A)).toThrowError(
+      "Lazy service cannot be resolved synchronously",
+    );
   });
   it("should resolve async service concurrently", async () => {
     const A = createSyncMockedService("A");

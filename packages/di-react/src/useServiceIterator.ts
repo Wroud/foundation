@@ -12,6 +12,7 @@ export function useServiceIterator<T>(type: ServiceType<T>): T | T[] {
     provider,
     type,
     new Set(),
+    "async",
   );
 
   while (!(result = iterator.next()).done) {

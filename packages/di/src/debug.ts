@@ -4,6 +4,7 @@ import type { IServiceDescriptor } from "./types/index.js";
 export class Debug {
   public static extended = false;
   public static errors = {
+    lazyServiceCantResolveSync: "Lazy service cannot be resolved synchronously",
     serviceNotLoaded: (loader: Function) => "Service is not loaded yet",
     classNotDecorated: (name: string) =>
       `Class "${name}" not registered as service`,

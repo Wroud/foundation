@@ -10,6 +10,7 @@ describe("ServiceProvider", () => {
         {} as any,
         createService("test"),
         new Set(),
+        "sync",
       ),
     ).toThrowError("provider must be an instance of ServiceProvider");
   });

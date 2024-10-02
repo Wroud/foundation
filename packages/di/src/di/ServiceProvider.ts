@@ -24,26 +24,30 @@ export class ServiceProvider implements IServiceProvider {
     provider: IServiceProvider,
     service: SingleServiceType<T>,
     requestedBy: Set<IServiceDescriptor<any>>,
+    mode: "sync" | "async",
   ): Generator<Promise<unknown>, T, unknown>;
   static internalGetService<T>(
     provider: IServiceProvider,
     service: SingleServiceType<T>[],
     requestedBy: Set<IServiceDescriptor<any>>,
+    mode: "sync" | "async",
   ): Generator<Promise<unknown>, T[], unknown>;
   static internalGetService<T>(
     provider: IServiceProvider,
     service: ServiceType<T>,
     requestedBy: Set<IServiceDescriptor<any>>,
+    mode: "sync" | "async",
   ): Generator<Promise<unknown>, T | T[], unknown>;
   static internalGetService<T>(
     provider: IServiceProvider,
     service: ServiceType<T>,
     requestedBy: Set<IServiceDescriptor<any>>,
+    mode: "sync" | "async",
   ): Generator<Promise<unknown>, T | T[], unknown> {
     if (!(provider instanceof ServiceProvider)) {
       throw new Error("provider must be an instance of ServiceProvider");
     }
-    return provider.internalGetService(service, requestedBy);
+    return provider.internalGetService(service, requestedBy, mode);
   }
 
   static getDescriptor<T>(
@@ -76,25 +80,25 @@ export class ServiceProvider implements IServiceProvider {
 
   getServices<T>(service: SingleServiceType<T>): T[] {
     return this.resolveGeneratorSync(
-      this.internalGetService([service], new Set()),
+      this.internalGetService([service], new Set(), "sync"),
     );
   }
 
   getServiceAsync<T>(service: SingleServiceType<T>): Promise<T> {
     return this.resolveGeneratorAsync(
-      this.internalGetService(service, new Set()),
+      this.internalGetService(service, new Set(), "async"),
     );
   }
 
   getService<T>(service: SingleServiceType<T>): T {
     return this.resolveGeneratorSync(
-      this.internalGetService(service, new Set()),
+      this.internalGetService(service, new Set(), "sync"),
     );
   }
 
   getServicesAsync<T>(service: SingleServiceType<T>): Promise<T[]> {
     return this.resolveGeneratorAsync(
-      this.internalGetService([service], new Set()),
+      this.internalGetService([service], new Set(), "async"),
     );
   }
 
@@ -123,18 +127,22 @@ export class ServiceProvider implements IServiceProvider {
   private internalGetService<T>(
     service: SingleServiceType<T>,
     requestedBy: Set<IServiceDescriptor<any>>,
+    mode: "sync" | "async",
   ): Generator<Promise<unknown>, T, unknown>;
   private internalGetService<T>(
     service: SingleServiceType<T>[],
     requestedBy: Set<IServiceDescriptor<any>>,
+    mode: "sync" | "async",
   ): Generator<Promise<unknown>, T[], unknown>;
   private internalGetService<T>(
     service: ServiceType<T>,
     requestedBy: Set<IServiceDescriptor<any>>,
+    mode: "sync" | "async",
   ): Generator<Promise<unknown>, T | T[], unknown>;
   private *internalGetService<T>(
     service: ServiceType<T>,
     requestedBy: Set<IServiceDescriptor<any>>,
+    mode: "sync" | "async",
   ): Generator<Promise<unknown>, T | T[], unknown> {
     const isAllServices = Array.isArray(service);
     const descriptors = isAllServices
@@ -148,6 +156,7 @@ export class ServiceProvider implements IServiceProvider {
         yield* this.internalGetDescriptorImplementation(
           descriptor,
           requestedBy,
+          mode,
         ),
       );
     }
@@ -161,6 +170,7 @@ export class ServiceProvider implements IServiceProvider {
   private *internalGetDescriptorImplementation<T>(
     descriptor: IServiceDescriptor<T>,
     requestedBy: Set<IServiceDescriptor<any>>,
+    mode: "sync" | "async",
   ): Generator<Promise<unknown>, T, unknown> {
     if (
       descriptor.lifetime === ServiceLifetime.Singleton &&
@@ -169,17 +179,22 @@ export class ServiceProvider implements IServiceProvider {
     ) {
       return yield* (
         this.parent as ServiceProvider
-      ).internalGetDescriptorImplementation(descriptor, requestedBy);
+      ).internalGetDescriptorImplementation(descriptor, requestedBy, mode);
     }
 
     validateRequestPath(requestedBy, descriptor);
 
-    return yield* this.createInstanceFromDescriptor(descriptor, requestedBy);
+    return yield* this.createInstanceFromDescriptor(
+      descriptor,
+      requestedBy,
+      mode,
+    );
   }
 
   private *createInstanceFromDescriptor<T>(
     descriptor: IServiceDescriptor<T>,
     requestedBy: Set<IServiceDescriptor<any>>,
+    mode: "sync" | "async",
   ): Generator<Promise<unknown>, T, unknown> {
     try {
       const lastRequestedBy = [...requestedBy].pop();
@@ -207,7 +222,7 @@ export class ServiceProvider implements IServiceProvider {
           );
 
           instanceInfo.initialize(
-            yield* this.createServiceInitializer(descriptor, requestedBy),
+            yield* this.createServiceInitializer(descriptor, requestedBy, mode),
           );
 
           return instanceInfo.instance;
@@ -216,6 +231,7 @@ export class ServiceProvider implements IServiceProvider {
           return (yield* this.createServiceInitializer(
             descriptor,
             requestedBy,
+            mode,
           ))();
       }
     } catch (exception: any) {
@@ -229,11 +245,12 @@ export class ServiceProvider implements IServiceProvider {
   private *createServiceInitializer<T>(
     descriptor: IServiceDescriptor<T>,
     requestedBy: Set<IServiceDescriptor<any>>,
+    mode: "sync" | "async",
   ): Generator<Promise<unknown>, () => T, unknown> {
     let implementation = descriptor.implementation;
 
     if (isAsyncServiceImplementationLoader(implementation)) {
-      if (!implementation.isLoaded()) {
+      if (!implementation.isLoaded() || mode === "sync") {
         yield implementation.load();
       }
       implementation = implementation.getImplementation();
@@ -246,7 +263,7 @@ export class ServiceProvider implements IServiceProvider {
       requestedBy = new Set([...requestedBy, descriptor]);
       for (const dependency of metadata.dependencies) {
         dependencies.push(
-          yield* this.internalGetService(dependency, requestedBy),
+          yield* this.internalGetService(dependency, requestedBy, mode),
         );
       }
 
@@ -309,7 +326,13 @@ export class ServiceProvider implements IServiceProvider {
     let result: IteratorResult<Promise<unknown>, TResult>;
 
     while (!(result = iterator.next()).done) {
-      throw new Error(`Lazy service cannot be resolved synchronously`);
+      result = iterator.throw(
+        new Error(Debug.errors.lazyServiceCantResolveSync),
+      );
+
+      if (result.done) {
+        break;
+      }
     }
 
     return result.value;
@@ -321,7 +344,15 @@ export class ServiceProvider implements IServiceProvider {
     let result: IteratorResult<Promise<unknown>, TResult>;
 
     while (!(result = iterator.next()).done) {
-      await result.value;
+      try {
+        await result.value;
+      } catch (err) {
+        result = iterator.throw(err);
+
+        if (result.done) {
+          break;
+        }
+      }
     }
 
     return result.value;

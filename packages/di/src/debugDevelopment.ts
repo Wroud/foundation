@@ -4,6 +4,7 @@ import type { IServiceDescriptor } from "./types/index.js";
 
 Debug.extended = true;
 Debug.errors = {
+  ...Debug.errors,
   serviceNotLoaded: (loader: Function) =>
     `Service implementation not loaded, loader: ${String(loader)}`,
   classNotDecorated: (name: string) =>

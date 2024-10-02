@@ -6,10 +6,11 @@ const filePathRegex = /^([\w/.-]+)\((\d+),(\d+)\)/g;
 
 interface IOptions {
   tscArgs: string[];
+  verbose?: boolean;
 }
 
 export function tscPlugin(
-  { tscArgs }: IOptions = {
+  { tscArgs, verbose }: IOptions = {
     tscArgs: [],
   },
 ): PluginOption {
@@ -45,7 +46,7 @@ export function tscPlugin(
         .replaceAll(/(\r\n|\n|\r)/gm, "")
         .replace(/^.*?\s-\s/g, "");
 
-      if (!message) {
+      if (!message || (filterTscMessages(message) && !verbose)) {
         return;
       }
 
@@ -126,4 +127,11 @@ export function tscPlugin(
       }
     },
   };
+}
+
+function filterTscMessages(message: string) {
+  return (
+    message.match(/Found \d+ errors\. Watching for file changes/g) ||
+    message.match(/File change detected\. Starting incremental compilation/g)
+  );
 }

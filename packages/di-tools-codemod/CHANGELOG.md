@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.3.1 -->
+## 0.3.1 (2024-10-02)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/di-tools-codemod-v0.3.0...di-tools-codemod-v0.3.1)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- bin command ([5e988bc](https://github.com/Wroud/foundation/commit/5e988bc))
+
 <!-- version:0.3.0 -->
 ## 0.3.0 (2024-09-22)
 

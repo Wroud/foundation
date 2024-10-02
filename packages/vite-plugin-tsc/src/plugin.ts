@@ -82,7 +82,7 @@ export function tscPlugin(
         logger.info("building...", {
           timestamp: true,
         });
-        await execa("yarn", ["tsc", ...tscArgs], execaOptions);
+        await execa("npx", ["tsc", ...tscArgs], execaOptions);
         logger.info("building completed.", {
           timestamp: true,
         });
@@ -90,7 +90,7 @@ export function tscPlugin(
         logger.info("prebuild...", {
           timestamp: true,
         });
-        await execa("yarn", ["tsc", ...tscArgs], execaOptions);
+        await execa("npx", ["tsc", ...tscArgs], execaOptions);
 
         if (tsProcess) {
           logger.warn("watch process already running. Skipping...", {
@@ -100,7 +100,7 @@ export function tscPlugin(
         }
 
         tsProcess = execa(
-          "yarn",
+          "npx",
           ["tsc", ...tscArgs, "--watch", "--preserveWatchOutput"],
           execaOptions,
         );

@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.11.0 -->
+## 0.11.0 (2024-10-02)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/di-v0.10.2...di-v0.11.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- prohibit resolving lazy services synchronously even if it's loaded ([32dbc85](https://github.com/Wroud/foundation/commit/32dbc85))
+
 <!-- version:0.10.2 -->
 ## 0.10.2 (2024-09-27)
 

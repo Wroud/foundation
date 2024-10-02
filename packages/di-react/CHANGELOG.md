@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.2.0 -->
+## 0.2.0 (2024-10-02)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/di-react-v0.1.1...di-react-v0.2.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- prohibit resolving lazy services synchronously even if it's loaded ([32dbc85](https://github.com/Wroud/foundation/commit/32dbc85))
+
 <!-- version:0.1.1 -->
 ## 0.1.1
 

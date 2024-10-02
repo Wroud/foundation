@@ -1,0 +1,77 @@
+{
+  "name": "@wroud/vite-plugin-tsc",
+  "description": "A Vite plugin that uses TypeScript's tsc to transpile TypeScript sources for seamless bundling.",
+  "version": "0.0.1",
+  "type": "module",
+  "packageManager": "yarn@4.5.0",
+  "license": "MIT",
+  "author": "Wroud",
+  "homepage": "https://wroud.dev",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Wroud/foundation",
+    "directory": "packages/vite-plugin-tsc"
+  },
+  "sideEffects": [],
+  "module": "./lib/plugin.js",
+  "exports": {
+    ".": "./lib/plugin.js",
+    "./*.js": "./lib/*.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "package.json",
+    "LICENSE",
+    "README.md",
+    "CHANGELOG.md",
+    "lib",
+    "!lib/**/*.test.js",
+    "!lib/**/*.test.d.ts",
+    "!lib/**/*.test.d.ts.map",
+    "!lib/**/*.test.js.map",
+    "!lib/tests",
+    "!.tsbuildinfo"
+  ],
+  "scripts": {
+    "ci:release": "yarn ci release --prefix vite-plugin-tsc-v",
+    "ci:git-tag": "yarn ci git-tag --prefix vite-plugin-tsc-v",
+    "ci:release-github": "yarn ci release-github --prefix vite-plugin-tsc-v",
+    "test": "tests-runner",
+    "test:ci": "CI=true yarn run test",
+    "build": "tsc -b",
+    "watch:tsc": "tsc -b -w",
+    "dev": "concurrently \"npm:watch:*\"",
+    "clear": "rimraf ./lib"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@vitest/coverage-v8": "^2",
+    "@wroud/ci": "workspace:*",
+    "@wroud/tests-runner": "workspace:*",
+    "@wroud/tsconfig": "workspace:*",
+    "concurrently": "^8",
+    "rimraf": "^6",
+    "tslib": "^2",
+    "typescript": "^5",
+    "vite": "^5",
+    "vitest": "^2"
+  },
+  "keywords": [
+    "vite",
+    "vite-plugin",
+    "typescript",
+    "tsc",
+    "transpiler",
+    "bundler",
+    "esmodules",
+    "development"
+  ],
+  "peerDependencies": {
+    "typescript": "*",
+    "vite": "*"
+  },
+  "dependencies": {
+    "execa": "^9",
+    "picocolors": "^1"
+  }
+}

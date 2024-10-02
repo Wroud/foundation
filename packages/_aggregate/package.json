@@ -31,6 +31,7 @@
     "@wroud/github": "workspace:*",
     "@wroud/ts-project-linker": "workspace:*",
     "@wroud/tsconfig": "workspace:*",
+    "@wroud/vite-plugin-tsc": "workspace:^",
     "concurrently": "^8",
     "rimraf": "^6",
     "typescript": "^5"

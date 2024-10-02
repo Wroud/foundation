@@ -17,21 +17,21 @@
 
 Install via npm:
 
-\```
+```
 npm install @wroud/ts-project-linker
-\```
+```
 
 Install via yarn:
 
-\```
+```
 yarn add @wroud/ts-project-linker
-\```
+```
 
 ## Usage
 
-\```
+```
 ts-link [paths..]
-\```
+```
 
 ### Commands:
 
@@ -45,9 +45,9 @@ ts-link [paths..]
 
 ## Example
 
-\```
+```
 ts-link ./packages/\*
-\```
+```
 
 This will link all TypeScript project references found in the `./packages/` directory.
 

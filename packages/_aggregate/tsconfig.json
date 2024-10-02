@@ -46,6 +46,9 @@
     },
     {
       "path": "../ts-project-linker"
+    },
+    {
+      "path": "../vite-plugin-tsc"
     }
   ]
 }

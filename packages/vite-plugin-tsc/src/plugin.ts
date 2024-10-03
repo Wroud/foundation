@@ -1,4 +1,9 @@
-import { createLogger, type PluginOption } from "vite";
+import {
+  createLogger,
+  type ErrorPayload,
+  type PluginOption,
+  type ViteDevServer,
+} from "vite";
 import colors from "picocolors";
 import { execa, type Options, type ResultPromise } from "execa";
 import { detect } from "detect-package-manager";
@@ -10,11 +15,14 @@ interface IOptions {
   verbose?: boolean;
 }
 
+const pluginName = "vite-plugin-tsc";
+
 export function tscPlugin(
   { tscArgs, verbose }: IOptions = {
     tscArgs: [],
   },
 ): PluginOption {
+  let server: ViteDevServer | null = null;
   const controller = new AbortController();
   const cancelSignal = controller.signal;
   const logger = createLogger("info", { prefix: "[tsc]" });
@@ -56,14 +64,36 @@ export function tscPlugin(
         message = message.replace("error TS", colors.red("error") + " TS");
       }
 
-      const pathMatch = filePathRegex.exec(message)?.[0];
+      const pathMatch = filePathRegex.exec(message);
+      let loc: ErrorPayload["err"]["loc"] | undefined = undefined;
 
       if (pathMatch) {
+        const [, filePath, line, column] = pathMatch;
+        try {
+          loc = {
+            file: filePath,
+            line: parseInt(line || "0", 10),
+            column: parseInt(column || "0", 10),
+          };
+        } catch {}
+
         message = message.replace(
           filePathRegex,
           (match, filePath, line, column) =>
             colors.dim(`${filePath}(${line},${column})`),
         );
+      }
+
+      if (type === "error") {
+        server?.ws.send("vite:error", {
+          type: "error",
+          err: {
+            message,
+            stack: "",
+            loc,
+            plugin: pluginName,
+          },
+        });
       }
 
       const level: keyof typeof logger =
@@ -73,27 +103,29 @@ export function tscPlugin(
   };
 
   return {
-    name: "vite-plugin-tsc",
+    name: pluginName,
 
     // Hook to check if watch mode is enabled
     async configResolved(config) {
       const packageManager = await detect();
       const isWatchMode = config.command === "serve" || !!config.build.watch;
 
-      if (!isWatchMode) {
-        logger.info("building...", {
-          timestamp: true,
-        });
-        await execa(packageManager, ["tsc", ...tscArgs], execaOptions);
-        logger.info("building completed.", {
-          timestamp: true,
-        });
-      } else {
-        logger.info("prebuild...", {
-          timestamp: true,
-        });
-        await execa(packageManager, ["tsc", ...tscArgs], execaOptions);
+      const timestamp = Date.now();
+      logger.info(isWatchMode ? "prebuild..." : "building...", {
+        timestamp: true,
+      });
+      await execa(packageManager, ["tsc", ...tscArgs], execaOptions);
 
+      logger.info(
+        isWatchMode
+          ? `prebuild completed in ${Date.now() - timestamp}ms.`
+          : `build completed in ${Date.now() - timestamp}ms.`,
+        {
+          timestamp: true,
+        },
+      );
+
+      if (isWatchMode) {
         if (tsProcess) {
           logger.warn("watch process already running. Skipping...", {
             timestamp: true,
@@ -121,6 +153,10 @@ export function tscPlugin(
       }
     },
 
+    configureServer(devServer) {
+      server = devServer;
+    },
+
     async closeBundle() {
       if (tsProcess) {
         controller.abort();
@@ -133,7 +169,8 @@ export function tscPlugin(
 
 function filterTscMessages(message: string) {
   return (
-    message.match(/Found \d+ errors\. Watching for file changes/g) ||
-    message.match(/File change detected\. Starting incremental compilation/g)
+    message.match(/Found \d+ errors?\. Watching for file changes/g) ||
+    message.match(/File change detected\. Starting incremental compilation/g) ||
+    message.match(/Starting compilation in watch mode/g)
   );
 }

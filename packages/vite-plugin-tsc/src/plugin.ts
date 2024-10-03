@@ -7,7 +7,7 @@ import {
 import colors from "picocolors";
 import stripAnsi from "strip-ansi";
 import { execa, type Options, type ResultPromise } from "execa";
-import { detect } from "detect-package-manager";
+import { detect, type PM } from "detect-package-manager";
 
 const filePathRegex = /^([\w/.-]+)\((\d+),(\d+)\)/g;
 
@@ -16,12 +16,13 @@ interface IOptions {
   verbose?: boolean;
   prebuild?: boolean;
   enableOverlay?: boolean;
+  packageManager?: PM;
 }
 
 const pluginName = "vite-plugin-tsc";
 
 export function tscPlugin(
-  { tscArgs, verbose, prebuild, enableOverlay }: IOptions = {
+  { tscArgs, verbose, prebuild, enableOverlay, packageManager }: IOptions = {
     tscArgs: [],
   },
 ): PluginOption {
@@ -116,7 +117,10 @@ export function tscPlugin(
 
     // Hook to check if watch mode is enabled
     async configResolved(config) {
-      const packageManager = await detect();
+      if (!packageManager) {
+        packageManager = await detect();
+      }
+
       const isWatchMode = config.command === "serve" || !!config.build.watch;
 
       if (prebuild || !isWatchMode) {
@@ -188,6 +192,7 @@ function filterTscMessages(message: string) {
   return (
     message.match(/Found \d+ errors?\. Watching for file changes/g) ||
     message.match(/File change detected\. Starting incremental compilation/g) ||
-    message.match(/Starting compilation in watch mode/g)
+    message.match(/Starting compilation in watch mode/g) ||
+    message.match(/Command failed with exit code/g)
   );
 }

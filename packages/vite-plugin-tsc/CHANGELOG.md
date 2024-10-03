@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.6.0 -->
+## 0.6.0 (2024-10-03)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-tsc-v0.5.0...vite-plugin-tsc-v0.6.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- do not exit if error occurred in watch mode prebuild ([51477b0](https://github.com/Wroud/foundation/commit/51477b0))
+
 <!-- version:0.5.0 -->
 ## 0.5.0 (2024-10-03)
 

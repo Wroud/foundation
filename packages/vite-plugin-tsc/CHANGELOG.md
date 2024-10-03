@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.5.0 -->
+## 0.5.0 (2024-10-03)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-tsc-v0.4.0...vite-plugin-tsc-v0.5.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- make pre-build optional ([62768c1](https://github.com/Wroud/foundation/commit/62768c1))
+
 <!-- version:0.4.0 -->
 ## 0.4.0 (2024-10-03)
 

@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.7.0 -->
+## 0.7.0 (2024-10-03)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-tsc-v0.6.0...vite-plugin-tsc-v0.7.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- support vite's dev server overlay ([e80c5c1](https://github.com/Wroud/foundation/commit/e80c5c1))
+
 <!-- version:0.6.0 -->
 ## 0.6.0 (2024-10-03)
 

@@ -13,12 +13,13 @@ const filePathRegex = /^([\w/.-]+)\((\d+),(\d+)\)/g;
 interface IOptions {
   tscArgs: string[];
   verbose?: boolean;
+  prebuild?: boolean;
 }
 
 const pluginName = "vite-plugin-tsc";
 
 export function tscPlugin(
-  { tscArgs, verbose }: IOptions = {
+  { tscArgs, verbose, prebuild }: IOptions = {
     tscArgs: [],
   },
 ): PluginOption {
@@ -110,20 +111,22 @@ export function tscPlugin(
       const packageManager = await detect();
       const isWatchMode = config.command === "serve" || !!config.build.watch;
 
-      const timestamp = Date.now();
-      logger.info(isWatchMode ? "prebuild..." : "building...", {
-        timestamp: true,
-      });
-      await execa(packageManager, ["tsc", ...tscArgs], execaOptions);
-
-      logger.info(
-        isWatchMode
-          ? `prebuild completed in ${Date.now() - timestamp}ms.`
-          : `build completed in ${Date.now() - timestamp}ms.`,
-        {
+      if (prebuild || !isWatchMode) {
+        const timestamp = Date.now();
+        logger.info(isWatchMode ? "prebuild..." : "building...", {
           timestamp: true,
-        },
-      );
+        });
+        await execa(packageManager, ["tsc", ...tscArgs], execaOptions);
+
+        logger.info(
+          isWatchMode
+            ? `prebuild completed in ${Date.now() - timestamp}ms.`
+            : `build completed in ${Date.now() - timestamp}ms.`,
+          {
+            timestamp: true,
+          },
+        );
+      }
 
       if (isWatchMode) {
         if (tsProcess) {

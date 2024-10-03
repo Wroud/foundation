@@ -3363,7 +3363,6 @@ __metadata:
     vitest: "npm:^2"
   peerDependencies:
     react: ">=18.0.0"
-    react-dom: ">=18.0.0"
   languageName: unknown
   linkType: soft
 

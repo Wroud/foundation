@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.2.1 -->
+## 0.2.1 (2024-10-03)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/di-react-v0.2.0...di-react-v0.2.1)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- remove `react-dom` dependency ([b9bb95d](https://github.com/Wroud/foundation/commit/b9bb95d))
+
 <!-- version:0.2.0 -->
 ## 0.2.0 (2024-10-02)
 

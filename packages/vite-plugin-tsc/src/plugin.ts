@@ -1,6 +1,7 @@
 import { createLogger, type PluginOption } from "vite";
 import colors from "picocolors";
 import { execa, type Options, type ResultPromise } from "execa";
+import { detect } from "detect-package-manager";
 
 const filePathRegex = /^([\w/.-]+)\((\d+),(\d+)\)/g;
 
@@ -76,13 +77,14 @@ export function tscPlugin(
 
     // Hook to check if watch mode is enabled
     async configResolved(config) {
+      const packageManager = await detect();
       const isWatchMode = config.command === "serve" || !!config.build.watch;
 
       if (!isWatchMode) {
         logger.info("building...", {
           timestamp: true,
         });
-        await execa("yarn", ["tsc", ...tscArgs], execaOptions);
+        await execa(packageManager, ["tsc", ...tscArgs], execaOptions);
         logger.info("building completed.", {
           timestamp: true,
         });
@@ -90,7 +92,7 @@ export function tscPlugin(
         logger.info("prebuild...", {
           timestamp: true,
         });
-        await execa("yarn", ["tsc", ...tscArgs], execaOptions);
+        await execa(packageManager, ["tsc", ...tscArgs], execaOptions);
 
         if (tsProcess) {
           logger.warn("watch process already running. Skipping...", {
@@ -100,7 +102,7 @@ export function tscPlugin(
         }
 
         tsProcess = execa(
-          "yarn",
+          packageManager,
           ["tsc", ...tscArgs, "--watch", "--preserveWatchOutput"],
           execaOptions,
         );

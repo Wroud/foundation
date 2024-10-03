@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.8.0 -->
+## 0.8.0 (2024-10-03)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-tsc-v0.7.0...vite-plugin-tsc-v0.8.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- add option to enable overlay `enableOverlay` ([1cd1248](https://github.com/Wroud/foundation/commit/1cd1248))
+
 <!-- version:0.7.0 -->
 ## 0.7.0 (2024-10-03)
 

@@ -5,6 +5,7 @@ import {
   type ViteDevServer,
 } from "vite";
 import colors from "picocolors";
+import stripAnsi from "strip-ansi";
 import { execa, type Options, type ResultPromise } from "execa";
 import { detect } from "detect-package-manager";
 
@@ -86,10 +87,16 @@ export function tscPlugin(
       }
 
       if (type === "error") {
-        server?.ws.send("vite:error", {
+        let formattedMessage = stripAnsi(message);
+
+        if (loc) {
+          formattedMessage = formattedMessage.replace(/.*?error TS\d+:/g, "");
+        }
+
+        server?.ws.send({
           type: "error",
           err: {
-            message,
+            message: formattedMessage,
             stack: "",
             loc,
             plugin: pluginName,

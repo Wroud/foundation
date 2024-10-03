@@ -73,6 +73,7 @@
   "dependencies": {
     "detect-package-manager": "^3",
     "execa": "^9",
-    "picocolors": "^1"
+    "picocolors": "^1",
+    "strip-ansi": "^7"
   }
 }

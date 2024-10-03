@@ -3548,6 +3548,7 @@ __metadata:
     execa: "npm:^9"
     picocolors: "npm:^1"
     rimraf: "npm:^6"
+    strip-ansi: "npm:^7"
     tslib: "npm:^2"
     typescript: "npm:^5"
     vite: "npm:^5"
@@ -9282,7 +9283,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"strip-ansi@npm:^7.0.1":
+"strip-ansi@npm:^7, strip-ansi@npm:^7.0.1":
   version: 7.1.0
   resolution: "strip-ansi@npm:7.1.0"
   dependencies:

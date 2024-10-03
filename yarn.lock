@@ -3245,6 +3245,7 @@ __metadata:
     "@wroud/github": "workspace:*"
     "@wroud/ts-project-linker": "workspace:*"
     "@wroud/tsconfig": "workspace:*"
+    "@wroud/vite-plugin-asset-resolver": "workspace:^"
     "@wroud/vite-plugin-tsc": "workspace:^"
     concurrently: "npm:^8"
     rimraf: "npm:^6"
@@ -3531,6 +3532,26 @@ __metadata:
 "@wroud/tsconfig@workspace:*, @wroud/tsconfig@workspace:packages/tsconfig":
   version: 0.0.0-use.local
   resolution: "@wroud/tsconfig@workspace:packages/tsconfig"
+  languageName: unknown
+  linkType: soft
+
+"@wroud/vite-plugin-asset-resolver@workspace:^, @wroud/vite-plugin-asset-resolver@workspace:packages/vite-plugin-asset-resolver":
+  version: 0.0.0-use.local
+  resolution: "@wroud/vite-plugin-asset-resolver@workspace:packages/vite-plugin-asset-resolver"
+  dependencies:
+    "@types/node": "npm:^20"
+    "@vitest/coverage-v8": "npm:^2"
+    "@wroud/ci": "workspace:*"
+    "@wroud/tests-runner": "workspace:*"
+    "@wroud/tsconfig": "workspace:*"
+    concurrently: "npm:^8"
+    rimraf: "npm:^6"
+    tslib: "npm:^2"
+    typescript: "npm:^5"
+    vite: "npm:^5"
+    vitest: "npm:^2"
+  peerDependencies:
+    vite: "*"
   languageName: unknown
   linkType: soft
 

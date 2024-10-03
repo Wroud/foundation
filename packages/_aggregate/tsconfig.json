@@ -48,6 +48,9 @@
       "path": "../ts-project-linker"
     },
     {
+      "path": "../vite-plugin-asset-resolver"
+    },
+    {
       "path": "../vite-plugin-tsc"
     }
   ]

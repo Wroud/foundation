@@ -113,19 +113,25 @@ export function tscPlugin(
 
       if (prebuild || !isWatchMode) {
         const timestamp = Date.now();
-        logger.info(isWatchMode ? "prebuild..." : "building...", {
-          timestamp: true,
-        });
-        await execa(packageManager, ["tsc", ...tscArgs], execaOptions);
-
-        logger.info(
-          isWatchMode
-            ? `prebuild completed in ${Date.now() - timestamp}ms.`
-            : `build completed in ${Date.now() - timestamp}ms.`,
-          {
+        try {
+          logger.info(isWatchMode ? "prebuild..." : "building...", {
             timestamp: true,
-          },
-        );
+          });
+          await execa(packageManager, ["tsc", ...tscArgs], execaOptions);
+        } catch (e) {
+          if (!isWatchMode) {
+            throw e;
+          }
+        } finally {
+          logger.info(
+            isWatchMode
+              ? `prebuild completed in ${Date.now() - timestamp}ms.`
+              : `build completed in ${Date.now() - timestamp}ms.`,
+            {
+              timestamp: true,
+            },
+          );
+        }
       }
 
       if (isWatchMode) {

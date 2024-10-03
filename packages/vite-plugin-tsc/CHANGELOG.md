@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.3.0 -->
+## 0.3.0 (2024-10-03)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-tsc-v0.2.0...vite-plugin-tsc-v0.3.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- make it package manager independent ([d2954ff](https://github.com/Wroud/foundation/commit/d2954ff))
+
 <!-- version:0.2.0 -->
 ## 0.2.0 (2024-10-02)
 

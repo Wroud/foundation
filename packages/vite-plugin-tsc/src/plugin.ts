@@ -15,12 +15,13 @@ interface IOptions {
   tscArgs: string[];
   verbose?: boolean;
   prebuild?: boolean;
+  enableOverlay?: boolean;
 }
 
 const pluginName = "vite-plugin-tsc";
 
 export function tscPlugin(
-  { tscArgs, verbose, prebuild }: IOptions = {
+  { tscArgs, verbose, prebuild, enableOverlay }: IOptions = {
     tscArgs: [],
   },
 ): PluginOption {
@@ -86,7 +87,7 @@ export function tscPlugin(
         );
       }
 
-      if (type === "error") {
+      if (type === "error" && enableOverlay) {
         let formattedMessage = stripAnsi(message);
 
         if (loc) {

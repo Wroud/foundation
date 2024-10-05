@@ -8,8 +8,7 @@ import colors from "picocolors";
 import stripAnsi from "strip-ansi";
 import { execa, type Options, type ResultPromise } from "execa";
 import { detect, type PM } from "detect-package-manager";
-
-const filePathRegex = /^([\w/.-]+)\((\d+),(\d+)\)/g;
+import { createProblemMatcher } from "./problemMatcher.js";
 
 interface IOptions {
   tscArgs: string[];
@@ -39,76 +38,76 @@ export function tscPlugin(
     command: "info",
     output: "info",
     ipc: "info",
-    error: "error",
     duration: "info",
+    error: "error",
+    warn: "warn",
+    info: "info",
   };
+
+  const tscProblemMatch = createProblemMatcher();
 
   const execaOptions: Options = {
     lines: true,
     gracefulCancel: true,
     cancelSignal,
     verbose(verboseLine, { message, type, result }) {
-      if (
-        ["command", "ipc", "duration"].includes(type as string) ||
-        (result as any)?.isGracefullyCanceled
-      ) {
-        return;
-      }
-
-      message = message
-        .replaceAll(/(\r\n|\n|\r)/gm, "")
-        .replace(/^.*?\s-\s/g, "");
-
-      if (!message || (filterTscMessages(message) && !verbose)) {
-        return;
-      }
-
-      if (message.includes("error TS")) {
-        type = "error";
-        message = message.replace("error TS", colors.red("error") + " TS");
-      }
-
-      const pathMatch = filePathRegex.exec(message);
-      let loc: ErrorPayload["err"]["loc"] | undefined = undefined;
-
-      if (pathMatch) {
-        const [, filePath, line, column] = pathMatch;
-        try {
-          loc = {
-            file: filePath,
-            line: parseInt(line || "0", 10),
-            column: parseInt(column || "0", 10),
-          };
-        } catch {}
-
-        message = message.replace(
-          filePathRegex,
-          (match, filePath, line, column) =>
-            colors.dim(`${filePath}(${line},${column})`),
-        );
-      }
-
-      if (type === "error" && enableOverlay) {
-        let formattedMessage = stripAnsi(message);
-
-        if (loc) {
-          formattedMessage = formattedMessage.replace(/.*?error TS\d+:/g, "");
+      try {
+        if (
+          ["command", "ipc", "duration"].includes(type as string) ||
+          (result as any)?.isGracefullyCanceled
+        ) {
+          return;
         }
 
-        server?.ws.send({
-          type: "error",
-          err: {
-            message: formattedMessage,
-            stack: "",
-            loc,
-            plugin: pluginName,
-          },
+        const tscProblem = tscProblemMatch(message);
+        let loc: ErrorPayload["err"]["loc"] | undefined;
+
+        if (tscProblem) {
+          loc = {
+            file: tscProblem.file,
+            line: tscProblem.line,
+            column: tscProblem.column,
+          };
+          type = tscProblem.severity as any;
+          message =
+            colors.dim(`TS${tscProblem.code}:`) + ` ${tscProblem.message}`;
+        } else {
+          message = message
+            .replaceAll(/(\r\n|\n|\r)/gm, "")
+            .replace(/^.*?\s-\s/g, "");
+        }
+
+        if (!message || (filterTscMessages(message) && !verbose)) {
+          return;
+        }
+
+        if (type === "error" && enableOverlay) {
+          server?.ws.send({
+            type: "error",
+            err: {
+              message: stripAnsi(message),
+              stack: "",
+              loc,
+              plugin: pluginName,
+            },
+          });
+        }
+
+        const level: keyof typeof logger =
+          LOG_LEVELS[type as keyof typeof LOG_LEVELS] || "info";
+        if (loc) {
+          message =
+            colors.dim(`${loc.file}(${loc.line},${loc.column})`) +
+            "\n" +
+            message;
+        }
+        logger[level](message as string, { timestamp: true });
+      } catch (e: any) {
+        logger.error("Error while parsing tsc output", {
+          timestamp: true,
+          error: e,
         });
       }
-
-      const level: keyof typeof logger =
-        LOG_LEVELS[type as keyof typeof LOG_LEVELS] || "info";
-      logger[level](message as string, { timestamp: true });
     },
   };
 

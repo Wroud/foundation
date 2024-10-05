@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.11.0 -->
+## 0.11.0 (2024-10-05)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-tsc-v0.10.0...vite-plugin-tsc-v0.11.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- pretty print error messages, support warnings and info messages ([63f54d1](https://github.com/Wroud/foundation/commit/63f54d1))
+
 <!-- version:0.10.0 -->
 ## 0.10.0 (2024-10-03)
 

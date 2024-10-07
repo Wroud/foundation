@@ -1,6 +1,6 @@
 {
   "name": "@wroud/conventional-commits-parser",
-  "private": true,
+  "description": "A lightweight parser for conventional commits that supports extracting commit metadata, generating commit messages, and managing commit trailers in TypeScript.",
   "version": "0.0.1",
   "type": "module",
   "packageManager": "yarn@4.5.0",
@@ -8,6 +8,9 @@
     ".": "./lib/index.js"
   },
   "scripts": {
+    "ci:release": "yarn ci release --prefix cc-parser-v",
+    "ci:git-tag": "yarn ci git-tag --prefix cc-parser-v",
+    "ci:release-github": "yarn ci release-github --prefix cc-parser-v",
     "test": "tests-runner",
     "test:ci": "CI=true yarn run test",
     "build": "tsc -b",
@@ -22,11 +25,21 @@
     "@tsconfig/node20": "^20",
     "@types/node": "^20",
     "@vitest/coverage-v8": "^2",
+    "@wroud/ci": "workspace:*",
     "@wroud/tests-runner": "workspace:*",
     "@wroud/tsconfig": "workspace:*",
     "concurrently": "^8",
     "rimraf": "^6",
     "typescript": "^5",
     "vitest": "^2"
-  }
+  },
+  "keywords": [
+    "conventional-commits-parser",
+    "commit",
+    "metadata",
+    "changelog",
+    "conventional",
+    "typescript",
+    "parser"
+  ]
 }

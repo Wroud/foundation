@@ -1,12 +1,12 @@
 # @wroud/di
 
-[![ESM-only package][package]][package-url]
+[![ESM-only package][package]][esm-info-url]
 [![NPM version][npm]][npm-url]
 
 <!-- [![Install size][size]][size-url] -->
 
 [package]: https://img.shields.io/badge/package-ESM--only-ffe536.svg
-[package-url]: https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c
+[esm-info-url]: https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c
 [npm]: https://img.shields.io/npm/v/@wroud/di.svg
 [npm-url]: https://npmjs.com/package/@wroud/di
 [size]: https://packagephobia.com/badge?p=@wroud/di
@@ -19,7 +19,7 @@
 - **Modern JavaScript**: Leverages ES modules, decorators, and asynchronous service loading for advanced performance optimizations.
 - **TypeScript**: Written in TypeScript for type safety.
 - **Flexible DI**: Supports singleton, transient, and scoped services.
-- [Pure ESM package][package-url]
+- [Pure ESM package][esm-info-url]
 
 ## Installation
 

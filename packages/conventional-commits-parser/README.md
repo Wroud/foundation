@@ -1,12 +1,12 @@
 # @wroud/conventional-commits-parser
 
-[![ESM-only package][package]][package-url]
+[![ESM-only package][package]][esm-info-url]
 [![NPM version][npm]][npm-url]
 
 <!-- [![Install size][size]][size-url] -->
 
 [package]: https://img.shields.io/badge/package-ESM--only-ffe536.svg
-[package-url]: https://npmjs.com/package/@wroud/conventional-commits-parser
+[esm-info-url]: https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c
 [npm]: https://img.shields.io/npm/v/@wroud/conventional-commits-parser.svg
 [npm-url]: https://npmjs.com/package/@wroud/conventional-commits-parser
 [size]: https://packagephobia.com/badge?p=@wroud/conventional-commits-parser
@@ -18,7 +18,7 @@
 
 - **Conventional Commits Parsing**: Extract commit types, scopes, and messages.
 - **TypeScript**: Written in TypeScript for type safety and modern JavaScript support.
-- **ESM Package**: Pure ESM package for modern JavaScript environments.
+- [Pure ESM package][esm-info-url]
 
 ## Installation
 

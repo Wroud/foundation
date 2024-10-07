@@ -1,12 +1,12 @@
 # @wroud/github
 
-[![ESM-only package][package]][package-url]
+[![ESM-only package][package]][esm-info-url]
 [![NPM version][npm]][npm-url]
 
 <!-- [![Install size][size]][size-url] -->
 
 [package]: https://img.shields.io/badge/package-ESM--only-ffe536.svg
-[package-url]: https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c
+[esm-info-url]: https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c
 [npm]: https://img.shields.io/npm/v/@wroud/github.svg
 [npm-url]: https://npmjs.com/package/@wroud/github
 [size]: https://packagephobia.com/badge?p=@wroud/github
@@ -21,7 +21,7 @@ This library uses the `IGitCommitInfo` interface from [`@wroud/git`](https://npm
 - **GitHub metadata**: Extract co-authors, GitHub issue links, and commit references from git commits.
 - **TypeScript**: Written in TypeScript for type safety and modern JavaScript support.
 - **GitHub URL generation**: Easily generate URLs for issues and commits.
-- [Pure ESM package][package-url]
+- [Pure ESM package][esm-info-url]
 
 ## Installation
 

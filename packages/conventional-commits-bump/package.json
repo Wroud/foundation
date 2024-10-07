@@ -1,7 +1,7 @@
 {
   "name": "@wroud/conventional-commits-bump",
+  "description": "A utility for determining version bump types (major, minor, patch) based on conventional commit messages, facilitating semantic versioning in your projects.",
   "version": "0.0.1",
-  "private": true,
   "type": "module",
   "packageManager": "yarn@4.5.0",
   "bin": "./lib/cli.js",
@@ -9,6 +9,9 @@
     ".": "./lib/index.js"
   },
   "scripts": {
+    "ci:release": "yarn ci release --prefix cc-bump-v",
+    "ci:git-tag": "yarn ci git-tag --prefix cc-bump-v",
+    "ci:release-github": "yarn ci release-github --prefix cc-bump-v",
     "test": "tests-runner",
     "test:ci": "CI=true yarn run test",
     "build": "tsc -b",
@@ -23,11 +26,24 @@
     "@tsconfig/node20": "^20",
     "@types/node": "^20",
     "@vitest/coverage-v8": "^2",
+    "@wroud/ci": "workspace:*",
     "@wroud/tests-runner": "workspace:*",
     "@wroud/tsconfig": "workspace:*",
     "concurrently": "^8",
     "rimraf": "^6",
     "typescript": "^5",
     "vitest": "^2"
-  }
+  },
+  "keywords": [
+    "semantic-versioning",
+    "semver",
+    "conventional-commits",
+    "version-bump",
+    "npm",
+    "typescript",
+    "automated-versioning",
+    "release-management",
+    "commit-parser",
+    "javascript"
+  ]
 }

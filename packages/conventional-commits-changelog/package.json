@@ -1,6 +1,6 @@
 {
   "name": "@wroud/conventional-commits-changelog",
-  "private": true,
+  "description": "A TypeScript library for generating markdown changelogs from conventional commit messages, providing a structured and consistent format for documenting project updates.",
   "version": "0.0.1",
   "type": "module",
   "packageManager": "yarn@4.5.0",
@@ -8,6 +8,9 @@
     ".": "./lib/index.js"
   },
   "scripts": {
+    "ci:release": "yarn ci release --prefix cc-changelog-v",
+    "ci:git-tag": "yarn ci git-tag --prefix cc-changelog-v",
+    "ci:release-github": "yarn ci release-github --prefix cc-changelog-v",
     "test": "tests-runner",
     "test:ci": "CI=true yarn run test",
     "build": "tsc -b",
@@ -22,11 +25,23 @@
     "@tsconfig/node20": "^20",
     "@types/node": "^20",
     "@vitest/coverage-v8": "^2",
+    "@wroud/ci": "workspace:*",
     "@wroud/tests-runner": "workspace:*",
     "@wroud/tsconfig": "workspace:*",
     "concurrently": "^8",
     "rimraf": "^6",
     "typescript": "^5",
     "vitest": "^2"
-  }
+  },
+  "keywords": [
+    "changelog",
+    "markdown",
+    "conventional-commits",
+    "typescript",
+    "git",
+    "versioning",
+    "release-notes",
+    "documentation",
+    "semantic-versioning"
+  ]
 }

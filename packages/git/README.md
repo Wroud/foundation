@@ -1,12 +1,12 @@
 # @wroud/git
 
-[![ESM-only package][package]][package-url]
+[![ESM-only package][package]][esm-info-url]
 [![NPM version][npm]][npm-url]
 
 <!-- [![Install size][size]][size-url] -->
 
 [package]: https://img.shields.io/badge/package-ESM--only-ffe536.svg
-[package-url]: https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c
+[esm-info-url]: https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c
 [npm]: https://img.shields.io/npm/v/@wroud/git.svg
 [npm-url]: https://npmjs.com/package/@wroud/git
 [size]: https://packagephobia.com/badge?p=@wroud/git
@@ -20,7 +20,7 @@
 
 - **getGitLastSemverTag**: Returns the most recent semantic version tag from the git history. By default, it checks up to `HEAD` and looks for tags with a `v` prefix, although both can be customized through the `to` and `prefix` parameters.
 
-- [Pure ESM package][package-url]
+- [Pure ESM package][esm-info-url]
 
 ## Installation
 

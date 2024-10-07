@@ -1,6 +1,6 @@
 {
   "name": "@wroud/github",
-  "private": true,
+  "description": "A lightweight GitHub integration library for working with git history, co-authors, issues, and commit links. Supports extracting GitHub metadata, generating GitHub URLs, and managing commit trailers in TypeScript.",
   "version": "0.0.1",
   "type": "module",
   "packageManager": "yarn@4.5.0",
@@ -8,6 +8,9 @@
     ".": "./lib/index.js"
   },
   "scripts": {
+    "ci:release": "yarn ci release --prefix github-v",
+    "ci:git-tag": "yarn ci git-tag --prefix github-v",
+    "ci:release-github": "yarn ci release-github --prefix github-v",
     "test": "tests-runner",
     "test:ci": "CI=true yarn run test",
     "build": "tsc -b",
@@ -28,5 +31,20 @@
     "rimraf": "^6",
     "typescript": "^5",
     "vitest": "^2"
-  }
+  },
+  "keywords": [
+    "GitHub",
+    "git",
+    "commit",
+    "issues",
+    "co-authors",
+    "links",
+    "GitHub integration",
+    "git history",
+    "git metadata",
+    "TypeScript",
+    "commit links",
+    "issue tracking",
+    "GitHub trailers"
+  ]
 }

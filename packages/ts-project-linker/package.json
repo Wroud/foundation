@@ -1,7 +1,7 @@
 {
   "name": "@wroud/ts-project-linker",
   "description": "A CLI tool that synchronizes TypeScript project references with package dependencies, supporting sub configurations like tsconfig.*.json.",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "packageManager": "yarn@4.5.0",
   "license": "MIT",
   "author": "Wroud",

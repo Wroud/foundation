@@ -20,7 +20,7 @@
   "module": "./lib/index.js",
   "exports": {
     ".": "./lib/index.js",
-    "./*": "./lib/*.js",
+    "./*.js": "./lib/*.js",
     "./package.json": "./package.json"
   },
   "files": [
@@ -37,6 +37,9 @@
     "!.tsbuildinfo"
   ],
   "scripts": {
+    "ci:release": "yarn ci release --prefix ts-link-v",
+    "ci:git-tag": "yarn ci git-tag --prefix ts-link-v",
+    "ci:release-github": "yarn ci release-github --prefix ts-link-v",
     "test": "tests-runner",
     "test:ci": "CI=true yarn run test",
     "build": "tsc -b",

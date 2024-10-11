@@ -155,6 +155,56 @@ describe("ServiceInstanceInfo", () => {
     expect(disposeA).toHaveBeenCalledTimes(1);
     expect(disposeDependent).toHaveBeenCalledTimes(0);
   });
+  it("should use 'dispose' method if 'Symbol.dispose' is not available", async () => {
+    const instanceInfo = new ServiceInstanceInfo(mockDescriptor());
+    const dispose = vi.fn();
+
+    instanceInfo.initialize(() => ({
+      dispose,
+    }));
+
+    instanceInfo.disposeSync();
+    expect(dispose).toHaveBeenCalledTimes(1);
+  });
+  it("should use 'Symbol.dispose' when both 'dispose' and 'Symbol.dispose' are provided", async () => {
+    const instanceInfo = new ServiceInstanceInfo(mockDescriptor());
+    const disposeFn = vi.fn();
+    const disposeSymbol = vi.fn();
+
+    instanceInfo.initialize(() => ({
+      [Symbol.dispose]: disposeSymbol,
+      dispose: disposeFn,
+    }));
+
+    instanceInfo.disposeSync();
+    expect(disposeSymbol).toHaveBeenCalledTimes(1);
+    expect(disposeFn).toHaveBeenCalledTimes(0);
+  });
+  it("should use 'dispose' method if 'Symbol.asyncDispose' is not available", async () => {
+    const instanceInfo = new ServiceInstanceInfo(mockDescriptor());
+    const dispose = vi.fn();
+
+    instanceInfo.initialize(() => ({
+      dispose,
+    }));
+
+    await instanceInfo.disposeAsync();
+    expect(dispose).toHaveBeenCalledTimes(1);
+  });
+  it("should use 'Symbol.asyncDispose' when both 'dispose' and 'Symbol.asyncDispose' are provided", async () => {
+    const instanceInfo = new ServiceInstanceInfo(mockDescriptor());
+    const disposeFn = vi.fn();
+    const disposeSymbol = vi.fn();
+
+    instanceInfo.initialize(() => ({
+      [Symbol.asyncDispose]: disposeSymbol,
+      dispose: disposeFn,
+    }));
+
+    await instanceInfo.disposeAsync();
+    expect(disposeSymbol).toHaveBeenCalledTimes(1);
+    expect(disposeFn).toHaveBeenCalledTimes(0);
+  });
 });
 
 function mockDescriptor<T>(): IServiceDescriptor<T> {

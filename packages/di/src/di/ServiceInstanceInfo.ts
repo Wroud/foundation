@@ -39,8 +39,9 @@ export class ServiceInstanceInfo<T> implements IServiceInstanceInfo<T> {
 
   disposeSync(): void {
     const instance = this.instance as any;
+    const disposeMethod = instance[Symbol.dispose] ?? instance.dispose;
     if (
-      typeof instance[Symbol.dispose] === "function" &&
+      typeof disposeMethod === "function" &&
       !this.disposed &&
       this.initialized
     ) {
@@ -48,7 +49,7 @@ export class ServiceInstanceInfo<T> implements IServiceInstanceInfo<T> {
         dependent.disposeSync();
       }
 
-      instance[Symbol.dispose]();
+      Reflect.apply(disposeMethod, instance, []);
       this.disposed = true;
     }
   }
@@ -57,13 +58,14 @@ export class ServiceInstanceInfo<T> implements IServiceInstanceInfo<T> {
     const instance = this.instance as any;
 
     if (!this.disposed && this.initialized) {
-      if (typeof instance[Symbol.asyncDispose] === "function") {
+      const disposeMethod = instance[Symbol.asyncDispose] ?? instance.dispose;
+      if (typeof disposeMethod === "function") {
         this.disposed = true;
         try {
           await Promise.all(
             [...this.dependents].map((dependent) => dependent.disposeAsync()),
           );
-          await instance[Symbol.asyncDispose]();
+          await Reflect.apply(disposeMethod, instance, []);
         } catch (e) {
           this.disposed = false;
           throw e;

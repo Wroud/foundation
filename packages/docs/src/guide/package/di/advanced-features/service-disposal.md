@@ -31,17 +31,17 @@ With the `using` keyword, services are automatically disposed of when they go ou
 #### Example: Automatic Disposal
 
 ```typescript
-import { ServiceContainerBuilder, injectable } from '@wroud/di';
+import { ServiceContainerBuilder, injectable } from "@wroud/di";
 
 @injectable()
 class DatabaseConnection {
-    connect() {
-        console.log('Database connected');
-    }
+  connect() {
+    console.log("Database connected");
+  }
 
-    [Symbol.dispose]() {
-        console.log('Database connection closed');
-    }
+  [Symbol.dispose]() {
+    console.log("Database connection closed");
+  }
 }
 
 const builder = new ServiceContainerBuilder();
@@ -56,22 +56,22 @@ dbConnection.connect();
 
 ### Asynchronous Disposal
 
-For services that require asynchronous cleanup, use `Symbol.asyncDispose`.
+For services that require asynchronous cleanup, use `Symbol.asyncDispose`. You can also name the function `dispose`; it will be used as a fallback if `Symbol.asyncDispose` is not presented.
 
 #### Example: Asynchronous Disposal
 
 ```typescript
-import { ServiceContainerBuilder, injectable } from '@wroud/di';
+import { ServiceContainerBuilder, injectable } from "@wroud/di";
 
 @injectable()
 class AsyncService {
-    async init() {
-        console.log('AsyncService initialized');
-    }
+  async init() {
+    console.log("AsyncService initialized");
+  }
 
-    async [Symbol.asyncDispose]() {
-        console.log('AsyncService cleaned up asynchronously');
-    }
+  async [Symbol.asyncDispose]() {
+    console.log("AsyncService cleaned up asynchronously");
+  }
 }
 
 const builder = new ServiceContainerBuilder();
@@ -92,17 +92,18 @@ Transient services must be disposed of manually by the user. Here's how you can 
 #### Example: Manual Disposal of Transient Services
 
 ```typescript
-import { ServiceContainerBuilder, injectable } from '@wroud/di';
+import { ServiceContainerBuilder, injectable } from "@wroud/di";
 
 @injectable()
 class Logger {
-    log(message: string) {
-        console.log(message);
-    }
+  log(message: string) {
+    console.log(message);
+  }
 
-    [Symbol.dispose]() {
-        console.log('Logger disposed');
-    }
+  // you also can use dispose() function it will be used as a fallback if `Symbol.dispose` not presented
+  [Symbol.dispose]() {
+    console.log("Logger disposed");
+  }
 }
 
 const builder = new ServiceContainerBuilder();
@@ -111,7 +112,7 @@ builder.addTransient(Logger);
 const serviceProvider = builder.build();
 
 using logger = serviceProvider.getService(Logger);
-logger.log('This is a log message');
+logger.log("This is a log message");
 
 // When the logger goes out of scope, the Logger will be disposed of automatically
 ```
@@ -123,17 +124,18 @@ Scoped services are disposed of at the end of a request or scope. Here's how you
 #### Example: Automatic Disposal of Scoped Services
 
 ```typescript
-import { ServiceContainerBuilder, injectable } from '@wroud/di';
+import { ServiceContainerBuilder, injectable } from "@wroud/di";
 
 @injectable()
 class RequestHandler {
-    handle() {
-        console.log('Handling request');
-    }
+  handle() {
+    console.log("Handling request");
+  }
 
-    [Symbol.dispose]() {
-        console.log('RequestHandler disposed');
-    }
+  // you also can use dispose() function it will be used as a fallback if `Symbol.dispose` not presented
+  [Symbol.dispose]() {
+    console.log("RequestHandler disposed");
+  }
 }
 
 const builder = new ServiceContainerBuilder();
@@ -141,11 +143,11 @@ builder.addScoped(RequestHandler);
 using serviceProvider = builder.build();
 
 function handleRequest() {
-    using scope = serviceProvider.createScope();
+  using scope = serviceProvider.createScope();
 
-    const requestHandler = scope.serviceProvider.getService(RequestHandler);
-    requestHandler.handle();
-    // When the scope goes out of scope, the RequestHandler will be disposed of automatically
+  const requestHandler = scope.serviceProvider.getService(RequestHandler);
+  requestHandler.handle();
+  // When the scope goes out of scope, the RequestHandler will be disposed of automatically
 }
 
 handleRequest();
@@ -162,17 +164,17 @@ Manual disposal requires you to explicitly call the `[Symbol.dispose]()` method.
 #### Example: Manual Disposal
 
 ```typescript
-import { ServiceContainerBuilder, injectable } from '@wroud/di';
+import { ServiceContainerBuilder, injectable } from "@wroud/di";
 
 @injectable()
 class Cache {
-    clear() {
-        console.log('Cache cleared');
-    }
+  clear() {
+    console.log("Cache cleared");
+  }
 
-    [Symbol.dispose]() {
-        console.log('Cache disposed');
-    }
+  [Symbol.dispose]() {
+    console.log("Cache disposed");
+  }
 }
 
 const builder = new ServiceContainerBuilder();
@@ -193,17 +195,17 @@ Manual asynchronous disposal requires you to explicitly call the `[Symbol.asyncD
 #### Example: Manual Asynchronous Disposal
 
 ```typescript
-import { ServiceContainerBuilder, injectable } from '@wroud/di';
+import { ServiceContainerBuilder, injectable } from "@wroud/di";
 
 @injectable()
 class AsyncProcessor {
-    async process() {
-        console.log('Processing asynchronously');
-    }
+  async process() {
+    console.log("Processing asynchronously");
+  }
 
-    async [Symbol.asyncDispose]() {
-        console.log('AsyncProcessor cleaned up asynchronously');
-    }
+  async [Symbol.asyncDispose]() {
+    console.log("AsyncProcessor cleaned up asynchronously");
+  }
 }
 
 const builder = new ServiceContainerBuilder();
@@ -222,28 +224,28 @@ await serviceProvider[Symbol.asyncDispose]();
 Consider an application that manages database connections. Proper disposal of these connections is critical to avoid resource leaks. In this example, we will use a combination of singleton and transient services.
 
 ```typescript
-import { ServiceContainerBuilder, injectable } from '@wroud/di';
+import { ServiceContainerBuilder, injectable } from "@wroud/di";
 
 @injectable()
 class DatabaseConnection {
-    connect() {
-        console.log('Database connected');
-    }
+  connect() {
+    console.log("Database connected");
+  }
 
-    [Symbol.dispose]() {
-        console.log('Database connection closed');
-    }
+  [Symbol.dispose]() {
+    console.log("Database connection closed");
+  }
 }
 
 @injectable()
 class Logger {
-    log(message: string) {
-        console.log(message);
-    }
+  log(message: string) {
+    console.log(message);
+  }
 
-    [Symbol.dispose]() {
-        console.log('Logger disposed');
-    }
+  [Symbol.dispose]() {
+    console.log("Logger disposed");
+  }
 }
 
 const builder = new ServiceContainerBuilder();
@@ -259,7 +261,7 @@ dbConnection.connect();
 
 // Using manual disposal for transient services
 using logger = serviceProvider.getService(Logger);
-logger.log('This is a log message');
+logger.log("This is a log message");
 
 // When the logger goes out of scope, the Logger will be disposed of automatically
 ```

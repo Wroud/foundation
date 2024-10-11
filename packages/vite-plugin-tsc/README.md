@@ -43,7 +43,7 @@ import { tscPlugin } from "@wroud/vite-plugin-tsc";
 
 export default defineConfig({
   plugins: [
-    typescriptBuildPlugin({
+    tscPlugin({
       tscArgs: ["-b"],
       // Enable prebuild to ensure dependencies are built before Vite starts bundling
       prebuild: true, // Recommended for projects with TypeScript project references

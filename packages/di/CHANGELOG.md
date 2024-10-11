@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.12.0 -->
+## 0.12.0 (2024-10-11)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/di-v0.11.0...di-v0.12.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- support fallback `dispose()` method on services ([b8d17f8](https://github.com/Wroud/foundation/commit/b8d17f8))
+
 <!-- version:0.11.0 -->
 ## 0.11.0 (2024-10-02)
 

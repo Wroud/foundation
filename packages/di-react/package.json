@@ -26,6 +26,7 @@
     "README.md",
     "CHANGELOG.md",
     "lib",
+    "!lib/**/*.d.ts.map",
     "!lib/**/*.test.js",
     "!lib/**/*.test.d.ts",
     "!lib/**/*.test.d.ts.map",

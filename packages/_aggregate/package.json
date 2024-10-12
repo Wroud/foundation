@@ -20,6 +20,7 @@
   },
   "devDependencies": {
     "@wroud/ci": "workspace:*",
+    "@wroud/conventional-commits-bump": "workspace:^",
     "@wroud/conventional-commits-changelog": "workspace:*",
     "@wroud/conventional-commits-parser": "workspace:*",
     "@wroud/di": "workspace:*",

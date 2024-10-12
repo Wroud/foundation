@@ -3234,6 +3234,7 @@ __metadata:
   resolution: "@wroud/_aggregate@workspace:packages/_aggregate"
   dependencies:
     "@wroud/ci": "workspace:*"
+    "@wroud/conventional-commits-bump": "workspace:^"
     "@wroud/conventional-commits-changelog": "workspace:*"
     "@wroud/conventional-commits-parser": "workspace:*"
     "@wroud/di": "workspace:*"
@@ -3284,7 +3285,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wroud/conventional-commits-bump@workspace:*, @wroud/conventional-commits-bump@workspace:packages/conventional-commits-bump":
+"@wroud/conventional-commits-bump@workspace:*, @wroud/conventional-commits-bump@workspace:^, @wroud/conventional-commits-bump@workspace:packages/conventional-commits-bump":
   version: 0.0.0-use.local
   resolution: "@wroud/conventional-commits-bump@workspace:packages/conventional-commits-bump"
   dependencies:

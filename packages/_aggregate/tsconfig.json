@@ -15,6 +15,9 @@
   ],
   "references": [
     {
+      "path": "../conventional-commits-bump"
+    },
+    {
       "path": "../conventional-commits-changelog"
     },
     {

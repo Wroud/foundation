@@ -7,6 +7,19 @@
   "exports": {
     ".": "./lib/index.js"
   },
+  "files": [
+    "package.json",
+    "LICENSE",
+    "README.md",
+    "CHANGELOG.md",
+    "lib",
+    "!lib/**/*.test.js",
+    "!lib/**/*.test.d.ts",
+    "!lib/**/*.test.d.ts.map",
+    "!lib/**/*.test.js.map",
+    "!lib/tests",
+    "!.tsbuildinfo"
+  ],
   "scripts": {
     "ci:release": "yarn ci release --prefix github-v",
     "ci:git-tag": "yarn ci git-tag --prefix github-v",

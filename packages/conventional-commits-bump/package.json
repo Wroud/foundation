@@ -1,7 +1,7 @@
 {
   "name": "@wroud/conventional-commits-bump",
   "description": "A utility for determining version bump types (major, minor, patch) based on conventional commit messages, facilitating semantic versioning in your projects.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "packageManager": "yarn@4.5.0",
   "bin": "./lib/cli.js",

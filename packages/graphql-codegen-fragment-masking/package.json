@@ -15,8 +15,8 @@
   "sideEffects": [],
   "module": "./lib/index.js",
   "exports": {
-    ".": "./out/index.js",
-    "./*": "./out/*.js"
+    ".": "./lib/index.js",
+    "./*": "./lib/*.js"
   },
   "files": [
     "package.json",

@@ -48,6 +48,9 @@
       "path": "../github"
     },
     {
+      "path": "../graphql-codegen-typed-document-nodes"
+    },
+    {
       "path": "../ts-project-linker"
     },
     {

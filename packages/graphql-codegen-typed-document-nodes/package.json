@@ -1,0 +1,82 @@
+{
+  "name": "graphql-codegen-typed-document-nodes",
+  "description": "A custom GraphQL Code Generator plugin to generate typed document nodes for TypeScript operations and fragments. Provides enhanced type safety with generated exports for GraphQL queries, mutations, and fragments.",
+  "version": "0.0.0",
+  "type": "module",
+  "packageManager": "yarn@4.5.0",
+  "license": "MIT",
+  "author": "Wroud",
+  "homepage": "https://wroud.dev/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Wroud/foundation",
+    "directory": "packages/graphql-codegen-typed-document-nodes"
+  },
+  "sideEffects": [],
+  "module": "./lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./*": "./lib/*.js"
+  },
+  "files": [
+    "package.json",
+    "LICENSE",
+    "README.md",
+    "CHANGELOG.md",
+    "lib",
+    "!lib/**/*.d.ts.map",
+    "!lib/**/*.test.js",
+    "!lib/**/*.test.d.ts",
+    "!lib/**/*.test.d.ts.map",
+    "!lib/**/*.test.js.map",
+    "!lib/tests",
+    "!.tsbuildinfo"
+  ],
+  "scripts": {
+    "ci:release": "yarn ci release --prefix gql-codegen-doc-nodes-v",
+    "ci:git-tag": "yarn ci git-tag --prefix gql-codegen-doc-nodes-v",
+    "ci:release-github": "yarn ci release-github --prefix gql-codegen-doc-nodes-v",
+    "test": "tests-runner",
+    "test:ci": "CI=true yarn run test",
+    "build": "tsc -b",
+    "watch:tsc": "tsc -b -w",
+    "dev": "concurrently \"npm:watch:*\"",
+    "clear": "rimraf ./lib"
+  },
+  "dependencies": {
+    "@graphql-codegen/plugin-helpers": "^5",
+    "@graphql-codegen/visitor-plugin-common": "^5",
+    "change-case-all": "^2",
+    "graphql": "^16"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@vitest/coverage-v8": "^2",
+    "@wroud/ci": "workspace:*",
+    "@wroud/tests-runner": "workspace:*",
+    "@wroud/tsconfig": "workspace:*",
+    "concurrently": "^8",
+    "rimraf": "^6",
+    "tslib": "^2",
+    "typescript": "^5",
+    "vitest": "^2"
+  },
+  "peerDependencies": {
+    "@graphql-codegen/typescript-operations": "*"
+  },
+  "keywords": [
+    "graphql",
+    "codegen",
+    "plugin",
+    "typescript",
+    "graphql-codegen",
+    "typed-document-node",
+    "graphql-fragments",
+    "graphql-operations",
+    "graphql-mutations",
+    "graphql-queries",
+    "typescript-documents",
+    "type-safe",
+    "graphql-tools"
+  ]
+}

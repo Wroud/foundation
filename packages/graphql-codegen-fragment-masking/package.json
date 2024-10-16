@@ -1,0 +1,67 @@
+{
+  "name": "graphql-codegen-fragment-masking",
+  "description": "Type-safe fragment masking plugin for GraphQL Code Generator, providing helper functions for managing GraphQL fragments with enhanced type safety and customizable configurations.",
+  "version": "0.0.0",
+  "type": "module",
+  "packageManager": "yarn@4.5.0",
+  "license": "MIT",
+  "author": "Wroud",
+  "homepage": "https://wroud.dev/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Wroud/foundation",
+    "directory": "packages/graphql-codegen-fragment-masking"
+  },
+  "sideEffects": [],
+  "module": "./lib/index.js",
+  "exports": {
+    ".": "./out/index.js",
+    "./*": "./out/*.js"
+  },
+  "files": [
+    "package.json",
+    "LICENSE",
+    "README.md",
+    "CHANGELOG.md",
+    "lib",
+    "!lib/**/*.d.ts.map",
+    "!lib/**/*.test.js",
+    "!lib/**/*.test.d.ts",
+    "!lib/**/*.test.d.ts.map",
+    "!lib/**/*.test.js.map",
+    "!lib/tests",
+    "!.tsbuildinfo"
+  ],
+  "scripts": {
+    "ci:release": "yarn ci release --prefix gql-codegen-fragment-masking-v",
+    "ci:git-tag": "yarn ci git-tag --prefix gql-codegen-fragment-masking-v",
+    "ci:release-github": "yarn ci release-github --prefix gql-codegen-fragment-masking-v",
+    "test": "tests-runner",
+    "test:ci": "CI=true yarn run test",
+    "build": "tsc -b",
+    "watch:tsc": "tsc -b -w",
+    "dev": "concurrently \"npm:watch:*\"",
+    "clear": "rimraf ./lib"
+  },
+  "devDependencies": {
+    "@graphql-codegen/plugin-helpers": "^5",
+    "@wroud/tsconfig": "workspace:^",
+    "graphql": "^16",
+    "typescript": "^5"
+  },
+  "keywords": [
+    "graphql",
+    "codegen",
+    "plugin",
+    "typescript",
+    "graphql-codegen",
+    "fragment-masking",
+    "graphql-fragments",
+    "graphql-operations",
+    "graphql-mutations",
+    "graphql-queries",
+    "typescript-documents",
+    "type-safe",
+    "graphql-tools"
+  ]
+}

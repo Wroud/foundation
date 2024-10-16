@@ -35,6 +35,7 @@
     "@wroud/vite-plugin-asset-resolver": "workspace:^",
     "@wroud/vite-plugin-tsc": "workspace:^",
     "concurrently": "^8",
+    "graphql-codegen-fragment-masking": "workspace:^",
     "graphql-codegen-typed-document-nodes": "workspace:^",
     "rimraf": "^6",
     "typescript": "^5"

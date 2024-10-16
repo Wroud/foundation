@@ -3944,6 +3944,7 @@ __metadata:
     "@wroud/vite-plugin-asset-resolver": "workspace:^"
     "@wroud/vite-plugin-tsc": "workspace:^"
     concurrently: "npm:^8"
+    graphql-codegen-fragment-masking: "workspace:^"
     graphql-codegen-typed-document-nodes: "workspace:^"
     rimraf: "npm:^6"
     tslib: "npm:^2"
@@ -4230,7 +4231,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wroud/tsconfig@workspace:*, @wroud/tsconfig@workspace:packages/tsconfig":
+"@wroud/tsconfig@workspace:*, @wroud/tsconfig@workspace:^, @wroud/tsconfig@workspace:packages/tsconfig":
   version: 0.0.0-use.local
   resolution: "@wroud/tsconfig@workspace:packages/tsconfig"
   languageName: unknown
@@ -7347,6 +7348,17 @@ __metadata:
   checksum: 10c0/108415fb07ac913f17040dc336607772fcea68c7f495ef91887edddb0b0f5ff7bc1d1ab181b125ecb2f0505669ef12c9a178a3bbd2dd8e042d8c5f1d7c90331a
   languageName: node
   linkType: hard
+
+"graphql-codegen-fragment-masking@workspace:^, graphql-codegen-fragment-masking@workspace:packages/graphql-codegen-fragment-masking":
+  version: 0.0.0-use.local
+  resolution: "graphql-codegen-fragment-masking@workspace:packages/graphql-codegen-fragment-masking"
+  dependencies:
+    "@graphql-codegen/plugin-helpers": "npm:^5"
+    "@wroud/tsconfig": "workspace:^"
+    graphql: "npm:^16"
+    typescript: "npm:^5"
+  languageName: unknown
+  linkType: soft
 
 "graphql-codegen-typed-document-nodes@workspace:^, graphql-codegen-typed-document-nodes@workspace:packages/graphql-codegen-typed-document-nodes":
   version: 0.0.0-use.local

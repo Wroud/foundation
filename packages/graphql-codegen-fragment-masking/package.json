@@ -1,7 +1,7 @@
 {
   "name": "graphql-codegen-fragment-masking",
   "description": "Type-safe fragment masking plugin for GraphQL Code Generator, providing helper functions for managing GraphQL fragments with enhanced type safety and customizable configurations.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "packageManager": "yarn@4.5.0",
   "license": "MIT",

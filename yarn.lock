@@ -4231,7 +4231,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wroud/tsconfig@workspace:*, @wroud/tsconfig@workspace:^, @wroud/tsconfig@workspace:packages/tsconfig":
+"@wroud/tsconfig@workspace:*, @wroud/tsconfig@workspace:packages/tsconfig":
   version: 0.0.0-use.local
   resolution: "@wroud/tsconfig@workspace:packages/tsconfig"
   languageName: unknown
@@ -7354,9 +7354,16 @@ __metadata:
   resolution: "graphql-codegen-fragment-masking@workspace:packages/graphql-codegen-fragment-masking"
   dependencies:
     "@graphql-codegen/plugin-helpers": "npm:^5"
-    "@wroud/tsconfig": "workspace:^"
+    "@vitest/coverage-v8": "npm:^2"
+    "@wroud/ci": "workspace:*"
+    "@wroud/tests-runner": "workspace:*"
+    "@wroud/tsconfig": "workspace:*"
+    concurrently: "npm:^8"
     graphql: "npm:^16"
+    rimraf: "npm:^6"
+    tslib: "npm:^2"
     typescript: "npm:^5"
+    vitest: "npm:^2"
   languageName: unknown
   linkType: soft
 

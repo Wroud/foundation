@@ -45,9 +45,16 @@
   },
   "devDependencies": {
     "@graphql-codegen/plugin-helpers": "^5",
-    "@wroud/tsconfig": "workspace:^",
+    "@vitest/coverage-v8": "^2",
+    "@wroud/ci": "workspace:*",
+    "@wroud/tests-runner": "workspace:*",
+    "@wroud/tsconfig": "workspace:*",
+    "concurrently": "^8",
     "graphql": "^16",
-    "typescript": "^5"
+    "rimraf": "^6",
+    "tslib": "^2",
+    "typescript": "^5",
+    "vitest": "^2"
   },
   "keywords": [
     "graphql",

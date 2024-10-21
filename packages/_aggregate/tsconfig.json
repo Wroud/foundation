@@ -57,6 +57,9 @@
       "path": "../ts-project-linker"
     },
     {
+      "path": "../ts-template"
+    },
+    {
       "path": "../vite-plugin-asset-resolver"
     },
     {

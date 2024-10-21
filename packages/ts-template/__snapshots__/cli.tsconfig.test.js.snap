@@ -1,0 +1,163 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`cli tsconfig > cli tsconfig @my-scope/my-tsconfig 1`] = `
+{
+  "/Users/wroud/Documents/side-projects/foundation/packages/ts-template/tsconfig.json": "{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "include": [],
+  "compilerOptions": {
+    "target": "esnext",
+    "lib": [
+      "esnext"
+    ],
+    "module": "nodenext",
+    "skipLibCheck": true,
+    "moduleResolution": "NodeNext",
+    "resolveJsonModule": true,
+    "importHelpers": true,
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": false,
+    "noFallthroughCasesInSwitch": true,
+    "exactOptionalPropertyTypes": false,
+    "verbatimModuleSyntax": true,
+    "checkJs": true,
+    "allowUnusedLabels": false,
+    "allowUnreachableCode": false,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noUncheckedIndexedAccess": true,
+    /* Source maps */
+    "sourceMap": true,
+    /* project references */
+    "declarationMap": true
+  }
+}
+",
+}
+`;
+
+exports[`cli tsconfig > cli tsconfig -t es2020 1`] = `
+{
+  "/Users/wroud/Documents/side-projects/foundation/packages/ts-template/tsconfig.json": "{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "include": [],
+  "compilerOptions": {
+    "target": "es2020",
+    "lib": [
+      "esnext"
+    ],
+    "module": "nodenext",
+    "skipLibCheck": true,
+    "moduleResolution": "NodeNext",
+    "resolveJsonModule": true,
+    "importHelpers": true,
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": false,
+    "noFallthroughCasesInSwitch": true,
+    "exactOptionalPropertyTypes": false,
+    "verbatimModuleSyntax": true,
+    "checkJs": true,
+    "allowUnusedLabels": false,
+    "allowUnreachableCode": false,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noUncheckedIndexedAccess": true,
+    /* Source maps */
+    "sourceMap": true,
+    /* project references */
+    "declarationMap": true
+  }
+}
+",
+}
+`;
+
+exports[`cli tsconfig > cli tsconfig 1`] = `
+{
+  "/Users/wroud/Documents/side-projects/foundation/packages/ts-template/tsconfig.json": "{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "include": [],
+  "compilerOptions": {
+    "target": "esnext",
+    "lib": [
+      "esnext"
+    ],
+    "module": "nodenext",
+    "skipLibCheck": true,
+    "moduleResolution": "NodeNext",
+    "resolveJsonModule": true,
+    "importHelpers": true,
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": false,
+    "noFallthroughCasesInSwitch": true,
+    "exactOptionalPropertyTypes": false,
+    "verbatimModuleSyntax": true,
+    "checkJs": true,
+    "allowUnusedLabels": false,
+    "allowUnreachableCode": false,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noUncheckedIndexedAccess": true,
+    /* Source maps */
+    "sourceMap": true,
+    /* project references */
+    "declarationMap": true
+  }
+}
+",
+}
+`;
+
+exports[`cli tsconfig > cli tsconfig my-tsconfig -i 1`] = `
+{
+  "/Users/wroud/Documents/side-projects/foundation/packages/ts-template": null,
+}
+`;
+
+exports[`cli tsconfig > cli tsconfig my-tsconfig 1`] = `
+{
+  "/Users/wroud/Documents/side-projects/foundation/packages/ts-template/tsconfig.json": "{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "include": [],
+  "compilerOptions": {
+    "target": "esnext",
+    "lib": [
+      "esnext"
+    ],
+    "module": "nodenext",
+    "skipLibCheck": true,
+    "moduleResolution": "NodeNext",
+    "resolveJsonModule": true,
+    "importHelpers": true,
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": false,
+    "noFallthroughCasesInSwitch": true,
+    "exactOptionalPropertyTypes": false,
+    "verbatimModuleSyntax": true,
+    "checkJs": true,
+    "allowUnusedLabels": false,
+    "allowUnreachableCode": false,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noUncheckedIndexedAccess": true,
+    /* Source maps */
+    "sourceMap": true,
+    /* project references */
+    "declarationMap": true
+  }
+}
+",
+}
+`;

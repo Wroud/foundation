@@ -1,0 +1,60 @@
+{
+  "name": "@wroud/ts-template",
+  "description": "",
+  "version": "0.0.0",
+  "packageManager": "yarn@4.5.0",
+  "license": "MIT",
+  "author": "Wroud",
+  "homepage": "https://wroud.dev/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Wroud/foundation",
+    "directory": "packages/ts-template"
+  },
+  "type": "module",
+  "sideEffects": [],
+  "bin": "./lib/cli.js",
+  "files": [
+    "package.json",
+    "LICENSE",
+    "README.md",
+    "CHANGELOG.md",
+    "lib",
+    "!lib/**/*.d.ts.map",
+    "!lib/**/*.test.js",
+    "!lib/**/*.test.d.ts",
+    "!lib/**/*.test.d.ts.map",
+    "!lib/**/*.test.js.map",
+    "!lib/tests",
+    "!.tsbuildinfo"
+  ],
+  "scripts": {
+    "ci:release": "yarn ci release --prefix ts-template-v",
+    "ci:git-tag": "yarn ci git-tag --prefix ts-template-v",
+    "ci:release-github": "yarn ci release-github --prefix ts-template-v",
+    "test": "tests-runner",
+    "test:ci": "CI=true yarn run test",
+    "build": "tsc -b",
+    "watch:tsc": "tsc -b -w",
+    "dev": "concurrently \"npm:watch:*\"",
+    "clear": "rimraf ./lib"
+  },
+  "dependencies": {
+    "execa": "^9",
+    "picocolors": "^1",
+    "yargs": "^17"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/yargs": "^17",
+    "@vitest/coverage-v8": "^2",
+    "@wroud/ci": "workspace:^",
+    "@wroud/tests-runner": "workspace:^",
+    "@wroud/tsconfig": "workspace:^",
+    "concurrently": "^9",
+    "memfs": "^4",
+    "rimraf": "^6",
+    "typescript": "^5",
+    "vitest": "^2"
+  }
+}

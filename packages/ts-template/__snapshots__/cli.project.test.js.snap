@@ -1,0 +1,162 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`cli project > cli project @my-scope/my-project --ts @other-scope/my-tsconfig 1`] = `
+{
+  "/Users/wroud/Documents/side-projects/foundation/packages/ts-template/tsconfig.json": "{
+  "extends": "@other-scope/my-tsconfig/tsconfig.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "./lib/.tsbuildinfo",
+    "rootDir": "src",
+    "rootDirs": [
+      "src"
+    ],
+    "outDir": "lib",
+    "incremental": true,
+    "composite": true
+  },
+  "include": [
+    "src"
+  ]
+}
+",
+}
+`;
+
+exports[`cli project > cli project @my-scope/my-project --ts my-tsconfig 1`] = `
+{
+  "/Users/wroud/Documents/side-projects/foundation/packages/ts-template/tsconfig.json": "{
+  "extends": "@my-scope/my-tsconfig/tsconfig.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "./lib/.tsbuildinfo",
+    "rootDir": "src",
+    "rootDirs": [
+      "src"
+    ],
+    "outDir": "lib",
+    "incremental": true,
+    "composite": true
+  },
+  "include": [
+    "src"
+  ]
+}
+",
+}
+`;
+
+exports[`cli project > cli project @my-scope/my-project 1`] = `
+{
+  "/Users/wroud/Documents/side-projects/foundation/packages/ts-template/tsconfig.json": "{
+  "extends": "@my-scope/tsconfig/tsconfig.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "./lib/.tsbuildinfo",
+    "rootDir": "src",
+    "rootDirs": [
+      "src"
+    ],
+    "outDir": "lib",
+    "incremental": true,
+    "composite": true
+  },
+  "include": [
+    "src"
+  ]
+}
+",
+}
+`;
+
+exports[`cli project > cli project -t es2020 1`] = `
+{
+  "/Users/wroud/Documents/side-projects/foundation/packages/ts-template/tsconfig.json": "{
+  "extends": "tsconfig/tsconfig.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "./lib/.tsbuildinfo",
+    "rootDir": "src",
+    "rootDirs": [
+      "src"
+    ],
+    "outDir": "lib",
+    "target": "es2020",
+    "incremental": true,
+    "composite": true
+  },
+  "include": [
+    "src"
+  ]
+}
+",
+}
+`;
+
+exports[`cli project > cli project 1`] = `
+{
+  "/Users/wroud/Documents/side-projects/foundation/packages/ts-template/tsconfig.json": "{
+  "extends": "tsconfig/tsconfig.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "./lib/.tsbuildinfo",
+    "rootDir": "src",
+    "rootDirs": [
+      "src"
+    ],
+    "outDir": "lib",
+    "incremental": true,
+    "composite": true
+  },
+  "include": [
+    "src"
+  ]
+}
+",
+}
+`;
+
+exports[`cli project > cli project my-project --ts my-tsconfi -i 1`] = `
+{
+  "/Users/wroud/Documents/side-projects/foundation/packages/ts-template": null,
+}
+`;
+
+exports[`cli project > cli project my-project --ts my-tsconfig 1`] = `
+{
+  "/Users/wroud/Documents/side-projects/foundation/packages/ts-template/tsconfig.json": "{
+  "extends": "my-tsconfig/tsconfig.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "./lib/.tsbuildinfo",
+    "rootDir": "src",
+    "rootDirs": [
+      "src"
+    ],
+    "outDir": "lib",
+    "incremental": true,
+    "composite": true
+  },
+  "include": [
+    "src"
+  ]
+}
+",
+}
+`;
+
+exports[`cli project > cli project my-project 1`] = `
+{
+  "/Users/wroud/Documents/side-projects/foundation/packages/ts-template/tsconfig.json": "{
+  "extends": "tsconfig/tsconfig.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "./lib/.tsbuildinfo",
+    "rootDir": "src",
+    "rootDirs": [
+      "src"
+    ],
+    "outDir": "lib",
+    "incremental": true,
+    "composite": true
+  },
+  "include": [
+    "src"
+  ]
+}
+",
+}
+`;

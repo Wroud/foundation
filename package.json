@@ -25,6 +25,7 @@
     "@vitest/coverage-v8": "^2",
     "@wroud/tests-runner": "workspace:*",
     "@wroud/ts-project-linker": "workspace:*",
+    "@wroud/ts-template": "workspace:^",
     "concurrently": "^9",
     "happy-dom": "^15",
     "husky": "^9",

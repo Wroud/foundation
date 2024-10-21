@@ -35,5 +35,6 @@ jobs:
         with:
           name: build-artifacts
           path: |
+            packages/@wroud/*/lib/**
             packages/*/lib/**
             coverage/**

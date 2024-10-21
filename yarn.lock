@@ -3875,6 +3875,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@wroud/new-test@workspace:packages/@wroud/new-test":
+  version: 0.0.0-use.local
+  resolution: "@wroud/new-test@workspace:packages/@wroud/new-test"
+  dependencies:
+    "@wroud/tsconfig": "workspace:^"
+    typescript: "npm:^5"
+  languageName: unknown
+  linkType: soft
+
 "@wroud/tests-runner@workspace:*, @wroud/tests-runner@workspace:^, @wroud/tests-runner@workspace:packages/@wroud/tests-runner":
   version: 0.0.0-use.local
   resolution: "@wroud/tests-runner@workspace:packages/@wroud/tests-runner"
@@ -6759,6 +6768,7 @@ __metadata:
     "@vitest/coverage-v8": "npm:^2"
     "@wroud/tests-runner": "workspace:*"
     "@wroud/ts-project-linker": "workspace:*"
+    "@wroud/ts-template": "workspace:^"
     concurrently: "npm:^9"
     happy-dom: "npm:^15"
     husky: "npm:^9"

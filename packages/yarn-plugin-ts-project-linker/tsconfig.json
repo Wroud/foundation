@@ -13,7 +13,7 @@
   ],
   "references": [
     {
-      "path": "../ts-project-linker"
+      "path": "../@wroud/ts-project-linker"
     }
   ]
 }

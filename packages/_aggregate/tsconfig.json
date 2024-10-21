@@ -15,55 +15,55 @@
   ],
   "references": [
     {
-      "path": "../conventional-commits-bump"
+      "path": "../@wroud/conventional-commits-bump"
     },
     {
-      "path": "../conventional-commits-changelog"
+      "path": "../@wroud/conventional-commits-changelog"
     },
     {
-      "path": "../conventional-commits-parser"
+      "path": "../@wroud/conventional-commits-parser"
     },
     {
-      "path": "../di"
+      "path": "../@wroud/di"
     },
     {
-      "path": "../di-react"
+      "path": "../@wroud/di-react"
     },
     {
-      "path": "../di-tools-analyzer"
+      "path": "../@wroud/di-tools-analyzer"
     },
     {
-      "path": "../di-tools-codemod"
+      "path": "../@wroud/di-tools-codemod"
     },
     {
-      "path": "../di-tools-codemod/tsconfig.commonjs.json"
+      "path": "../@wroud/di-tools-codemod/tsconfig.commonjs.json"
+    },
+    {
+      "path": "../@wroud/git"
+    },
+    {
+      "path": "../@wroud/github"
+    },
+    {
+      "path": "../@wroud/ts-project-linker"
+    },
+    {
+      "path": "../@wroud/ts-template"
+    },
+    {
+      "path": "../@wroud/vite-plugin-asset-resolver"
+    },
+    {
+      "path": "../@wroud/vite-plugin-tsc"
     },
     {
       "path": "../docs"
-    },
-    {
-      "path": "../git"
-    },
-    {
-      "path": "../github"
     },
     {
       "path": "../graphql-codegen-fragment-masking"
     },
     {
       "path": "../graphql-codegen-typed-document-nodes"
-    },
-    {
-      "path": "../ts-project-linker"
-    },
-    {
-      "path": "../ts-template"
-    },
-    {
-      "path": "../vite-plugin-asset-resolver"
-    },
-    {
-      "path": "../vite-plugin-tsc"
     }
   ]
 }

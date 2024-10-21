@@ -1,23 +1,20 @@
 {
-  "name": "@wroud/ts-project-linker",
-  "description": "A CLI tool that synchronizes TypeScript project references with package dependencies, supporting sub configurations like tsconfig.*.json.",
-  "version": "0.1.0",
+  "name": "@wroud/di-react",
+  "description": "A simple and lightweight dependency injection library for React",
+  "version": "0.2.1",
   "packageManager": "yarn@4.5.0",
+  "type": "module",
   "license": "MIT",
   "author": "Wroud",
-  "homepage": "https://wroud.dev/",
+  "homepage": "https://wroud.dev/packages/di/integrations/react/overview",
   "repository": {
     "type": "git",
     "url": "https://github.com/Wroud/foundation",
-    "directory": "packages/ts-project-linker"
+    "directory": "packages/@wroud/di-react"
   },
-  "type": "module",
   "sideEffects": [],
-  "bin": {
-    "ts-link": "./lib/cli.js",
-    "ts-project-linker": "./lib/cli.js"
-  },
   "module": "./lib/index.js",
+  "types": "./lib/index.d.ts",
   "exports": {
     ".": "./lib/index.js",
     "./*.js": "./lib/*.js",
@@ -38,9 +35,9 @@
     "!.tsbuildinfo"
   ],
   "scripts": {
-    "ci:release": "yarn ci release --prefix ts-link-v",
-    "ci:git-tag": "yarn ci git-tag --prefix ts-link-v",
-    "ci:release-github": "yarn ci release-github --prefix ts-link-v",
+    "ci:release": "yarn ci release --prefix di-react-v",
+    "ci:git-tag": "yarn ci git-tag --prefix di-react-v",
+    "ci:release-github": "yarn ci release-github --prefix di-react-v",
     "test": "tests-runner",
     "test:ci": "CI=true yarn run test",
     "build": "tsc -b",
@@ -49,38 +46,35 @@
     "clear": "rimraf ./lib"
   },
   "dependencies": {
-    "comment-json": "^4",
-    "execa": "^9",
-    "fast-glob": "^3",
-    "globby": "^14",
-    "picocolors": "^1",
-    "yargs": "^17"
+    "@wroud/di": "workspace:^0"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0"
   },
   "devDependencies": {
-    "@tsconfig/node20": "^20",
+    "@testing-library/dom": "^10",
+    "@testing-library/jest-dom": "^6",
+    "@testing-library/react": "^16",
+    "@testing-library/user-event": "^14",
     "@types/node": "^20",
-    "@types/yargs": "^17",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
     "@vitest/coverage-v8": "^2",
     "@wroud/ci": "workspace:*",
     "@wroud/tests-runner": "workspace:*",
     "@wroud/tsconfig": "workspace:*",
     "concurrently": "^8",
+    "happy-dom": "^15",
+    "react": "^18",
+    "react-dom": "^18",
     "rimraf": "^6",
+    "tslib": "^2",
     "typescript": "^5",
     "vitest": "^2"
   },
   "keywords": [
-    "typescript",
-    "project references",
-    "dependencies",
-    "cli",
-    "cli tool",
-    "tool",
-    "tsconfig",
-    "monorepo",
-    "typescript linker",
-    "typescript project references",
-    "sub configs",
-    "package dependencies"
+    "dependency-injection",
+    "di",
+    "react"
   ]
 }

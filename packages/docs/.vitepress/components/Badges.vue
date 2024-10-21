@@ -7,10 +7,10 @@ const props = defineProps<{
 const nameWithoutOrg = props.name.replace("@wroud/", "");
 
 const version = ref("");
-const { total } = getPackageJestSummary(nameWithoutOrg);
+const { total } = getPackageJestSummary(props.name);
 
 onMounted(async () => {
-  const packageJson = await import(`../../../${nameWithoutOrg}/package.json`);
+  const packageJson = await import(`../../../${props.name}/package.json`);
   version.value = "@" + packageJson.default.version;
 });
 </script>
@@ -39,7 +39,7 @@ onMounted(async () => {
       alt="Coverage"
     />
     <a
-      :href="`https://github.com/wroud/foundation/tree/main/packages/${nameWithoutOrg}`"
+      :href="`https://github.com/wroud/foundation/tree/main/packages/${name}`"
       target="_blank"
       ><img
         src="https://img.shields.io/badge/source-a?logo=github&color=1B3C4A"

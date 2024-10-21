@@ -10,7 +10,7 @@
       "name": "Debug CodeMod Tests",
       "skipFiles": ["<node_internals>/**"],
       "runtimeExecutable": "yarn",
-      "cwd": "${workspaceFolder}/packages/di-tools-codemod",
+      "cwd": "${workspaceFolder}/packages/@wroud/di-tools-codemod",
       "runtimeArgs": ["run", "test"]
     },
     {

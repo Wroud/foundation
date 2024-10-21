@@ -9,7 +9,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/Wroud/foundation",
-    "directory": "packages/ts-template"
+    "directory": "packages/@wroud/ts-template"
   },
   "type": "module",
   "sideEffects": [],

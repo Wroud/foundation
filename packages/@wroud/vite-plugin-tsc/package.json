@@ -1,22 +1,21 @@
 {
-  "name": "@wroud/di-react",
-  "description": "A simple and lightweight dependency injection library for React",
-  "version": "0.2.1",
-  "packageManager": "yarn@4.5.0",
+  "name": "@wroud/vite-plugin-tsc",
+  "description": "A Vite plugin that uses TypeScript's tsc to transpile TypeScript sources for seamless bundling.",
+  "version": "0.11.0",
   "type": "module",
+  "packageManager": "yarn@4.5.0",
   "license": "MIT",
   "author": "Wroud",
-  "homepage": "https://wroud.dev/packages/di/integrations/react/overview",
+  "homepage": "https://wroud.dev",
   "repository": {
     "type": "git",
     "url": "https://github.com/Wroud/foundation",
-    "directory": "packages/di-react"
+    "directory": "packages/@wroud/vite-plugin-tsc"
   },
   "sideEffects": [],
-  "module": "./lib/index.js",
-  "types": "./lib/index.d.ts",
+  "module": "./lib/plugin.js",
   "exports": {
-    ".": "./lib/index.js",
+    ".": "./lib/plugin.js",
     "./*.js": "./lib/*.js",
     "./package.json": "./package.json"
   },
@@ -35,9 +34,9 @@
     "!.tsbuildinfo"
   ],
   "scripts": {
-    "ci:release": "yarn ci release --prefix di-react-v",
-    "ci:git-tag": "yarn ci git-tag --prefix di-react-v",
-    "ci:release-github": "yarn ci release-github --prefix di-react-v",
+    "ci:release": "yarn ci release --prefix vite-plugin-tsc-v",
+    "ci:git-tag": "yarn ci git-tag --prefix vite-plugin-tsc-v",
+    "ci:release-github": "yarn ci release-github --prefix vite-plugin-tsc-v",
     "test": "tests-runner",
     "test:ci": "CI=true yarn run test",
     "build": "tsc -b",
@@ -45,36 +44,37 @@
     "dev": "concurrently \"npm:watch:*\"",
     "clear": "rimraf ./lib"
   },
-  "dependencies": {
-    "@wroud/di": "workspace:^0"
-  },
-  "peerDependencies": {
-    "react": ">=18.0.0"
-  },
   "devDependencies": {
-    "@testing-library/dom": "^10",
-    "@testing-library/jest-dom": "^6",
-    "@testing-library/react": "^16",
-    "@testing-library/user-event": "^14",
     "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
     "@vitest/coverage-v8": "^2",
     "@wroud/ci": "workspace:*",
     "@wroud/tests-runner": "workspace:*",
     "@wroud/tsconfig": "workspace:*",
     "concurrently": "^8",
-    "happy-dom": "^15",
-    "react": "^18",
-    "react-dom": "^18",
     "rimraf": "^6",
     "tslib": "^2",
     "typescript": "^5",
+    "vite": "^5",
     "vitest": "^2"
   },
   "keywords": [
-    "dependency-injection",
-    "di",
-    "react"
-  ]
+    "vite",
+    "vite-plugin",
+    "typescript",
+    "tsc",
+    "transpiler",
+    "bundler",
+    "esmodules",
+    "development"
+  ],
+  "peerDependencies": {
+    "typescript": "*",
+    "vite": "*"
+  },
+  "dependencies": {
+    "detect-package-manager": "^3",
+    "execa": "^9",
+    "picocolors": "^1",
+    "strip-ansi": "^7"
+  }
 }

@@ -1,8 +1,7 @@
 {
-  "name": "@wroud/git",
-  "description": "A lightweight toolset for working with local git, including utilities for retrieving git commits and tags, ideal for CI/CD pipelines and automated release workflows.",
-  "version": "0.1.2",
-  "type": "module",
+  "name": "@wroud/ts-project-linker",
+  "description": "A CLI tool that synchronizes TypeScript project references with package dependencies, supporting sub configurations like tsconfig.*.json.",
+  "version": "0.1.0",
   "packageManager": "yarn@4.5.0",
   "license": "MIT",
   "author": "Wroud",
@@ -10,9 +9,14 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/Wroud/foundation",
-    "directory": "packages/git"
+    "directory": "packages/@wroud/ts-project-linker"
   },
+  "type": "module",
   "sideEffects": [],
+  "bin": {
+    "ts-link": "./lib/cli.js",
+    "ts-project-linker": "./lib/cli.js"
+  },
   "module": "./lib/index.js",
   "exports": {
     ".": "./lib/index.js",
@@ -34,9 +38,9 @@
     "!.tsbuildinfo"
   ],
   "scripts": {
-    "ci:release": "yarn ci release --prefix git-v",
-    "ci:git-tag": "yarn ci git-tag --prefix git-v",
-    "ci:release-github": "yarn ci release-github --prefix git-v",
+    "ci:release": "yarn ci release --prefix ts-link-v",
+    "ci:git-tag": "yarn ci git-tag --prefix ts-link-v",
+    "ci:release-github": "yarn ci release-github --prefix ts-link-v",
     "test": "tests-runner",
     "test:ci": "CI=true yarn run test",
     "build": "tsc -b",
@@ -45,14 +49,17 @@
     "clear": "rimraf ./lib"
   },
   "dependencies": {
+    "comment-json": "^4",
     "execa": "^9",
-    "semver-regex": "^4",
-    "uuid": "^10"
+    "fast-glob": "^3",
+    "globby": "^14",
+    "picocolors": "^1",
+    "yargs": "^17"
   },
   "devDependencies": {
     "@tsconfig/node20": "^20",
     "@types/node": "^20",
-    "@types/uuid": "^10",
+    "@types/yargs": "^17",
     "@vitest/coverage-v8": "^2",
     "@wroud/ci": "workspace:*",
     "@wroud/tests-runner": "workspace:*",
@@ -63,20 +70,17 @@
     "vitest": "^2"
   },
   "keywords": [
-    "git",
-    "commits",
-    "tags",
-    "semver",
-    "ci",
-    "cd",
-    "automation",
-    "release",
-    "conventional-commits",
-    "git-tools",
-    "git-history",
-    "git-commits",
-    "git-tags",
-    "node",
-    "esm"
+    "typescript",
+    "project references",
+    "dependencies",
+    "cli",
+    "cli tool",
+    "tool",
+    "tsconfig",
+    "monorepo",
+    "typescript linker",
+    "typescript project references",
+    "sub configs",
+    "package dependencies"
   ]
 }

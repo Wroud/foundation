@@ -1,21 +1,21 @@
 {
-  "name": "@wroud/vite-plugin-tsc",
-  "description": "A Vite plugin that uses TypeScript's tsc to transpile TypeScript sources for seamless bundling.",
-  "version": "0.11.0",
+  "name": "@wroud/git",
+  "description": "A lightweight toolset for working with local git, including utilities for retrieving git commits and tags, ideal for CI/CD pipelines and automated release workflows.",
+  "version": "0.1.2",
   "type": "module",
   "packageManager": "yarn@4.5.0",
   "license": "MIT",
   "author": "Wroud",
-  "homepage": "https://wroud.dev",
+  "homepage": "https://wroud.dev/",
   "repository": {
     "type": "git",
     "url": "https://github.com/Wroud/foundation",
-    "directory": "packages/vite-plugin-tsc"
+    "directory": "packages/@wroud/git"
   },
   "sideEffects": [],
-  "module": "./lib/plugin.js",
+  "module": "./lib/index.js",
   "exports": {
-    ".": "./lib/plugin.js",
+    ".": "./lib/index.js",
     "./*.js": "./lib/*.js",
     "./package.json": "./package.json"
   },
@@ -34,9 +34,9 @@
     "!.tsbuildinfo"
   ],
   "scripts": {
-    "ci:release": "yarn ci release --prefix vite-plugin-tsc-v",
-    "ci:git-tag": "yarn ci git-tag --prefix vite-plugin-tsc-v",
-    "ci:release-github": "yarn ci release-github --prefix vite-plugin-tsc-v",
+    "ci:release": "yarn ci release --prefix git-v",
+    "ci:git-tag": "yarn ci git-tag --prefix git-v",
+    "ci:release-github": "yarn ci release-github --prefix git-v",
     "test": "tests-runner",
     "test:ci": "CI=true yarn run test",
     "build": "tsc -b",
@@ -44,37 +44,39 @@
     "dev": "concurrently \"npm:watch:*\"",
     "clear": "rimraf ./lib"
   },
+  "dependencies": {
+    "execa": "^9",
+    "semver-regex": "^4",
+    "uuid": "^10"
+  },
   "devDependencies": {
+    "@tsconfig/node20": "^20",
     "@types/node": "^20",
+    "@types/uuid": "^10",
     "@vitest/coverage-v8": "^2",
     "@wroud/ci": "workspace:*",
     "@wroud/tests-runner": "workspace:*",
     "@wroud/tsconfig": "workspace:*",
     "concurrently": "^8",
     "rimraf": "^6",
-    "tslib": "^2",
     "typescript": "^5",
-    "vite": "^5",
     "vitest": "^2"
   },
   "keywords": [
-    "vite",
-    "vite-plugin",
-    "typescript",
-    "tsc",
-    "transpiler",
-    "bundler",
-    "esmodules",
-    "development"
-  ],
-  "peerDependencies": {
-    "typescript": "*",
-    "vite": "*"
-  },
-  "dependencies": {
-    "detect-package-manager": "^3",
-    "execa": "^9",
-    "picocolors": "^1",
-    "strip-ansi": "^7"
-  }
+    "git",
+    "commits",
+    "tags",
+    "semver",
+    "ci",
+    "cd",
+    "automation",
+    "release",
+    "conventional-commits",
+    "git-tools",
+    "git-history",
+    "git-commits",
+    "git-tags",
+    "node",
+    "esm"
+  ]
 }

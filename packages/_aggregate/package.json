@@ -8,7 +8,7 @@
   "author": "Wroud",
   "sideEffects": [],
   "scripts": {
-    "build:ci": "cd ../ci && yarn build",
+    "build:ci": "cd ../@wroud/ci && yarn build",
     "build:tsc": "tsc -b",
     "build": "conc \"npm:build:*\"",
     "clear": "rimraf ./lib",

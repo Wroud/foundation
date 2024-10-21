@@ -3640,9 +3640,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wroud/ci@workspace:*, @wroud/ci@workspace:^, @wroud/ci@workspace:packages/ci":
+"@wroud/ci@workspace:*, @wroud/ci@workspace:^, @wroud/ci@workspace:packages/@wroud/ci":
   version: 0.0.0-use.local
-  resolution: "@wroud/ci@workspace:packages/ci"
+  resolution: "@wroud/ci@workspace:packages/@wroud/ci"
   dependencies:
     "@octokit/auth-action": "npm:^5"
     "@octokit/rest": "npm:^21"
@@ -3670,9 +3670,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wroud/conventional-commits-bump@workspace:*, @wroud/conventional-commits-bump@workspace:^, @wroud/conventional-commits-bump@workspace:packages/conventional-commits-bump":
+"@wroud/conventional-commits-bump@workspace:*, @wroud/conventional-commits-bump@workspace:^, @wroud/conventional-commits-bump@workspace:packages/@wroud/conventional-commits-bump":
   version: 0.0.0-use.local
-  resolution: "@wroud/conventional-commits-bump@workspace:packages/conventional-commits-bump"
+  resolution: "@wroud/conventional-commits-bump@workspace:packages/@wroud/conventional-commits-bump"
   dependencies:
     "@tsconfig/node20": "npm:^20"
     "@types/node": "npm:^20"
@@ -3690,9 +3690,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wroud/conventional-commits-changelog@workspace:*, @wroud/conventional-commits-changelog@workspace:packages/conventional-commits-changelog":
+"@wroud/conventional-commits-changelog@workspace:*, @wroud/conventional-commits-changelog@workspace:packages/@wroud/conventional-commits-changelog":
   version: 0.0.0-use.local
-  resolution: "@wroud/conventional-commits-changelog@workspace:packages/conventional-commits-changelog"
+  resolution: "@wroud/conventional-commits-changelog@workspace:packages/@wroud/conventional-commits-changelog"
   dependencies:
     "@tsconfig/node20": "npm:^20"
     "@types/node": "npm:^20"
@@ -3708,9 +3708,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wroud/conventional-commits-parser@workspace:*, @wroud/conventional-commits-parser@workspace:^0, @wroud/conventional-commits-parser@workspace:packages/conventional-commits-parser":
+"@wroud/conventional-commits-parser@workspace:*, @wroud/conventional-commits-parser@workspace:^0, @wroud/conventional-commits-parser@workspace:packages/@wroud/conventional-commits-parser":
   version: 0.0.0-use.local
-  resolution: "@wroud/conventional-commits-parser@workspace:packages/conventional-commits-parser"
+  resolution: "@wroud/conventional-commits-parser@workspace:packages/@wroud/conventional-commits-parser"
   dependencies:
     "@tsconfig/node20": "npm:^20"
     "@types/node": "npm:^20"
@@ -3726,9 +3726,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wroud/di-react@workspace:*, @wroud/di-react@workspace:packages/di-react":
+"@wroud/di-react@workspace:*, @wroud/di-react@workspace:packages/@wroud/di-react":
   version: 0.0.0-use.local
-  resolution: "@wroud/di-react@workspace:packages/di-react"
+  resolution: "@wroud/di-react@workspace:packages/@wroud/di-react"
   dependencies:
     "@testing-library/dom": "npm:^10"
     "@testing-library/jest-dom": "npm:^6"
@@ -3755,9 +3755,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wroud/di-tools-analyzer@workspace:*, @wroud/di-tools-analyzer@workspace:packages/di-tools-analyzer":
+"@wroud/di-tools-analyzer@workspace:*, @wroud/di-tools-analyzer@workspace:packages/@wroud/di-tools-analyzer":
   version: 0.0.0-use.local
-  resolution: "@wroud/di-tools-analyzer@workspace:packages/di-tools-analyzer"
+  resolution: "@wroud/di-tools-analyzer@workspace:packages/@wroud/di-tools-analyzer"
   dependencies:
     "@types/d3": "npm:^7"
     "@types/node": "npm:^20"
@@ -3777,9 +3777,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wroud/di-tools-codemod@workspace:*, @wroud/di-tools-codemod@workspace:packages/di-tools-codemod":
+"@wroud/di-tools-codemod@workspace:*, @wroud/di-tools-codemod@workspace:packages/@wroud/di-tools-codemod":
   version: 0.0.0-use.local
-  resolution: "@wroud/di-tools-codemod@workspace:packages/di-tools-codemod"
+  resolution: "@wroud/di-tools-codemod@workspace:packages/@wroud/di-tools-codemod"
   dependencies:
     "@types/jscodeshift": "npm:^0"
     "@types/node": "npm:^20"
@@ -3795,9 +3795,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wroud/di@workspace:*, @wroud/di@workspace:^0, @wroud/di@workspace:packages/di":
+"@wroud/di@workspace:*, @wroud/di@workspace:^0, @wroud/di@workspace:packages/@wroud/di":
   version: 0.0.0-use.local
-  resolution: "@wroud/di@workspace:packages/di"
+  resolution: "@wroud/di@workspace:packages/@wroud/di"
   dependencies:
     "@types/node": "npm:^20"
     "@vitest/coverage-v8": "npm:^2"
@@ -3836,9 +3836,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wroud/git@workspace:*, @wroud/git@workspace:^0, @wroud/git@workspace:packages/git":
+"@wroud/git@workspace:*, @wroud/git@workspace:^0, @wroud/git@workspace:packages/@wroud/git":
   version: 0.0.0-use.local
-  resolution: "@wroud/git@workspace:packages/git"
+  resolution: "@wroud/git@workspace:packages/@wroud/git"
   dependencies:
     "@tsconfig/node20": "npm:^20"
     "@types/node": "npm:^20"
@@ -3857,9 +3857,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wroud/github@workspace:*, @wroud/github@workspace:packages/github":
+"@wroud/github@workspace:*, @wroud/github@workspace:packages/@wroud/github":
   version: 0.0.0-use.local
-  resolution: "@wroud/github@workspace:packages/github"
+  resolution: "@wroud/github@workspace:packages/@wroud/github"
   dependencies:
     "@tsconfig/node20": "npm:^20"
     "@types/node": "npm:^20"
@@ -3875,9 +3875,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wroud/tests-runner@workspace:*, @wroud/tests-runner@workspace:^, @wroud/tests-runner@workspace:packages/tests-runner":
+"@wroud/tests-runner@workspace:*, @wroud/tests-runner@workspace:^, @wroud/tests-runner@workspace:packages/@wroud/tests-runner":
   version: 0.0.0-use.local
-  resolution: "@wroud/tests-runner@workspace:packages/tests-runner"
+  resolution: "@wroud/tests-runner@workspace:packages/@wroud/tests-runner"
   dependencies:
     "@tsconfig/node20": "npm:^20"
     "@tsconfig/strictest": "npm:^2"
@@ -3892,9 +3892,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wroud/ts-project-linker@workspace:*, @wroud/ts-project-linker@workspace:^, @wroud/ts-project-linker@workspace:packages/ts-project-linker":
+"@wroud/ts-project-linker@workspace:*, @wroud/ts-project-linker@workspace:^, @wroud/ts-project-linker@workspace:packages/@wroud/ts-project-linker":
   version: 0.0.0-use.local
-  resolution: "@wroud/ts-project-linker@workspace:packages/ts-project-linker"
+  resolution: "@wroud/ts-project-linker@workspace:packages/@wroud/ts-project-linker"
   dependencies:
     "@tsconfig/node20": "npm:^20"
     "@types/node": "npm:^20"
@@ -3919,9 +3919,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wroud/ts-template@workspace:^, @wroud/ts-template@workspace:packages/ts-template":
+"@wroud/ts-template@workspace:^, @wroud/ts-template@workspace:packages/@wroud/ts-template":
   version: 0.0.0-use.local
-  resolution: "@wroud/ts-template@workspace:packages/ts-template"
+  resolution: "@wroud/ts-template@workspace:packages/@wroud/ts-template"
   dependencies:
     "@types/node": "npm:^20"
     "@types/yargs": "npm:^17"
@@ -3943,15 +3943,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wroud/tsconfig@workspace:*, @wroud/tsconfig@workspace:^, @wroud/tsconfig@workspace:packages/tsconfig":
+"@wroud/tsconfig@workspace:*, @wroud/tsconfig@workspace:^, @wroud/tsconfig@workspace:packages/@wroud/tsconfig":
   version: 0.0.0-use.local
-  resolution: "@wroud/tsconfig@workspace:packages/tsconfig"
+  resolution: "@wroud/tsconfig@workspace:packages/@wroud/tsconfig"
   languageName: unknown
   linkType: soft
 
-"@wroud/vite-plugin-asset-resolver@workspace:^, @wroud/vite-plugin-asset-resolver@workspace:packages/vite-plugin-asset-resolver":
+"@wroud/vite-plugin-asset-resolver@workspace:^, @wroud/vite-plugin-asset-resolver@workspace:packages/@wroud/vite-plugin-asset-resolver":
   version: 0.0.0-use.local
-  resolution: "@wroud/vite-plugin-asset-resolver@workspace:packages/vite-plugin-asset-resolver"
+  resolution: "@wroud/vite-plugin-asset-resolver@workspace:packages/@wroud/vite-plugin-asset-resolver"
   dependencies:
     "@types/node": "npm:^20"
     "@vitest/coverage-v8": "npm:^2"
@@ -3969,9 +3969,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wroud/vite-plugin-tsc@workspace:^, @wroud/vite-plugin-tsc@workspace:packages/vite-plugin-tsc":
+"@wroud/vite-plugin-tsc@workspace:^, @wroud/vite-plugin-tsc@workspace:packages/@wroud/vite-plugin-tsc":
   version: 0.0.0-use.local
-  resolution: "@wroud/vite-plugin-tsc@workspace:packages/vite-plugin-tsc"
+  resolution: "@wroud/vite-plugin-tsc@workspace:packages/@wroud/vite-plugin-tsc"
   dependencies:
     "@types/node": "npm:^20"
     "@vitest/coverage-v8": "npm:^2"

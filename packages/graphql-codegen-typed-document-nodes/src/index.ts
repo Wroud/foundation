@@ -56,7 +56,7 @@ function generateExportTypes(
     } else if (def.kind === Kind.FRAGMENT_DEFINITION) {
       const fragmentName = visitor.getFragmentName(def);
       exportTypes.push(
-        `export type ${fragmentName}Doc = Types.TypedDocumentNode<${fragmentName}, unknown>;`,
+        `export type ${fragmentName}Doc = Types.TypedDocumentNode<${fragmentName}, void>;`,
       );
     }
   }

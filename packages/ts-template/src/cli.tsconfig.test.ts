@@ -9,6 +9,7 @@ import {
 } from "vitest";
 import { fs, vol } from "memfs";
 import { execa } from "execa";
+import path from "path";
 
 vi.mock("fs", () => fs);
 vi.mock("fs/promises", () => fs.promises);
@@ -21,14 +22,17 @@ let originalArgv: string[];
 let logFn: MockInstance<Console["log"]>;
 let warnFn: MockInstance<Console["warn"]>;
 let errorFn: MockInstance<Console["error"]>;
+let cwdFn: MockInstance<typeof process.cwd>;
+const CWD = path.normalize("/project/packages/@my-scope/my-pkg");
 
 beforeEach(() => {
   originalArgv = process.argv;
   vol.reset();
-  vol.mkdirSync(process.cwd(), { recursive: true });
+  vol.mkdirSync(CWD, { recursive: true });
   logFn = vi.spyOn(console, "log").mockImplementation(() => {});
   warnFn = vi.spyOn(console, "warn").mockImplementation(() => {});
   errorFn = vi.spyOn(console, "error").mockImplementation(() => {});
+  cwdFn = vi.spyOn(process, "cwd").mockReturnValue(CWD);
 });
 
 afterEach(() => {
@@ -38,20 +42,29 @@ afterEach(() => {
   logFn.mockRestore();
   warnFn.mockRestore();
   errorFn.mockRestore();
+  cwdFn.mockRestore();
 });
 
 describe("cli tsconfig", () => {
   it("cli tsconfig", async () => {
     await runCli(["tsconfig"]);
 
-    expect(execa).toHaveBeenCalledWith("yarn", ["init", "-n", "ts-template"]);
+    expect(execa).toHaveBeenCalledWith("yarn", [
+      "init",
+      "-n",
+      "@my-scope/my-pkg",
+    ]);
 
     expect(vol.toJSON()).toMatchSnapshot();
   });
   it("cli tsconfig -t es2020", async () => {
     await runCli(["tsconfig", "-t", "es2020"]);
 
-    expect(execa).toHaveBeenCalledWith("yarn", ["init", "-n", "ts-template"]);
+    expect(execa).toHaveBeenCalledWith("yarn", [
+      "init",
+      "-n",
+      "@my-scope/my-pkg",
+    ]);
 
     expect(vol.toJSON()).toMatchSnapshot();
   });

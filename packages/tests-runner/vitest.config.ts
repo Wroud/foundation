@@ -6,6 +6,9 @@ export default defineConfig({
   build: {
     target: "esnext",
   },
+  css: {
+    postcss: {},
+  },
   esbuild: false,
   test: {
     // isolate: false,

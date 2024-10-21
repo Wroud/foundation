@@ -2,7 +2,7 @@
 
 exports[`cli project > cli project @my-scope/my-project --ts @other-scope/my-tsconfig 1`] = `
 {
-  "/Users/wroud/Documents/side-projects/foundation/packages/ts-template/tsconfig.json": "{
+  "/project/packages/@my-scope/my-pkg/tsconfig.json": "{
   "extends": "@other-scope/my-tsconfig/tsconfig.json",
   "compilerOptions": {
     "tsBuildInfoFile": "./lib/.tsbuildinfo",
@@ -24,7 +24,7 @@ exports[`cli project > cli project @my-scope/my-project --ts @other-scope/my-tsc
 
 exports[`cli project > cli project @my-scope/my-project --ts my-tsconfig 1`] = `
 {
-  "/Users/wroud/Documents/side-projects/foundation/packages/ts-template/tsconfig.json": "{
+  "/project/packages/@my-scope/my-pkg/tsconfig.json": "{
   "extends": "@my-scope/my-tsconfig/tsconfig.json",
   "compilerOptions": {
     "tsBuildInfoFile": "./lib/.tsbuildinfo",
@@ -46,7 +46,7 @@ exports[`cli project > cli project @my-scope/my-project --ts my-tsconfig 1`] = `
 
 exports[`cli project > cli project @my-scope/my-project 1`] = `
 {
-  "/Users/wroud/Documents/side-projects/foundation/packages/ts-template/tsconfig.json": "{
+  "/project/packages/@my-scope/my-pkg/tsconfig.json": "{
   "extends": "@my-scope/tsconfig/tsconfig.json",
   "compilerOptions": {
     "tsBuildInfoFile": "./lib/.tsbuildinfo",
@@ -68,8 +68,8 @@ exports[`cli project > cli project @my-scope/my-project 1`] = `
 
 exports[`cli project > cli project -t es2020 1`] = `
 {
-  "/Users/wroud/Documents/side-projects/foundation/packages/ts-template/tsconfig.json": "{
-  "extends": "tsconfig/tsconfig.json",
+  "/project/packages/@my-scope/my-pkg/tsconfig.json": "{
+  "extends": "@my-scope/tsconfig/tsconfig.json",
   "compilerOptions": {
     "tsBuildInfoFile": "./lib/.tsbuildinfo",
     "rootDir": "src",
@@ -91,8 +91,8 @@ exports[`cli project > cli project -t es2020 1`] = `
 
 exports[`cli project > cli project 1`] = `
 {
-  "/Users/wroud/Documents/side-projects/foundation/packages/ts-template/tsconfig.json": "{
-  "extends": "tsconfig/tsconfig.json",
+  "/project/packages/@my-scope/my-pkg/tsconfig.json": "{
+  "extends": "@my-scope/tsconfig/tsconfig.json",
   "compilerOptions": {
     "tsBuildInfoFile": "./lib/.tsbuildinfo",
     "rootDir": "src",
@@ -113,13 +113,13 @@ exports[`cli project > cli project 1`] = `
 
 exports[`cli project > cli project my-project --ts my-tsconfi -i 1`] = `
 {
-  "/Users/wroud/Documents/side-projects/foundation/packages/ts-template": null,
+  "/project/packages/@my-scope/my-pkg": null,
 }
 `;
 
 exports[`cli project > cli project my-project --ts my-tsconfig 1`] = `
 {
-  "/Users/wroud/Documents/side-projects/foundation/packages/ts-template/tsconfig.json": "{
+  "/project/packages/@my-scope/my-pkg/tsconfig.json": "{
   "extends": "my-tsconfig/tsconfig.json",
   "compilerOptions": {
     "tsBuildInfoFile": "./lib/.tsbuildinfo",
@@ -141,7 +141,7 @@ exports[`cli project > cli project my-project --ts my-tsconfig 1`] = `
 
 exports[`cli project > cli project my-project 1`] = `
 {
-  "/Users/wroud/Documents/side-projects/foundation/packages/ts-template/tsconfig.json": "{
+  "/project/packages/@my-scope/my-pkg/tsconfig.json": "{
   "extends": "tsconfig/tsconfig.json",
   "compilerOptions": {
     "tsBuildInfoFile": "./lib/.tsbuildinfo",

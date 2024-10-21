@@ -42,6 +42,7 @@
   "dependencies": {
     "execa": "^9",
     "picocolors": "^1",
+    "tslib": "^2",
     "yargs": "^17"
   },
   "devDependencies": {

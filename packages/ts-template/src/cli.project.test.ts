@@ -10,6 +10,7 @@ import {
 import { fs, vol } from "memfs";
 import { execa } from "execa";
 import { getTsWithVersion } from "./getTsWithVersion.js";
+import path from "path";
 
 vi.mock("fs", () => fs);
 vi.mock("fs/promises", () => fs.promises);
@@ -22,15 +23,18 @@ let originalArgv: string[];
 let logFn: MockInstance<Console["log"]>;
 let warnFn: MockInstance<Console["warn"]>;
 let errorFn: MockInstance<Console["error"]>;
+let cwdFn: MockInstance<typeof process.cwd>;
+const CWD = path.normalize("/project/packages/@my-scope/my-pkg");
 
 beforeEach(() => {
   originalArgv = process.argv;
   vol.reset();
-  vol.mkdirSync(process.cwd(), { recursive: true });
+  vol.mkdirSync(CWD, { recursive: true });
 
   logFn = vi.spyOn(console, "log").mockImplementation(() => {});
   warnFn = vi.spyOn(console, "warn").mockImplementation(() => {});
   errorFn = vi.spyOn(console, "error").mockImplementation(() => {});
+  cwdFn = vi.spyOn(process, "cwd").mockReturnValue(CWD);
 });
 
 afterEach(() => {
@@ -40,17 +44,22 @@ afterEach(() => {
   logFn.mockRestore();
   warnFn.mockRestore();
   errorFn.mockRestore();
+  cwdFn.mockRestore();
 });
 
 describe("cli project", () => {
   it("cli project", async () => {
     await runCli(["project"]);
 
-    expect(execa).toHaveBeenCalledWith("yarn", ["init", "-n", "ts-template"]);
+    expect(execa).toHaveBeenCalledWith("yarn", [
+      "init",
+      "-n",
+      "@my-scope/my-pkg",
+    ]);
     expect(execa).toHaveBeenCalledWith("yarn", [
       "add",
       "-D",
-      "tsconfig",
+      "@my-scope/tsconfig",
       getTsWithVersion(),
     ]);
 
@@ -59,11 +68,15 @@ describe("cli project", () => {
   it("cli project -t es2020", async () => {
     await runCli(["project", "-t", "es2020"]);
 
-    expect(execa).toHaveBeenCalledWith("yarn", ["init", "-n", "ts-template"]);
+    expect(execa).toHaveBeenCalledWith("yarn", [
+      "init",
+      "-n",
+      "@my-scope/my-pkg",
+    ]);
     expect(execa).toHaveBeenCalledWith("yarn", [
       "add",
       "-D",
-      "tsconfig",
+      "@my-scope/tsconfig",
       getTsWithVersion(),
     ]);
 

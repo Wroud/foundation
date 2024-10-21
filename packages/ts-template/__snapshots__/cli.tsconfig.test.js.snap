@@ -2,7 +2,7 @@
 
 exports[`cli tsconfig > cli tsconfig @my-scope/my-tsconfig 1`] = `
 {
-  "/Users/wroud/Documents/side-projects/foundation/packages/ts-template/tsconfig.json": "{
+  "/project/packages/@my-scope/my-pkg/tsconfig.json": "{
   "$schema": "https://json.schemastore.org/tsconfig",
   "include": [],
   "compilerOptions": {
@@ -41,7 +41,7 @@ exports[`cli tsconfig > cli tsconfig @my-scope/my-tsconfig 1`] = `
 
 exports[`cli tsconfig > cli tsconfig -t es2020 1`] = `
 {
-  "/Users/wroud/Documents/side-projects/foundation/packages/ts-template/tsconfig.json": "{
+  "/project/packages/@my-scope/my-pkg/tsconfig.json": "{
   "$schema": "https://json.schemastore.org/tsconfig",
   "include": [],
   "compilerOptions": {
@@ -80,7 +80,7 @@ exports[`cli tsconfig > cli tsconfig -t es2020 1`] = `
 
 exports[`cli tsconfig > cli tsconfig 1`] = `
 {
-  "/Users/wroud/Documents/side-projects/foundation/packages/ts-template/tsconfig.json": "{
+  "/project/packages/@my-scope/my-pkg/tsconfig.json": "{
   "$schema": "https://json.schemastore.org/tsconfig",
   "include": [],
   "compilerOptions": {
@@ -119,13 +119,13 @@ exports[`cli tsconfig > cli tsconfig 1`] = `
 
 exports[`cli tsconfig > cli tsconfig my-tsconfig -i 1`] = `
 {
-  "/Users/wroud/Documents/side-projects/foundation/packages/ts-template": null,
+  "/project/packages/@my-scope/my-pkg": null,
 }
 `;
 
 exports[`cli tsconfig > cli tsconfig my-tsconfig 1`] = `
 {
-  "/Users/wroud/Documents/side-projects/foundation/packages/ts-template/tsconfig.json": "{
+  "/project/packages/@my-scope/my-pkg/tsconfig.json": "{
   "$schema": "https://json.schemastore.org/tsconfig",
   "include": [],
   "compilerOptions": {

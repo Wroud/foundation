@@ -70,6 +70,7 @@ export async function initTsProject({
       sideEffects: [...sideEffects],
       exports: {
         ".": "./lib/index.js",
+        "./*": "./lib/*.js",
         ...exports,
       },
       scripts: {

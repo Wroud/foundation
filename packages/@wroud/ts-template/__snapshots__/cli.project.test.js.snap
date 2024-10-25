@@ -7,7 +7,8 @@ exports[`cli project > cli project @my-scope/my-project --ts @other-scope/my-tsc
   "type": "module",
   "sideEffects": [],
   "exports": {
-    ".": "./lib/index.js"
+    ".": "./lib/index.js",
+    "./*": "./lib/*.js"
   },
   "scripts": {
     "clear": "rimraf lib"
@@ -55,7 +56,8 @@ exports[`cli project > cli project @my-scope/my-project --ts my-tsconfig 1`] = `
   "type": "module",
   "sideEffects": [],
   "exports": {
-    ".": "./lib/index.js"
+    ".": "./lib/index.js",
+    "./*": "./lib/*.js"
   },
   "scripts": {
     "clear": "rimraf lib"
@@ -103,7 +105,8 @@ exports[`cli project > cli project @my-scope/my-project 1`] = `
   "type": "module",
   "sideEffects": [],
   "exports": {
-    ".": "./lib/index.js"
+    ".": "./lib/index.js",
+    "./*": "./lib/*.js"
   },
   "scripts": {
     "clear": "rimraf lib"
@@ -151,7 +154,8 @@ exports[`cli project > cli project -t es2020 1`] = `
   "type": "module",
   "sideEffects": [],
   "exports": {
-    ".": "./lib/index.js"
+    ".": "./lib/index.js",
+    "./*": "./lib/*.js"
   },
   "scripts": {
     "clear": "rimraf lib"
@@ -200,7 +204,8 @@ exports[`cli project > cli project 1`] = `
   "type": "module",
   "sideEffects": [],
   "exports": {
-    ".": "./lib/index.js"
+    ".": "./lib/index.js",
+    "./*": "./lib/*.js"
   },
   "scripts": {
     "clear": "rimraf lib"
@@ -254,7 +259,8 @@ exports[`cli project > cli project my-project --ts my-tsconfig 1`] = `
   "type": "module",
   "sideEffects": [],
   "exports": {
-    ".": "./lib/index.js"
+    ".": "./lib/index.js",
+    "./*": "./lib/*.js"
   },
   "scripts": {
     "clear": "rimraf lib"
@@ -302,7 +308,8 @@ exports[`cli project > cli project my-project 1`] = `
   "type": "module",
   "sideEffects": [],
   "exports": {
-    ".": "./lib/index.js"
+    ".": "./lib/index.js",
+    "./*": "./lib/*.js"
   },
   "scripts": {
     "clear": "rimraf lib"

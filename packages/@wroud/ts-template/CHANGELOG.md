@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.3.0 -->
+## 0.3.0 (2024-10-25)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/ts-template-v0.2.0...ts-template-v0.3.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- add exports and type fields to the `package.json` ([99c32e7](https://github.com/Wroud/foundation/commit/99c32e7))
+
 <!-- version:0.2.0 -->
 ## 0.2.0 (2024-10-25)
 

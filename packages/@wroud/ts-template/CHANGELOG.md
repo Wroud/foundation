@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.4.0 -->
+## 0.4.0 (2024-10-25)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/ts-template-v0.3.0...ts-template-v0.4.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- export independent modules ([e7d8bdc](https://github.com/Wroud/foundation/commit/e7d8bdc))
+
 <!-- version:0.3.0 -->
 ## 0.3.0 (2024-10-25)
 

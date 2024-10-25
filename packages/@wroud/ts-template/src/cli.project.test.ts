@@ -61,6 +61,7 @@ describe("cli project", () => {
       "-D",
       "@my-scope/tsconfig",
       getTsWithVersion(),
+      "rimraf@^6",
     ]);
 
     expect(vol.toJSON()).toMatchSnapshot();
@@ -78,6 +79,7 @@ describe("cli project", () => {
       "-D",
       "@my-scope/tsconfig",
       getTsWithVersion(),
+      "rimraf@^6",
     ]);
 
     expect(vol.toJSON()).toMatchSnapshot();
@@ -92,6 +94,7 @@ describe("cli project", () => {
       "-D",
       "tsconfig",
       getTsWithVersion(),
+      "rimraf@^6",
     ]);
 
     expect(vol.toJSON()).toMatchSnapshot();
@@ -106,6 +109,7 @@ describe("cli project", () => {
       "-D",
       "@my-scope/tsconfig",
       getTsWithVersion(),
+      "rimraf@^6",
     ]);
 
     expect(vol.toJSON()).toMatchSnapshot();
@@ -121,6 +125,7 @@ describe("cli project", () => {
       "-D",
       tsConfigName,
       getTsWithVersion(),
+      "rimraf@^6",
     ]);
 
     expect(vol.toJSON()).toMatchSnapshot();
@@ -136,6 +141,7 @@ describe("cli project", () => {
       "-D",
       tsConfigName,
       getTsWithVersion(),
+      "rimraf@^6",
     ]);
 
     expect(vol.toJSON()).toMatchSnapshot();
@@ -151,6 +157,7 @@ describe("cli project", () => {
       "-D",
       tsConfigName,
       getTsWithVersion(),
+      "rimraf@^6",
     ]);
 
     expect(vol.toJSON()).toMatchSnapshot();
@@ -167,6 +174,7 @@ describe("cli project", () => {
       "yarn add -D",
       tsConfigName,
       getTsWithVersion(),
+      "rimraf@^6",
     );
 
     expect(execa).not.toHaveBeenCalledWith("yarn", ["init", "-n", projectName]);
@@ -175,6 +183,7 @@ describe("cli project", () => {
       "-D",
       tsConfigName,
       getTsWithVersion(),
+      "rimraf@^6",
     ]);
 
     expect(vol.toJSON()).toMatchSnapshot();
@@ -191,5 +200,21 @@ describe("cli project", () => {
 
 async function runCli(args: string[]) {
   process.argv = ["node", "ts-template", ...args];
+  mockYarnInit();
   await import("./cli.js");
+}
+
+function mockYarnInit() {
+  if (vi.isMockFunction(execa)) {
+    execa.mockImplementationOnce(async (command, [cmd, n, pkgname]) => {
+      if (command === "yarn" && cmd === "init") {
+        await fs.promises.writeFile(
+          path.join(CWD, "package.json"),
+          JSON.stringify({
+            name: pkgname,
+          }),
+        );
+      }
+    });
+  }
 }

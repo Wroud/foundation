@@ -2,6 +2,31 @@
 
 exports[`cli project > cli project @my-scope/my-project --ts @other-scope/my-tsconfig 1`] = `
 {
+  "/project/packages/@my-scope/my-pkg/package.json": "{
+  "name": "@my-scope/my-project",
+  "type": "module",
+  "sideEffects": [],
+  "exports": {
+    ".": "./lib/index.js"
+  },
+  "scripts": {
+    "clear": "rimraf lib"
+  },
+  "files": [
+    "package.json",
+    "LICENSE",
+    "README.md",
+    "CHANGELOG.md",
+    "lib",
+    "!lib/**/*.d.ts.map",
+    "!lib/**/*.test.js",
+    "!lib/**/*.test.d.ts",
+    "!lib/**/*.test.d.ts.map",
+    "!lib/**/*.test.js.map",
+    "!lib/tests",
+    "!.tsbuildinfo"
+  ]
+}",
   "/project/packages/@my-scope/my-pkg/src": null,
   "/project/packages/@my-scope/my-pkg/tsconfig.json": "{
   "extends": "@other-scope/my-tsconfig/tsconfig.json",
@@ -25,6 +50,31 @@ exports[`cli project > cli project @my-scope/my-project --ts @other-scope/my-tsc
 
 exports[`cli project > cli project @my-scope/my-project --ts my-tsconfig 1`] = `
 {
+  "/project/packages/@my-scope/my-pkg/package.json": "{
+  "name": "@my-scope/my-project",
+  "type": "module",
+  "sideEffects": [],
+  "exports": {
+    ".": "./lib/index.js"
+  },
+  "scripts": {
+    "clear": "rimraf lib"
+  },
+  "files": [
+    "package.json",
+    "LICENSE",
+    "README.md",
+    "CHANGELOG.md",
+    "lib",
+    "!lib/**/*.d.ts.map",
+    "!lib/**/*.test.js",
+    "!lib/**/*.test.d.ts",
+    "!lib/**/*.test.d.ts.map",
+    "!lib/**/*.test.js.map",
+    "!lib/tests",
+    "!.tsbuildinfo"
+  ]
+}",
   "/project/packages/@my-scope/my-pkg/src": null,
   "/project/packages/@my-scope/my-pkg/tsconfig.json": "{
   "extends": "@my-scope/my-tsconfig/tsconfig.json",
@@ -48,6 +98,31 @@ exports[`cli project > cli project @my-scope/my-project --ts my-tsconfig 1`] = `
 
 exports[`cli project > cli project @my-scope/my-project 1`] = `
 {
+  "/project/packages/@my-scope/my-pkg/package.json": "{
+  "name": "@my-scope/my-project",
+  "type": "module",
+  "sideEffects": [],
+  "exports": {
+    ".": "./lib/index.js"
+  },
+  "scripts": {
+    "clear": "rimraf lib"
+  },
+  "files": [
+    "package.json",
+    "LICENSE",
+    "README.md",
+    "CHANGELOG.md",
+    "lib",
+    "!lib/**/*.d.ts.map",
+    "!lib/**/*.test.js",
+    "!lib/**/*.test.d.ts",
+    "!lib/**/*.test.d.ts.map",
+    "!lib/**/*.test.js.map",
+    "!lib/tests",
+    "!.tsbuildinfo"
+  ]
+}",
   "/project/packages/@my-scope/my-pkg/src": null,
   "/project/packages/@my-scope/my-pkg/tsconfig.json": "{
   "extends": "@my-scope/tsconfig/tsconfig.json",
@@ -71,6 +146,31 @@ exports[`cli project > cli project @my-scope/my-project 1`] = `
 
 exports[`cli project > cli project -t es2020 1`] = `
 {
+  "/project/packages/@my-scope/my-pkg/package.json": "{
+  "name": "@my-scope/my-pkg",
+  "type": "module",
+  "sideEffects": [],
+  "exports": {
+    ".": "./lib/index.js"
+  },
+  "scripts": {
+    "clear": "rimraf lib"
+  },
+  "files": [
+    "package.json",
+    "LICENSE",
+    "README.md",
+    "CHANGELOG.md",
+    "lib",
+    "!lib/**/*.d.ts.map",
+    "!lib/**/*.test.js",
+    "!lib/**/*.test.d.ts",
+    "!lib/**/*.test.d.ts.map",
+    "!lib/**/*.test.js.map",
+    "!lib/tests",
+    "!.tsbuildinfo"
+  ]
+}",
   "/project/packages/@my-scope/my-pkg/src": null,
   "/project/packages/@my-scope/my-pkg/tsconfig.json": "{
   "extends": "@my-scope/tsconfig/tsconfig.json",
@@ -95,6 +195,31 @@ exports[`cli project > cli project -t es2020 1`] = `
 
 exports[`cli project > cli project 1`] = `
 {
+  "/project/packages/@my-scope/my-pkg/package.json": "{
+  "name": "@my-scope/my-pkg",
+  "type": "module",
+  "sideEffects": [],
+  "exports": {
+    ".": "./lib/index.js"
+  },
+  "scripts": {
+    "clear": "rimraf lib"
+  },
+  "files": [
+    "package.json",
+    "LICENSE",
+    "README.md",
+    "CHANGELOG.md",
+    "lib",
+    "!lib/**/*.d.ts.map",
+    "!lib/**/*.test.js",
+    "!lib/**/*.test.d.ts",
+    "!lib/**/*.test.d.ts.map",
+    "!lib/**/*.test.js.map",
+    "!lib/tests",
+    "!.tsbuildinfo"
+  ]
+}",
   "/project/packages/@my-scope/my-pkg/src": null,
   "/project/packages/@my-scope/my-pkg/tsconfig.json": "{
   "extends": "@my-scope/tsconfig/tsconfig.json",
@@ -124,6 +249,31 @@ exports[`cli project > cli project my-project --ts my-tsconfi -i 1`] = `
 
 exports[`cli project > cli project my-project --ts my-tsconfig 1`] = `
 {
+  "/project/packages/@my-scope/my-pkg/package.json": "{
+  "name": "my-project",
+  "type": "module",
+  "sideEffects": [],
+  "exports": {
+    ".": "./lib/index.js"
+  },
+  "scripts": {
+    "clear": "rimraf lib"
+  },
+  "files": [
+    "package.json",
+    "LICENSE",
+    "README.md",
+    "CHANGELOG.md",
+    "lib",
+    "!lib/**/*.d.ts.map",
+    "!lib/**/*.test.js",
+    "!lib/**/*.test.d.ts",
+    "!lib/**/*.test.d.ts.map",
+    "!lib/**/*.test.js.map",
+    "!lib/tests",
+    "!.tsbuildinfo"
+  ]
+}",
   "/project/packages/@my-scope/my-pkg/src": null,
   "/project/packages/@my-scope/my-pkg/tsconfig.json": "{
   "extends": "my-tsconfig/tsconfig.json",
@@ -147,6 +297,31 @@ exports[`cli project > cli project my-project --ts my-tsconfig 1`] = `
 
 exports[`cli project > cli project my-project 1`] = `
 {
+  "/project/packages/@my-scope/my-pkg/package.json": "{
+  "name": "my-project",
+  "type": "module",
+  "sideEffects": [],
+  "exports": {
+    ".": "./lib/index.js"
+  },
+  "scripts": {
+    "clear": "rimraf lib"
+  },
+  "files": [
+    "package.json",
+    "LICENSE",
+    "README.md",
+    "CHANGELOG.md",
+    "lib",
+    "!lib/**/*.d.ts.map",
+    "!lib/**/*.test.js",
+    "!lib/**/*.test.d.ts",
+    "!lib/**/*.test.d.ts.map",
+    "!lib/**/*.test.js.map",
+    "!lib/tests",
+    "!.tsbuildinfo"
+  ]
+}",
   "/project/packages/@my-scope/my-pkg/src": null,
   "/project/packages/@my-scope/my-pkg/tsconfig.json": "{
   "extends": "tsconfig/tsconfig.json",

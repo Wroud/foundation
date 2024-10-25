@@ -2,6 +2,7 @@
 
 exports[`cli project > cli project @my-scope/my-project --ts @other-scope/my-tsconfig 1`] = `
 {
+  "/project/packages/@my-scope/my-pkg/src": null,
   "/project/packages/@my-scope/my-pkg/tsconfig.json": "{
   "extends": "@other-scope/my-tsconfig/tsconfig.json",
   "compilerOptions": {
@@ -24,6 +25,7 @@ exports[`cli project > cli project @my-scope/my-project --ts @other-scope/my-tsc
 
 exports[`cli project > cli project @my-scope/my-project --ts my-tsconfig 1`] = `
 {
+  "/project/packages/@my-scope/my-pkg/src": null,
   "/project/packages/@my-scope/my-pkg/tsconfig.json": "{
   "extends": "@my-scope/my-tsconfig/tsconfig.json",
   "compilerOptions": {
@@ -46,6 +48,7 @@ exports[`cli project > cli project @my-scope/my-project --ts my-tsconfig 1`] = `
 
 exports[`cli project > cli project @my-scope/my-project 1`] = `
 {
+  "/project/packages/@my-scope/my-pkg/src": null,
   "/project/packages/@my-scope/my-pkg/tsconfig.json": "{
   "extends": "@my-scope/tsconfig/tsconfig.json",
   "compilerOptions": {
@@ -68,6 +71,7 @@ exports[`cli project > cli project @my-scope/my-project 1`] = `
 
 exports[`cli project > cli project -t es2020 1`] = `
 {
+  "/project/packages/@my-scope/my-pkg/src": null,
   "/project/packages/@my-scope/my-pkg/tsconfig.json": "{
   "extends": "@my-scope/tsconfig/tsconfig.json",
   "compilerOptions": {
@@ -91,6 +95,7 @@ exports[`cli project > cli project -t es2020 1`] = `
 
 exports[`cli project > cli project 1`] = `
 {
+  "/project/packages/@my-scope/my-pkg/src": null,
   "/project/packages/@my-scope/my-pkg/tsconfig.json": "{
   "extends": "@my-scope/tsconfig/tsconfig.json",
   "compilerOptions": {
@@ -119,6 +124,7 @@ exports[`cli project > cli project my-project --ts my-tsconfi -i 1`] = `
 
 exports[`cli project > cli project my-project --ts my-tsconfig 1`] = `
 {
+  "/project/packages/@my-scope/my-pkg/src": null,
   "/project/packages/@my-scope/my-pkg/tsconfig.json": "{
   "extends": "my-tsconfig/tsconfig.json",
   "compilerOptions": {
@@ -141,6 +147,7 @@ exports[`cli project > cli project my-project --ts my-tsconfig 1`] = `
 
 exports[`cli project > cli project my-project 1`] = `
 {
+  "/project/packages/@my-scope/my-pkg/src": null,
   "/project/packages/@my-scope/my-pkg/tsconfig.json": "{
   "extends": "tsconfig/tsconfig.json",
   "compilerOptions": {

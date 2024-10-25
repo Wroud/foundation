@@ -1,6 +1,6 @@
 import { execa } from "execa";
 import { join } from "path";
-import { writeFile } from "fs/promises";
+import { writeFile, mkdir } from "fs/promises";
 import { getTsConfigTemplate } from "./getTsConfigTemplate.js";
 import picocolors from "picocolors";
 import type { IParsedPackageName } from "../../pasrsePackageName.js";
@@ -30,6 +30,7 @@ export async function initTsProject({
       tsconfig.packageName,
       getTsWithVersion(),
     );
+    console.log('make dir "src"');
   } else {
     await execa("yarn", ["init", "-n", packageName.packageName]);
     await execa("yarn", [
@@ -38,6 +39,7 @@ export async function initTsProject({
       tsconfig.packageName,
       getTsWithVersion(),
     ]);
+    await mkdir("src");
     console.log(
       "project initialized:",
       picocolors.green(packageName.packageName),

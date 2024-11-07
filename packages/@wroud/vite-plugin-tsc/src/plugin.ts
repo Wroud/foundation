@@ -153,14 +153,7 @@ export function tscPlugin(
         execaOptions,
       );
 
-      tsProcess.catch((error) => {
-        if (!error.isGracefullyCanceled) {
-          logger.error("watch process failed.", {
-            timestamp: true,
-            error,
-          });
-        }
-      });
+      tsProcess.catch((error) => {});
     }
   }
 

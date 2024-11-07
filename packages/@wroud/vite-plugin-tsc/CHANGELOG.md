@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.11.2 -->
+## 0.11.2 (2024-11-07)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-tsc-v0.11.2...vite-plugin-tsc-v0.11.2)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- remove kill process logging ([be4e75c](https://github.com/Wroud/foundation/commit/be4e75c))
+
 <!-- version:0.11.1 -->
 ## 0.11.1 (2024-11-07)
 

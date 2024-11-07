@@ -1,7 +1,7 @@
 {
   "name": "@wroud/vite-plugin-tsc",
   "description": "A Vite plugin that uses TypeScript's tsc to transpile TypeScript sources for seamless bundling.",
-  "version": "0.11.1",
+  "version": "0.11.2",
   "type": "module",
   "packageManager": "yarn@4.5.0",
   "license": "MIT",

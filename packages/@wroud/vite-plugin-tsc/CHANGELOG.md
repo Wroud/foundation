@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.11.1 -->
+## 0.11.1 (2024-11-07)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-tsc-v0.11.0...vite-plugin-tsc-v0.11.1)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- watch mode process termination ([b4617df](https://github.com/Wroud/foundation/commit/b4617df))
+
 <!-- version:0.11.0 -->
 ## 0.11.0 (2024-10-05)
 

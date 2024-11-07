@@ -154,9 +154,6 @@ export function tscPlugin(
       );
 
       tsProcess.catch((error) => {
-        logger.error("kill.", {
-          timestamp: true,
-        });
         if (!error.isGracefullyCanceled) {
           logger.error("watch process failed.", {
             timestamp: true,

@@ -26,10 +26,10 @@ export function tscPlugin(
   },
 ): PluginOption {
   let server: ViteDevServer | null = null;
-  const controller = new AbortController();
-  const cancelSignal = controller.signal;
   const logger = createLogger("info", { prefix: "[tsc]" });
   let tsProcess: ResultPromise<Options> | null = null;
+  let isPrebuilt = false;
+  let isWatchMode = false;
 
   const LOG_LEVELS: Record<
     string,
@@ -48,8 +48,6 @@ export function tscPlugin(
 
   const execaOptions: Options = {
     lines: true,
-    gracefulCancel: true,
-    cancelSignal,
     verbose(verboseLine, { message, type, result }) {
       try {
         if (
@@ -110,8 +108,66 @@ export function tscPlugin(
       }
     },
   };
+  async function run() {
+    if (!packageManager) {
+      logger.warn("packageManager is not detected. Skipping...", {
+        timestamp: true,
+      });
+      return;
+    }
+    if ((prebuild || !isWatchMode) && !isPrebuilt) {
+      const timestamp = Date.now();
+      try {
+        logger.info(isWatchMode ? "prebuild..." : "building...", {
+          timestamp: true,
+        });
+        await execa(packageManager, ["tsc", ...tscArgs], execaOptions);
+        isPrebuilt = true;
+      } catch (e) {
+        if (!isWatchMode) {
+          throw e;
+        }
+      } finally {
+        logger.info(
+          isWatchMode
+            ? `prebuild completed in ${Date.now() - timestamp}ms.`
+            : `build completed in ${Date.now() - timestamp}ms.`,
+          {
+            timestamp: true,
+          },
+        );
+      }
+    }
 
-  return {
+    if (isWatchMode) {
+      if (tsProcess) {
+        logger.warn("watch process already running. Skipping...", {
+          timestamp: true,
+        });
+        return;
+      }
+
+      tsProcess = execa(
+        packageManager,
+        ["tsc", ...tscArgs, "--watch", "--preserveWatchOutput"],
+        execaOptions,
+      );
+
+      tsProcess.catch((error) => {
+        logger.error("kill.", {
+          timestamp: true,
+        });
+        if (!error.isGracefullyCanceled) {
+          logger.error("watch process failed.", {
+            timestamp: true,
+            error,
+          });
+        }
+      });
+    }
+  }
+
+  const plugin: PluginOption = {
     name: pluginName,
 
     // Hook to check if watch mode is enabled
@@ -120,57 +176,11 @@ export function tscPlugin(
         packageManager = await detect();
       }
 
-      const isWatchMode = config.command === "serve" || !!config.build.watch;
+      isWatchMode = config.command === "serve" || !!config.build.watch;
+    },
 
-      if (prebuild || !isWatchMode) {
-        const timestamp = Date.now();
-        try {
-          logger.info(isWatchMode ? "prebuild..." : "building...", {
-            timestamp: true,
-          });
-          await execa(packageManager, ["tsc", ...tscArgs], execaOptions);
-        } catch (e) {
-          if (!isWatchMode) {
-            throw e;
-          }
-        } finally {
-          logger.info(
-            isWatchMode
-              ? `prebuild completed in ${Date.now() - timestamp}ms.`
-              : `build completed in ${Date.now() - timestamp}ms.`,
-            {
-              timestamp: true,
-            },
-          );
-        }
-      }
-
-      if (isWatchMode) {
-        if (tsProcess) {
-          logger.warn("watch process already running. Skipping...", {
-            timestamp: true,
-          });
-          return;
-        }
-
-        tsProcess = execa(
-          packageManager,
-          ["tsc", ...tscArgs, "--watch", "--preserveWatchOutput"],
-          execaOptions,
-        );
-
-        tsProcess.catch((error) => {
-          logger.error("kill.", {
-            timestamp: true,
-          });
-          if (!error.isGracefullyCanceled) {
-            logger.error("watch process failed.", {
-              timestamp: true,
-              error,
-            });
-          }
-        });
-      }
+    async buildStart() {
+      await run();
     },
 
     configureServer(devServer) {
@@ -179,12 +189,19 @@ export function tscPlugin(
 
     async closeBundle() {
       if (tsProcess) {
-        controller.abort();
+        tsProcess.kill();
         await tsProcess.catch(() => {});
         tsProcess = null;
       }
     },
   };
+
+  // TODO: replace it with direct declaration in vite 6
+  Object.assign(plugin, {
+    sharedDuringBuild: true,
+  });
+
+  return plugin;
 }
 
 function filterTscMessages(message: string) {

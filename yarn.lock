@@ -3942,6 +3942,7 @@ __metadata:
     "@wroud/ts-template": "workspace:^"
     "@wroud/tsconfig": "workspace:*"
     "@wroud/vite-plugin-asset-resolver": "workspace:^"
+    "@wroud/vite-plugin-ssg": "workspace:^"
     "@wroud/vite-plugin-tsc": "workspace:^"
     concurrently: "npm:^8"
     graphql-codegen-fragment-masking: "workspace:^"
@@ -4281,7 +4282,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wroud/vite-plugin-ssg@workspace:packages/@wroud/vite-plugin-ssg":
+"@wroud/vite-plugin-ssg@workspace:^, @wroud/vite-plugin-ssg@workspace:packages/@wroud/vite-plugin-ssg":
   version: 0.0.0-use.local
   resolution: "@wroud/vite-plugin-ssg@workspace:packages/@wroud/vite-plugin-ssg"
   dependencies:

@@ -34,6 +34,7 @@
     "@wroud/ts-template": "workspace:^",
     "@wroud/tsconfig": "workspace:*",
     "@wroud/vite-plugin-asset-resolver": "workspace:^",
+    "@wroud/vite-plugin-ssg": "workspace:^",
     "@wroud/vite-plugin-tsc": "workspace:^",
     "concurrently": "^8",
     "graphql-codegen-fragment-masking": "workspace:^",

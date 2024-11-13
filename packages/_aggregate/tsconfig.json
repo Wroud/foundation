@@ -54,6 +54,9 @@
       "path": "../@wroud/vite-plugin-asset-resolver"
     },
     {
+      "path": "../@wroud/vite-plugin-ssg"
+    },
+    {
       "path": "../@wroud/vite-plugin-tsc"
     },
     {

@@ -24,6 +24,7 @@
     "LICENSE",
     "README.md",
     "CHANGELOG.md",
+    "resolvers.d.ts",
     "lib",
     "!lib/**/*.d.ts.map",
     "!lib/**/*.test.js",

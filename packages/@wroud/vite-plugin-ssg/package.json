@@ -8,6 +8,7 @@
     ".": "./lib/ssgPlugin.js",
     "./*": "./lib/*.js",
     "./resolvers": {
+      "default": "./resolvers.js",
       "types": "./resolvers.d.ts"
     }
   },

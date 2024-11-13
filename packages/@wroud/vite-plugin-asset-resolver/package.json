@@ -1,7 +1,7 @@
 {
   "name": "@wroud/vite-plugin-asset-resolver",
   "description": "A Vite plugin for custom asset resolution, mapping 'dist' to 'src' directories and resolving files like SVG, images, and other resources. Supports multiple directory aliases and file extensions for flexible module resolution.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "packageManager": "yarn@4.5.0",
   "license": "MIT",

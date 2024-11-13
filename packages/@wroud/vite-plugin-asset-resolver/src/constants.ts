@@ -1,6 +1,12 @@
 // copy from https://github.com/vitejs/vite/blob/main/packages/vite/src/node/constants.ts
 
 export const KNOWN_ASSET_TYPES = [
+  // resources
+  "css",
+  "scss",
+  "sass",
+  "less",
+
   // images
   "apng",
   "bmp",

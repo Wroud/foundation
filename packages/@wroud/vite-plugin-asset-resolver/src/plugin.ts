@@ -1,5 +1,4 @@
 import path from "path";
-import fs from "fs";
 import { DEFAULT_DIST, DEFAULT_SRC, KNOWN_ASSET_TYPES } from "./constants.js";
 import type { PluginOption } from "vite";
 
@@ -33,22 +32,21 @@ export function assetResolverPlugin(
   return [
     {
       name: "asset-resolver-plugin",
-      async resolveId(source, importer) {
-        if (regex.test(source)) {
-          if (!source || !importer) {
-            throw new Error("Source or importer is undefined in resolveId");
+      enforce: "pre",
+      resolveId: {
+        order: "pre",
+        async handler(source, importer, options) {
+          if (!importer || !regex.test(source)) {
+            return;
           }
 
           // Attempt default resolution
-          const resolved = await this.resolve(source, importer, {
-            skipSelf: true,
-          });
+          const resolved = await this.resolve(source, importer, options);
           if (resolved) {
             return resolved;
           }
 
-          const importerDir = path.dirname(importer);
-          const pathParts = importerDir.split(path.sep);
+          const pathParts = importer.split(path.sep);
 
           let distIndex = -1;
           for (let i = pathParts.length - 1; i >= 0; i--) {
@@ -62,23 +60,26 @@ export function assetResolverPlugin(
             for (const srcAlias of src) {
               pathParts[distIndex] = srcAlias;
 
-              let adjustedImporterDir = path.join(...pathParts);
+              let adjustedImporter = path.join(...pathParts);
 
-              if (importerDir.startsWith("/")) {
-                adjustedImporterDir = "/" + adjustedImporterDir;
+              if (importer.startsWith("/")) {
+                adjustedImporter = "/" + adjustedImporter;
               }
 
-              const srcPath = path.resolve(adjustedImporterDir, source);
+              const resolvedId = await this.resolve(
+                source,
+                adjustedImporter,
+                options,
+              );
 
-              if (fs.existsSync(srcPath)) {
-                return srcPath;
+              if (resolvedId) {
+                return resolvedId;
               }
             }
           }
 
           throw new Error(`Failed to resolve ${source} from ${importer}`);
-        }
-        return null;
+        },
       },
     },
   ];

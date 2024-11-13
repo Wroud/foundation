@@ -1,0 +1,75 @@
+{
+  "name": "@wroud/vite-plugin-ssg",
+  "description": "A Vite plugin for static site generation (SSG) with React. Renders React applications to static HTML for faster load times and improved SEO.",
+  "version": "0.0.0",
+  "type": "module",
+  "sideEffects": [],
+  "exports": {
+    ".": "./lib/ssgPlugin.js",
+    "./*": "./lib/*.js",
+    "./resolvers": {
+      "types": "./resolvers.d.ts"
+    }
+  },
+  "scripts": {
+    "ci:release": "yarn ci release --prefix vite-plugin-ssg-v",
+    "ci:git-tag": "yarn ci git-tag --prefix vite-plugin-ssg-v",
+    "ci:release-github": "yarn ci release-github --prefix vite-plugin-ssg-v",
+    "build": "tsc -b",
+    "watch:tsc": "tsc -b -w",
+    "clear": "rimraf lib"
+  },
+  "files": [
+    "package.json",
+    "LICENSE",
+    "README.md",
+    "CHANGELOG.md",
+    "lib",
+    "!lib/**/*.d.ts.map",
+    "!lib/**/*.test.js",
+    "!lib/**/*.test.d.ts",
+    "!lib/**/*.test.d.ts.map",
+    "!lib/**/*.test.js.map",
+    "!lib/tests",
+    "!.tsbuildinfo"
+  ],
+  "packageManager": "yarn@4.5.0",
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "npm:types-react@rc",
+    "@types/react-dom": "npm:types-react-dom@rc",
+    "@wroud/tsconfig": "workspace:^",
+    "rimraf": "^6",
+    "rollup": "^4",
+    "typescript": "^5",
+    "vite": ">=6.0.0-beta"
+  },
+  "dependencies": {
+    "change-case": "^5",
+    "magic-string": "^0",
+    "react": ">=19.0.0-rc",
+    "react-dom": ">=19.0.0-rc",
+    "style-to-object": "^1"
+  },
+  "peerDependencies": {
+    "@types/react": "*",
+    "@types/react-dom": "*",
+    "vite": ">=6.0.0-beta"
+  },
+  "overrides": {
+    "@types/react": "npm:types-react@rc",
+    "@types/react-dom": "npm:types-react-dom@rc"
+  },
+  "keywords": [
+    "vite",
+    "vite-plugin",
+    "static-site-generation",
+    "ssg",
+    "react",
+    "static-rendering",
+    "html-generation",
+    "vite-ssg",
+    "pre-rendering",
+    "SEO"
+  ]
+}

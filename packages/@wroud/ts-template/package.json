@@ -13,7 +13,10 @@
   },
   "type": "module",
   "sideEffects": [],
-  "bin": "./lib/cli.js",
+  "bin": {
+    "ts-template": "./lib/cli.js",
+    "tst": "./lib/cli.js"
+  },
   "files": [
     "package.json",
     "LICENSE",

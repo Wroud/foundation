@@ -4253,6 +4253,7 @@ __metadata:
     yargs: "npm:^17"
   bin:
     ts-template: ./lib/cli.js
+    tst: ./lib/cli.js
   languageName: unknown
   linkType: soft
 

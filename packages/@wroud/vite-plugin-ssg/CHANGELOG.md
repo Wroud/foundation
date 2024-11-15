@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.2.1 -->
+## 0.2.1 (2024-11-15)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-ssg-v0.2.0...vite-plugin-ssg-v0.2.1)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- publish resolvers js file ([1d2a306](https://github.com/Wroud/foundation/commit/1d2a306))
+
 <!-- version:0.2.0 -->
 ## 0.2.0 (2024-11-13)
 

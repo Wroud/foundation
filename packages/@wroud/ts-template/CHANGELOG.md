@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.5.0 -->
+## 0.5.0 (2024-11-15)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/ts-template-v0.4.0...ts-template-v0.5.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- add command shortcut ([5b61ce9](https://github.com/Wroud/foundation/commit/5b61ce9))
+
 <!-- version:0.4.0 -->
 ## 0.4.0 (2024-10-25)
 

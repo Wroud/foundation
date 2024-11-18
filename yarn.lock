@@ -1168,6 +1168,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@dagrejs/dagre@npm:^1":
+  version: 1.1.4
+  resolution: "@dagrejs/dagre@npm:1.1.4"
+  dependencies:
+    "@dagrejs/graphlib": "npm:2.2.4"
+  checksum: 10c0/1717ecb1667a70199881871a69990fc2521b9e002e9cc5088cad55ae6fffe349b0bfd8fcb8a7c30e6d19c29dc6a080138bff2e675336bb5f85d5439e12581bf5
+  languageName: node
+  linkType: hard
+
+"@dagrejs/graphlib@npm:2.2.4":
+  version: 2.2.4
+  resolution: "@dagrejs/graphlib@npm:2.2.4"
+  checksum: 10c0/14597ea9294c46b2571aee78bcaad3a24e3e5e0ebcdf198b6eae5b3805f99af727ac54a477dd9152e8b0a576efea0528fb7d4919c74801e9f669c90e5e6f5bd9
+  languageName: node
+  linkType: hard
+
 "@docsearch/css@npm:3.6.2, @docsearch/css@npm:^3.6.2":
   version: 3.6.2
   resolution: "@docsearch/css@npm:3.6.2"
@@ -4072,6 +4088,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@wroud/di-tools-analyzer@workspace:packages/@wroud/di-tools-analyzer"
   dependencies:
+    "@dagrejs/dagre": "npm:^1"
     "@types/d3": "npm:^7"
     "@types/node": "npm:^20"
     "@types/uuid": "npm:^10"

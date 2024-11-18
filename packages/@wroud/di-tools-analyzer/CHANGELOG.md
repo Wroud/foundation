@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.3.0 -->
+## 0.3.0 (2024-11-18)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/di-tools-analyzer-v0.2.1...di-tools-analyzer-v0.3.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- visualization for optional dependencies and clusters based on modules ([2af044e](https://github.com/Wroud/foundation/commit/2af044e))
+
 <!-- version:0.2.1 -->
 ## 0.2.1
 

@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.13.0 -->
+## 0.13.0 (2024-11-18)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/di-v0.12.0...di-v0.13.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- add `optional` dependencies and introduce plugin API ([e2d5d35](https://github.com/Wroud/foundation/commit/e2d5d35))
+
 <!-- version:0.12.0 -->
 ## 0.12.0 (2024-10-11)
 

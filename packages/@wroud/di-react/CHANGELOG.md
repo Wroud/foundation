@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.3.0 -->
+## 0.3.0 (2024-11-18)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/di-react-v0.2.1...di-react-v0.3.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- support new features from `@wroud/di` ([3261b86](https://github.com/Wroud/foundation/commit/3261b86))
+
 <!-- version:0.2.1 -->
 ## 0.2.1 (2024-10-03)
 

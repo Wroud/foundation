@@ -1,8 +1,10 @@
 import { select, type Selection } from "d3";
 import { Layout } from "./Layout.js";
+import type { IDefs } from "./addDefs.js";
 
 export function createLegend(
   svg: Selection<SVGSVGElement, unknown, null, undefined>,
+  defs: IDefs,
 ) {
   // Legend data
   const legendData = [
@@ -10,11 +12,13 @@ export function createLegend(
     { label: "Scoped", class: "node-scoped" },
     { label: "Singleton", class: "node-singleton" },
     { label: "Not Found", class: "node-not-found" },
+    { label: "Dependency", class: "", type: "link" },
+    { label: "Optional", class: "optional-link", type: "link" },
   ];
 
   // Calculate the dimensions for the legend background
   const legendItemHeight = 20;
-  const legendWidth = 90;
+  const legendWidth = 120;
   const legendHeight = legendData.length * legendItemHeight;
 
   const legend = svg.append("g").attr("style", "transform-origin: 100% 0%;");
@@ -45,12 +49,30 @@ export function createLegend(
     .each(function (d) {
       const g = select(this);
       g.classed(d.class, true);
-      g.append("circle")
-        .attr("r", Layout.node.radius)
-        .classed("node-circle", true);
+
+      if (d.type === "link") {
+        g.append("line")
+          .classed("link", true)
+          .classed(d.class, true)
+          .attr("opacity", Layout.link.opacity)
+          .attr("marker-end", `url(#${defs.defs.arrowHead})`)
+          .style(
+            "stroke-dasharray",
+            d.class === "optional-link" ? Layout.linkOptional.dashArray : "",
+          )
+          .attr("x1", -Layout.node.radius)
+          .attr("y1", 0)
+          .attr("x2", Layout.node.radius * 3)
+          .attr("y2", 0);
+      } else {
+        g.append("circle")
+          .attr("r", Layout.node.radius)
+          .attr("cx", Layout.node.radius)
+          .classed("node-circle", true);
+      }
 
       g.append("text")
-        .attr("x", 10)
+        .attr("x", 20)
         .attr("y", 5)
         .text(d.label)
         .classed("node-text", true)

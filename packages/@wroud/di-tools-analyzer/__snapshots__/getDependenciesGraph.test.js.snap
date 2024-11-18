@@ -39,7 +39,7 @@ exports[`injectable > should make graph for async services implementations 1`] =
   },
   {
     "id": "uuid-0",
-    "lifetime": 0,
+    "lifetime": 2,
     "name": "IServiceProvider",
   },
   {
@@ -75,71 +75,85 @@ exports[`injectable > should make graph for async services implementations 2`] =
 [
   {
     "name": "AppImpl (App) -> Logger",
+    "optional": false,
     "source": "uuid-1",
     "target": "uuid-2",
   },
   {
     "name": "AppImpl (App) -> DatabaseConnectionImpl (DatabaseConnection)",
+    "optional": false,
     "source": "uuid-1",
     "target": "uuid-3",
   },
   {
     "name": "AppImpl (App) -> GQLServerImpl (GQLServer)",
+    "optional": false,
     "source": "uuid-1",
     "target": "uuid-4",
   },
   {
     "name": "GQLServerImpl (GQLServer) -> Logger",
+    "optional": false,
     "source": "uuid-4",
     "target": "uuid-2",
   },
   {
     "name": "GQLServerImpl (GQLServer) -> RequestImpl (Request)",
+    "optional": false,
     "source": "uuid-4",
     "target": "uuid-5",
   },
   {
     "name": "DatabaseImpl (Database) -> DatabaseConnectionImpl (DatabaseConnection)",
+    "optional": false,
     "source": "uuid-6",
     "target": "uuid-3",
   },
   {
     "name": "SessionStoreImpl (SessionStore) -> DatabaseImpl (Database)",
+    "optional": false,
     "source": "uuid-7",
     "target": "uuid-6",
   },
   {
     "name": "DBUsersImpl (DBUsers) -> DatabaseImpl (Database)",
+    "optional": false,
     "source": "uuid-8",
     "target": "uuid-6",
   },
   {
     "name": "DBArticlesImpl (DBArticles) -> DatabaseImpl (Database)",
+    "optional": false,
     "source": "uuid-9",
     "target": "uuid-6",
   },
   {
     "name": "DBCommentsImpl (DBComments) -> DatabaseImpl (Database)",
+    "optional": false,
     "source": "uuid-10",
     "target": "uuid-6",
   },
   {
     "name": "ProfileImpl (Profile) -> RequestImpl (Request)",
+    "optional": false,
     "source": "uuid-11",
     "target": "uuid-5",
   },
   {
     "name": "ProfileImpl (Profile) -> DBUsersImpl (DBUsers)",
+    "optional": false,
     "source": "uuid-11",
     "target": "uuid-8",
   },
   {
     "name": "SessionImpl (Session) -> RequestImpl (Request)",
+    "optional": false,
     "source": "uuid-12",
     "target": "uuid-5",
   },
   {
     "name": "SessionImpl (Session) -> SessionStoreImpl (SessionStore)",
+    "optional": false,
     "source": "uuid-12",
     "target": "uuid-7",
   },
@@ -185,7 +199,7 @@ exports[`injectable > should make graph for sync services implementations 1`] = 
   },
   {
     "id": "uuid-0",
-    "lifetime": 0,
+    "lifetime": 2,
     "name": "IServiceProvider",
   },
   {
@@ -221,71 +235,85 @@ exports[`injectable > should make graph for sync services implementations 2`] = 
 [
   {
     "name": "App -> Logger",
+    "optional": false,
     "source": "uuid-1",
     "target": "uuid-2",
   },
   {
     "name": "App -> DatabaseConnection",
+    "optional": false,
     "source": "uuid-1",
     "target": "uuid-3",
   },
   {
     "name": "App -> GQLServer",
+    "optional": false,
     "source": "uuid-1",
     "target": "uuid-4",
   },
   {
     "name": "GQLServer -> Logger",
+    "optional": false,
     "source": "uuid-4",
     "target": "uuid-2",
   },
   {
     "name": "GQLServer -> Request",
+    "optional": false,
     "source": "uuid-4",
     "target": "uuid-5",
   },
   {
     "name": "Database -> DatabaseConnection",
+    "optional": false,
     "source": "uuid-6",
     "target": "uuid-3",
   },
   {
     "name": "SessionStore -> Database",
+    "optional": false,
     "source": "uuid-7",
     "target": "uuid-6",
   },
   {
     "name": "DBUsers -> Database",
+    "optional": false,
     "source": "uuid-8",
     "target": "uuid-6",
   },
   {
     "name": "DBArticles -> Database",
+    "optional": false,
     "source": "uuid-9",
     "target": "uuid-6",
   },
   {
     "name": "DBComments -> Database",
+    "optional": false,
     "source": "uuid-10",
     "target": "uuid-6",
   },
   {
     "name": "Profile -> Request",
+    "optional": false,
     "source": "uuid-11",
     "target": "uuid-5",
   },
   {
     "name": "Profile -> DBUsers",
+    "optional": false,
     "source": "uuid-11",
     "target": "uuid-8",
   },
   {
     "name": "Session -> Request",
+    "optional": false,
     "source": "uuid-12",
     "target": "uuid-5",
   },
   {
     "name": "Session -> SessionStore",
+    "optional": false,
     "source": "uuid-12",
     "target": "uuid-7",
   },

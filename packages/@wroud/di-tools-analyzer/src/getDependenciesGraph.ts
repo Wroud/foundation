@@ -1,15 +1,18 @@
-import { ServiceRegistry, type IServiceCollection } from "@wroud/di";
+import { type IServiceCollection } from "@wroud/di";
 import { v4 as uuid } from "uuid";
 import type { IGraph, ILink, INode } from "./IGraph.js";
 import { getNameOfServiceType } from "@wroud/di/helpers/getNameOfServiceType.js";
 import type { IServiceDescriptor } from "@wroud/di/types";
-import { loadImplementation } from "./loadImplementation.js";
+import { getDeps } from "./loadImplementation.js";
 import { getNameOfDescriptor } from "@wroud/di/helpers/getNameOfDescriptor.js";
 import { ServiceLifetime } from "@wroud/di/di/ServiceLifetime.js";
 import { getServiceTypeFromDependency } from "@wroud/di/helpers/getServiceTypeFromDependency.js";
+import { isOptionalDependency } from "./isOptionalDependency.js";
+import type { ServiceCollectionProxy } from "./ServiceCollectionProxy.js";
 
 export async function getDependenciesGraph(
   serviceCollection: IServiceCollection,
+  proxy?: ServiceCollectionProxy,
 ): Promise<IGraph> {
   const nodes: Map<any, INode> = new Map();
   const links: ILink[] = [];
@@ -31,7 +34,7 @@ export async function getDependenciesGraph(
   }
 
   async function addDescriptorNode(descriptor: IServiceDescriptor<unknown>) {
-    await loadImplementation(descriptor);
+    await getDeps(descriptor);
 
     const node = nodes.get(descriptor);
     if (!node) {
@@ -41,6 +44,11 @@ export async function getDependenciesGraph(
         name: getNameOfDescriptor(descriptor),
         lifetime: descriptor.lifetime,
       };
+      const module = proxy?.getModules().get(descriptor);
+
+      if (module) {
+        node.module = module;
+      }
       nodes.set(descriptor, node);
       return node;
     }
@@ -48,15 +56,10 @@ export async function getDependenciesGraph(
   }
 
   for (const descriptor of serviceCollection) {
-    const implementation = await loadImplementation(descriptor);
+    const deps = await getDeps(descriptor);
     const source = await addDescriptorNode(descriptor);
 
-    const dependencies = ServiceRegistry.get(implementation);
-    if (!dependencies) {
-      continue;
-    }
-
-    for (const dependency of dependencies.dependencies) {
+    for (const dependency of deps) {
       const service = getServiceTypeFromDependency(dependency);
 
       const descriptors = serviceCollection.getDescriptors(service);
@@ -66,16 +69,21 @@ export async function getDependenciesGraph(
           source: source.id,
           target: target.id,
           name: `${source.name} -> ${target.name}`,
+          optional: isOptionalDependency(dependency),
         });
         continue;
       }
 
       for (const dep of descriptors) {
+        if (dep === descriptor) {
+          continue;
+        }
         const target = await addDescriptorNode(dep);
         links.push({
           source: source.id,
           target: target.id,
           name: `${source.name} -> ${target.name}`,
+          optional: isOptionalDependency(dependency),
         });
       }
     }

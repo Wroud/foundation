@@ -1,24 +1,25 @@
-import { drag, type Selection, type SimulationNodeDatum } from "d3";
+import * as d3 from "d3";
 import type { INode } from "../IGraph.js";
 import { Layout } from "./Layout.js";
 import { ServiceLifetime } from "@wroud/di/di/ServiceLifetime.js";
 
-export type INodeDatum = SimulationNodeDatum & {
+export type INodeDatum = d3.SimulationNodeDatum & {
   data: INode;
 };
 
 export interface INodes {
-  nodes: Selection<SVGGElement, INodeDatum, SVGSVGElement, unknown>;
+  nodes: d3.Selection<SVGGElement, INodeDatum, SVGSVGElement, unknown>;
   updateData(data: INodeDatum[]): void;
   update(): void;
 }
 
 export function createNodes(
-  paper: Selection<SVGGElement, unknown, null, undefined>,
+  paper: d3.Selection<SVGGElement, unknown, null, undefined>,
   events?: {
     onHover?: (node: INodeDatum) => void;
     onBlur?: (node: INodeDatum) => void;
     onDragStart?: (node: INodeDatum) => void;
+    onDrag?: (node: INodeDatum) => void;
     onDragEnd?: (node: INodeDatum) => void;
   },
 ) {
@@ -51,6 +52,7 @@ export function createNodes(
     }
 
     function dragged(event: any, d: any) {
+      events?.onDrag?.(d);
       d.fx = event.x;
       d.fy = event.y;
     }
@@ -63,14 +65,15 @@ export function createNodes(
       d.fy = null;
     }
 
-    return drag<SVGGElement, INodeDatum>()
+    return d3
+      .drag<SVGGElement, INodeDatum>()
       .on("start", dragstarted)
       .on("drag", dragged)
       .on("end", dragended);
   }
 
   function updateNode(
-    node: Selection<SVGGElement, INodeDatum, SVGGElement, unknown>,
+    node: d3.Selection<SVGGElement, INodeDatum, SVGGElement, unknown>,
   ) {
     node
       .classed(
@@ -92,7 +95,51 @@ export function createNodes(
       .selectChild("title")
       .text((d) => d.data.name + (d.data.notFound ? " (not found)" : ""));
 
-    node.selectChild("text").text((d) => d.data.name);
+    node.selectChild("text").each(function (d) {
+      const textElement = d3.select(this);
+      const maxLength = 30;
+      const lineHeight = 1.2;
+
+      const processText = (text: string) => {
+        if (text.includes(" ")) {
+          const words = text.split(" ");
+          const lines = [];
+          let currentLine: string = "";
+
+          for (const word of words) {
+            if (currentLine.length + word.length + 1 <= maxLength) {
+              currentLine += word;
+            } else {
+              if (currentLine.length > 0) {
+                lines.push(currentLine);
+              }
+              currentLine = word;
+            }
+          }
+
+          if (currentLine.length) {
+            lines.push(currentLine);
+          }
+
+          return lines;
+        } else {
+          return text.length > maxLength
+            ? [text.slice(0, maxLength - 3) + "..."]
+            : [text];
+        }
+      };
+
+      const lines = processText(d.data.name);
+
+      textElement.text(null);
+      lines.reverse().forEach((line, i) => {
+        textElement
+          .append("tspan")
+          .text(line)
+          .attr("x", 0)
+          .attr("dy", i === 0 ? -16 : `-${lineHeight}em`);
+      });
+    });
   }
 
   return {
@@ -126,7 +173,8 @@ export function createNodes(
               .attr("dy", "-16")
               .attr("text-anchor", "middle")
               .attr("stroke", "white")
-              .attr("paint-order", "stroke");
+              .attr("paint-order", "stroke")
+              .attr("dominant-baseline", "hanging");
 
             updateNode(node);
             return node;

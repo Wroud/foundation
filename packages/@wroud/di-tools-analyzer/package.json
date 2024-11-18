@@ -46,6 +46,7 @@
     "clear": "rimraf ./lib"
   },
   "dependencies": {
+    "@dagrejs/dagre": "^1",
     "@wroud/di": "workspace:^0",
     "d3": "^7",
     "uuid": "^10"

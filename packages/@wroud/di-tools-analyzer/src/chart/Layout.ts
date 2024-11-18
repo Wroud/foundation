@@ -6,4 +6,7 @@ export const Layout = {
     opacity: 0.3,
     hoverOpacity: 1,
   },
+  linkOptional: {
+    dashArray: "4 2",
+  },
 };

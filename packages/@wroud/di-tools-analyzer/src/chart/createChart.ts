@@ -1,15 +1,15 @@
 /// <reference lib="DOM" />
 import type { IGraph } from "../IGraph.js";
 import type { IChart } from "../IChart.js";
-import { forceLink } from "d3";
 import { createSvg } from "./createSvg.js";
 import { addDefs } from "./addDefs.js";
-import { createForceSimulation } from "./createForceSimulation.js";
 import { createLegend } from "./createLegend.js";
 import { createLinks, type ILinkDatum } from "./createLinks.js";
 import { createNodes, type INodeDatum } from "./createNodes.js";
 import { createPaper } from "./createPaper.js";
 import { createFullScreenSwitch } from "./createFullScreenSwitch.js";
+import { createDagreLayout } from "./createDagreLayout.js";
+import { createClusters } from "./createClusters.js";
 
 export function createChart(
   svgElement: SVGSVGElement,
@@ -24,23 +24,37 @@ export function createChart(
 
   const paper = createPaper(svg);
   const fullScreenSwitch = createFullScreenSwitch(svg, defs);
-  const legend = createLegend(svg);
+  const legend = createLegend(svg, defs);
   resizeSubscribers.push(() => {
     legend.update();
     fullScreenSwitch.update();
   });
 
-  const simulation = createForceSimulation().on("tick", ticked);
+  const dagreLayout = createDagreLayout();
+  // const forceLayout = createForceLayout({
+  //   onTick() {
+  //     ticked();
+  //   },
+  // });
 
-  const links = createLinks(paper.element, defs);
+  const clusters = createClusters(paper.element, {});
+  const links = createLinks(paper.element, defs, {
+    onHover: (link) => links.highlightLink(link),
+    onBlur: () => links.resetHighlight(),
+  });
   const nodes = createNodes(paper.element, {
     onHover: (node) => links.highlight(node),
     onBlur: () => links.resetHighlight(),
     onDragStart: () => {
-      simulation.alphaTarget(0.3).restart();
+      // forceLayout.start();
+      ticked();
+    },
+    onDrag: () => {
+      ticked();
     },
     onDragEnd: () => {
-      simulation.alphaTarget(0);
+      // forceLayout.stop();
+      ticked();
     },
   });
 
@@ -53,25 +67,51 @@ export function createChart(
     update(graph: IGraph) {
       // Make a shallow copy to protect against mutation, while
       // recycling old nodes to preserve position and velocity.
-      const old = new Map(nodes.nodes.data().map((d) => [d.data.id, d]));
-      const nodesData = graph.nodes.map((d) => ({ ...old.get(d.id), data: d }));
-      const linksData = graph.links.map((d) => ({ ...d }));
+      const oldNodes = new Map(nodes.nodes.data().map((d) => [d.data.id, d]));
+      const oldLinks = new Map(
+        links.links.data().map((d) => [d.data.source + ":" + d.data.target, d]),
+      );
+
+      const nodesData = graph.nodes.map<INodeDatum>((d) => ({
+        ...oldNodes.get(d.id),
+        data: d,
+      }));
+      const linksData = graph.links.map<ILinkDatum>((d) => ({
+        ...oldLinks.get(d.source + ":" + d.target),
+        data: d,
+        points: [],
+        source: nodesData.find((n) => n.data.id === d.source)!,
+        target: nodesData.find((n) => n.data.id === d.target)!,
+      }));
+
+      const layout = dagreLayout.updateData(nodesData, linksData);
+      // forceLayout.updateData(nodesData, linksData);
+
+      const { width, height } = layout.getDemensions();
+
+      if (width && height) {
+        paper.translate(width / 2, height / 2);
+        paper.zoom(0.8);
+      }
+
+      for (const node of nodesData) {
+        const { x, y } = layout.getNode(node.data.id);
+        node.x = x;
+        node.y = y;
+      }
+
+      for (const link of linksData) {
+        const { points } = layout.getEdge(link.data.source, link.data.target);
+        link.points = points.map(({ x, y }: any) => ({ x, y }));
+      }
 
       nodes.updateData(nodesData);
       links.updateData(linksData);
+      clusters.updateData(layout.getClusters());
 
-      simulation
-        .nodes(nodesData)
-        .force(
-          "link",
-          forceLink<INodeDatum, ILinkDatum>(linksData)
-            .id((d) => d.data.id)
-            .distance(50)
-            .strength(0.4),
-        )
-        .alpha(1)
-        .restart()
-        .tick();
+      nodes.update();
+      links.update();
+      clusters.update();
     },
   };
 }

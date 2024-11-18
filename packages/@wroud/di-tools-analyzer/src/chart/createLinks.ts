@@ -1,20 +1,46 @@
-import { select, type Selection } from "d3";
+import * as d3 from "d3";
 import type { IDefs } from "./addDefs.js";
 import { type INodeDatum } from "./createNodes.js";
 import { Layout } from "./Layout.js";
+import type { ILink } from "../IGraph.js";
+import { getLinkPoints } from "./getLinkPoints.js";
 
-export type ILinkDatum = d3.SimulationLinkDatum<INodeDatum>;
+export type ILinkDatum = /*d3.SimulationLinkDatum<INodeDatum> & */ {
+  data: ILink;
+  points: Array<{
+    x: number;
+    y: number;
+  }>;
+  source: INodeDatum;
+  target: INodeDatum;
+};
 
 export function createLinks(
-  paper: Selection<SVGGElement, unknown, null, undefined>,
+  paper: d3.Selection<SVGGElement, unknown, null, undefined>,
   defs: IDefs,
+  events?: {
+    onHover?: (link: ILinkDatum) => void;
+    onBlur?: (link: ILinkDatum) => void;
+  },
 ) {
   let link = paper
     .append("g")
     .classed("links", true)
     .attr("stroke", "#999")
-    .selectAll("line")
+    .selectAll("g")
     .data<ILinkDatum>([]);
+
+  function hoverLink() {
+    function entered(event: any, d: any) {
+      events?.onHover?.(d);
+    }
+
+    function left(event: any, d: any) {
+      events?.onBlur?.(d);
+    }
+
+    return { entered, left };
+  }
 
   return {
     get links() {
@@ -22,41 +48,79 @@ export function createLinks(
     },
     updateData(data: ILinkDatum[]) {
       link = link
-        .data<ILinkDatum>(data, (d) => [d.source, d.target] as any)
-        .join((enter) =>
-          enter
-            .append("line")
-            .classed("link", true)
-            .attr("opacity", Layout.link.opacity)
-            .attr("marker-end", `url(#${defs.defs.arrowHead})`),
-        );
+        .data<ILinkDatum>(
+          data,
+          (data) => data.data.source + ":" + data.data.target,
+        )
+        .join((enter) => {
+          const line = enter
+            .append("g")
+            .call((group) => {
+              group
+                .append("path")
+                .classed("link", true)
+                .classed("optional-link", (data) => data.data.optional)
+                .attr("opacity", Layout.link.opacity)
+                .attr("marker-end", `url(#${defs.defs.arrowHead})`)
+                .style("stroke-dasharray", (data) =>
+                  data.data.optional ? Layout.linkOptional.dashArray : null,
+                );
+            })
+            .call((group) => {
+              group
+                .append("path")
+                .classed("link-hit-area", true)
+                .attr("opacity", 0)
+                .attr("stroke-width", 10)
+                .call((line) => {
+                  line.append("title").text((data) => data.data.name);
+                })
+                .on("mouseenter", hoverLink().entered)
+                .on("mouseleave", hoverLink().left);
+            });
+
+          return line;
+        });
     },
     update() {
       this.links.each(function update(datum: ILinkDatum) {
-        const link = select(this);
-        const target = datum.target as INodeDatum;
-        const source = datum.source as INodeDatum;
+        const link = d3
+          .select(this)
+          .selectAll<SVGPathElement, ILinkDatum>("path");
 
-        const dx = target.x! - source.x!;
-        const dy = target.y! - source.y!;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-        const offsetX = (dx * Layout.node.radius) / distance;
-        const offsetY = (dy * Layout.node.radius) / distance;
+        if (datum.points.length === 0) {
+          datum.points = getLinkPoints(datum);
+        }
 
-        link
-          .attr("x1", source.x! + offsetX)
-          .attr("y1", source.y! + offsetY)
-          .attr("x2", target.x! - offsetX)
-          .attr("y2", target.y! - offsetY);
+        link.attr("d", (d) =>
+          d3
+            .line()
+            .x((point) => point[0])
+            .y((point) => point[1])
+            .curve(d3.curveMonotoneY)(
+            d.points.map((p) => [p.x || 0, p.y || 0]),
+          ),
+        );
       });
     },
     highlight(source: INodeDatum) {
-      this.links.attr("opacity", (o) =>
-        o.source === source ? Layout.link.hoverOpacity : Layout.link.opacity,
-      );
+      this.links
+        .selectAll<SVGPathElement, ILinkDatum>("path.link")
+        .attr("opacity", (o) =>
+          o.source === source ? Layout.link.hoverOpacity : Layout.link.opacity,
+        );
+    },
+    highlightLink(link: ILinkDatum) {
+      this.links
+        .selectAll<SVGPathElement, ILinkDatum>("path.link")
+        .attr("opacity", (o) =>
+          o === link ? Layout.link.hoverOpacity : Layout.link.opacity,
+        );
     },
     resetHighlight() {
-      this.links.attr("opacity", Layout.link.opacity);
+      this.links
+        .selectAll<SVGPathElement, ILinkDatum>("path.link")
+        .attr("opacity", Layout.link.opacity);
     },
   };
 }

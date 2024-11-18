@@ -23,11 +23,13 @@ injectable(() => [DatabaseConnection])(Database);
 injectable(() => [Database])(DBUsers);
 injectable(() => [Database])(DBArticles);
 injectable(() => [Database])(DBComments);
-injectable(() => [Logger, DatabaseConnection, GQLServer])(App);
+injectable(({ optional }) => [optional(Logger), DatabaseConnection, GQLServer])(
+  App,
+);
 
 injectable(() => [])(Request);
 injectable(() => [Request, DBUsers])(Profile);
-injectable(() => [Request, SessionStore])(Session);
+injectable(({ optional }) => [Request, optional(SessionStore)])(Session);
 injectable(() => [Database])(SessionStore);
 injectable(() => [Request])(GQLServer);
 

@@ -146,6 +146,7 @@ import {
   createService,
   ServiceContainerBuilder,
   ServiceRegistry,
+  single,
 } from "@wroud/di";
 
 interface ILoggerService {
@@ -171,7 +172,7 @@ class CounterService {
 function configure() {
   ServiceRegistry.register(CounterService, {
     name: "CounterService",
-    dependencies: [ILoggerService],
+    dependencies: [single(ILoggerService)],
   });
 
   ServiceRegistry.register(ConsoleLoggerService, {

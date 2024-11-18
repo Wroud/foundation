@@ -17,7 +17,7 @@ To manually register services, you can use the `ServiceContainerBuilder` and `Se
 ### Example: Registering Services Manually
 
 ```javascript
-import { ServiceContainerBuilder, ServiceRegistry } from '@wroud/di';
+import { ServiceContainerBuilder, ServiceRegistry, single } from '@wroud/di';
 
 class Logger {
     log(message: string) {
@@ -38,7 +38,7 @@ class UserService {
 
 // Register services in the service registry
 ServiceRegistry.register(Logger, { name: 'Logger', dependencies: [] });
-ServiceRegistry.register(UserService, { name: 'UserService', dependencies: [Logger] });
+ServiceRegistry.register(UserService, { name: 'UserService', dependencies: [single(Logger)] });
 
 const containerBuilder = new ServiceContainerBuilder();
 
@@ -57,41 +57,52 @@ userService.createUser({ name: 'John Doe' });
 When using interfaces, you can create service tokens to register and resolve services.
 
 ```typescript
-import { ServiceContainerBuilder, ServiceRegistry, createService } from '@wroud/di';
+import {
+  ServiceContainerBuilder,
+  ServiceRegistry,
+  createService,
+  all,
+} from "@wroud/di";
 
 interface ILogger {
-    log(message: string): void;
+  log(message: string): void;
 }
 
-const ILogger = createService<ILogger>('ILogger');
+const ILogger = createService<ILogger>("ILogger");
 
 class ConsoleLogger implements ILogger {
-    log(message: string) {
-        console.log(`ConsoleLogger: ${message}`);
-    }
+  log(message: string) {
+    console.log(`ConsoleLogger: ${message}`);
+  }
 }
 
 class FileLogger implements ILogger {
-    log(message: string) {
-        // Assume logging to a file
-        console.log(`FileLogger: ${message}`);
-    }
+  log(message: string) {
+    // Assume logging to a file
+    console.log(`FileLogger: ${message}`);
+  }
 }
 
 class LoggingService {
-    constructor(private loggers: ILogger[]) {
-        this.loggers = loggers;
-    }
+  constructor(private loggers: ILogger[]) {
+    this.loggers = loggers;
+  }
 
-    logToAll(message: string) {
-        this.loggers.forEach(logger => logger.log(message));
-    }
+  logToAll(message: string) {
+    this.loggers.forEach((logger) => logger.log(message));
+  }
 }
 
 // Register services in the service registry
-ServiceRegistry.register(ConsoleLogger, { name: 'ConsoleLogger', dependencies: [] });
-ServiceRegistry.register(FileLogger, { name: 'FileLogger', dependencies: [] });
-ServiceRegistry.register(LoggingService, { name: 'LoggingService', dependencies: [[ILogger]] });
+ServiceRegistry.register(ConsoleLogger, {
+  name: "ConsoleLogger",
+  dependencies: [],
+});
+ServiceRegistry.register(FileLogger, { name: "FileLogger", dependencies: [] });
+ServiceRegistry.register(LoggingService, {
+  name: "LoggingService",
+  dependencies: [all(ILogger)],
+});
 
 const containerBuilder = new ServiceContainerBuilder();
 
@@ -103,7 +114,7 @@ containerBuilder.addTransient(LoggingService);
 const serviceProvider = containerBuilder.build();
 
 const loggingService = serviceProvider.getService(LoggingService);
-loggingService.logToAll('This is a test message');
+loggingService.logToAll("This is a test message");
 ```
 
 ## Integrating External Libraries
@@ -115,44 +126,55 @@ Manual service registration is particularly useful when you need to integrate ex
 Suppose you are using an external library for HTTP requests. You can register a class from this library as a service and define its dependencies.
 
 ```typescript
-import { ServiceContainerBuilder, ServiceRegistry, createService } from '@wroud/di';
+import {
+  ServiceContainerBuilder,
+  ServiceRegistry,
+  createService,
+  single,
+} from "@wroud/di";
 
 // Define a service token for the API key
-const ApiKey = createService<string>('ApiKey');
+const ApiKey = createService<string>("ApiKey");
 
 // External library class
 class ExternalHttpClient {
-    constructor(private apiKey: string) { }
+  constructor(private apiKey: string) {}
 
-    request(url: string) {
-        // Make HTTP request using apiKey
-    }
+  request(url: string) {
+    // Make HTTP request using apiKey
+  }
 }
 
 // Application service that depends on the external library
 class ApiService {
-    constructor(private httpClient: ExternalHttpClient) { }
+  constructor(private httpClient: ExternalHttpClient) {}
 
-    fetchData(endpoint: string) {
-        return this.httpClient.request(endpoint);
-    }
+  fetchData(endpoint: string) {
+    return this.httpClient.request(endpoint);
+  }
 }
 
 // Register external library and its dependencies
-ServiceRegistry.register(ExternalHttpClient, { name: 'ExternalHttpClient', dependencies: [ApiKey] });
-ServiceRegistry.register(ApiService, { name: 'ApiService', dependencies: [ExternalHttpClient] });
+ServiceRegistry.register(ExternalHttpClient, {
+  name: "ExternalHttpClient",
+  dependencies: [single(ApiKey)],
+});
+ServiceRegistry.register(ApiService, {
+  name: "ApiService",
+  dependencies: [single(ExternalHttpClient)],
+});
 
 const containerBuilder = new ServiceContainerBuilder();
 
 // Register services in the container builder
-containerBuilder.addSingleton(ApiKey, 'your-api-key');
+containerBuilder.addSingleton(ApiKey, "your-api-key");
 containerBuilder.addSingleton(ExternalHttpClient);
 containerBuilder.addTransient(ApiService);
 
 const serviceProvider = containerBuilder.build();
 
 const apiService = serviceProvider.getService(ApiService);
-apiService.fetchData('https://api.example.com/data');
+apiService.fetchData("https://api.example.com/data");
 ```
 
 In this TypeScript example, the `ExternalHttpClient` class from an external library is registered with the service registry and the service container. The `ApiService` class can then depend on the `ExternalHttpClient`, allowing for seamless integration of the external library within the dependency injection system.

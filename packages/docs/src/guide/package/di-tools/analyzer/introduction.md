@@ -66,6 +66,29 @@ const builder = new ServiceContainerBuilder();
 const data = await getDependenciesGraph(builder);
 ```
 
+#### Clusters based on Modules
+
+You can visualize clusters from ModuleRegistry
+
+```javascript
+import { ServiceContainerBuilder, ModuleRegistry } from "@wroud/di";
+import {
+  getDependenciesGraph,
+  ServiceCollectionProxy,
+} from "@wroud/di-tools-analyzer";
+
+const builder = new ServiceContainerBuilder();
+const builderProxy = new ServiceCollectionProxy(builder); // [!code ++]
+
+for (const module of ModuleRegistry) {
+  await module.configure(builder); // [!code --]
+  await module.configure(builderProxy.proxy(module.name)); // [!code ++]
+}
+
+const data = await getDependenciesGraph(builder); // [!code --]
+const data = await getDependenciesGraph(builder, builderProxy); // [!code ++]
+```
+
 ### Visualization
 
 Use the collected data to create visualizations.

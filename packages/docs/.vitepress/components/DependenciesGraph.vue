@@ -83,6 +83,7 @@ function onPromptImport() {
 .links {
   fill: none;
 }
+.cluster,
 .link {
   stroke: var(--vp-c-text-1);
 }
@@ -120,7 +121,8 @@ function onPromptImport() {
 .node-not-found .node-circle {
   fill: var(--vp-c-red-3);
 }
-.node-text {
+.node-text,
+.cluster-text {
   font-size: 12px;
   fill: var(--vp-c-text-1);
   stroke: var(--vp-c-bg);

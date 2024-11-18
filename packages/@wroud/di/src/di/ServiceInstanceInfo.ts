@@ -29,7 +29,7 @@ export class ServiceInstanceInfo<T> implements IServiceInstanceInfo<T> {
     if (this.initialized) {
       return;
     }
-    this._instance = creator();
+    this._instance = this.descriptor.dry ? (null as T) : creator();
     this.initialized = true;
   }
 
@@ -39,7 +39,7 @@ export class ServiceInstanceInfo<T> implements IServiceInstanceInfo<T> {
 
   disposeSync(): void {
     const instance = this.instance as any;
-    const disposeMethod = instance[Symbol.dispose] ?? instance.dispose;
+    const disposeMethod = instance?.[Symbol.dispose] ?? instance?.dispose;
     if (
       typeof disposeMethod === "function" &&
       !this.disposed &&
@@ -58,7 +58,8 @@ export class ServiceInstanceInfo<T> implements IServiceInstanceInfo<T> {
     const instance = this.instance as any;
 
     if (!this.disposed && this.initialized) {
-      const disposeMethod = instance[Symbol.asyncDispose] ?? instance.dispose;
+      const disposeMethod =
+        instance?.[Symbol.asyncDispose] ?? instance?.dispose;
       if (typeof disposeMethod === "function") {
         this.disposed = true;
         try {

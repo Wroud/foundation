@@ -210,7 +210,7 @@ describe("ServiceInstanceInfo", () => {
 function mockDescriptor<T>(): IServiceDescriptor<T> {
   return {
     service: {} as any,
-    implementation: {} as any,
+    resolver: {} as any,
     lifetime: ServiceLifetime.Singleton,
   };
 }

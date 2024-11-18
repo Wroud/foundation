@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { injectable } from "./injectable.js";
 import { ServiceRegistry } from "./ServiceRegistry.js";
+import { single } from "../service-type-resolvers/single.js";
 
 vi.mock(import("./ServiceRegistry.js"), () => ({
   ServiceRegistry: {
@@ -32,7 +33,7 @@ describe("injectable", () => {
     class Test {}
     expect(ServiceRegistry.register).toBeCalledWith(Test, {
       name: "Test",
-      dependencies: [Dep],
+      dependencies: [single(Dep)],
     });
   });
   it("should register service with ts legacy decorator", () => {

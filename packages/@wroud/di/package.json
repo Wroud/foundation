@@ -12,7 +12,9 @@
     "url": "https://github.com/Wroud/foundation",
     "directory": "packages/@wroud/di"
   },
-  "sideEffects": [],
+  "sideEffects": [
+    "./lib/module/ModuleRegistry.js"
+  ],
   "module": "./lib/production.js",
   "exports": {
     ".": {

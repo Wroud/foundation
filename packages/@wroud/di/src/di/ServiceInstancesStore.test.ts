@@ -10,7 +10,7 @@ describe("ServiceInstancesStore", () => {
     const store = new ServiceInstancesStore();
     const descriptor: IServiceDescriptor<{}> = {
       service: {} as any,
-      implementation: {} as any,
+      resolver: {} as any,
       lifetime: ServiceLifetime.Singleton,
     };
     const instance1 = {};

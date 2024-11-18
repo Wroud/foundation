@@ -1,6 +1,7 @@
-import type { IAsyncServiceImplementationLoader } from "./IAsyncServiceImplementationLoader.js";
-import type { ISyncServiceImplementation } from "./ISyncServiceImplementation.js";
+import type { IServiceImplementationResolver } from "./IServiceImplementationResolver.js";
+import type { SingleServiceImplementation } from "./ServiceImplementation.js";
 
 export type IServiceImplementation<T> =
-  | ISyncServiceImplementation<T>
-  | IAsyncServiceImplementationLoader<T>;
+  | T
+  | SingleServiceImplementation<T>
+  | IServiceImplementationResolver<T>;

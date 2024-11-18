@@ -1,24 +1,22 @@
 import type { IServiceDescriptor } from "../types/index.js";
 import { getNameOfServiceType } from "./getNameOfServiceType.js";
-import { isAsyncServiceImplementationLoader } from "./isAsyncServiceImplementationLoader.js";
+import { isJsEntityName } from "./isJsEntityName.js";
 
 export function getNameOfDescriptor(
   descriptor: IServiceDescriptor<unknown>,
 ): string {
-  let implementation = descriptor.implementation;
-
-  if (isAsyncServiceImplementationLoader(implementation)) {
-    if (implementation.isLoaded()) {
-      implementation = implementation.getImplementation();
-    } else {
-      implementation = { name: "lazy(?)" };
-    }
-  }
+  let resolver = descriptor.resolver;
 
   const serviceName = getNameOfServiceType(descriptor.service);
-  const implementationName = getNameOfServiceType(implementation);
+  const implementationName = getNameOfServiceType(resolver);
 
-  return implementationName === serviceName
-    ? `${implementationName}`
-    : `${implementationName} (${serviceName})`;
+  if (isJsEntityName(implementationName)) {
+    return serviceName;
+  }
+
+  if (implementationName === serviceName) {
+    return implementationName;
+  }
+
+  return `${implementationName} (${serviceName})`;
 }

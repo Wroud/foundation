@@ -3,10 +3,11 @@ import { describe, expect, it } from "vitest";
 import { ServiceContainerBuilder } from "./ServiceContainerBuilder.js";
 import { IServiceProvider } from "./IServiceProvider.js";
 import { injectable } from "./injectable.js";
-import { lazy } from "./lazy.js";
+import { lazy } from "../implementation-resolvers/lazy.js";
 import { createService } from "./createService.js";
 import { createAsyncMockedService } from "../tests/createAsyncMockedService.js";
 import { createSyncMockedService } from "../tests/createSyncMockedService.js";
+import type { AsyncServiceImplementationResolver } from "../implementation-resolvers/AsyncServiceImplementationResolver.js";
 
 describe("ServiceProvider", () => {
   it("should have createAsyncScope method", () => {
@@ -44,27 +45,27 @@ describe("ServiceProvider", () => {
     const serviceProvider = new ServiceContainerBuilder()
       .addSingleton(
         AService,
-        lazy<typeof A>(
+        lazy(
           () =>
-            new Promise((resolve) => {
+            new Promise<typeof A>((resolve) => {
               setTimeout(() => resolve(A), 10);
             }),
         ),
       )
       .addSingleton(
         BService,
-        lazy<typeof B>(
+        lazy(
           () =>
-            new Promise((resolve) => {
+            new Promise<typeof B>((resolve) => {
               setTimeout(() => resolve(B), 10);
             }),
         ),
       )
       .addSingleton(
         CService,
-        lazy<typeof C>(
+        lazy(
           () =>
-            new Promise((resolve) => {
+            new Promise<typeof C>((resolve) => {
               setTimeout(() => resolve(C), 10);
             }),
         ),
@@ -92,27 +93,27 @@ describe("ServiceProvider", () => {
     const serviceProvider = new ServiceContainerBuilder()
       .addSingleton(
         AService,
-        lazy<typeof A>(
+        lazy(
           () =>
-            new Promise((resolve) => {
+            new Promise<typeof A>((resolve) => {
               setTimeout(() => resolve(A), 10);
             }),
         ),
       )
       .addSingleton(
         BService,
-        lazy<typeof B>(
+        lazy(
           () =>
-            new Promise((resolve) => {
+            new Promise<typeof B>((resolve) => {
               setTimeout(() => resolve(B), 10);
             }),
         ),
       )
       .addSingleton(
         CService,
-        lazy<typeof C>(
+        lazy(
           () =>
-            new Promise((resolve) => {
+            new Promise<typeof C>((resolve) => {
               setTimeout(() => resolve(C), 10);
             }),
         ),
@@ -257,7 +258,8 @@ describe("ServiceProvider", () => {
     const A = createSyncMockedService("A");
     const loader = lazy(() => Promise.resolve(A));
 
-    await loader.load();
+    // @ts-expect-error
+    await (loader as AsyncServiceImplementationResolver<typeof A>).load();
 
     const serviceProvider = new ServiceContainerBuilder()
       .addSingleton(A, loader)

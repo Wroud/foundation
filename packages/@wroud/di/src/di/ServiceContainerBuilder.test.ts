@@ -2,7 +2,8 @@ import { expect, it, describe } from "vitest";
 import { ServiceContainerBuilder } from "./ServiceContainerBuilder.js";
 import { ServiceCollection } from "./ServiceCollection.js";
 import { ServiceRegistry } from "./ServiceRegistry.js";
-import { lazy } from "./lazy.js";
+import { lazy } from "../implementation-resolvers/lazy.js";
+import { single } from "../service-type-resolvers/single.js";
 
 describe("ServiceContainerBuilder", () => {
   it("should be defined", () => {
@@ -27,11 +28,11 @@ describe("ServiceContainerBuilder", () => {
     class Test2 {}
     ServiceRegistry.register(Test1, {
       name: Test1.name,
-      dependencies: [Test2],
+      dependencies: [single(Test2)],
     });
     ServiceRegistry.register(Test2, {
       name: Test2.name,
-      dependencies: [Test1],
+      dependencies: [single(Test1)],
     });
 
     const builder = new ServiceContainerBuilder();

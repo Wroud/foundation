@@ -1,49 +1,30 @@
 import { IServiceProvider } from "./IServiceProvider.js";
 import { ServiceCollection } from "./ServiceCollection.js";
-import { ServiceRegistry } from "./ServiceRegistry.js";
-import { getNameOfServiceType } from "../helpers/getNameOfServiceType.js";
 import { ServiceInstancesStore } from "./ServiceInstancesStore.js";
 import { ServiceLifetime } from "./ServiceLifetime.js";
-import { isAsyncServiceImplementationLoader } from "../helpers/isAsyncServiceImplementationLoader.js";
 import { validateRequestPath } from "./validation/validateRequestPath.js";
 import { getNameOfDescriptor } from "../helpers/getNameOfDescriptor.js";
-import { Debug } from "../debug.js";
 import type {
   IAsyncServiceScope,
-  IServiceConstructor,
   IServiceDescriptor,
-  IServiceFactory,
   IServiceInstancesStore,
   IServiceScope,
-  ServiceType,
+  IResolverServiceType,
   SingleServiceType,
 } from "../types/index.js";
+import { resolveGeneratorAsync } from "../helpers/resolveGeneratorAsync.js";
+import { resolveGeneratorSync } from "../helpers/resolveGeneratorSync.js";
+import { isServiceProvider } from "../helpers/isServiceProvider.js";
+import { all } from "../service-type-resolvers/all.js";
+import { single } from "../service-type-resolvers/single.js";
 
 export class ServiceProvider implements IServiceProvider {
   static internalGetService<T>(
     provider: IServiceProvider,
-    service: SingleServiceType<T>,
+    service: IResolverServiceType<any, T>,
     requestedBy: Set<IServiceDescriptor<any>>,
     mode: "sync" | "async",
-  ): Generator<Promise<unknown>, T, unknown>;
-  static internalGetService<T>(
-    provider: IServiceProvider,
-    service: SingleServiceType<T>[],
-    requestedBy: Set<IServiceDescriptor<any>>,
-    mode: "sync" | "async",
-  ): Generator<Promise<unknown>, T[], unknown>;
-  static internalGetService<T>(
-    provider: IServiceProvider,
-    service: ServiceType<T>,
-    requestedBy: Set<IServiceDescriptor<any>>,
-    mode: "sync" | "async",
-  ): Generator<Promise<unknown>, T | T[], unknown>;
-  static internalGetService<T>(
-    provider: IServiceProvider,
-    service: ServiceType<T>,
-    requestedBy: Set<IServiceDescriptor<any>>,
-    mode: "sync" | "async",
-  ): Generator<Promise<unknown>, T | T[], unknown> {
+  ): Generator<Promise<unknown>, T, unknown> {
     if (!(provider instanceof ServiceProvider)) {
       throw new Error("provider must be an instance of ServiceProvider");
     }
@@ -57,7 +38,7 @@ export class ServiceProvider implements IServiceProvider {
     if (!(provider instanceof ServiceProvider)) {
       throw new Error("provider must be an instance of ServiceProvider");
     }
-    return provider.getDescriptor(service);
+    return provider.collection.getDescriptor(service);
   }
 
   static getDescriptors<T>(
@@ -76,29 +57,32 @@ export class ServiceProvider implements IServiceProvider {
     private readonly parent?: IServiceProvider,
   ) {
     this.instancesStore = new ServiceInstancesStore();
+    this.internalGetService = this.internalGetService.bind(this);
+    this.resolveServiceImplementation =
+      this.resolveServiceImplementation.bind(this);
   }
 
   getServices<T>(service: SingleServiceType<T>): T[] {
-    return this.resolveGeneratorSync(
-      this.internalGetService([service], new Set(), "sync"),
+    return resolveGeneratorSync(
+      this.internalGetService(all(service), new Set(), "sync"),
     );
   }
 
   getServiceAsync<T>(service: SingleServiceType<T>): Promise<T> {
-    return this.resolveGeneratorAsync(
-      this.internalGetService(service, new Set(), "async"),
+    return resolveGeneratorAsync(
+      this.internalGetService(single(service), new Set(), "async"),
     );
   }
 
   getService<T>(service: SingleServiceType<T>): T {
-    return this.resolveGeneratorSync(
-      this.internalGetService(service, new Set(), "sync"),
+    return resolveGeneratorSync(
+      this.internalGetService(single(service), new Set(), "sync"),
     );
   }
 
   getServicesAsync<T>(service: SingleServiceType<T>): Promise<T[]> {
-    return this.resolveGeneratorAsync(
-      this.internalGetService([service], new Set(), "async"),
+    return resolveGeneratorAsync(
+      this.internalGetService(all(service), new Set(), "async"),
     );
   }
 
@@ -124,65 +108,31 @@ export class ServiceProvider implements IServiceProvider {
     };
   }
 
-  private internalGetService<T>(
-    service: SingleServiceType<T>,
-    requestedBy: Set<IServiceDescriptor<any>>,
-    mode: "sync" | "async",
-  ): Generator<Promise<unknown>, T, unknown>;
-  private internalGetService<T>(
-    service: SingleServiceType<T>[],
-    requestedBy: Set<IServiceDescriptor<any>>,
-    mode: "sync" | "async",
-  ): Generator<Promise<unknown>, T[], unknown>;
-  private internalGetService<T>(
-    service: ServiceType<T>,
-    requestedBy: Set<IServiceDescriptor<any>>,
-    mode: "sync" | "async",
-  ): Generator<Promise<unknown>, T | T[], unknown>;
   private *internalGetService<T>(
-    service: ServiceType<T>,
+    service: IResolverServiceType<any, T>,
     requestedBy: Set<IServiceDescriptor<any>>,
     mode: "sync" | "async",
-  ): Generator<Promise<unknown>, T | T[], unknown> {
-    const isAllServices = Array.isArray(service);
-    const descriptors = isAllServices
-      ? this.collection.getDescriptors(service[0]!)
-      : [this.getDescriptor(service)];
-
-    const services: T[] = [];
-
-    for (const descriptor of descriptors) {
-      services.push(
-        yield* this.internalGetDescriptorImplementation(
-          descriptor,
-          requestedBy,
-          mode,
-        ),
-      );
-    }
-
-    if (isAllServices) {
-      return services;
-    }
-    return services[0] as T;
+  ): Generator<Promise<unknown>, T, unknown> {
+    return yield* service.resolve(
+      this.collection,
+      this.resolveServiceImplementation,
+      requestedBy,
+      mode,
+    );
   }
 
-  private *internalGetDescriptorImplementation<T>(
+  private *resolveServiceImplementation<T>(
     descriptor: IServiceDescriptor<T>,
     requestedBy: Set<IServiceDescriptor<any>>,
     mode: "sync" | "async",
   ): Generator<Promise<unknown>, T, unknown> {
-    if (
-      descriptor.lifetime === ServiceLifetime.Singleton &&
-      this.parent &&
-      descriptor.service !== IServiceProvider
-    ) {
+    validateRequestPath(requestedBy, descriptor);
+
+    if (descriptor.lifetime === ServiceLifetime.Singleton && this.parent) {
       return yield* (
         this.parent as ServiceProvider
-      ).internalGetDescriptorImplementation(descriptor, requestedBy, mode);
+      ).resolveServiceImplementation(descriptor, requestedBy, mode);
     }
-
-    validateRequestPath(requestedBy, descriptor);
 
     return yield* this.createInstanceFromDescriptor(
       descriptor,
@@ -198,23 +148,21 @@ export class ServiceProvider implements IServiceProvider {
   ): Generator<Promise<unknown>, T, unknown> {
     try {
       const lastRequestedBy = [...requestedBy].pop();
-      if (lastRequestedBy?.lifetime !== undefined) {
-        if (
-          lastRequestedBy.lifetime === ServiceLifetime.Singleton &&
-          descriptor.lifetime === ServiceLifetime.Scoped
-        ) {
+
+      if (descriptor.lifetime === ServiceLifetime.Scoped) {
+        if (lastRequestedBy?.lifetime === ServiceLifetime.Singleton) {
           throw new Error(
             `Scoped service cannot be resolved from singleton service.`,
           );
         }
+
+        if (!this.parent) {
+          throw new Error("Scoped services require a service scope.");
+        }
       }
 
       switch (descriptor.lifetime) {
-        // @ts-expect-error
         case ServiceLifetime.Scoped:
-          if (!this.parent) {
-            throw new Error("Scoped services require a service scope.");
-          }
         case ServiceLifetime.Singleton: {
           const instanceInfo = this.instancesStore.addInstance(
             descriptor,
@@ -222,17 +170,29 @@ export class ServiceProvider implements IServiceProvider {
           );
 
           instanceInfo.initialize(
-            yield* this.createServiceInitializer(descriptor, requestedBy, mode),
+            yield* descriptor.resolver.resolve(
+              this.internalGetService,
+              descriptor,
+              requestedBy,
+              mode,
+            ),
           );
 
           return instanceInfo.instance;
         }
-        case ServiceLifetime.Transient:
-          return (yield* this.createServiceInitializer(
+        case ServiceLifetime.Transient: {
+          if (isServiceProvider(descriptor.service)) {
+            return this as unknown as T;
+          }
+
+          const implementationGetter = yield* descriptor.resolver.resolve(
+            this.internalGetService,
             descriptor,
             requestedBy,
             mode,
-          ))();
+          );
+          return descriptor.dry ? (null as T) : implementationGetter();
+        }
       }
     } catch (exception: any) {
       throw new Error(
@@ -240,122 +200,6 @@ export class ServiceProvider implements IServiceProvider {
         { cause: exception },
       );
     }
-  }
-
-  private *createServiceInitializer<T>(
-    descriptor: IServiceDescriptor<T>,
-    requestedBy: Set<IServiceDescriptor<any>>,
-    mode: "sync" | "async",
-  ): Generator<Promise<unknown>, () => T, unknown> {
-    let implementation = descriptor.implementation;
-
-    if (isAsyncServiceImplementationLoader(implementation)) {
-      if (!implementation.isLoaded() || mode === "sync") {
-        yield implementation.load();
-      }
-      implementation = implementation.getImplementation();
-    }
-
-    const metadata = ServiceRegistry.get(implementation);
-
-    if (metadata) {
-      const dependencies: any[] = [];
-      requestedBy = new Set([...requestedBy, descriptor]);
-      for (const dependency of metadata.dependencies) {
-        dependencies.push(
-          yield* this.internalGetService(dependency, requestedBy, mode),
-        );
-      }
-
-      return () =>
-        new (implementation as IServiceConstructor<T>)(...dependencies);
-    }
-
-    if (descriptor.service === IServiceProvider) {
-      return () => this as unknown as T;
-    }
-
-    if (typeof implementation === "function") {
-      return () => {
-        try {
-          return (implementation as IServiceFactory<T>)(this);
-        } catch (err) {
-          if (
-            err instanceof TypeError &&
-            err.message.includes("cannot be invoked without 'new'")
-          ) {
-            throw new Error(
-              Debug.errors.classNotDecorated(implementation.name),
-              {
-                cause: err,
-              },
-            );
-          } else {
-            throw err;
-          }
-        }
-      };
-    }
-
-    return () => implementation;
-  }
-
-  private getDescriptor<T>(
-    service: SingleServiceType<T>,
-  ): IServiceDescriptor<T> {
-    const descriptors = this.collection.getDescriptors(service);
-
-    if (descriptors.length === 0) {
-      let name = getNameOfServiceType(service);
-
-      const metadata = ServiceRegistry.get(service);
-
-      if (metadata?.name) {
-        name = metadata.name;
-      }
-
-      throw new Error(`No service of type "${name}" is registered`);
-    }
-
-    return descriptors[descriptors.length - 1]!;
-  }
-
-  private resolveGeneratorSync<T, TResult>(
-    iterator: Generator<Promise<unknown>, TResult, unknown>,
-  ) {
-    let result: IteratorResult<Promise<unknown>, TResult>;
-
-    while (!(result = iterator.next()).done) {
-      result = iterator.throw(
-        new Error(Debug.errors.lazyServiceCantResolveSync),
-      );
-
-      if (result.done) {
-        break;
-      }
-    }
-
-    return result.value;
-  }
-
-  private async resolveGeneratorAsync<T, TResult>(
-    iterator: Generator<Promise<unknown>, TResult, unknown>,
-  ) {
-    let result: IteratorResult<Promise<unknown>, TResult>;
-
-    while (!(result = iterator.next()).done) {
-      try {
-        await result.value;
-      } catch (err) {
-        result = iterator.throw(err);
-
-        if (result.done) {
-          break;
-        }
-      }
-    }
-
-    return result.value;
   }
 
   [Symbol.dispose]() {

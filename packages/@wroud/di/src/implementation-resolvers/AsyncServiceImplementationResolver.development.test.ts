@@ -1,12 +1,12 @@
 ///<reference types="@wroud/tests-runner/jest-extended.d.ts"/>
 
 import { describe, expect, it } from "vitest";
-import { AsyncServiceImplementationLoader } from "./AsyncServiceImplementationLoader.js";
+import { AsyncServiceImplementationResolver } from "./AsyncServiceImplementationResolver.js";
 import "../debugDevelopment.js";
 
-describe("AsyncServiceImplementationLoader development", () => {
+describe("AsyncServiceImplementationResolver development", () => {
   it("should return generic name if the implementation is not loaded", () => {
-    const asyncLoader = new AsyncServiceImplementationLoader(() =>
+    const asyncLoader = new AsyncServiceImplementationResolver(() =>
       Promise.resolve("implementation"),
     );
 

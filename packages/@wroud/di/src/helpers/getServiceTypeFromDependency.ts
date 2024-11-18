@@ -1,11 +1,11 @@
-import type { ServiceType } from "../types/ServiceType.js";
-import type { SingleServiceType } from "../types/SingleServiceType.js";
+import { isServiceTypeResolver } from "../service-type-resolvers/BaseServiceTypeResolver.js";
+import type { ServiceType, SingleServiceType } from "../types/index.js";
 
 export function getServiceTypeFromDependency<T>(
   dependency: ServiceType<T>,
 ): SingleServiceType<T> {
-  if (Array.isArray(dependency)) {
-    return dependency[0]!;
+  if (isServiceTypeResolver(dependency)) {
+    return dependency.service;
   }
   return dependency;
 }

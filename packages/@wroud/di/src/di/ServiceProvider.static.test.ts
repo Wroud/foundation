@@ -2,13 +2,14 @@
 import { describe, expect, it } from "vitest";
 import { ServiceProvider } from "./ServiceProvider.js";
 import { createService } from "./createService.js";
+import { single } from "../service-type-resolvers/single.js";
 
 describe("ServiceProvider", () => {
   it("should should check for instance in static internalGetService", () => {
     expect(() =>
       ServiceProvider.internalGetService(
         {} as any,
-        createService("test"),
+        single(createService("test")),
         new Set(),
         "sync",
       ),

@@ -1,7 +1,10 @@
-import type { ServiceType } from "./ServiceType.js";
+import type { IResolverServiceType } from "./IResolverServiceType.js";
 
 export interface IServiceMetadata<
-  TServices extends ServiceType<any>[] = ServiceType<any>[],
+  TServices extends IResolverServiceType<any, any>[] = IResolverServiceType<
+    any,
+    any
+  >[],
 > {
   name: string | undefined;
   dependencies: TServices;

@@ -27,7 +27,7 @@ import {
 import type { BoundServerRenderFunction } from "./react/server.js";
 import { mapHtmlTagsToReactTags } from "./react/mapHtmlTagsToReactTags.js";
 import { parseHtmlTagsFromHtml } from "./parseHtmlTagsFromHtml.js";
-import type { OutputChunk } from "rollup";
+import type { OutputAsset, OutputChunk } from "rollup";
 import MagicString from "magic-string";
 import { isSSgHtmlTagsId } from "./utils/ssgHtmlTags.js";
 
@@ -132,20 +132,27 @@ export const ssgPlugin = (
 
           if (isSSgId(source)) {
             if (this.environment.name === "ssr") {
-              return addQueryParam(removeSSgQuery(source), "ssr-server");
+              return await this.resolve(
+                addQueryParam(removeSSgQuery(source), "ssr-server"),
+                importer,
+                options,
+              );
             } else {
               if (config.command === "build") {
                 this.emitFile({
                   id: path.join(
                     path.dirname(source),
-                    path.basename(source, path.extname(source)) +
-                      "-virtual.html",
+                    path.basename(cleanUrl(source)) + "-virtual.html",
                   ),
                   type: "chunk",
                   importer: source,
                 });
               }
-              return addQueryParam(removeSSgQuery(source), "ssr-client");
+              return await this.resolve(
+                addQueryParam(removeSSgQuery(source), "ssr-client"),
+                importer,
+                options,
+              );
             }
           }
 
@@ -172,8 +179,8 @@ export const ssgPlugin = (
               id = JSON.stringify(
                 (config.server.origin || "") +
                   config.base +
-                  path.relative(
-                    config.root,
+                  path.join(
+                    "@fs",
                     addQueryParam(removeMainQuery(id), "ssr-client"),
                   ),
               );
@@ -230,26 +237,39 @@ export const ssgPlugin = (
       },
       async generateBundle(options, bundle) {
         const virtualChunks = new Map(
-          Object.entries(bundle).filter(([key, chunk]) =>
+          Object.entries(bundle).filter(([, chunk]) =>
             chunk.fileName.endsWith("-virtual.html"),
-          ),
+          ) as [string, OutputAsset][],
         );
 
         for (const [key] of virtualChunks) {
           delete bundle[key];
         }
         const config = this.environment.config;
-        for (const chunk of Object.values(bundle)) {
-          if (chunk.type !== "chunk" || !chunk.isEntry) {
+        for (const [, virtualHtmlChunk] of virtualChunks) {
+          const mainId = addQueryParam(
+            virtualHtmlChunk.originalFileNames[0]?.replace(
+              "-virtual.html",
+              "",
+            ) || "",
+            "ssr-client",
+          );
+          const mainChunk = Object.values(bundle).find(
+            (c) => c.type == "chunk" && c.facadeModuleId === mainId,
+          );
+          if (mainChunk?.type !== "chunk" || !mainChunk.isEntry) {
             continue;
           }
 
-          if (chunk.facadeModuleId && isSSrClientId(chunk.facadeModuleId)) {
+          if (
+            mainChunk.facadeModuleId &&
+            isSSrClientId(mainChunk.facadeModuleId)
+          ) {
             Object.assign(globalThis, {
               _viteResolveUrl: async (url: string) => {
                 const resolveId = await this.resolve(
                   url,
-                  chunk.facadeModuleId!,
+                  mainChunk.facadeModuleId!,
                   { skipSelf: false },
                 );
 
@@ -289,12 +309,13 @@ export const ssgPlugin = (
             });
 
             const { render } = await import(
-              path.join(config.root, config.build.outDir, chunk.name + ".js")
+              path.join(
+                config.root,
+                config.build.outDir,
+                mainChunk.name + ".js",
+              )
             );
 
-            const constVirtualHtmlChunk = virtualChunks.get(
-              chunk.name + "-virtual.html",
-            );
             let htmlTags: HtmlTagDescriptor[] = [
               {
                 tag: "meta",
@@ -310,14 +331,12 @@ export const ssgPlugin = (
             ];
 
             const analyzedChunk = new Map<OutputChunk, number>();
-            if (constVirtualHtmlChunk?.type === "asset") {
-              htmlTags.push(
-                ...parseHtmlTagsFromHtml(String(constVirtualHtmlChunk.source)),
-              );
-            }
+            htmlTags.push(
+              ...parseHtmlTagsFromHtml(String(virtualHtmlChunk.source)),
+            );
 
             const getCssTagsForChunk = (
-              c: typeof chunk,
+              c: typeof mainChunk,
               seen: Set<string> = new Set(),
             ): HtmlTagDescriptor[] => {
               const tags: HtmlTagDescriptor[] = [];
@@ -349,13 +368,13 @@ export const ssgPlugin = (
               return tags;
             };
 
-            htmlTags.push(...getCssTagsForChunk(chunk));
-            const s = new MagicString(chunk.code);
+            htmlTags.push(...getCssTagsForChunk(mainChunk));
+            const s = new MagicString(mainChunk.code);
             s.replace("__VITE_SSG_HTML_TAGS__", JSON.stringify(htmlTags));
 
-            chunk.code = s.toString();
-            if (chunk.map) {
-              chunk.map = s.generateMap();
+            mainChunk.code = s.toString();
+            if (mainChunk.map) {
+              mainChunk.map = s.generateMap();
             }
 
             const source = await (render as BoundServerRenderFunction)(
@@ -368,7 +387,7 @@ export const ssgPlugin = (
             );
             this.emitFile({
               type: "asset",
-              fileName: chunk.name + ".html",
+              fileName: mainChunk.name + ".html",
               source,
             });
           }
@@ -430,14 +449,18 @@ function indexHtmlMiddleware(
           path.relative(server.config.base, decodeURIComponent(url)),
         );
 
-        const htmlTagsModule = await server.moduleGraph.ensureEntryFromUrl(
-          entry.replace(path.extname(entry), "?ssg-html-tags"),
+        const entryModule = await server.moduleGraph.ensureEntryFromUrl(
+          entry.replace(path.extname(entry), "?ssg"),
         );
 
-        server.moduleGraph.updateModuleTransformResult(htmlTagsModule, {
-          code: `export default ${JSON.stringify(htmlTags)};`,
-          map: null,
-        });
+        for (const [id, module] of entryModule._moduleGraph.idToModuleMap) {
+          if (isSSgHtmlTagsId(id)) {
+            server.moduleGraph.updateModuleTransformResult(module, {
+              code: `export default ${JSON.stringify(htmlTags)};`,
+              map: null,
+            });
+          }
+        }
 
         const { render } = await moduleRunner.import(
           entry.replace(path.extname(entry), "?ssg"),

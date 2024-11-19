@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.13.1 -->
+## 0.13.1 (2024-11-19)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/di-v0.13.0...di-v0.13.1)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- types and resolvers combination ([9f21291](https://github.com/Wroud/foundation/commit/9f21291))
+
 <!-- version:0.13.0 -->
 ## 0.13.0 (2024-11-18)
 

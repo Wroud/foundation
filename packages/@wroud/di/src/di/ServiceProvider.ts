@@ -11,12 +11,14 @@ import type {
   IServiceScope,
   IResolverServiceType,
   SingleServiceType,
+  ServiceType,
 } from "../types/index.js";
 import { resolveGeneratorAsync } from "../helpers/resolveGeneratorAsync.js";
 import { resolveGeneratorSync } from "../helpers/resolveGeneratorSync.js";
 import { isServiceProvider } from "../helpers/isServiceProvider.js";
 import { all } from "../service-type-resolvers/all.js";
 import { single } from "../service-type-resolvers/single.js";
+import { isServiceTypeResolver } from "../service-type-resolvers/BaseServiceTypeResolver.js";
 
 export class ServiceProvider implements IServiceProvider {
   static internalGetService<T>(
@@ -62,25 +64,33 @@ export class ServiceProvider implements IServiceProvider {
       this.resolveServiceImplementation.bind(this);
   }
 
-  getServices<T>(service: SingleServiceType<T>): T[] {
+  getServices<T>(service: ServiceType<T>): T[] {
     return resolveGeneratorSync(
       this.internalGetService(all(service), new Set(), "sync"),
     );
   }
 
-  getServiceAsync<T>(service: SingleServiceType<T>): Promise<T> {
+  getServiceAsync<T>(service: ServiceType<T>): Promise<T> {
+    if (!isServiceTypeResolver(service)) {
+      service = single(service);
+    }
+
     return resolveGeneratorAsync(
-      this.internalGetService(single(service), new Set(), "async"),
+      this.internalGetService(service, new Set(), "async"),
     );
   }
 
-  getService<T>(service: SingleServiceType<T>): T {
+  getService<T>(service: ServiceType<T>): T {
+    if (!isServiceTypeResolver(service)) {
+      service = single(service);
+    }
+
     return resolveGeneratorSync(
-      this.internalGetService(single(service), new Set(), "sync"),
+      this.internalGetService(service, new Set(), "sync"),
     );
   }
 
-  getServicesAsync<T>(service: SingleServiceType<T>): Promise<T[]> {
+  getServicesAsync<T>(service: ServiceType<T>): Promise<T[]> {
     return resolveGeneratorAsync(
       this.internalGetService(all(service), new Set(), "async"),
     );

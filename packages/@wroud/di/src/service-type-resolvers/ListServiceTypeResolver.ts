@@ -22,7 +22,6 @@ export class ListServiceTypeResolver<T> extends BaseServiceTypeResolver<
     resolveServiceImplementation: IServiceDescriptorResolver,
     requestedBy: Set<IServiceDescriptor<any>>,
     mode: "sync" | "async",
-    descriptor?: IServiceDescriptor<T>,
   ): Generator<Promise<unknown>, T[], unknown> {
     const descriptors = collection.getDescriptors(this.service);
 
@@ -40,10 +39,11 @@ export class ListServiceTypeResolver<T> extends BaseServiceTypeResolver<
             descriptor,
           ),
         );
+      } else {
+        services.push(
+          yield* resolveServiceImplementation(descriptor, requestedBy, mode),
+        );
       }
-      services.push(
-        yield* resolveServiceImplementation(descriptor, requestedBy, mode),
-      );
     }
 
     return services;

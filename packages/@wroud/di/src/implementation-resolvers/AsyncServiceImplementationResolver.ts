@@ -9,6 +9,7 @@ import type {
 import { Debug } from "../debug.js";
 import { BaseServiceImplementationResolver } from "./BaseServiceImplementationResolver.js";
 import { RegistryServiceImplementationResolver } from "./RegistryServiceImplementationResolver.js";
+import { ValueServiceImplementationResolver } from "./ValueServiceImplementationResolver.js";
 
 const NOT_LOADED = Symbol("NOT_LOADED");
 
@@ -41,32 +42,28 @@ export class AsyncServiceImplementationResolver<
     mode: "sync" | "async",
   ): Generator<Promise<unknown>, IResolvedServiceImplementation<T>, unknown> {
     if (mode === "sync" && descriptor.dry) {
-      return yield* new RegistryServiceImplementationResolver(
-        null as T,
-      ).resolve(internalGetService, descriptor, requestedBy, mode);
+      return yield* new ValueServiceImplementationResolver(null as T).resolve(
+        internalGetService,
+        descriptor,
+        requestedBy,
+        mode,
+      );
     }
 
-    if (!this.isLoaded() || mode === "sync") {
+    if (this.implementation === NOT_LOADED || mode === "sync") {
       yield this.load();
+
+      if (this.implementation === NOT_LOADED) {
+        throw new AsyncServiceImplementationError();
+      }
     }
 
-    return yield* this.getImplementation().resolve(
+    return yield* this.implementation.resolve(
       internalGetService,
       descriptor,
       requestedBy,
       mode,
     );
-  }
-
-  private isLoaded(): boolean {
-    return this.implementation !== NOT_LOADED;
-  }
-
-  private getImplementation(): IServiceImplementationResolver<T> {
-    if (this.implementation === NOT_LOADED) {
-      throw new AsyncServiceImplementationError();
-    }
-    return this.implementation;
   }
 
   private async load(): Promise<IServiceImplementationResolver<T>> {

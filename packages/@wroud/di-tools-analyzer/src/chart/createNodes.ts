@@ -137,7 +137,7 @@ export function createNodes(
           .append("tspan")
           .text(line)
           .attr("x", 0)
-          .attr("dy", i === 0 ? -16 : `-${lineHeight}em`);
+          .attr("dy", i === 0 ? -Layout.node.radius * 6 : `-${lineHeight}em`);
       });
     });
   }

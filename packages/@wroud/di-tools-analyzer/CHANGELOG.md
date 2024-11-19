@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.3.1 -->
+## 0.3.1 (2024-11-19)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/di-tools-analyzer-v0.3.0...di-tools-analyzer-v0.3.1)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- add space for node labels ([b078a0e](https://github.com/Wroud/foundation/commit/b078a0e))
+
 <!-- version:0.3.0 -->
 ## 0.3.0 (2024-11-18)
 

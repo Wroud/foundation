@@ -12,7 +12,7 @@ The `ServiceContainerBuilder` class is used to register services and build the s
 
 ### Methods
 
-- **`addSingleton<T>(service: ServiceImplementation<T>): this`**
+- **`addSingleton<T>(service: SingleServiceImplementation<T>): this`**
 
   - Registers a singleton service to itself.
 
@@ -28,7 +28,11 @@ The `ServiceContainerBuilder` class is used to register services and build the s
 
   - Registers a singleton service with an instance as implementation.
 
-- **`addTransient<T>(service: ServiceImplementation<T>): this`**
+- **`addSingleton<T>(service: SingleServiceType<T>, resolver: IServiceImplementationResolver<T>): this`**
+
+  - Registers a singleton service with an service resolver as implementation.
+
+- **`addTransient<T>(service: SingleServiceImplementation<T>): this`**
 
   - Registers a transient service.
 
@@ -40,7 +44,11 @@ The `ServiceContainerBuilder` class is used to register services and build the s
 
   - Registers a transient service with a constructor implementation.
 
-- **`addScoped<T>(service: ServiceImplementation<T>): this`**
+- **`addTransient<T>(service: SingleServiceType<T>, resolver: IServiceImplementationResolver<T>): this`**
+
+  - Registers a transient service with an service resolver as implementation.
+
+- **`addScoped<T>(service: SingleServiceImplementation<T>): this`**
 
   - Registers a scoped service.
 
@@ -51,6 +59,10 @@ The `ServiceContainerBuilder` class is used to register services and build the s
 - **`addScoped<T>(service: SingleServiceType<T>, constructor: IServiceConstructor<T>): this`**
 
   - Registers a scoped service with a constructor implementation.
+
+- **`addScoped<T>(service: SingleServiceType<T>, resolver: IServiceImplementationResolver<T>): this`**
+
+  - Registers a scoped service with an service resolver as implementation.
 
 - **`build(): IServiceProvider`**
   - Builds and returns the service provider.
@@ -76,15 +88,19 @@ The `IServiceProvider` interface is used to resolve services.
 
 ### Methods
 
-- **`getService<T>(service: SingleServiceType<T>): T`**
+- **`getService<T>(service: ServiceType<T>): T`**
 
   - Resolves and returns an instance of the requested service.
 
-- **`getServiceAsync<T>(service: SingleServiceType<T>): Promise<T>`**
+- **`getServices<T>(service: ServiceType<T>): T[]`**
+
+  - Resolves and returns all instances of the requested service.
+
+- **`getServiceAsync<T>(service: ServiceType<T>): Promise<T>`**
 
   - Resolves and returns an instance of the requested service asynchronously.
 
-- **`getServicesAsync<T>(service: SingleServiceType<T>): Promise<T[]>`**
+- **`getServicesAsync<T>(service: ServiceType<T>): Promise<T[]>`**
 
   - Resolves and returns all instances of the requested service asynchronously.
 
@@ -159,13 +175,20 @@ The `ServiceRegistry` class allows registering service metadata such as dependen
 ### Example
 
 ```ts
+import { single, all, optional, ServiceRegistry } from "@wroud/di";
 import Logger from "./Logger";
+import Formatter from "./Formatter";
+import LoggerNode from "./LoggerNode";
+import LoggerBrowser from "./LoggerBrowser";
 
 ServiceRegistry.register(Logger, {
   name: "Logger",
-  dependencies: [],
+  dependencies: [all(Formatter), single(LoggerNode), optional(LoggerBrowser)],
 });
 ```
+
+- Injects an array of `Formatter` implementations as the first argument of a constructor,
+  `LoggerNode` implementation as the second argument and implementation resolver of `LoggerBrowser` as a third argument.
 
 ## createService
 
@@ -188,11 +211,13 @@ The `injectable` decorator marks a class as injectable and registers its depende
   - Injects the `Service` implementation as the first argument of a constructor.
 - `@injectable(() => [Service, [Service2]])`
   - Injects the `Service` implementation as the first argument of a constructor and an array of `Service2` implementations as the second argument of a constructor.
+- `@injectable(({ single, all, optional }) => [single(Service), all(Service2), optional(Service3)])`
+  - Injects the `Service` implementation as the first argument of a constructor, an array of `Service2` implementations as the second argument of a constructor and the `Service3` implementation resolver as the third argument of a constructor.
 
 ### Example
 
 ```ts
-import { injectable } from "@wroud/di";
+import { injectable, type IOptionalService } from "@wroud/di";
 
 @injectable()
 class Logger {
@@ -220,6 +245,29 @@ class AnotherService {
   anotherAction() {
     this.services.forEach((service) => service.action());
     this.logger.log("Another action executed");
+  }
+}
+
+@injectable(({ single, all, optional }) => [
+  single(Logger),
+  all(Service),
+  optional(NodeLogger),
+])
+class AnotherService {
+  constructor(
+    private readonly logger: Logger,
+    private readonly services: Service[],
+    private readonly nodeLogger: IOptionalService<NodeLogger>,
+  ) {}
+
+  anotherAction() {
+    this.services.forEach((service) => service.action());
+    this.logger.log("Another action executed");
+  }
+
+  yetOneAnotherAction() {
+    const nodeLogger = this.nodeLogger.resolve();
+    nodeLogger.log("Yet One Another action executed");
   }
 }
 ```

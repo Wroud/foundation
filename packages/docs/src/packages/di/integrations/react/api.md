@@ -38,7 +38,7 @@ The `useService` hook is used to resolve a single service instance. If the servi
 
 ### Arguments
 
-- **`type: SingleServiceType<T>`**
+- **`type: ServiceType<T>`**
 
   - The service type to resolve.
 
@@ -69,7 +69,7 @@ The `useServices` hook is used to resolve multiple instances of a service. Like 
 
 ### Arguments
 
-- **`type: SingleServiceType<T>`**
+- **`type: ServiceType<T>`**
 
   - The service type to resolve.
 

@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.3.1 -->
+## 0.3.1 (2024-11-20)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/di-react-v0.3.0...di-react-v0.3.1)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- allow combined service implementation resolvers usage (types) ([a85caa4](https://github.com/Wroud/foundation/commit/a85caa4))
+
 <!-- version:0.3.0 -->
 ## 0.3.0 (2024-11-18)
 

@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.4.0 -->
+## 0.4.0 (2024-11-20)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/di-tools-analyzer-v0.3.1...di-tools-analyzer-v0.4.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- allow to break cyclic dependency with `optional()` ([ac23b2d](https://github.com/Wroud/foundation/commit/ac23b2d))
+
 <!-- version:0.3.1 -->
 ## 0.3.1 (2024-11-19)
 

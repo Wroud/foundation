@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.14.0 -->
+## 0.14.0 (2024-11-20)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/di-v0.13.1...di-v0.14.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- allow to break cyclic dependency with `optional()` ([ac23b2d](https://github.com/Wroud/foundation/commit/ac23b2d))
+
 <!-- version:0.13.1 -->
 ## 0.13.1 (2024-11-19)
 

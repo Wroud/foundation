@@ -1,5 +1,7 @@
 {
   "name": "@wroud/preconditions",
+  "description": "A flexible and extensible library for managing preconditions in JavaScript and TypeScript applications. Simplify validation and preparation of entities like nodes, connections, and features with dynamic precondition handling.",
+  "version": "0.0.0",
   "type": "module",
   "sideEffects": [],
   "exports": {
@@ -34,5 +36,19 @@
     "@wroud/tsconfig": "workspace:^",
     "rimraf": "^6",
     "typescript": "^5"
-  }
+  },
+  "keywords": [
+    "preconditions",
+    "javascript",
+    "typescript",
+    "validation",
+    "fulfillment",
+    "entity-management",
+    "dynamic-applicability",
+    "precondition-manager",
+    "plugin",
+    "plugins",
+    "plugin-style",
+    "esm"
+  ]
 }

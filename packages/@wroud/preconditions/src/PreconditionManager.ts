@@ -7,8 +7,8 @@ export class PreconditionManager<T> {
    * Registers a new precondition for this entity type.
    * @param precondition - The precondition to register.
    */
-  public register(precondition: IPrecondition<T>): void {
-    this.preconditions.push(precondition);
+  public register(...precondition: IPrecondition<T>[]): void {
+    this.preconditions.push(...precondition);
   }
 
   /**

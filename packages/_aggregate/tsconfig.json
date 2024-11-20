@@ -45,6 +45,9 @@
       "path": "../@wroud/github"
     },
     {
+      "path": "../@wroud/preconditions"
+    },
+    {
       "path": "../@wroud/ts-project-linker"
     },
     {

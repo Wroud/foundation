@@ -1,0 +1,38 @@
+{
+  "name": "@wroud/preconditions",
+  "type": "module",
+  "sideEffects": [],
+  "exports": {
+    ".": "./lib/index.js",
+    "./*": "./lib/*.js"
+  },
+  "scripts": {
+    "ci:release": "yarn ci release --prefix preconditions-v",
+    "ci:git-tag": "yarn ci git-tag --prefix preconditions-v",
+    "ci:release-github": "yarn ci release-github --prefix preconditions-v",
+    "clear": "rimraf lib",
+    "build": "tsc -b",
+    "watch": "tsc -b -w"
+  },
+  "files": [
+    "package.json",
+    "LICENSE",
+    "README.md",
+    "CHANGELOG.md",
+    "lib",
+    "!lib/**/*.d.ts.map",
+    "!lib/**/*.test.js",
+    "!lib/**/*.test.d.ts",
+    "!lib/**/*.test.d.ts.map",
+    "!lib/**/*.test.js.map",
+    "!lib/tests",
+    "!.tsbuildinfo"
+  ],
+  "packageManager": "yarn@4.5.0",
+  "devDependencies": {
+    "@wroud/ci": "workspace:^",
+    "@wroud/tsconfig": "workspace:^",
+    "rimraf": "^6",
+    "typescript": "^5"
+  }
+}

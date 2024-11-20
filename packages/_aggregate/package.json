@@ -30,6 +30,7 @@
     "@wroud/docs": "workspace:*",
     "@wroud/git": "workspace:*",
     "@wroud/github": "workspace:*",
+    "@wroud/preconditions": "workspace:^",
     "@wroud/ts-project-linker": "workspace:*",
     "@wroud/ts-template": "workspace:^",
     "@wroud/tsconfig": "workspace:*",

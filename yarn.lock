@@ -3954,6 +3954,7 @@ __metadata:
     "@wroud/docs": "workspace:*"
     "@wroud/git": "workspace:*"
     "@wroud/github": "workspace:*"
+    "@wroud/preconditions": "workspace:^"
     "@wroud/ts-project-linker": "workspace:*"
     "@wroud/ts-template": "workspace:^"
     "@wroud/tsconfig": "workspace:*"
@@ -4202,6 +4203,17 @@ __metadata:
     rimraf: "npm:^6"
     typescript: "npm:^5"
     vitest: "npm:^2"
+  languageName: unknown
+  linkType: soft
+
+"@wroud/preconditions@workspace:^, @wroud/preconditions@workspace:packages/@wroud/preconditions":
+  version: 0.0.0-use.local
+  resolution: "@wroud/preconditions@workspace:packages/@wroud/preconditions"
+  dependencies:
+    "@wroud/ci": "workspace:^"
+    "@wroud/tsconfig": "workspace:^"
+    rimraf: "npm:^6"
+    typescript: "npm:^5"
   languageName: unknown
   linkType: soft
 

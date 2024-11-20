@@ -19,4 +19,20 @@ describe("ServiceInstancesStore", () => {
     instanceInfo.initialize(() => instance1);
     expect(store.addInstance(descriptor)).toBe(instanceInfo);
   });
+  it("should has", async () => {
+    const store = new ServiceInstancesStore();
+    const descriptor: IServiceDescriptor<{}> = {
+      service: {} as any,
+      resolver: {} as any,
+      lifetime: ServiceLifetime.Singleton,
+    };
+
+    store.addInstance(descriptor);
+    expect(store.hasInstanceOf(descriptor)).toBe(true);
+    expect(
+      store.hasInstanceOf({
+        ...descriptor,
+      }),
+    ).toBe(false);
+  });
 });

@@ -125,6 +125,7 @@ export class ServiceProvider implements IServiceProvider {
   ): Generator<Promise<unknown>, T, unknown> {
     return yield* service.resolve(
       this.collection,
+      this.instancesStore,
       this.resolveServiceImplementation,
       requestedBy,
       mode,
@@ -136,7 +137,9 @@ export class ServiceProvider implements IServiceProvider {
     requestedBy: Set<IServiceDescriptor<any>>,
     mode: "sync" | "async",
   ): Generator<Promise<unknown>, T, unknown> {
-    validateRequestPath(requestedBy, descriptor);
+    if (!this.instancesStore.getInstanceInfo(descriptor)?.initialized) {
+      validateRequestPath(requestedBy, descriptor);
+    }
 
     if (descriptor.lifetime === ServiceLifetime.Singleton && this.parent) {
       return yield* (

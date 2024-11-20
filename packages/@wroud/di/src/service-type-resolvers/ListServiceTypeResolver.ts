@@ -3,6 +3,7 @@ import type {
   IServiceDescriptorResolver,
   IServiceDescriptor,
   IServiceCollection,
+  IServiceInstancesStore,
 } from "../types/index.js";
 import {
   BaseServiceTypeResolver,
@@ -19,6 +20,7 @@ export class ListServiceTypeResolver<T> extends BaseServiceTypeResolver<
 
   override *resolve(
     collection: IServiceCollection,
+    instancesStore: IServiceInstancesStore,
     resolveServiceImplementation: IServiceDescriptorResolver,
     requestedBy: Set<IServiceDescriptor<any>>,
     mode: "sync" | "async",
@@ -33,6 +35,7 @@ export class ListServiceTypeResolver<T> extends BaseServiceTypeResolver<
         services.push(
           yield* next.resolve(
             collection,
+            instancesStore,
             resolveServiceImplementation,
             requestedBy,
             mode,

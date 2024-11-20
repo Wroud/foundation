@@ -1,3 +1,6 @@
+import { Debug } from "../debug.js";
+import { getNameOfDescriptor } from "../helpers/getNameOfDescriptor.js";
+import { getNameOfServiceType } from "../helpers/getNameOfServiceType.js";
 import { resolveGeneratorAsync } from "../helpers/resolveGeneratorAsync.js";
 import { resolveGeneratorSync } from "../helpers/resolveGeneratorSync.js";
 import type {
@@ -6,6 +9,7 @@ import type {
   IServiceDescriptorResolver,
   IServiceCollection,
   IResolverServiceType,
+  IServiceInstancesStore,
 } from "../types/index.js";
 import {
   BaseServiceTypeResolver,
@@ -27,6 +31,7 @@ export class OptionalServiceTypeResolver<T> extends BaseServiceTypeResolver<
 
   override *resolve(
     collection: IServiceCollection,
+    instancesStore: IServiceInstancesStore,
     resolveServiceImplementation: IServiceDescriptorResolver,
     requestedBy: Set<IServiceDescriptor<any>>,
     mode: "sync" | "async",
@@ -34,10 +39,27 @@ export class OptionalServiceTypeResolver<T> extends BaseServiceTypeResolver<
   ): Generator<Promise<unknown>, IOptionalService<T>, unknown> {
     let next = this.next;
 
+    function validateConstructorRequest() {
+      const lastRequestedBy = [...requestedBy].pop();
+      if (
+        lastRequestedBy &&
+        instancesStore.getInstanceInfo(lastRequestedBy)?.initialized === false
+      ) {
+        throw new Error(
+          Debug.errors.optionalServiceAsDependency(
+            getNameOfServiceType(next),
+            getNameOfDescriptor(lastRequestedBy),
+          ),
+        );
+      }
+    }
+
     if (isServiceTypeResolver(next)) {
       return new OptionalResolver<T>(function* resolver(mode) {
+        validateConstructorRequest();
         return yield* next.resolve(
           collection,
+          instancesStore,
           resolveServiceImplementation,
           requestedBy,
           mode,
@@ -47,6 +69,7 @@ export class OptionalServiceTypeResolver<T> extends BaseServiceTypeResolver<
     }
 
     return new OptionalResolver<T>(function* resolver(mode) {
+      validateConstructorRequest();
       return yield* resolveServiceImplementation(
         descriptor ?? collection.getDescriptor(next),
         requestedBy,

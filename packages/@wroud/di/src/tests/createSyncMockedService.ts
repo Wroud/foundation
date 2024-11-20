@@ -4,8 +4,9 @@ import { injectable } from "../di/injectable.js";
 export function createSyncMockedService(
   name: string,
   deps: () => any[] = () => [],
+  constructorImplementation?: (...deps: any[]) => void,
 ) {
-  const constructorMock = vi.fn();
+  const constructorMock = vi.fn(constructorImplementation);
   @injectable(deps)
   class Disposable {
     readonly deps: any[];

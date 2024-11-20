@@ -3,6 +3,7 @@ import type {
   IServiceDescriptor,
   IServiceDescriptorResolver,
   IServiceCollection,
+  IServiceInstancesStore,
 } from "../types/index.js";
 import {
   BaseServiceTypeResolver,
@@ -19,6 +20,7 @@ export class SingleServiceTypeResolver<T> extends BaseServiceTypeResolver<
 
   override *resolve(
     collection: IServiceCollection,
+    instancesStore: IServiceInstancesStore,
     resolveServiceImplementation: IServiceDescriptorResolver,
     requestedBy: Set<IServiceDescriptor<any>>,
     mode: "sync" | "async",
@@ -29,6 +31,7 @@ export class SingleServiceTypeResolver<T> extends BaseServiceTypeResolver<
     if (isServiceTypeResolver(next)) {
       return yield* next.resolve(
         collection,
+        instancesStore,
         resolveServiceImplementation,
         requestedBy,
         mode,

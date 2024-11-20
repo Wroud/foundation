@@ -8,6 +8,8 @@ export class Debug {
     serviceNotLoaded: (loader: Function) => "Service is not loaded yet",
     classNotDecorated: (name: string) =>
       `Class "${name}" not registered as service`,
+    optionalServiceAsDependency: (name: string, from: string) =>
+      `Optional service ${name} cannot be resolved during construction of service ${from}`,
   };
   public static warnings = {
     asyncValidation: (descriptor: IServiceDescriptor<unknown>) =>

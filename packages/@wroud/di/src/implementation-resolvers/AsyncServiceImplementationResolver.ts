@@ -1,4 +1,3 @@
-import { AsyncServiceImplementationError } from "../di/errors/AsyncServiceImplementationError.js";
 import { getNameOfServiceType } from "../helpers/getNameOfServiceType.js";
 import type {
   IResolvedServiceImplementation,
@@ -10,6 +9,7 @@ import { Debug } from "../debug.js";
 import { BaseServiceImplementationResolver } from "./BaseServiceImplementationResolver.js";
 import { RegistryServiceImplementationResolver } from "./RegistryServiceImplementationResolver.js";
 import { ValueServiceImplementationResolver } from "./ValueServiceImplementationResolver.js";
+import { AsyncServiceImplementationError } from "../di/errors/AsyncServiceImplementationError.js";
 
 const NOT_LOADED = Symbol("NOT_LOADED");
 
@@ -58,7 +58,7 @@ export class AsyncServiceImplementationResolver<
       }
     }
 
-    return yield* this.implementation.resolve(
+    return yield* (this.implementation as any).resolve(
       internalGetService,
       descriptor,
       requestedBy,

@@ -5,6 +5,7 @@ import type {
   SingleServiceType,
   IServiceDescriptorResolver,
   IServiceCollection,
+  IServiceInstancesStore,
 } from "../types/index.js";
 
 export abstract class BaseServiceTypeResolver<In, Out>
@@ -24,6 +25,7 @@ export abstract class BaseServiceTypeResolver<In, Out>
 
   abstract resolve(
     collection: IServiceCollection,
+    instancesStore: IServiceInstancesStore,
     resolveServiceImplementation: IServiceDescriptorResolver,
     requestedBy: Set<IServiceDescriptor<any>>,
     mode: "sync" | "async",

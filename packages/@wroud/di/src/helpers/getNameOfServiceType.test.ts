@@ -27,6 +27,10 @@ describe("getNameOfServiceType", () => {
     expect(getNameOfServiceType(null)).toBe("null");
   });
 
+  it("should return the correct name for a given undefined", () => {
+    expect(getNameOfServiceType(undefined)).toBe("undefined");
+  });
+
   it("should return the correct name for a given anonymous function from var", () => {
     const service = () => {};
     expect(getNameOfServiceType(service)).toBe("service");

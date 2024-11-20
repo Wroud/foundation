@@ -6,7 +6,11 @@ import type {
 export function getNameOfServiceType(
   service: SingleServiceType<any> | IServiceImplementation<any>,
 ): string {
-  if (!["object", "function"].includes(typeof service) || service === null) {
+  if (
+    !["object", "function"].includes(typeof service) ||
+    service === null ||
+    service === undefined
+  ) {
     return String(service);
   }
 

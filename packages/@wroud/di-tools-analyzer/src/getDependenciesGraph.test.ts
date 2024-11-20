@@ -17,7 +17,7 @@ const mockImpl = vi.hoisted(() => {
 
 vi.mock(import("uuid"), () => mockImpl as any);
 
-describe.sequential("injectable", () => {
+describe("getDependenciesGraph", () => {
   beforeEach(() => {
     mockImpl.reset();
   });
@@ -26,35 +26,29 @@ describe.sequential("injectable", () => {
     expect(getDependenciesGraph).toBeDefined();
   });
 
-  it.sequential(
-    "should make graph for sync services implementations",
-    async () => {
-      const servicesCollection = mockSyncServicesCollection();
-      const graph = await getDependenciesGraph(servicesCollection);
+  it("should make graph for sync services implementations", async () => {
+    const servicesCollection = mockSyncServicesCollection();
+    const graph = await getDependenciesGraph(servicesCollection);
 
-      expect(graph).toBeDefined();
-      expect(graph.nodes).toBeDefined();
-      expect(graph.links).toBeDefined();
-      expect(
-        graph.nodes.sort((a, b) => a.name.localeCompare(b.name)),
-      ).toMatchSnapshot();
-      expect(graph.links).toMatchSnapshot();
-    },
-  );
+    expect(graph).toBeDefined();
+    expect(graph.nodes).toBeDefined();
+    expect(graph.links).toBeDefined();
+    expect(
+      graph.nodes.sort((a, b) => a.name.localeCompare(b.name)),
+    ).toMatchSnapshot();
+    expect(graph.links).toMatchSnapshot();
+  });
 
-  it.sequential(
-    "should make graph for async services implementations",
-    async () => {
-      const servicesCollection = mockAsyncServicesCollection();
-      const graph = await getDependenciesGraph(servicesCollection);
+  it("should make graph for async services implementations", async () => {
+    const servicesCollection = mockAsyncServicesCollection();
+    const graph = await getDependenciesGraph(servicesCollection);
 
-      expect(graph).toBeDefined();
-      expect(graph.nodes).toBeDefined();
-      expect(graph.links).toBeDefined();
-      expect(
-        graph.nodes.sort((a, b) => a.name.localeCompare(b.name)),
-      ).toMatchSnapshot();
-      expect(graph.links).toMatchSnapshot();
-    },
-  );
+    expect(graph).toBeDefined();
+    expect(graph.nodes).toBeDefined();
+    expect(graph.links).toBeDefined();
+    expect(
+      graph.nodes.sort((a, b) => a.name.localeCompare(b.name)),
+    ).toMatchSnapshot();
+    expect(graph.links).toMatchSnapshot();
+  });
 });

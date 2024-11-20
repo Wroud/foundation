@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`injectable > should make graph for async services implementations 1`] = `
+exports[`getDependenciesGraph > should make graph for async services implementations 1`] = `
 [
   {
     "id": "uuid-1",
@@ -71,7 +71,7 @@ exports[`injectable > should make graph for async services implementations 1`] =
 ]
 `;
 
-exports[`injectable > should make graph for async services implementations 2`] = `
+exports[`getDependenciesGraph > should make graph for async services implementations 2`] = `
 [
   {
     "name": "AppImpl (App) -> Logger",
@@ -160,7 +160,7 @@ exports[`injectable > should make graph for async services implementations 2`] =
 ]
 `;
 
-exports[`injectable > should make graph for sync services implementations 1`] = `
+exports[`getDependenciesGraph > should make graph for sync services implementations 1`] = `
 [
   {
     "id": "uuid-1",
@@ -231,7 +231,7 @@ exports[`injectable > should make graph for sync services implementations 1`] = 
 ]
 `;
 
-exports[`injectable > should make graph for sync services implementations 2`] = `
+exports[`getDependenciesGraph > should make graph for sync services implementations 2`] = `
 [
   {
     "name": "App -> Logger",

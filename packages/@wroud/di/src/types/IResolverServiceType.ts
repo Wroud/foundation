@@ -1,6 +1,7 @@
 import type { IServiceCollection } from "./IServiceCollection.js";
 import type { IServiceDescriptor } from "./IServiceDescriptor.js";
 import type { IServiceDescriptorResolver } from "./IServiceDescriptorResolver.js";
+import type { IServiceInstancesStore } from "./IServiceInstancesStore.js";
 import type { ServiceType } from "./ServiceType.js";
 import type { SingleServiceType } from "./SingleServiceType.js";
 
@@ -10,6 +11,7 @@ export interface IResolverServiceType<In, Out> {
   readonly next: ServiceType<In>;
   resolve(
     collection: IServiceCollection,
+    instancesStore: IServiceInstancesStore,
     resolveService: IServiceDescriptorResolver,
     requestedBy: Set<IServiceDescriptor<any>>,
     mode: "sync" | "async",

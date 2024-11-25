@@ -1,7 +1,7 @@
 {
   "name": "@wroud/di-tools-analyzer",
   "description": "DI Tools Analyzer is a tool that helps you to analyze the dependency injection tools in your project and generate a report for them.",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "packageManager": "yarn@4.5.0",
   "type": "module",
   "license": "MIT",

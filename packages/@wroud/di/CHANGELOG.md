@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.15.0 -->
+## 0.15.0 (2024-11-25)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/di-v0.14.0...di-v0.15.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- improve performance ([03afb24](https://github.com/Wroud/foundation/commit/03afb24))
+
 <!-- version:0.14.0 -->
 ## 0.14.0 (2024-11-20)
 

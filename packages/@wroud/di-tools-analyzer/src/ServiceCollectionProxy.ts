@@ -33,7 +33,7 @@ export class ServiceCollectionProxy {
       },
       getDescriptors<T>(
         service: SingleServiceType<T>,
-      ): IServiceDescriptor<T>[] {
+      ): readonly IServiceDescriptor<T>[] {
         return collection.getDescriptors(service);
       },
       addScoped<T>(

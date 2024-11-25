@@ -15,9 +15,9 @@ describe("ServiceInstancesStore", () => {
     };
     const instance1 = {};
 
-    const instanceInfo = store.addInstance(descriptor);
+    const instanceInfo = store.addInstance(descriptor, null);
     instanceInfo.initialize(() => instance1);
-    expect(store.addInstance(descriptor)).toBe(instanceInfo);
+    expect(store.addInstance(descriptor, null)).toBe(instanceInfo);
   });
   it("should has", async () => {
     const store = new ServiceInstancesStore();
@@ -27,7 +27,7 @@ describe("ServiceInstancesStore", () => {
       lifetime: ServiceLifetime.Singleton,
     };
 
-    store.addInstance(descriptor);
+    store.addInstance(descriptor, null);
     expect(store.hasInstanceOf(descriptor)).toBe(true);
     expect(
       store.hasInstanceOf({

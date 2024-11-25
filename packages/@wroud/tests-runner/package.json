@@ -3,7 +3,10 @@
   "private": true,
   "type": "module",
   "packageManager": "yarn@4.5.0",
-  "bin": "./bin/tests-runner.mjs",
+  "bin": {
+    "benchmark": "./bin/benchmark.mjs",
+    "tests-runner": "./bin/tests-runner.mjs"
+  },
   "devDependencies": {
     "@tsconfig/node20": "^20",
     "@tsconfig/strictest": "^2",

@@ -31,7 +31,7 @@ export class ServiceInstancesStore implements IServiceInstancesStore {
 
   addInstance<T>(
     descriptor: IServiceDescriptor<T>,
-    requestedBy?: IServiceDescriptor<any>,
+    requestedBy: IServiceDescriptor<any> | null,
   ): IServiceInstanceInfo<T> {
     let instanceInfo = this.getInstanceInfo(descriptor);
 

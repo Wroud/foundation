@@ -4,11 +4,11 @@ import type {
   IServiceDescriptor,
   IServiceImplementationResolver,
   IServiceTypeResolver,
+  RequestPath,
 } from "../types/index.js";
 import { Debug } from "../debug.js";
 import { BaseServiceImplementationResolver } from "./BaseServiceImplementationResolver.js";
 import { RegistryServiceImplementationResolver } from "./RegistryServiceImplementationResolver.js";
-import { ValueServiceImplementationResolver } from "./ValueServiceImplementationResolver.js";
 import { AsyncServiceImplementationError } from "../di/errors/AsyncServiceImplementationError.js";
 
 const NOT_LOADED = Symbol("NOT_LOADED");
@@ -38,18 +38,10 @@ export class AsyncServiceImplementationResolver<
   *resolve(
     internalGetService: IServiceTypeResolver,
     descriptor: IServiceDescriptor<T>,
-    requestedBy: Set<IServiceDescriptor<any>>,
+    requestedBy: IServiceDescriptor<any> | null,
+    requestedPath: RequestPath,
     mode: "sync" | "async",
   ): Generator<Promise<unknown>, IResolvedServiceImplementation<T>, unknown> {
-    if (mode === "sync" && descriptor.dry) {
-      return yield* new ValueServiceImplementationResolver(null as T).resolve(
-        internalGetService,
-        descriptor,
-        requestedBy,
-        mode,
-      );
-    }
-
     if (this.implementation === NOT_LOADED || mode === "sync") {
       yield this.load();
 
@@ -62,6 +54,7 @@ export class AsyncServiceImplementationResolver<
       internalGetService,
       descriptor,
       requestedBy,
+      requestedPath,
       mode,
     );
   }

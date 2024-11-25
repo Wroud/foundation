@@ -5,27 +5,27 @@ import type {
 } from "../types/index.js";
 
 export class ServiceRegistry {
-  private static readonly services: WeakMap<any, IServiceMetadata> =
-    new WeakMap();
+  private static metadataKey = Symbol("service-metadata");
 
   static register<
     TClass extends abstract new (...args: MapToServicesType<TServices>) => any,
     TServices extends IResolverServiceType<any, any>[] = [],
   >(service: TClass, metadata: IServiceMetadata<TServices>) {
-    const existing = this.services.get(service);
-
-    if (existing) {
-      throw new Error(`Service ${existing.name} is already registered`);
+    if (ServiceRegistry.has(service)) {
+      throw new Error(`Service ${service.name} is already registered`);
     }
 
-    this.services.set(service, metadata);
+    Object.defineProperty(service, this.metadataKey, {
+      value: metadata,
+      writable: false,
+    });
   }
 
   static has(service: any): boolean {
-    return this.services.has(service);
+    return this.metadataKey in service;
   }
 
   static get(service: any): IServiceMetadata | undefined {
-    return this.services.get(service);
+    return service[this.metadataKey];
   }
 }

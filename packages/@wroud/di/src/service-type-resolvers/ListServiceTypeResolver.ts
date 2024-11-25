@@ -4,6 +4,7 @@ import type {
   IServiceDescriptor,
   IServiceCollection,
   IServiceInstancesStore,
+  RequestPath,
 } from "../types/index.js";
 import {
   BaseServiceTypeResolver,
@@ -22,7 +23,8 @@ export class ListServiceTypeResolver<T> extends BaseServiceTypeResolver<
     collection: IServiceCollection,
     instancesStore: IServiceInstancesStore,
     resolveServiceImplementation: IServiceDescriptorResolver,
-    requestedBy: Set<IServiceDescriptor<any>>,
+    requestedBy: IServiceDescriptor<any> | null,
+    requestedPath: RequestPath,
     mode: "sync" | "async",
   ): Generator<Promise<unknown>, T[], unknown> {
     const descriptors = collection.getDescriptors(this.service);
@@ -38,13 +40,19 @@ export class ListServiceTypeResolver<T> extends BaseServiceTypeResolver<
             instancesStore,
             resolveServiceImplementation,
             requestedBy,
+            requestedPath,
             mode,
             descriptor,
           ),
         );
       } else {
         services.push(
-          yield* resolveServiceImplementation(descriptor, requestedBy, mode),
+          yield* resolveServiceImplementation(
+            descriptor,
+            requestedBy,
+            requestedPath,
+            mode,
+          ),
         );
       }
     }

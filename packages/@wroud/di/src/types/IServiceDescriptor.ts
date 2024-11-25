@@ -3,8 +3,7 @@ import type { SingleServiceType } from "./SingleServiceType.js";
 import type { IServiceImplementationResolver } from "./IServiceImplementationResolver.js";
 
 export interface IServiceDescriptor<T> {
-  lifetime: ServiceLifetime;
-  service: SingleServiceType<T>;
-  resolver: IServiceImplementationResolver<T>;
-  dry?: boolean;
+  readonly lifetime: ServiceLifetime;
+  readonly service: SingleServiceType<T>;
+  readonly resolver: IServiceImplementationResolver<T>;
 }

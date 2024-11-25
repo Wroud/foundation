@@ -1,15 +1,20 @@
-import type { IServiceDescriptor } from "../../types/IServiceDescriptor.js";
+import type { IServiceDescriptor, RequestPath } from "../../types/index.js";
 import { getNameOfDescriptor } from "../../helpers/getNameOfDescriptor.js";
+import { requestPathToArray } from "../../helpers/requestPathToArray.js";
 
 export function validateRequestPath<T>(
-  path: Set<IServiceDescriptor<any>>,
+  path: RequestPath,
   descriptor: IServiceDescriptor<T>,
 ) {
-  if (path.has(descriptor)) {
-    throw new Error(
-      `Cyclic dependency detected: ${[...path, descriptor]
-        .map(getNameOfDescriptor)
-        .join(" -> ")}`,
-    );
+  for (let node: RequestPath | null = path; node; node = node.next) {
+    if (node.value === descriptor) {
+      throw new Error(
+        `Cyclic dependency detected: ${[descriptor, ...requestPathToArray(path)]
+          .reverse()
+          .filter((v) => v !== null)
+          .map(getNameOfDescriptor)
+          .join(" -> ")}`,
+      );
+    }
   }
 }

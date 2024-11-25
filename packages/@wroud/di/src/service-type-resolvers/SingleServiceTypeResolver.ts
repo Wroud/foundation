@@ -4,6 +4,7 @@ import type {
   IServiceDescriptorResolver,
   IServiceCollection,
   IServiceInstancesStore,
+  RequestPath,
 } from "../types/index.js";
 import {
   BaseServiceTypeResolver,
@@ -18,30 +19,31 @@ export class SingleServiceTypeResolver<T> extends BaseServiceTypeResolver<
     super(next);
   }
 
-  override *resolve(
+  override resolve(
     collection: IServiceCollection,
     instancesStore: IServiceInstancesStore,
     resolveServiceImplementation: IServiceDescriptorResolver,
-    requestedBy: Set<IServiceDescriptor<any>>,
+    requestedBy: IServiceDescriptor<any> | null,
+    requestedPath: RequestPath,
     mode: "sync" | "async",
     descriptor?: IServiceDescriptor<T>,
   ): Generator<Promise<unknown>, T, unknown> {
-    let next = this.next;
-
-    if (isServiceTypeResolver(next)) {
-      return yield* next.resolve(
+    if (isServiceTypeResolver(this.next)) {
+      return this.next.resolve(
         collection,
         instancesStore,
         resolveServiceImplementation,
         requestedBy,
+        requestedPath,
         mode,
         descriptor,
       );
     }
 
-    return yield* resolveServiceImplementation(
-      descriptor ?? collection.getDescriptor(next),
+    return resolveServiceImplementation(
+      descriptor ?? collection.getDescriptor(this.next),
       requestedBy,
+      requestedPath,
       mode,
     );
   }

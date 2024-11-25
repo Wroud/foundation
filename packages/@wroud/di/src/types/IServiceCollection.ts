@@ -8,7 +8,9 @@ import type { SingleServiceType } from "./SingleServiceType.js";
 export interface IServiceCollection
   extends Iterable<IServiceDescriptor<unknown>> {
   getDescriptor<T>(service: SingleServiceType<T>): IServiceDescriptor<T>;
-  getDescriptors<T>(service: SingleServiceType<T>): IServiceDescriptor<T>[];
+  getDescriptors<T>(
+    service: SingleServiceType<T>,
+  ): readonly IServiceDescriptor<T>[];
 
   addScoped<T>(service: SingleServiceImplementation<T>): this;
   addScoped<T>(

@@ -3,6 +3,7 @@ import type {
   IServiceDescriptor,
   IServiceImplementationResolver,
   IServiceTypeResolver,
+  RequestPath,
 } from "../types/index.js";
 
 export abstract class BaseServiceImplementationResolver<T>
@@ -12,7 +13,8 @@ export abstract class BaseServiceImplementationResolver<T>
   abstract resolve(
     internalGetService: IServiceTypeResolver,
     descriptor: IServiceDescriptor<any>,
-    requestedBy: Set<IServiceDescriptor<any>>,
+    requestedBy: IServiceDescriptor<any> | null,
+    requestedPath: RequestPath,
     mode: "sync" | "async",
   ): Generator<Promise<unknown>, IResolvedServiceImplementation<T>, unknown>;
 }

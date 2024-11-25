@@ -1,0 +1,18 @@
+{
+  "extends": "@wroud/tsconfig/tsconfig.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "./lib/modern.tsbuildinfo",
+    "rootDir": "src",
+    "rootDirs": ["src"],
+    "outDir": "lib",
+    "target": "ES2023",
+    "incremental": true,
+    "composite": true
+  },
+  "include": ["src/tools", "src/@wroud", "src/brandi"],
+  "references": [
+    {
+      "path": "../di"
+    }
+  ]
+}

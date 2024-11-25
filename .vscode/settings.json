@@ -15,7 +15,7 @@
   "explorer.fileNesting.enabled": true,
   "explorer.fileNesting.expand": false,
   "explorer.fileNesting.patterns": {
-    "*.ts": "${capture}.js, ${capture}.test.tsx, ${capture}.test.ts, ${capture}.*.ts, ${capture}.d.ts",
+    "*.ts": "${capture}.js, ${capture}.test.tsx, ${capture}.test.ts, ${capture}.bench.ts, ${capture}.*.ts, ${capture}.d.ts",
     "*.d.ts": "${capture}.d.ts.map",
     "*.js": "${capture}.js.map, ${capture}.min.js, ${capture}.d.ts, ${capture}.d.ts.map",
     "*.jsx": "${capture}.js, ${capture}.jsx.map",

@@ -9,7 +9,7 @@ export interface IServiceInstancesStore
   ): IServiceInstanceInfo<T> | undefined;
   addInstance<T>(
     descriptor: IServiceDescriptor<T>,
-    requestedBy?: IServiceDescriptor<any>,
+    requestedBy: IServiceDescriptor<any> | null,
   ): IServiceInstanceInfo<T>;
   [Symbol.dispose](): void;
   [Symbol.asyncDispose](): Promise<void>;

@@ -10,6 +10,7 @@ import type {
   IServiceCollection,
   IResolverServiceType,
   IServiceInstancesStore,
+  RequestPath,
 } from "../types/index.js";
 import {
   BaseServiceTypeResolver,
@@ -33,46 +34,48 @@ export class OptionalServiceTypeResolver<T> extends BaseServiceTypeResolver<
     collection: IServiceCollection,
     instancesStore: IServiceInstancesStore,
     resolveServiceImplementation: IServiceDescriptorResolver,
-    requestedBy: Set<IServiceDescriptor<any>>,
+    requestedBy: IServiceDescriptor<any> | null,
+    requestedPath: RequestPath,
     mode: "sync" | "async",
     descriptor?: IServiceDescriptor<T>,
   ): Generator<Promise<unknown>, IOptionalService<T>, unknown> {
     let next = this.next;
 
     function validateConstructorRequest() {
-      const lastRequestedBy = [...requestedBy].pop();
       if (
-        lastRequestedBy &&
-        instancesStore.getInstanceInfo(lastRequestedBy)?.initialized === false
+        requestedBy &&
+        instancesStore.getInstanceInfo(requestedBy)?.initialized === false
       ) {
         throw new Error(
           Debug.errors.optionalServiceAsDependency(
             getNameOfServiceType(next),
-            getNameOfDescriptor(lastRequestedBy),
+            getNameOfDescriptor(requestedBy),
           ),
         );
       }
     }
 
     if (isServiceTypeResolver(next)) {
-      return new OptionalResolver<T>(function* resolver(mode) {
+      return new OptionalResolver<T>(function resolver(mode) {
         validateConstructorRequest();
-        return yield* next.resolve(
+        return next.resolve(
           collection,
           instancesStore,
           resolveServiceImplementation,
           requestedBy,
+          requestedPath,
           mode,
           descriptor,
         );
       });
     }
 
-    return new OptionalResolver<T>(function* resolver(mode) {
+    return new OptionalResolver<T>(function resolver(mode) {
       validateConstructorRequest();
-      return yield* resolveServiceImplementation(
+      return resolveServiceImplementation(
         descriptor ?? collection.getDescriptor(next),
         requestedBy,
+        requestedPath,
         mode,
       );
     });

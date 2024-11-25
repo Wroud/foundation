@@ -4,6 +4,7 @@ import type {
   IServiceDescriptor,
   IResolverServiceType,
   IServiceTypeResolver,
+  RequestPath,
 } from "../types/index.js";
 import { BaseServiceImplementationResolver } from "./BaseServiceImplementationResolver.js";
 
@@ -21,12 +22,14 @@ export class ProxyServiceImplementationResolver<
   *resolve(
     internalGetService: IServiceTypeResolver,
     descriptor: IServiceDescriptor<T>,
-    requestedBy: Set<IServiceDescriptor<any>>,
+    requestedBy: IServiceDescriptor<any> | null,
+    requestedPath: RequestPath,
     mode: "sync" | "async",
   ): Generator<Promise<unknown>, IResolvedServiceImplementation<T>, unknown> {
     const implementation = yield* internalGetService(
       this.service,
       requestedBy,
+      requestedPath,
       mode,
     );
     return () => implementation;

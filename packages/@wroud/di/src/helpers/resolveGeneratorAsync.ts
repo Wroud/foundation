@@ -1,17 +1,13 @@
 export async function resolveGeneratorAsync<TResult>(
   iterator: Generator<Promise<unknown>, TResult, unknown>,
 ) {
-  let result: IteratorResult<Promise<unknown>, TResult>;
+  let result = iterator.next();
 
-  while (!(result = iterator.next()).done) {
+  for (; !result.done; result = iterator.next()) {
     try {
       await result.value;
     } catch (err) {
       result = iterator.throw(err);
-
-      if (result.done) {
-        break;
-      }
     }
   }
 

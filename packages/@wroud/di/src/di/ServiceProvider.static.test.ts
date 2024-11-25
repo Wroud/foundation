@@ -12,7 +12,8 @@ describe("ServiceProvider", () => {
       ServiceProvider.internalGetService(
         {} as any,
         single(createService("test")),
-        new Set(),
+        null,
+        { value: null, next: null },
         "sync",
       ),
     ).toThrowError("provider must be an instance of ServiceProvider");

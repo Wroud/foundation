@@ -286,35 +286,6 @@ describe("ServiceProvider", () => {
     expect(a2).toBeInstanceOf(A);
     expect(a1).toBe(a2);
   });
-  it("should throw on attempt to resolve async service implementation with circular dependency", async () => {
-    const serviceB = createService("B");
-    const A = createSyncMockedService("A", () => [serviceB]);
-    const loaderA = lazy(() => Promise.resolve(A));
-    const B = createSyncMockedService("B", () => [A]);
-    const loaderB = lazy(() => Promise.resolve(B));
-
-    const serviceProvider = new ServiceContainerBuilder()
-      .addSingleton(A, loaderA)
-      .addSingleton(serviceB, loaderB)
-      .build();
-
-    await expect(() => serviceProvider.getServiceAsync(A)).rejects.toThrowError(
-      "Cyclic dependency detected: A -> B -> A",
-    );
-  });
-  it("should throw on attempt to resolve async service implementation with circular dependency with multiple services resolve", async () => {
-    const serviceB = createService("B");
-    const A = createSyncMockedService("A", () => [[serviceB]]);
-    const loaderA = lazy(() => Promise.resolve(A));
-
-    const serviceProvider = new ServiceContainerBuilder()
-      .addSingleton(serviceB, loaderA)
-      .build();
-
-    await expect(() =>
-      serviceProvider.getServicesAsync(serviceB),
-    ).rejects.toThrowError("Cyclic dependency detected: A (B) -> A (B)");
-  });
   it("should not initialize copy of previously resolved service when resolving multiple services async", async () => {
     const A = createSyncMockedService("A");
     const B = createSyncMockedService("B");

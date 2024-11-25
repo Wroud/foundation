@@ -6,6 +6,7 @@ import type {
   IServiceImplementationResolver,
   SingleServiceImplementation,
   IServiceTypeResolver,
+  RequestPath,
 } from "../types/index.js";
 import {
   BaseServiceImplementationResolver,
@@ -33,7 +34,8 @@ export class RegistryServiceImplementationResolver<
   *resolve(
     internalGetService: IServiceTypeResolver,
     descriptor: IServiceDescriptor<T>,
-    requestedBy: Set<IServiceDescriptor<any>>,
+    requestedBy: IServiceDescriptor<any> | null,
+    requestedPath: RequestPath,
     mode: "sync" | "async",
   ): Generator<Promise<unknown>, IResolvedServiceImplementation<T>, unknown> {
     let implementation = this.implementation;
@@ -47,6 +49,7 @@ export class RegistryServiceImplementationResolver<
         internalGetService,
         descriptor,
         requestedBy,
+        requestedPath,
         mode,
       )) as T | SingleServiceImplementation<T>;
     }
@@ -54,20 +57,34 @@ export class RegistryServiceImplementationResolver<
     const metadata = ServiceRegistry.get(implementation);
 
     if (metadata) {
-      const instanceDependencies: any[] = [];
-      requestedBy = new Set([...requestedBy, descriptor]);
-      for (const dependency of metadata.dependencies) {
-        instanceDependencies.push(
-          yield* internalGetService(dependency, requestedBy, mode),
-        );
+      if (metadata.dependencies.length > 0) {
+        const instanceDependencies: any[] = [];
+
+        requestedPath = {
+          value: descriptor,
+          next: requestedPath,
+        };
+        for (const dependency of metadata.dependencies) {
+          instanceDependencies.push(
+            yield* internalGetService(
+              dependency,
+              descriptor,
+              requestedPath,
+              mode,
+            ),
+          );
+        }
+        return () =>
+          new (implementation as IServiceConstructor<T>)(
+            ...instanceDependencies,
+          );
       }
 
-      return () =>
-        new (implementation as IServiceConstructor<T>)(...instanceDependencies);
+      return () => new (implementation as IServiceConstructor<T>)();
     }
 
     return yield* new FactoryServiceImplementationResolver(
       implementation,
-    ).resolve(internalGetService, descriptor, requestedBy, mode);
+    ).resolve(internalGetService, descriptor, requestedBy, requestedPath, mode);
   }
 }

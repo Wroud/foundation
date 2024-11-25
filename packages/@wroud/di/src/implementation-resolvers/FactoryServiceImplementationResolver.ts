@@ -6,6 +6,7 @@ import type {
   IServiceImplementationResolver,
   SingleServiceImplementation,
   IServiceTypeResolver,
+  RequestPath,
 } from "../types/index.js";
 import {
   BaseServiceImplementationResolver,
@@ -35,7 +36,8 @@ export class FactoryServiceImplementationResolver<
   *resolve(
     getService: IServiceTypeResolver,
     descriptor: IServiceDescriptor<any>,
-    requestedBy: Set<IServiceDescriptor<any>>,
+    requestedBy: IServiceDescriptor<any> | null,
+    requestedPath: RequestPath,
     mode: "sync" | "async",
   ): Generator<Promise<unknown>, IResolvedServiceImplementation<T>, unknown> {
     let implementation = this.implementation;
@@ -49,6 +51,7 @@ export class FactoryServiceImplementationResolver<
         getService,
         descriptor,
         requestedBy,
+        requestedPath,
         mode,
       )) as T | SingleServiceImplementation<T>;
     }
@@ -57,6 +60,7 @@ export class FactoryServiceImplementationResolver<
       const serviceProvider = yield* getService(
         single(IServiceProvider),
         requestedBy,
+        requestedPath,
         mode,
       );
       return () => {
@@ -82,6 +86,6 @@ export class FactoryServiceImplementationResolver<
 
     return yield* new ValueServiceImplementationResolver(
       implementation,
-    ).resolve(getService, descriptor, requestedBy, mode);
+    ).resolve(getService, descriptor, requestedBy, requestedPath, mode);
   }
 }

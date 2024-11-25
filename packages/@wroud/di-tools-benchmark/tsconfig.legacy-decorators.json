@@ -1,0 +1,22 @@
+{
+  "extends": "@wroud/tsconfig/tsconfig.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "./lib/legacy-decorators.tsbuildinfo",
+    "rootDir": "src",
+    "rootDirs": ["src"],
+    "outDir": "lib",
+    "incremental": true,
+    "composite": true,
+    "lib": ["ES2023"],
+    "types": ["reflect-metadata"],
+    "target": "ES2023",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
+  },
+  "include": ["src/inversify", "src/tsyringe"],
+  "references": [
+    {
+      "path": "../di"
+    }
+  ]
+}

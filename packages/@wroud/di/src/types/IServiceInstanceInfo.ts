@@ -3,10 +3,11 @@ import type { IServiceDescriptor } from "./IServiceDescriptor.js";
 export interface IServiceInstanceInfo<T> {
   descriptor: IServiceDescriptor<T>;
   instance: T;
-  dependents: Set<IServiceInstanceInfo<any>>;
+  dependents: IServiceInstanceInfo<any>[];
   initialized: boolean;
   disposed: boolean;
-  initialize(creator: () => T): void;
+  getInstance(): Generator<any, T | symbol>;
+  initialize(creator: () => T): T;
   addDependent(dependent: IServiceInstanceInfo<any>): void;
   disposeSync(): void;
   disposeAsync(): Promise<void>;

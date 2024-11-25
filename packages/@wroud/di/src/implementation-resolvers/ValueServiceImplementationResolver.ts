@@ -4,6 +4,7 @@ import type {
   IServiceDescriptor,
   IServiceImplementationResolver,
   IServiceTypeResolver,
+  RequestPath,
 } from "../types/index.js";
 import {
   BaseServiceImplementationResolver,
@@ -26,7 +27,8 @@ export class ValueServiceImplementationResolver<
   *resolve(
     internalGetService: IServiceTypeResolver,
     descriptor: IServiceDescriptor<any>,
-    requestedBy: Set<IServiceDescriptor<any>>,
+    requestedBy: IServiceDescriptor<any> | null,
+    requestedPath: RequestPath,
     mode: "sync" | "async",
   ): Generator<Promise<unknown>, IResolvedServiceImplementation<T>, unknown> {
     let implementation = this.implementation;
@@ -36,6 +38,7 @@ export class ValueServiceImplementationResolver<
         internalGetService,
         descriptor,
         requestedBy,
+        requestedPath,
         mode,
       )) as T;
     }

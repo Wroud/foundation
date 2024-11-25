@@ -16,6 +16,11 @@ export default defineConfig({
     setupFiles: [import.meta.resolve("./vitest.setup.ts")],
 
     include: ["**/lib/**/*.test.js"],
+
+    benchmark: {
+      include: ["**/lib/**/*.bench.js"],
+    },
+
     poolOptions: {
       forks: {
         execArgv: ["--expose-gc"],

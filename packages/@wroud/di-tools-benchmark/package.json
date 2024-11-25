@@ -1,0 +1,48 @@
+{
+  "name": "@wroud/di-tools-benchmark",
+  "type": "module",
+  "private": true,
+  "sideEffects": [],
+  "exports": {
+    ".": "./lib/index.js",
+    "./*": "./lib/*.js"
+  },
+  "scripts": {
+    "build:legacy-decorators": "tsc --build tsconfig.legacy-decorators.json",
+    "build:modern": "tsc --build tsconfig.modern.json",
+    "build:benchmark": "tsc --build tsconfig.json",
+    "build": "yarn build:modern && yarn build:legacy-decorators && yarn build:benchmark",
+    "bench": "benchmark run",
+    "clear": "rimraf lib"
+  },
+  "files": [
+    "package.json",
+    "LICENSE",
+    "README.md",
+    "CHANGELOG.md",
+    "lib",
+    "!lib/**/*.d.ts.map",
+    "!lib/**/*.test.js",
+    "!lib/**/*.test.d.ts",
+    "!lib/**/*.test.d.ts.map",
+    "!lib/**/*.test.js.map",
+    "!lib/tests",
+    "!.tsbuildinfo"
+  ],
+  "packageManager": "yarn@4.5.0",
+  "devDependencies": {
+    "@wroud/tsconfig": "workspace:^",
+    "rimraf": "^6",
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@wroud/di": "workspace:^",
+    "@wroud/tests-runner": "workspace:^",
+    "brandi": "^5",
+    "inversify": "^6",
+    "reflect-metadata": "^0",
+    "tslib": "^2",
+    "tsyringe": "^4",
+    "vitest": "^2"
+  }
+}

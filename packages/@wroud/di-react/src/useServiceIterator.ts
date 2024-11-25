@@ -9,7 +9,8 @@ export function useServiceIterator<T>(type: IResolverServiceType<any, T>): T {
   const iterator = ServiceProvider.internalGetService(
     provider,
     type,
-    new Set(),
+    null,
+    { next: null, value: null },
     "async",
   );
 

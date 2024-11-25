@@ -4,6 +4,7 @@ import type {
 } from "../types/index.js";
 import { getNameOfDescriptor } from "../helpers/getNameOfDescriptor.js";
 
+const NOT_INITIALIZED = Symbol("NOT_INITIALIZED");
 export class ServiceInstanceInfo<T> implements IServiceInstanceInfo<T> {
   get instance(): T {
     if (!this.initialized) {
@@ -12,39 +13,46 @@ export class ServiceInstanceInfo<T> implements IServiceInstanceInfo<T> {
       );
     }
 
-    return this._instance!;
+    return this._instance as T;
   }
 
-  initialized: boolean;
+  get initialized(): boolean {
+    return this._instance !== NOT_INITIALIZED;
+  }
+
   disposed: boolean;
-  dependents: Set<IServiceInstanceInfo<any>>;
-  private _instance: T | undefined;
+  dependents: IServiceInstanceInfo<any>[];
+  private _instance: T | typeof NOT_INITIALIZED;
   constructor(public descriptor: IServiceDescriptor<T>) {
-    this.initialized = false;
     this.disposed = false;
-    this.dependents = new Set();
+    this.dependents = [];
+    this._instance = NOT_INITIALIZED;
   }
 
-  initialize(creator: () => T): void {
-    if (this.initialized) {
-      return;
+  *getInstance(): Generator<any, T | symbol> {
+    return this._instance;
+  }
+
+  initialize(creator: () => T): T {
+    if (this._instance === NOT_INITIALIZED) {
+      this._instance = creator();
     }
-    this._instance = this.descriptor.dry ? (null as T) : creator();
-    this.initialized = true;
+
+    return this._instance;
   }
 
   addDependent(dependent: IServiceInstanceInfo<any>): void {
-    this.dependents.add(dependent);
+    this.dependents.push(dependent);
   }
 
   disposeSync(): void {
-    const instance = this.instance as any;
+    if (this.disposed || !this.initialized) {
+      return;
+    }
+
+    const instance = this._instance as any;
     const disposeMethod = instance?.[Symbol.dispose] ?? instance?.dispose;
-    if (
-      typeof disposeMethod === "function" &&
-      !this.disposed &&
-      this.initialized
-    ) {
+    if (typeof disposeMethod === "function") {
       for (const dependent of this.dependents) {
         dependent.disposeSync();
       }
@@ -55,25 +63,25 @@ export class ServiceInstanceInfo<T> implements IServiceInstanceInfo<T> {
   }
 
   async disposeAsync(): Promise<void> {
-    const instance = this.instance as any;
+    if (this.disposed || !this.initialized) {
+      return;
+    }
+    const instance = this._instance as any;
 
-    if (!this.disposed && this.initialized) {
-      const disposeMethod =
-        instance?.[Symbol.asyncDispose] ?? instance?.dispose;
-      if (typeof disposeMethod === "function") {
-        this.disposed = true;
-        try {
-          await Promise.all(
-            [...this.dependents].map((dependent) => dependent.disposeAsync()),
-          );
-          await Reflect.apply(disposeMethod, instance, []);
-        } catch (e) {
-          this.disposed = false;
-          throw e;
-        }
-      } else {
-        this.disposeSync();
+    const disposeMethod = instance?.[Symbol.asyncDispose] ?? instance?.dispose;
+    if (typeof disposeMethod === "function") {
+      this.disposed = true;
+      try {
+        await Promise.all(
+          [...this.dependents].map((dependent) => dependent.disposeAsync()),
+        );
+        await Reflect.apply(disposeMethod, instance, []);
+      } catch (e) {
+        this.disposed = false;
+        throw e;
       }
+    } else {
+      this.disposeSync();
     }
   }
 }

@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.3.0 -->
+## 0.3.0 (2024-11-26)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/flow-middleware-v0.2.0...flow-middleware-v0.3.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- add multiple middleware registration and rename register functions ([337e9ee](https://github.com/Wroud/foundation/commit/337e9ee))
+
 <!-- version:0.2.0 -->
 ## 0.2.0 (2024-11-26)
 

@@ -19,6 +19,7 @@
     "tslib": "^2"
   },
   "devDependencies": {
+    "@wroud/api-logger": "workspace:^",
     "@wroud/ci": "workspace:*",
     "@wroud/conventional-commits-bump": "workspace:^",
     "@wroud/conventional-commits-changelog": "workspace:*",
@@ -28,6 +29,7 @@
     "@wroud/di-tools-analyzer": "workspace:*",
     "@wroud/di-tools-codemod": "workspace:*",
     "@wroud/docs": "workspace:*",
+    "@wroud/flow-middleware": "workspace:^",
     "@wroud/git": "workspace:*",
     "@wroud/github": "workspace:*",
     "@wroud/preconditions": "workspace:^",

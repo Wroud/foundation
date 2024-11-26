@@ -1,0 +1,55 @@
+{
+  "name": "@wroud/flow-middleware",
+  "type": "module",
+  "version": "0.0.0",
+  "description": "A lightweight middleware management library for JavaScript and TypeScript, facilitating middleware chains with re-runs, error handling, and disposability.",
+  "sideEffects": [],
+  "exports": {
+    ".": "./lib/index.js",
+    "./*": "./lib/*.js"
+  },
+  "scripts": {
+    "ci:release": "yarn ci release --prefix api-logger-v",
+    "ci:git-tag": "yarn ci git-tag --prefix api-logger-v",
+    "ci:release-github": "yarn ci release-github --prefix api-logger-v",
+    "build": "tsc -b",
+    "clear": "rimraf lib"
+  },
+  "files": [
+    "package.json",
+    "LICENSE",
+    "README.md",
+    "CHANGELOG.md",
+    "lib",
+    "!lib/**/*.d.ts.map",
+    "!lib/**/*.test.js",
+    "!lib/**/*.test.d.ts",
+    "!lib/**/*.test.d.ts.map",
+    "!lib/**/*.test.js.map",
+    "!lib/tests",
+    "!.tsbuildinfo"
+  ],
+  "packageManager": "yarn@4.5.3",
+  "devDependencies": {
+    "@wroud/api-logger": "workspace:^",
+    "@wroud/ci": "workspace:^",
+    "@wroud/tsconfig": "workspace:^",
+    "rimraf": "^6",
+    "typescript": "^5"
+  },
+  "keywords": [
+    "middleware",
+    "typescript",
+    "javascript",
+    "flow control",
+    "error handling",
+    "ESM",
+    "asynchronous",
+    "dependency management",
+    "middleware chains",
+    "re-run",
+    "disposable",
+    "flow middleware",
+    "middleware library"
+  ]
+}

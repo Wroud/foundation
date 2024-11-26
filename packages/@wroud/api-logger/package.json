@@ -1,0 +1,50 @@
+{
+  "name": "@wroud/api-logger",
+  "type": "module",
+  "version": "0.0.0",
+  "description": "@wroud/api-logger is a lightweight, TypeScript-compatible logging interface for JavaScript applications. It provides standardized logging methods (`info`, `warn`, `error`) to ensure consistent and maintainable logging across your projects. Designed as an ESM-only package, it seamlessly integrates with modern JavaScript workflows and various logging implementations, making it an ideal choice for developers seeking flexibility and type safety in their logging solutions.",
+  "sideEffects": [],
+  "exports": {
+    ".": "./lib/index.js",
+    "./*": "./lib/*.js"
+  },
+  "scripts": {
+    "ci:release": "yarn ci release --prefix api-logger-v",
+    "ci:git-tag": "yarn ci git-tag --prefix api-logger-v",
+    "ci:release-github": "yarn ci release-github --prefix api-logger-v",
+    "build": "tsc -b",
+    "clear": "rimraf lib"
+  },
+  "files": [
+    "package.json",
+    "LICENSE",
+    "README.md",
+    "CHANGELOG.md",
+    "lib",
+    "!lib/**/*.d.ts.map",
+    "!lib/**/*.test.js",
+    "!lib/**/*.test.d.ts",
+    "!lib/**/*.test.d.ts.map",
+    "!lib/**/*.test.js.map",
+    "!lib/tests",
+    "!.tsbuildinfo"
+  ],
+  "packageManager": "yarn@4.5.3",
+  "devDependencies": {
+    "@wroud/ci": "workspace:^",
+    "@wroud/tsconfig": "workspace:^",
+    "rimraf": "^6",
+    "typescript": "^5"
+  },
+  "keywords": [
+    "logger",
+    "logging",
+    "typescript",
+    "javascript",
+    "ESM",
+    "interface",
+    "lightweight",
+    "logging-interface",
+    "API-logger"
+  ]
+}

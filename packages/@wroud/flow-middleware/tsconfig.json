@@ -1,0 +1,21 @@
+{
+  "extends": "@wroud/tsconfig/tsconfig.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "./lib/.tsbuildinfo",
+    "rootDir": "src",
+    "rootDirs": [
+      "src"
+    ],
+    "outDir": "lib",
+    "incremental": true,
+    "composite": true
+  },
+  "include": [
+    "src"
+  ],
+  "references": [
+    {
+      "path": "../api-logger"
+    }
+  ]
+}

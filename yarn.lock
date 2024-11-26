@@ -4005,6 +4005,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@wroud/_aggregate@workspace:packages/_aggregate"
   dependencies:
+    "@wroud/api-logger": "workspace:^"
     "@wroud/ci": "workspace:*"
     "@wroud/conventional-commits-bump": "workspace:^"
     "@wroud/conventional-commits-changelog": "workspace:*"
@@ -4014,6 +4015,7 @@ __metadata:
     "@wroud/di-tools-analyzer": "workspace:*"
     "@wroud/di-tools-codemod": "workspace:*"
     "@wroud/docs": "workspace:*"
+    "@wroud/flow-middleware": "workspace:^"
     "@wroud/git": "workspace:*"
     "@wroud/github": "workspace:*"
     "@wroud/preconditions": "workspace:^"
@@ -4028,6 +4030,17 @@ __metadata:
     graphql-codegen-typed-document-nodes: "workspace:^"
     rimraf: "npm:^6"
     tslib: "npm:^2"
+    typescript: "npm:^5"
+  languageName: unknown
+  linkType: soft
+
+"@wroud/api-logger@workspace:^, @wroud/api-logger@workspace:packages/@wroud/api-logger":
+  version: 0.0.0-use.local
+  resolution: "@wroud/api-logger@workspace:packages/@wroud/api-logger"
+  dependencies:
+    "@wroud/ci": "workspace:^"
+    "@wroud/tsconfig": "workspace:^"
+    rimraf: "npm:^6"
     typescript: "npm:^5"
   languageName: unknown
   linkType: soft
@@ -4244,6 +4257,18 @@ __metadata:
     vitepress: "npm:^1"
     vitepress-plugin-tabs: "npm:^0"
     vue: "npm:^3"
+  languageName: unknown
+  linkType: soft
+
+"@wroud/flow-middleware@workspace:^, @wroud/flow-middleware@workspace:packages/@wroud/flow-middleware":
+  version: 0.0.0-use.local
+  resolution: "@wroud/flow-middleware@workspace:packages/@wroud/flow-middleware"
+  dependencies:
+    "@wroud/api-logger": "workspace:^"
+    "@wroud/ci": "workspace:^"
+    "@wroud/tsconfig": "workspace:^"
+    rimraf: "npm:^6"
+    typescript: "npm:^5"
   languageName: unknown
   linkType: soft
 

@@ -15,6 +15,9 @@
   ],
   "references": [
     {
+      "path": "../@wroud/api-logger"
+    },
+    {
       "path": "../@wroud/conventional-commits-bump"
     },
     {
@@ -37,6 +40,9 @@
     },
     {
       "path": "../@wroud/di-tools-codemod/tsconfig.commonjs.json"
+    },
+    {
+      "path": "../@wroud/flow-middleware"
     },
     {
       "path": "../@wroud/git"

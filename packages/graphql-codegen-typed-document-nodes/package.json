@@ -1,7 +1,7 @@
 {
   "name": "graphql-codegen-typed-document-nodes",
   "description": "A custom GraphQL Code Generator plugin to generate typed document nodes for TypeScript operations and fragments. Provides enhanced type safety with generated exports for GraphQL queries, mutations, and fragments.",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "type": "module",
   "packageManager": "yarn@4.5.3",
   "license": "MIT",

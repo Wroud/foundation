@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.15.1 -->
+## 0.15.1 (2024-11-26)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/di-v0.15.0...di-v0.15.1)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- update dependencies ([25cddb7](https://github.com/Wroud/foundation/commit/25cddb7))
+
 <!-- version:0.15.0 -->
 ## 0.15.0 (2024-11-25)
 

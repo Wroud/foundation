@@ -6,7 +6,7 @@ import { createSyncMockedService } from "../tests/createSyncMockedService.js";
 import { all, lazy, optional, proxy } from "../production.js";
 
 describe("ServiceProvider", () => {
-  it("should resolve optional(all())", () => {
+  it("should resolve optional(all())", async () => {
     const A = createSyncMockedService("A");
     const AService = createService<InstanceType<typeof A>>("A");
 
@@ -21,9 +21,9 @@ describe("ServiceProvider", () => {
 
     expect(a.resolve()).toHaveLength(1);
     expect(a.resolve()[0]).toBeInstanceOf(A);
-    expect(a.resolveAsync().then((a) => a[0])).resolves.toBeInstanceOf(A);
+    await expect(a.resolveAsync().then((a) => a[0])).resolves.toBeInstanceOf(A);
   });
-  it("should resolve all(optional())", () => {
+  it("should resolve all(optional())", async () => {
     const A = createSyncMockedService("A");
     const AService = createService<InstanceType<typeof A>>("A");
 
@@ -38,7 +38,7 @@ describe("ServiceProvider", () => {
     expect(a[0]!.resolveAsync).toBeDefined();
 
     expect(a[0]!.resolve()).toBeInstanceOf(A);
-    expect(a[0]!.resolveAsync()).resolves.toBeInstanceOf(A);
+    await expect(a[0]!.resolveAsync()).resolves.toBeInstanceOf(A);
   });
   it("should resolve proxy() + all()", () => {
     const A = createSyncMockedService("A");

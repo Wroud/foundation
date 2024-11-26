@@ -16,19 +16,13 @@ export function createDeepServices(deep: number): {
 
   for (let i = 0; i < deep; i++) {
     const service = Symbol(`service${i}`);
-    let impl;
-    if (!lastService) {
-      @injectable()
-      class implementation {}
-      impl = implementation;
-    } else {
-      @injectable()
-      class implementation {
-        // @ts-ignore
-        constructor(@inject(lastService) public service: any) {}
-      }
-      impl = implementation;
+
+    class impl {}
+
+    if (lastService) {
+      inject(lastService)(impl, undefined, 0);
     }
+    injectable()(impl);
 
     lastService = service;
     services.push({ service, impl });

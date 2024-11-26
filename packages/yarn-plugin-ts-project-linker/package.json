@@ -10,12 +10,12 @@
     "@wroud/ts-project-linker": "workspace:^",
     "@yarnpkg/cli": "^4",
     "@yarnpkg/core": "^4",
-    "clipanion": "^4.0.0-rc.2"
+    "clipanion": "^4.0.0-rc.4"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@yarnpkg/builder": "^4",
-    "rimraf": "5",
+    "rimraf": "^6",
     "typescript": "^5"
   },
   "scripts": {

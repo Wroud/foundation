@@ -15,9 +15,7 @@ export function createDeepServices(deep: number): {
 
     //@ts-ignore
     @injectable(lastService ? () => [single(lastService)] : undefined)
-    class impl {
-      constructor(service: any) {}
-    }
+    class impl {}
 
     lastService = service;
     services.push({ service, impl });

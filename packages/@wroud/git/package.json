@@ -3,7 +3,7 @@
   "description": "A lightweight toolset for working with local git, including utilities for retrieving git commits and tags, ideal for CI/CD pipelines and automated release workflows.",
   "version": "0.1.2",
   "type": "module",
-  "packageManager": "yarn@4.5.0",
+  "packageManager": "yarn@4.5.3",
   "license": "MIT",
   "author": "Wroud",
   "homepage": "https://wroud.dev/",
@@ -47,7 +47,7 @@
   "dependencies": {
     "execa": "^9",
     "semver-regex": "^4",
-    "uuid": "^10"
+    "uuid": "^11"
   },
   "devDependencies": {
     "@tsconfig/node20": "^20",
@@ -57,7 +57,7 @@
     "@wroud/ci": "workspace:*",
     "@wroud/tests-runner": "workspace:*",
     "@wroud/tsconfig": "workspace:*",
-    "concurrently": "^8",
+    "concurrently": "^9",
     "rimraf": "^6",
     "typescript": "^5",
     "vitest": "^2"

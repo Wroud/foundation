@@ -1,12 +1,12 @@
 {
   "extends": "@wroud/tsconfig/tsconfig.json",
   "compilerOptions": {
-    "tsBuildInfoFile": "./lib/.tsbuildinfo",
+    "tsBuildInfoFile": "./lib/benchmark/.tsbuildinfo",
     "rootDir": "src",
     "rootDirs": [
       "src"
     ],
-    "outDir": "lib",
+    "outDir": "lib/benchmark",
     "incremental": true,
     "composite": true
   },

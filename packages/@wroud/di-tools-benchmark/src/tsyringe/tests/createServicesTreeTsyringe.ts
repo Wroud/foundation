@@ -1,7 +1,7 @@
 import {
   createServicesTree,
   type IServicePair,
-} from "@wroud/di-tools-benchmark/tools/createServicesTree";
+} from "@wroud/di-tools-benchmark/modern/tools/createServicesTree";
 import { inject, injectable } from "tsyringe";
 
 export type ServicePair = IServicePair<symbol, new (...args: any[]) => any>;

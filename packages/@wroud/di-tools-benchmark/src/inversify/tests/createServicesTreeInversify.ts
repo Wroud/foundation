@@ -1,7 +1,7 @@
 import {
   createServicesTree,
   type IServicePair,
-} from "@wroud/di-tools-benchmark/tools/createServicesTree";
+} from "@wroud/di-tools-benchmark/modern/tools/createServicesTree";
 import { decorate, injectable, inject } from "inversify";
 
 export type ServicePair = IServicePair<symbol, new (...args: any[]) => any>;

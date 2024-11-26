@@ -1,4 +1,4 @@
-import { inject, injectable } from "inversify";
+import { decorate, inject, injectable } from "inversify";
 
 interface IServicePair {
   service: symbol;
@@ -15,18 +15,11 @@ export function createDeepServices(deep: number): {
 
   for (let i = 0; i < deep; i++) {
     const service = Symbol(`service${i}`);
-    let impl;
-    if (!lastService) {
-      @injectable()
-      class implementation {}
-      impl = implementation;
-    } else {
-      @injectable()
-      class implementation {
-        // @ts-ignore
-        @inject(lastService) private service: any;
-      }
-      impl = implementation;
+    class impl {}
+
+    decorate(injectable(), impl);
+    if (lastService) {
+      decorate(inject(lastService), impl, 0);
     }
 
     lastService = service;

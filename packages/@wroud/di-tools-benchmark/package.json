@@ -29,7 +29,7 @@
     "!lib/tests",
     "!.tsbuildinfo"
   ],
-  "packageManager": "yarn@4.5.0",
+  "packageManager": "yarn@4.5.3",
   "devDependencies": {
     "@wroud/tsconfig": "workspace:^",
     "rimraf": "^6",

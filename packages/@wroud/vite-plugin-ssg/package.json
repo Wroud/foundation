@@ -36,7 +36,7 @@
     "!lib/tests",
     "!.tsbuildinfo"
   ],
-  "packageManager": "yarn@4.5.0",
+  "packageManager": "yarn@4.5.3",
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "npm:types-react@rc",

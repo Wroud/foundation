@@ -16,7 +16,6 @@ type ErrorMiddlewareStates<Data> = Map<
 export class MiddlewareRequest<Data = Record<string, any>>
   implements IMiddlewareRequest<Data>
 {
-  public data: Data;
   private middlewareStates: MiddlewareStates<Data>;
   private errorMiddlewareStates: ErrorMiddlewareStates<Data>;
   private isDisposed: boolean;
@@ -24,16 +23,15 @@ export class MiddlewareRequest<Data = Record<string, any>>
   /**
    * Creates an instance of MiddlewareRequest.
    * @param {Middleware<Data>[]} middlewares - Array of middleware functions.
-   * @param {Data} initialData - Initial data for the request.
+   * @param {Data} data - Initial data for the request.
    */
   constructor(
     private readonly middlewares: IMiddleware<Data>[],
     private readonly errorMiddlewares: IErrorMiddleware<Data>[],
-    initialData: Data,
+    readonly data: Data,
     private readonly logger?: ILogger,
   ) {
     this.middlewares = middlewares;
-    this.data = { ...initialData };
     this.middlewareStates = new Map();
     this.errorMiddlewareStates = new Map();
     this.isDisposed = false;

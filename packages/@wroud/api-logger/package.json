@@ -1,7 +1,7 @@
 {
   "name": "@wroud/api-logger",
   "type": "module",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "@wroud/api-logger is a lightweight, TypeScript-compatible logging interface for JavaScript applications. It provides standardized logging methods (`info`, `warn`, `error`) to ensure consistent and maintainable logging across your projects. Designed as an ESM-only package, it seamlessly integrates with modern JavaScript workflows and various logging implementations, making it an ideal choice for developers seeking flexibility and type safety in their logging solutions.",
   "sideEffects": [],
   "exports": {

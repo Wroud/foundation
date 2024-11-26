@@ -11,13 +11,13 @@ export interface IFlowMiddleware<Data = Record<string, any>> {
    * Registers a middleware globally.
    * @param {Middleware<Data>} middleware - The middleware function to register.
    */
-  use(...middleware: IMiddleware<Data>[]): void;
+  use(...middleware: IMiddleware<Data>[]): this;
 
   /**
    * Registers an error-handling middleware globally.
    * @param {ErrorMiddleware<Data>} errorMiddleware - The error middleware function to register.
    */
-  error(...errorMiddleware: IErrorMiddleware<Data>[]): void;
+  error(...errorMiddleware: IErrorMiddleware<Data>[]): this;
 
   /**
    * Creates a new MiddlewareRequest instance.

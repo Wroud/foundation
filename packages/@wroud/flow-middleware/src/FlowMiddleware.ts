@@ -24,16 +24,18 @@ export class FlowMiddleware<Data = Record<string, any>>
    * Registers a middleware globally.
    * @param {Middleware<Data>} middleware - The middleware function to register.
    */
-  public use(...middleware: IMiddleware<Data>[]): void {
+  public use(...middleware: IMiddleware<Data>[]): this {
     this.middlewares.push(...middleware);
+    return this;
   }
 
   /**
    * Registers an error-handling middleware globally.
    * @param {ErrorMiddleware<Data>} errorMiddleware - The error middleware function to register.
    */
-  public error(...errorMiddleware: IErrorMiddleware<Data>[]): void {
+  public error(...errorMiddleware: IErrorMiddleware<Data>[]): this {
     this.errorMiddlewares.push(...errorMiddleware);
+    return this;
   }
 
   /**

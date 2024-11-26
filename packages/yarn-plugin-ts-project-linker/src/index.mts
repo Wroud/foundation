@@ -1,5 +1,6 @@
 import { Hooks, Plugin } from "@yarnpkg/core";
 import { link } from "@wroud/ts-project-linker";
+import { npath } from "@yarnpkg/fslib";
 
 const plugin: Plugin<Hooks> = {
   hooks: {
@@ -8,7 +9,9 @@ const plugin: Plugin<Hooks> = {
         {
           immutable: options.immutable,
         },
-        ...project.workspaces.map((workspace) => workspace.cwd),
+        ...project.workspaces.map((workspace) =>
+          npath.fromPortablePath(workspace.cwd),
+        ),
       );
     },
   },

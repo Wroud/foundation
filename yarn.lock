@@ -4547,7 +4547,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@yarnpkg/fslib@npm:^3.0.0, @yarnpkg/fslib@npm:^3.0.1, @yarnpkg/fslib@npm:^3.0.2, @yarnpkg/fslib@npm:^3.1.0, @yarnpkg/fslib@npm:^3.1.1":
+"@yarnpkg/fslib@npm:^3, @yarnpkg/fslib@npm:^3.0.0, @yarnpkg/fslib@npm:^3.0.1, @yarnpkg/fslib@npm:^3.0.2, @yarnpkg/fslib@npm:^3.1.0, @yarnpkg/fslib@npm:^3.1.1":
   version: 3.1.1
   resolution: "@yarnpkg/fslib@npm:3.1.1"
   dependencies:
@@ -12153,6 +12153,7 @@ __metadata:
     "@yarnpkg/builder": "npm:^4"
     "@yarnpkg/cli": "npm:^4"
     "@yarnpkg/core": "npm:^4"
+    "@yarnpkg/fslib": "npm:^3"
     clipanion: "npm:^4.0.0-rc.4"
     rimraf: "npm:^6"
     typescript: "npm:^5"

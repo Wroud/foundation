@@ -10,6 +10,7 @@
     "@wroud/ts-project-linker": "workspace:^",
     "@yarnpkg/cli": "^4",
     "@yarnpkg/core": "^4",
+    "@yarnpkg/fslib": "^3",
     "clipanion": "^4.0.0-rc.4"
   },
   "devDependencies": {

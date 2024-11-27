@@ -220,6 +220,7 @@ async function subscribe(
     existingSubscription &&
     areDependenciesEqual(existingSubscription.dependencies, dependencies)
   ) {
+    existingSubscription.active = true;
     return;
   }
 

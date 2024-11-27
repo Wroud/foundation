@@ -9,7 +9,7 @@ export interface IErrorMiddleware<Data = Record<string, any>> {
     error: Error,
     data: Data,
     next: () => Promise<void>,
-    triggerReRun: () => Promise<void>,
+    triggerReRun: (error?: any) => Promise<void>,
     subscribe: IMiddlewareSubscribe,
   ): Promise<void>;
 }

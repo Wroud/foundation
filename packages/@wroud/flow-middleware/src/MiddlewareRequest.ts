@@ -46,7 +46,7 @@ export class MiddlewareRequest<Data = Record<string, any>>
     return this;
   }
 
-  public async execute(): Promise<void> {
+  public async execute(error?: any): Promise<void> {
     if (this.isDisposed) {
       throw new Error("Cannot execute a disposed request.");
     }
@@ -54,6 +54,9 @@ export class MiddlewareRequest<Data = Record<string, any>>
     const executedMiddlewares: ExecutedMiddlewares<Data> = new Set();
 
     try {
+      if (error !== undefined) {
+        throw error;
+      }
       await this.executeNext(executedMiddlewares, 0);
     } catch (error) {
       await this.handleNextError(executedMiddlewares, 0, error as Error);
@@ -90,9 +93,9 @@ export class MiddlewareRequest<Data = Record<string, any>>
     executedMiddlewares.add(middleware);
   }
 
-  private async triggerReRun(): Promise<void> {
+  private async triggerReRun(error?: any): Promise<void> {
     this.logger?.info("Re-run triggered.");
-    await this.execute();
+    await this.execute(error);
   }
 
   private async handleNextError(

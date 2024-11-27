@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.7.1 -->
+## 0.7.1 (2024-11-27)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/flow-middleware-v0.7.0...flow-middleware-v0.7.1)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- keep not changes subscriptions ([e81ac5b](https://github.com/Wroud/foundation/commit/e81ac5b))
+
 <!-- version:0.7.0 -->
 ## 0.7.0 (2024-11-27)
 

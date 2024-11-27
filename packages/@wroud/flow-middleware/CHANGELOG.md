@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.5.0 -->
+## 0.5.0 (2024-11-27)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/flow-middleware-v0.4.0...flow-middleware-v0.5.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- support asynchronous subscriptions ([caa6859](https://github.com/Wroud/foundation/commit/caa6859))
+
 <!-- version:0.4.0 -->
 ## 0.4.0 (2024-11-26)
 

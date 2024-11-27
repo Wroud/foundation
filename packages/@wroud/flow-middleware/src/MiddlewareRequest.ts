@@ -213,7 +213,10 @@ async function subscribe(
 ): Promise<void> {
   const existingSubscription = state.get(key);
 
-  if (areDependenciesEqual(existingSubscription?.dependencies, dependencies)) {
+  if (
+    existingSubscription &&
+    areDependenciesEqual(existingSubscription.dependencies, dependencies)
+  ) {
     return;
   }
 

@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.6.0 -->
+## 0.6.0 (2024-11-27)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/flow-middleware-v0.5.0...flow-middleware-v0.6.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- ability to register per request middlewares ([6f27c69](https://github.com/Wroud/foundation/commit/6f27c69))
+
 <!-- version:0.5.0 -->
 ## 0.5.0 (2024-11-27)
 

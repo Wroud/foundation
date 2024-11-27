@@ -1,7 +1,7 @@
 {
   "name": "@wroud/flow-middleware",
   "type": "module",
-  "version": "0.7.1",
+  "version": "0.8.0",
   "description": "A lightweight middleware management library for JavaScript and TypeScript, facilitating middleware chains with re-runs, error handling, and disposability.",
   "sideEffects": [],
   "exports": {

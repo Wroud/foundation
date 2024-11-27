@@ -1,3 +1,5 @@
+import type { IMiddlewareSubscribe } from "./IMiddlewareSubscribe.js";
+
 /**
  * Type definition for an Error Middleware function.
  * @template Data - The shape of the request data.
@@ -8,6 +10,6 @@ export interface IErrorMiddleware<Data = Record<string, any>> {
     data: Data,
     next: () => Promise<void>,
     triggerReRun: () => Promise<void>,
-    subscribe: (key: string, subscribeFn: () => () => void) => void,
+    subscribe: IMiddlewareSubscribe,
   ): Promise<void>;
 }

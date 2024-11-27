@@ -1,12 +1,10 @@
-/**
- * Type definition for a Middleware function.
- * @template Data - The shape of the request data.
- */
+import type { IMiddlewareSubscribe } from "./IMiddlewareSubscribe.js";
+
 export interface IMiddleware<Data = Record<string, any>> {
   (
     data: Data,
     next: () => Promise<void>,
     triggerReRun: () => Promise<void>,
-    subscribe: (key: string, subscribeFn: () => () => void) => void,
+    subscribe: IMiddlewareSubscribe,
   ): Promise<void>;
 }

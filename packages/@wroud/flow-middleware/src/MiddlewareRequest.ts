@@ -2,29 +2,29 @@ import type { ILogger } from "@wroud/api-logger";
 import type { IErrorMiddleware } from "./interfaces/IErrorMiddleware.js";
 import type { IMiddleware } from "./interfaces/IMiddleware.js";
 import type { IMiddlewareRequest } from "./interfaces/IMiddlewareRequest.js";
+import type { IMiddlewareUnsubscribe } from "./interfaces/IMiddlewareSubscribe.js";
 
-type MiddlewareStates<Data> = Map<IMiddleware<Data>, Map<string, () => void>>;
-type ErrorMiddlewareStates<Data> = Map<
-  IErrorMiddleware<Data>,
-  Map<string, () => void>
+interface IMiddlewareState {
+  active: boolean;
+  dependencies?: any[];
+  unsubscribe: IMiddlewareUnsubscribe;
+}
+
+type MiddlewareStates<Data> = Map<
+  IMiddleware<Data> | IErrorMiddleware<Data>,
+  Map<string, IMiddlewareState>
 >;
 
-/**
- * Class representing a middleware request.
- * @template Data - The shape of the request data.
- */
+type ExecutedMiddlewares<Data> = Set<
+  IMiddleware<Data> | IErrorMiddleware<Data>
+>;
+
 export class MiddlewareRequest<Data = Record<string, any>>
   implements IMiddlewareRequest<Data>
 {
   private middlewareStates: MiddlewareStates<Data>;
-  private errorMiddlewareStates: ErrorMiddlewareStates<Data>;
   private isDisposed: boolean;
 
-  /**
-   * Creates an instance of MiddlewareRequest.
-   * @param {Middleware<Data>[]} middlewares - Array of middleware functions.
-   * @param {Data} data - Initial data for the request.
-   */
   constructor(
     private readonly middlewares: IMiddleware<Data>[],
     private readonly errorMiddlewares: IErrorMiddleware<Data>[],
@@ -33,227 +33,128 @@ export class MiddlewareRequest<Data = Record<string, any>>
   ) {
     this.middlewares = middlewares;
     this.middlewareStates = new Map();
-    this.errorMiddlewareStates = new Map();
     this.isDisposed = false;
   }
 
-  /**
-   * Executes the middleware chain.
-   */
   public async execute(): Promise<void> {
     if (this.isDisposed) {
       throw new Error("Cannot execute a disposed request.");
     }
 
+    const executedMiddlewares: ExecutedMiddlewares<Data> = new Set();
+
     try {
-      const newMiddlewareStates: MiddlewareStates<Data> = new Map();
-
-      for (let i = 0; i < this.middlewares.length; i++) {
-        const middleware = this.middlewares[i]!;
-        const currentState =
-          this.middlewareStates.get(middleware) ||
-          new Map<string, () => void>();
-
-        /**
-         * Subscribes to an external event.
-         * @param {string} key - Unique key for the subscription.
-         * @param {() => () => void} subscribeFn - Function that sets up the subscription and returns an unsubscribe function.
-         */
-        const subscribe = (
-          key: string,
-          subscribeFn: () => () => void,
-        ): void => {
-          if (currentState.has(key)) {
-            return; // Subscription already exists.
-          }
-
-          const unsubscribe = subscribeFn();
-          currentState.set(key, unsubscribe);
-        };
-
-        await middleware(
-          this.data,
-          () => this.executeNext(i + 1),
-          this.triggerReRun.bind(this),
-          subscribe,
-        );
-
-        newMiddlewareStates.set(middleware, currentState);
-      }
-
-      this.setMiddlewareStates(newMiddlewareStates);
+      await this.executeNext(executedMiddlewares, 0);
     } catch (error) {
-      await this.handleError(error as Error);
+      await this.handleNextError(executedMiddlewares, 0, error as Error);
+    } finally {
+      await this.cleanupSubscriptions(executedMiddlewares);
     }
   }
 
-  /**
-   * Executes the next middleware in the chain.
-   * @param {number} nextIndex - Index of the next middleware to execute.
-   */
-  private async executeNext(nextIndex: number): Promise<void> {
-    if (nextIndex >= this.middlewares.length) return;
+  private async executeNext(
+    executedMiddlewares: ExecutedMiddlewares<Data>,
+    nextIndex: number,
+  ): Promise<void> {
+    if (nextIndex >= this.middlewares.length) {
+      return;
+    }
 
     const middleware = this.middlewares[nextIndex]!;
-    const currentState =
-      this.middlewareStates.get(middleware) || new Map<string, () => void>();
+    let currentState = this.middlewareStates.get(middleware);
 
-    /**
-     * Subscribes to an external event.
-     * @param {string} key - Unique key for the subscription.
-     * @param {() => () => void} subscribeFn - Function that sets up the subscription and returns an unsubscribe function.
-     */
-    const subscribe = (key: string, subscribeFn: () => () => void): void => {
-      if (currentState.has(key)) {
-        return; // Subscription already exists.
-      }
-
-      const unsubscribe = subscribeFn();
-      currentState.set(key, unsubscribe);
-    };
-
-    try {
-      await middleware(
-        this.data,
-        () => this.executeNext(nextIndex + 1),
-        this.triggerReRun.bind(this),
-        subscribe,
-      );
-
+    if (!currentState) {
+      currentState = new Map<string, IMiddlewareState>();
       this.middlewareStates.set(middleware, currentState);
-    } catch (error) {
-      await this.handleError(error as Error);
     }
+
+    this.markMiddlewareSubscriptionsInactive(currentState);
+
+    await middleware(
+      this.data,
+      () => this.executeNext(executedMiddlewares, nextIndex + 1),
+      this.triggerReRun.bind(this),
+      subscribe.bind(null, currentState),
+    );
+
+    executedMiddlewares.add(middleware);
   }
 
-  /**
-   * Triggers a re-execution of the middleware chain.
-   */
   private async triggerReRun(): Promise<void> {
-    if (this.isDisposed) return;
     this.logger?.info("Re-run triggered.");
     await this.execute();
   }
 
-  /**
-   * Handles errors by executing error-handling middlewares.
-   * @param {Error} error - The error to handle.
-   */
-  private async handleError(error: Error): Promise<void> {
-    if (this.isDisposed) {
-      this.logger?.error("Cannot handle error for a disposed request:", error);
-      return;
-    }
-
-    if (this.errorMiddlewares.length === 0) {
+  private async handleNextError(
+    executedMiddlewares: ExecutedMiddlewares<Data>,
+    nextIndex: number,
+    error: Error,
+  ): Promise<void> {
+    if (nextIndex >= this.errorMiddlewares.length) {
       this.logger?.error("Unhandled error:", error);
-      return;
+      throw error;
     }
 
     try {
-      const newErrorMiddlewareStates: ErrorMiddlewareStates<Data> = new Map();
+      const errorMiddleware = this.errorMiddlewares[nextIndex]!;
+      let currentState = this.middlewareStates.get(errorMiddleware);
 
-      for (let i = 0; i < this.errorMiddlewares.length; i++) {
-        const errorMiddleware = this.errorMiddlewares[i]!;
-        const currentState =
-          this.errorMiddlewareStates.get(errorMiddleware) ||
-          new Map<string, () => void>();
-
-        /**
-         * Subscribes to an external event.
-         * @param {string} key - Unique key for the subscription.
-         * @param {() => () => void} subscribeFn - Function that sets up the subscription and returns an unsubscribe function.
-         */
-        const subscribe = (
-          key: string,
-          subscribeFn: () => () => void,
-        ): void => {
-          if (currentState.has(key)) {
-            return; // Subscription already exists.
-          }
-
-          const unsubscribe = subscribeFn();
-          currentState.set(key, unsubscribe);
-        };
-
-        await errorMiddleware(
-          error,
-          this.data,
-          () => this.execute(),
-          this.triggerReRun.bind(this),
-          subscribe,
-        );
-
-        newErrorMiddlewareStates.set(errorMiddleware, currentState);
+      if (!currentState) {
+        currentState = new Map<string, IMiddlewareState>();
+        this.middlewareStates.set(errorMiddleware, currentState);
       }
 
-      this.setErrorMiddlewareStates(newErrorMiddlewareStates);
-    } catch (err) {
-      this.logger?.error("Error in error-handling middleware:", err);
+      await errorMiddleware(
+        error,
+        this.data,
+        () => this.handleNextError(executedMiddlewares, nextIndex + 1, error),
+        this.triggerReRun.bind(this),
+        subscribe.bind(null, currentState),
+      );
+
+      executedMiddlewares.add(errorMiddleware);
+    } catch (error) {
+      await this.handleNextError(
+        executedMiddlewares,
+        nextIndex + 1,
+        error as Error,
+      );
     }
   }
 
-  private setMiddlewareStates(
-    newMiddlewareStates: MiddlewareStates<Data>,
+  private markMiddlewareSubscriptionsInactive(
+    state: Map<string, IMiddlewareState>,
   ): void {
-    this.cleanupSubscriptions(newMiddlewareStates);
-    this.middlewareStates = newMiddlewareStates;
+    for (const middlewareState of state.values()) {
+      middlewareState.active = false;
+    }
   }
 
-  private setErrorMiddlewareStates(
-    newErrorMiddlewareStates: ErrorMiddlewareStates<Data>,
-  ): void {
-    this.cleanupErrorSubscriptions(newErrorMiddlewareStates);
-    this.errorMiddlewareStates = newErrorMiddlewareStates;
-  }
-
-  /**
-   * Cleans up subscriptions that are no longer active in regular middlewares.
-   * @param {Map<Middleware<Data>, Map<string, () => void>>} newMiddlewareStates - The updated middleware states after execution.
-   */
-  private cleanupSubscriptions(
-    newMiddlewareStates: Map<IMiddleware<Data>, Map<string, () => void>>,
-  ): void {
+  private async cleanupSubscriptions(
+    executedMiddlewares: ExecutedMiddlewares<Data>,
+  ): Promise<void> {
     for (const [middleware, state] of this.middlewareStates.entries()) {
-      if (!newMiddlewareStates.has(middleware)) {
+      if (executedMiddlewares.has(middleware)) {
+        for (const [key, subscription] of state) {
+          if (!subscription.active) {
+            await subscription.unsubscribe();
+            state.delete(key);
+          }
+        }
+      } else {
         this.disposeMiddlewareSubscriptions(middleware, state);
       }
     }
   }
 
-  /**
-   * Cleans up subscriptions that are no longer active in error middlewares.
-   * @param {Map<ErrorMiddleware<Data>, Map<string, () => void>>} newErrorMiddlewareStates - The updated error middleware states after execution.
-   */
-  private cleanupErrorSubscriptions(
-    newErrorMiddlewareStates: Map<
-      IErrorMiddleware<Data>,
-      Map<string, () => void>
-    >,
-  ): void {
-    for (const [
-      errorMiddleware,
-      state,
-    ] of this.errorMiddlewareStates.entries()) {
-      if (!newErrorMiddlewareStates.has(errorMiddleware)) {
-        this.disposeErrorMiddlewareSubscriptions(errorMiddleware, state);
-      }
-    }
-  }
-
-  /**
-   * Disposes all subscriptions for a specific regular middleware.
-   * @param {Middleware<Data>} middleware - The middleware whose subscriptions are to be disposed.
-   * @param {Map<string, () => void>} state - The subscription state of the middleware.
-   */
   private disposeMiddlewareSubscriptions(
-    middleware: IMiddleware<Data>,
-    state: Map<string, () => void>,
+    middleware: IMiddleware<Data> | IErrorMiddleware<Data>,
+    state: Map<string, IMiddlewareState>,
   ): void {
     this.logger?.info(
       `Disposing subscriptions for middleware: ${middleware.name || "anonymous"}`,
     );
-    for (const [key, unsubscribe] of state.entries()) {
+    for (const [key, { unsubscribe }] of state.entries()) {
       try {
         unsubscribe();
         this.logger?.info(`Unsubscribed from ${key}.`);
@@ -264,52 +165,53 @@ export class MiddlewareRequest<Data = Record<string, any>>
     state.clear();
   }
 
-  /**
-   * Disposes all subscriptions for a specific error middleware.
-   * @param {ErrorMiddleware<Data>} errorMiddleware - The error middleware whose subscriptions are to be disposed.
-   * @param {Map<string, () => void>} state - The subscription state of the error middleware.
-   */
-  private disposeErrorMiddlewareSubscriptions(
-    errorMiddleware: IErrorMiddleware<Data>,
-    state: Map<string, () => void>,
-  ): void {
-    this.logger?.info(
-      `Disposing subscriptions for error middleware: ${errorMiddleware.name || "anonymous"}`,
-    );
-    for (const [key, unsubscribe] of state.entries()) {
-      try {
-        unsubscribe();
-        this.logger?.info(`Unsubscribed from ${key}.`);
-      } catch (error) {
-        this.logger?.error(`Error unsubscribing from ${key}:`, error);
-      }
-    }
-    state.clear();
-  }
-
-  /**
-   * Disposes the request and all active subscriptions.
-   */
   public dispose(): void {
-    if (this.isDisposed) return;
+    if (this.isDisposed) {
+      return;
+    }
 
     this.isDisposed = true;
     this.logger?.info("Disposing all subscriptions and request.");
 
-    // Dispose regular middlewares
     for (const [middleware, state] of this.middlewareStates.entries()) {
       this.disposeMiddlewareSubscriptions(middleware, state);
     }
 
-    // Dispose error middlewares
-    for (const [
-      errorMiddleware,
-      state,
-    ] of this.errorMiddlewareStates.entries()) {
-      this.disposeErrorMiddlewareSubscriptions(errorMiddleware, state);
-    }
-
     this.middlewareStates.clear();
-    this.errorMiddlewareStates.clear();
   }
+}
+
+function areDependenciesEqual(
+  depsA: any[] | undefined,
+  depsB: any[] | undefined,
+): boolean {
+  if (depsA === undefined && depsB === undefined) return true;
+  if (depsA === undefined || depsB === undefined) return false;
+  if (depsA.length === 0 && depsB.length === 0) return true;
+  if (depsA.length !== depsB.length) return false;
+  for (let i = 0; i < depsA.length; i++) {
+    if (depsA[i] !== depsB[i]) return false;
+  }
+  return true;
+}
+
+async function subscribe(
+  state: Map<string, IMiddlewareState>,
+  key: string,
+  subscribeFn: () => IMiddlewareUnsubscribe | Promise<IMiddlewareUnsubscribe>,
+  dependencies?: any[],
+): Promise<void> {
+  const existingSubscription = state.get(key);
+
+  if (areDependenciesEqual(existingSubscription?.dependencies, dependencies)) {
+    return;
+  }
+
+  if (existingSubscription) {
+    await existingSubscription.unsubscribe();
+    state.delete(key);
+  }
+
+  const unsubscribe = await subscribeFn();
+  state.set(key, { dependencies, unsubscribe, active: true });
 }

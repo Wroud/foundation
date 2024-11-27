@@ -36,6 +36,16 @@ export class MiddlewareRequest<Data = Record<string, any>>
     this.isDisposed = false;
   }
 
+  public use(...middleware: IMiddleware<Data>[]): this {
+    this.middlewares.push(...middleware);
+    return this;
+  }
+
+  public error(...errorMiddleware: IErrorMiddleware<Data>[]): this {
+    this.errorMiddlewares.push(...errorMiddleware);
+    return this;
+  }
+
   public async execute(): Promise<void> {
     if (this.isDisposed) {
       throw new Error("Cannot execute a disposed request.");

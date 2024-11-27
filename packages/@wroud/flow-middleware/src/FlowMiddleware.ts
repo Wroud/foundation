@@ -30,8 +30,8 @@ export class FlowMiddleware<Data = Record<string, any>>
     initialData: Data = {} as Data,
   ): IMiddlewareRequest<Data> {
     return new MiddlewareRequest<Data>(
-      this.middlewares,
-      this.errorMiddlewares,
+      [...this.middlewares],
+      [...this.errorMiddlewares],
       initialData,
       this.logger,
     );

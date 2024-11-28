@@ -9,7 +9,7 @@ import {
   injectable,
   lazy,
   ServiceContainerBuilder,
-} from "@wroud/di";
+} from "@wroud/di/development.js";
 import { ServiceProvider } from "./ServiceProvider.js";
 import { Suspense } from "react";
 

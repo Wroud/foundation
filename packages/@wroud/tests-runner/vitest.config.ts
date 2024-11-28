@@ -13,8 +13,6 @@ export default defineConfig({
   test: {
     // isolate: false,
 
-    setupFiles: [import.meta.resolve("./vitest.setup.ts")],
-
     include: ["**/lib/**/*.test.js"],
 
     benchmark: {

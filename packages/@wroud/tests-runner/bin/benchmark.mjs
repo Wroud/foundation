@@ -9,6 +9,7 @@ process.env["NODE_ENV"] = "production";
 const { filter, options } = parseCLI(["vitest", ...process.argv.slice(2)]);
 const vitest = await startVitest("benchmark", filter, {
   config: path.resolve(import.meta.dirname, "../vitest.config.ts"),
+  setupFiles: [import.meta.resolve("../vitest.setup.ts")],
   ...options,
   mode: "production",
 });

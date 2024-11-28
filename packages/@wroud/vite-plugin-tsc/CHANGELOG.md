@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.11.5 -->
+## 0.11.5 (2024-11-28)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-tsc-v0.11.4...vite-plugin-tsc-v0.11.5)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- update dependencies ([d1d071a](https://github.com/Wroud/foundation/commit/d1d071a))
+
 <!-- version:0.11.4 -->
 ## 0.11.4 (2024-11-26)
 

@@ -1,4 +1,4 @@
-import { join, resolve } from "path";
+import { posix } from "path";
 
 export interface IProjectPaths {
   directory: string;
@@ -7,23 +7,24 @@ export interface IProjectPaths {
 }
 
 export function getProjectPaths(path: string): IProjectPaths {
+  path = path.replace(/\\/g, "/");
   let packageJsonPath = path;
   let tsConfigPatterns = [path];
 
   if (path.endsWith(".json")) {
     tsConfigPatterns = [path];
-    packageJsonPath = join(path, "..", "package.json");
-    path = join(path, "..");
+    packageJsonPath = posix.join(path, "..", "package.json");
+    path = posix.join(path, "..");
   } else {
     tsConfigPatterns = [
-      join(path, "tsconfig.json"),
-      join(path, "tsconfig.*.json"),
+      posix.join(path, "tsconfig.json"),
+      posix.join(path, "tsconfig.*.json"),
     ];
-    packageJsonPath = join(path, "package.json");
+    packageJsonPath = posix.join(path, "package.json");
   }
 
   return {
-    directory: resolve(path),
+    directory: posix.resolve(path),
     packageJsonPath,
     tsConfigPatterns,
   };

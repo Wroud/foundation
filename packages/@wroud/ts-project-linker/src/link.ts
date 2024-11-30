@@ -1,9 +1,10 @@
-import { join, relative } from "path";
+import { posix } from "path";
 import { getProjectPaths } from "./getProjectPaths.js";
 import { readFile, writeFile } from "fs/promises";
 import colors from "picocolors";
 import commentJson, { assign, stringify } from "comment-json";
 import { globby } from "globby";
+import os from "os";
 import {
   TsConfigResolver,
   type TSConfig,
@@ -11,6 +12,7 @@ import {
 } from "./TsConfigResolver.js";
 import { existsSync } from "fs";
 import { isRootTsConfig } from "./isRootTsConfig.js";
+import { toPosixPath } from "./toPosixPath.js";
 
 interface IPackageInfo {
   directory: string;
@@ -105,7 +107,7 @@ export async function link(
         for (const ref of resolvedTsConfig.references || []) {
           const projectPath = ref.path.endsWith(".json")
             ? ref.path
-            : join(ref.path, "tsconfig.json");
+            : posix.join(ref.path, "tsconfig.json");
           const project = projects.get(projectPath);
 
           if (project) {
@@ -114,7 +116,7 @@ export async function link(
 
             if (referencedInRoot && !isRootTsConfig(tsConfigPath)) {
               removedRefs.push({
-                name: relative(directory, ref.path),
+                name: posix.relative(directory, ref.path),
                 referencedInRoot: true,
               });
               continue;
@@ -138,17 +140,17 @@ export async function link(
             }
           } else {
             if (existsSync(projectPath)) {
-              unknownRefs.add(relative(directory, ref.path));
+              unknownRefs.add(posix.relative(directory, ref.path));
             } else {
               removedRefs.push({
-                name: relative(directory, ref.path),
+                name: posix.relative(directory, ref.path),
                 notFound: true,
               });
               continue;
             }
           }
 
-          references.add(relative(directory, ref.path));
+          references.add(posix.relative(directory, ref.path));
         }
 
         for (const dep of Object.keys(packageInfo.dependencies)) {
@@ -175,7 +177,7 @@ export async function link(
               continue;
             }
 
-            const ref = relative(
+            const ref = posix.relative(
               directory,
               tsConfigPath.replace("tsconfig.json", ""),
             );
@@ -190,7 +192,9 @@ export async function link(
         if (newRefs.size || unknownRefs.size || removedRefs.length) {
           console.log(
             colorizePackageName(packageInfo.name) + colors.dim(" ·"),
-            colors.dim(relative(process.cwd(), tsConfigPath)),
+            colors.dim(
+              posix.relative(toPosixPath(process.cwd()), tsConfigPath),
+            ),
           );
         }
 
@@ -267,7 +271,10 @@ export async function link(
           delete tsConfig.references;
         }
 
-        await writeFile(tsConfigPath, stringify(tsConfig, null, 2) + "\n");
+        await writeFile(
+          tsConfigPath,
+          normalizeEOL(stringify(tsConfig, null, 2)) + os.EOL,
+        );
       } catch (error) {
         console.warn(
           `Error reading tsconfig.json at ${tsConfigPath}, skipping`,
@@ -304,4 +311,9 @@ function colorizePackageName(name: string): string {
       `${darkOrange}${org || ""}${lightOrange}${name}${darkOrange}` +
       colors.reset(""),
   );
+}
+
+function normalizeEOL(str: string) {
+  const eolRegex = /\r\n|\n|\r/g;
+  return str.replace(eolRegex, os.EOL);
 }

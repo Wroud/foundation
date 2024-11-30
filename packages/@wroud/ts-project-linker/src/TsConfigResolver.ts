@@ -1,6 +1,6 @@
 import { readFile } from "fs/promises";
 import commentJson, { assign } from "comment-json";
-import { join } from "path";
+import { posix } from "path";
 import { isRootTsConfig } from "./isRootTsConfig.js";
 
 export interface TSConfigReference {
@@ -34,7 +34,7 @@ export class TsConfigResolver {
 
     for (const ref of config.references || []) {
       assign(ref, {
-        path: join(path, "..", ref.path),
+        path: posix.join(path, "..", ref.path),
       });
     }
 
@@ -47,7 +47,9 @@ export class TsConfigResolver {
       return false;
     }
 
-    const rootTsConfig = await this.resolve(join(path, "..", "tsconfig.json"));
+    const rootTsConfig = await this.resolve(
+      posix.join(path, "..", "tsconfig.json"),
+    );
 
     return rootTsConfig.references?.some((ref) => ref.path === path) || false;
   }

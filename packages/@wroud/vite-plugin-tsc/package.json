@@ -34,9 +34,9 @@
     "!.tsbuildinfo"
   ],
   "scripts": {
-    "ci:release": "yarn ci release --prefix vite-plugin-tsc-v",
-    "ci:git-tag": "yarn ci git-tag --prefix vite-plugin-tsc-v",
-    "ci:release-github": "yarn ci release-github --prefix vite-plugin-tsc-v",
+    "ci:release": "ci release --prefix vite-plugin-tsc-v",
+    "ci:git-tag": "ci git-tag --prefix vite-plugin-tsc-v",
+    "ci:release-github": "ci release-github --prefix vite-plugin-tsc-v",
     "test": "tests-runner",
     "test:ci": "CI=true yarn run test",
     "build": "tsc -b",

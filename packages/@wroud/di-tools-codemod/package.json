@@ -37,9 +37,9 @@
     "node": ">=20"
   },
   "scripts": {
-    "ci:release": "yarn ci release --prefix di-tools-codemod-v",
-    "ci:git-tag": "yarn ci git-tag --prefix di-tools-codemod-v",
-    "ci:release-github": "yarn ci release-github --prefix di-tools-codemod-v",
+    "ci:release": "ci release --prefix di-tools-codemod-v",
+    "ci:git-tag": "ci git-tag --prefix di-tools-codemod-v",
+    "ci:release-github": "ci release-github --prefix di-tools-codemod-v",
     "test": "tests-runner",
     "test:ci": "CI=true yarn run test",
     "test:watch": "vitest watch",

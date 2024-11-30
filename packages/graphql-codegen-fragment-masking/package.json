@@ -33,9 +33,9 @@
     "!.tsbuildinfo"
   ],
   "scripts": {
-    "ci:release": "yarn ci release --prefix gql-codegen-fragment-masking-v",
-    "ci:git-tag": "yarn ci git-tag --prefix gql-codegen-fragment-masking-v",
-    "ci:release-github": "yarn ci release-github --prefix gql-codegen-fragment-masking-v",
+    "ci:release": "ci release --prefix gql-codegen-fragment-masking-v",
+    "ci:git-tag": "ci git-tag --prefix gql-codegen-fragment-masking-v",
+    "ci:release-github": "ci release-github --prefix gql-codegen-fragment-masking-v",
     "test": "tests-runner",
     "test:ci": "CI=true yarn run test",
     "build": "tsc -b",

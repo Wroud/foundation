@@ -13,9 +13,9 @@
     }
   },
   "scripts": {
-    "ci:release": "yarn ci release --prefix vite-plugin-ssg-v",
-    "ci:git-tag": "yarn ci git-tag --prefix vite-plugin-ssg-v",
-    "ci:release-github": "yarn ci release-github --prefix vite-plugin-ssg-v",
+    "ci:release": "ci release --prefix vite-plugin-ssg-v",
+    "ci:git-tag": "ci git-tag --prefix vite-plugin-ssg-v",
+    "ci:release-github": "ci release-github --prefix vite-plugin-ssg-v",
     "build": "tsc -b",
     "watch:tsc": "tsc -b -w",
     "clear": "rimraf lib"

@@ -9,9 +9,9 @@
     "./*": "./lib/*.js"
   },
   "scripts": {
-    "ci:release": "yarn ci release --prefix api-logger-v",
-    "ci:git-tag": "yarn ci git-tag --prefix api-logger-v",
-    "ci:release-github": "yarn ci release-github --prefix api-logger-v",
+    "ci:release": "ci release --prefix api-logger-v",
+    "ci:git-tag": "ci git-tag --prefix api-logger-v",
+    "ci:release-github": "ci release-github --prefix api-logger-v",
     "build": "tsc -b",
     "clear": "rimraf lib"
   },

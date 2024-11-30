@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.2.0 -->
+## 0.2.0 (2024-11-30)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/ts-link-v0.1.1...ts-link-v0.2.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- support windows ([80bea45](https://github.com/Wroud/foundation/commit/80bea45))
+
 <!-- version:0.1.1 -->
 ## 0.1.1 (2024-11-26)
 

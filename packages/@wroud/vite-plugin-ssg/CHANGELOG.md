@@ -3,6 +3,17 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:1.0.0 -->
+## 1.0.0 (2025-01-16)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-ssg-v0.2.4...vite-plugin-ssg-v1.0.0)
+
+<!-- changelog -->
+### ⚠️  Breaking Changes
+
+- use release version of react 19 ([12c94db](https://github.com/Wroud/foundation/commit/12c94db))
+  - use release version of react 19
+
 <!-- version:0.2.4 -->
 ## 0.2.4 (2024-11-28)
 

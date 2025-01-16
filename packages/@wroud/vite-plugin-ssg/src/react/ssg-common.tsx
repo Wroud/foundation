@@ -1,4 +1,5 @@
 import type { HtmlTagDescriptor } from "vite";
+import type { JSX } from "react";
 import type { IndexComponentContext } from "./IndexComponent.js";
 
 export function renderViteTags(

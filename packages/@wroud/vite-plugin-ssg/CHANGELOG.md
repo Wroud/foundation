@@ -3,6 +3,17 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:2.0.0 -->
+## 2.0.0 (2025-01-27)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-ssg-v1.0.0...vite-plugin-ssg-v2.0.0)
+
+<!-- changelog -->
+### ⚠️  Breaking Changes
+
+- support SSR manual generation, better support for CSP, support latest Vite, simple API ([0039c0b](https://github.com/Wroud/foundation/commit/0039c0b))
+  - support SSR manual generation, better support for CSP, support latest Vite, simple API
+
 <!-- version:1.0.0 -->
 ## 1.0.0 (2025-01-16)
 

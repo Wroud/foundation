@@ -1,9 +1,7 @@
-import type { HTMLAttributes } from "react";
-import type { IndexComponentProps } from "../IndexComponent.js";
+import { use, type HTMLAttributes } from "react";
+import { SSGContext } from "./SSGContext.js";
 
-export interface HeadProps
-  extends IndexComponentProps,
-    HTMLAttributes<HTMLHeadElement> {
+export interface HeadProps extends HTMLAttributes<HTMLHeadElement> {
   before?: React.ReactNode;
   after?: React.ReactNode;
   children?: React.ReactNode;
@@ -13,10 +11,9 @@ export const Head: React.FC<HeadProps> = function Head({
   before,
   after,
   children,
-  context,
-  renderTags,
   ...rest
 }) {
+  const { renderTags, context } = use(SSGContext)!;
   return (
     <head {...rest}>
       {before}
@@ -24,6 +21,9 @@ export const Head: React.FC<HeadProps> = function Head({
       {renderTags("head-prepend")}
       {children}
       {renderTags("head")}
+      {context.base !== undefined && (
+        <meta property="base" content={context.base} />
+      )}
       {after}
     </head>
   );

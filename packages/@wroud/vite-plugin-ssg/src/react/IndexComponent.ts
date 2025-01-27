@@ -10,6 +10,7 @@ export interface IndexComponentProps {
     injectTo?: "head" | "body" | "head-prepend" | "body-prepend",
   ) => React.ReactElement;
   context: IndexComponentContext;
+  mainScriptUrl?: string;
 }
 
 export type IndexComponent = React.FC<IndexComponentProps>;

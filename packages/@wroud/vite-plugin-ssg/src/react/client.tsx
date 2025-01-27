@@ -11,12 +11,14 @@ export function hydrate(
   Index: IndexComponent,
   htmlTags: HtmlTagDescriptor[],
   context: IndexComponentContext,
+  mainScriptUrl?: string,
 ) {
   hydrateRoot(
     document,
     <Index
       renderTags={renderViteTags.bind(undefined, htmlTags, getContext(context))}
       context={context}
+      mainScriptUrl={mainScriptUrl}
     />,
   );
 }

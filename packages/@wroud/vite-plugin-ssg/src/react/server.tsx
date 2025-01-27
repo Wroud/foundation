@@ -12,6 +12,7 @@ export type ServerRenderFunction = (
   htmlTags: HtmlTagDescriptor[],
   context: IndexComponentContext,
   timeout?: number,
+  mainScriptUrl?: string,
 ) => Promise<string>;
 
 export type BoundServerRenderFunction = (
@@ -25,6 +26,7 @@ export const render: ServerRenderFunction = async function render(
   htmlTags,
   context,
   timeout = 10000,
+  mainScriptUrl,
 ) {
   let htmlContent = "";
 
@@ -45,6 +47,7 @@ export const render: ServerRenderFunction = async function render(
         <Index
           renderTags={renderViteTags.bind(undefined, htmlTags, context)}
           context={context}
+          mainScriptUrl={mainScriptUrl}
         />,
         {
           nonce: context.cspNonce,

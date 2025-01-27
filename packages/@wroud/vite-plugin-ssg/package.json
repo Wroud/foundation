@@ -6,11 +6,7 @@
   "sideEffects": [],
   "exports": {
     ".": "./lib/ssgPlugin.js",
-    "./*": "./lib/*.js",
-    "./resolvers": {
-      "default": "./resolvers.js",
-      "types": "./resolvers.d.ts"
-    }
+    "./*": "./lib/*.js"
   },
   "scripts": {
     "ci:release": "ci release --prefix vite-plugin-ssg-v",
@@ -51,12 +47,13 @@
   "dependencies": {
     "change-case": "^5",
     "magic-string": "^0",
-    "style-to-object": "^1"
+    "style-to-object": "^1",
+    "tinyglobby": "^0"
   },
   "peerDependencies": {
     "react": ">=19.0.0",
     "react-dom": ">=19.0.0",
-    "vite": ">=6.0.0"
+    "vite": ">=6.0.11"
   },
   "keywords": [
     "vite",

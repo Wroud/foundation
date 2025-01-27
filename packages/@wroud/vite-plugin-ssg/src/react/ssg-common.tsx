@@ -1,6 +1,7 @@
 import type { HtmlTagDescriptor } from "vite";
 import type { JSX } from "react";
 import type { IndexComponentContext } from "./IndexComponent.js";
+import { pathUrlWithBase } from "./pathUrlWithBase.js";
 
 export function renderViteTags(
   tags: HtmlTagDescriptor[],
@@ -47,11 +48,11 @@ export function RenderViteTag({ tag, context }: IRenderViteTagProps) {
 
   if (context.base) {
     if (typeof attrs["href"] === "string") {
-      attrs["href"] = patchUrl(attrs["href"], context.base);
+      attrs["href"] = pathUrlWithBase(context.base, attrs["href"]);
     }
 
     if (typeof attrs["src"] === "string") {
-      attrs["src"] = patchUrl(attrs["src"], context.base);
+      attrs["src"] = pathUrlWithBase(context.base, attrs["src"]);
     }
 
     if (typeof tag.children === "string") {
@@ -94,12 +95,4 @@ export function RenderViteTag({ tag, context }: IRenderViteTagProps) {
   }
 
   return <Tag {...attrs} dangerouslySetInnerHTML={{ __html: tag.children }} />;
-}
-
-function patchUrl(url: string, base: string) {
-  if (url.startsWith("/")) {
-    return base + url.slice(1);
-  }
-
-  return url;
 }

@@ -81,31 +81,29 @@ To add `@wroud/vite-plugin-ssg` to your Vite application, follow these steps:
 
    ```ts
    /// <reference types="vite/client" />
-   /// <reference types="@wroud/vite-plugin-ssg/resolvers" />
    ```
 
 4. Create your `index.tsx` file with a default export for the `Index` component:
 
    ```tsx
    import type { IndexComponentProps } from "@wroud/vite-plugin-ssg";
-   import { Body, Head } from "@wroud/vite-plugin-ssg/react/components";
-   import main from "./index.tsx?ssg-main";
+   import { Html, Body, Head, Link } from "@wroud/vite-plugin-ssg/react/components";
    import indexStyles from "./index.css?url";
    import { App } from "./App.js";
 
    export default function Index(props: IndexComponentProps) {
      return (
-       <html lang="en">
-         <Head {...props}>
+       <Html lang="en" {...props}>
+         <Head>
            <meta charSet="utf-8" />
            <meta
              name="viewport"
              content="width=device-width, initial-scale=1"
            />
            <title>Grid</title>
-           <link rel="stylesheet" href={indexStyles} />
+           <Link rel="stylesheet" href={indexStyles} />
          </Head>
-         <Body {...props} after={<script type="module" src={main} />}>
+         <Body>
            <App />
          </Body>
        </html>
@@ -114,8 +112,7 @@ To add `@wroud/vite-plugin-ssg` to your Vite application, follow these steps:
    ```
 
    - Use a default export for the `Index` component.
-   - Import styles with `?url` and add them as a `<link>` element.
-   - Import the main file (e.g., `index.tsx`) with the `?ssg-main` query and include it as a script element for client-side bootstrapping.
+   - Import styles with `?url` and add them as a `<Link>` component.
 
 ### Generated Output
 

@@ -77,13 +77,7 @@ To add `@wroud/vite-plugin-ssg` to your Vite application, follow these steps:
 
    Here, we specify the entry point with a `?ssg` query to signal SSG processing.
 
-3. In `vite-env.d.ts` add:
-
-   ```ts
-   /// <reference types="vite/client" />
-   ```
-
-4. Create your `index.tsx` file with a default export for the `Index` component:
+3. Create your `index.tsx` file with a default export for the `Index` component:
 
    ```tsx
    import type { IndexComponentProps } from "@wroud/vite-plugin-ssg";

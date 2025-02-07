@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.1.4 -->
+## 0.1.4 (2025-02-07)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vp-asset-resolver-v0.1.3...vp-asset-resolver-v0.1.4)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- use posix path style ([82a83c4](https://github.com/Wroud/foundation/commit/82a83c4))
+
 <!-- version:0.1.3 -->
 ## 0.1.3 (2024-11-28)
 

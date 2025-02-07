@@ -30,7 +30,7 @@
     "!lib/tests",
     "!.tsbuildinfo"
   ],
-  "packageManager": "yarn@4.5.3",
+  "packageManager": "yarn@4.6.0",
   "devDependencies": {
     "@wroud/ci": "workspace:^",
     "@wroud/tsconfig": "workspace:^",

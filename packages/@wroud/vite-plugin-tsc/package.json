@@ -3,7 +3,7 @@
   "description": "A Vite plugin that uses TypeScript's tsc to transpile TypeScript sources for seamless bundling.",
   "version": "0.11.5",
   "type": "module",
-  "packageManager": "yarn@4.5.3",
+  "packageManager": "yarn@4.6.0",
   "license": "MIT",
   "author": "Wroud",
   "homepage": "https://wroud.dev",

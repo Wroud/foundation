@@ -3,7 +3,7 @@
   "description": "@wroud/di-tools-codemod is a codemod utility that automates the migration of your codebase from Inversify to @wroud/di. It streamlines the transformation process, allowing for effortless and customizable transitions through configuration support.",
   "version": "0.3.2",
   "type": "module",
-  "packageManager": "yarn@4.5.3",
+  "packageManager": "yarn@4.6.0",
   "license": "MIT",
   "author": "Wroud",
   "homepage": "https://wroud.dev",

@@ -3,7 +3,7 @@
   "description": "A TypeScript library for generating markdown changelogs from conventional commit messages, providing a structured and consistent format for documenting project updates.",
   "version": "0.1.2",
   "type": "module",
-  "packageManager": "yarn@4.5.3",
+  "packageManager": "yarn@4.6.0",
   "exports": {
     ".": "./lib/index.js"
   },

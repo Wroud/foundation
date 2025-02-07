@@ -3,7 +3,7 @@
   "description": "A lightweight parser for conventional commits that supports extracting commit metadata, generating commit messages, and managing commit trailers in TypeScript.",
   "version": "0.1.2",
   "type": "module",
-  "packageManager": "yarn@4.5.3",
+  "packageManager": "yarn@4.6.0",
   "exports": {
     ".": "./lib/index.js"
   },

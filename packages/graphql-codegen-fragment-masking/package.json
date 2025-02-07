@@ -3,7 +3,7 @@
   "description": "Type-safe fragment masking plugin for GraphQL Code Generator, providing helper functions for managing GraphQL fragments with enhanced type safety and customizable configurations.",
   "version": "0.1.2",
   "type": "module",
-  "packageManager": "yarn@4.5.3",
+  "packageManager": "yarn@4.6.0",
   "license": "MIT",
   "author": "Wroud",
   "homepage": "https://wroud.dev/",

@@ -2,7 +2,7 @@
   "name": "@wroud/di-react",
   "description": "A simple and lightweight dependency injection library for React",
   "version": "0.4.2",
-  "packageManager": "yarn@4.5.3",
+  "packageManager": "yarn@4.6.0",
   "type": "module",
   "license": "MIT",
   "author": "Wroud",

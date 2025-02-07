@@ -46,7 +46,7 @@ export function assetResolverPlugin(
             return resolved;
           }
 
-          const pathParts = importer.split(path.sep);
+          const pathParts = importer.split(path.posix.sep);
 
           let distIndex = -1;
           for (let i = pathParts.length - 1; i >= 0; i--) {
@@ -60,7 +60,7 @@ export function assetResolverPlugin(
             for (const srcAlias of src) {
               pathParts[distIndex] = srcAlias;
 
-              let adjustedImporter = path.join(...pathParts);
+              let adjustedImporter = path.posix.join(...pathParts);
 
               if (importer.startsWith("/")) {
                 adjustedImporter = "/" + adjustedImporter;

@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.5.2 -->
+## 0.5.2 (2025-02-07)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/ts-template-v0.5.1...ts-template-v0.5.2)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- bump dependencies version ([91a7990](https://github.com/Wroud/foundation/commit/91a7990))
+
 <!-- version:0.5.1 -->
 ## 0.5.1 (2024-11-26)
 

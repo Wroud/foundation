@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.4.3 -->
+## 0.4.3 (2025-02-07)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/di-react-v0.4.2...di-react-v0.4.3)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- bump dependencies version ([91a7990](https://github.com/Wroud/foundation/commit/91a7990))
+
 <!-- version:0.4.2 -->
 ## 0.4.2 (2024-11-28)
 

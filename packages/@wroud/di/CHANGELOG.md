@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.15.2 -->
+## 0.15.2 (2025-02-07)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/di-v0.15.1...di-v0.15.2)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- bump dependencies version ([91a7990](https://github.com/Wroud/foundation/commit/91a7990))
+
 <!-- version:0.15.1 -->
 ## 0.15.1 (2024-11-26)
 

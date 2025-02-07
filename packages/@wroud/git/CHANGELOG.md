@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.1.4 -->
+## 0.1.4 (2025-02-07)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/git-v0.1.3...git-v0.1.4)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- bump dependencies version ([91a7990](https://github.com/Wroud/foundation/commit/91a7990))
+
 <!-- version:0.1.3 -->
 ## 0.1.3 (2024-11-26)
 

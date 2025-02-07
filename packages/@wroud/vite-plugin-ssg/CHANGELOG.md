@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:2.0.1 -->
+## 2.0.1 (2025-02-07)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-ssg-v2.0.0...vite-plugin-ssg-v2.0.1)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- bump dependencies version ([91a7990](https://github.com/Wroud/foundation/commit/91a7990))
+
 <!-- version:2.0.0 -->
 ## 2.0.0 (2025-01-27)
 

@@ -13,7 +13,7 @@ import { isUrlId, removeUrlQuery } from "./utils/removeUrlQuery.js";
 import { cleanUrl } from "./utils/cleanUrl.js";
 import { isSSgId, removeSSgQuery } from "./utils/ssgQuery.js";
 import { isSSrServerId } from "./utils/ssrServerQuery.js";
-import { isSSrClientId } from "./utils/ssrClientQuery.js";
+import { isSSrClientId, removeSSrClientQuery } from "./utils/ssrClientQuery.js";
 import { isMainId, removeMainQuery } from "./utils/mainQuery.js";
 import {
   addQueryParam,
@@ -22,8 +22,9 @@ import {
 } from "./utils/queryParam.js";
 import {
   cleanViteResolveUrl,
-  isViteResolveUrl,
-} from "./utils/isViteResolveUrl.js";
+  createSSGResolveURI,
+  isSSGResolveURI,
+} from "./utils/isSSGResolveURI.js";
 import type { BoundServerRenderFunction } from "./react/server.js";
 import { mapHtmlTagsToReactTags } from "./react/mapHtmlTagsToReactTags.js";
 import { parseHtmlTagsFromHtml } from "./parseHtmlTagsFromHtml.js";
@@ -32,6 +33,7 @@ import MagicString from "magic-string";
 import { isSSgHtmlTagsId } from "./utils/ssgHtmlTags.js";
 import { glob } from "tinyglobby";
 import { mkdir, readFile, unlink, writeFile } from "node:fs/promises";
+import { isPageURL, removePageURL } from "./utils/isPageURL.js";
 
 export * from "./react/IndexComponent.js";
 
@@ -62,13 +64,25 @@ export const ssgPlugin = (
               ...userConfig.environments?.["ssr"]?.build,
               ssr: true,
               emptyOutDir: true,
+              outDir: path.join(
+                userConfig.environments?.["ssr"]?.build?.outDir ||
+                  userConfig.build?.outDir ||
+                  "dist",
+                "server",
+              ),
             },
           },
           client: {
             ...userConfig.environments?.["client"],
             build: {
               ...userConfig.environments?.["client"]?.build,
-              emptyOutDir: false,
+              emptyOutDir: true,
+              outDir: path.join(
+                userConfig.environments?.["client"]?.build?.outDir ||
+                  userConfig.build?.outDir ||
+                  "dist",
+                "client",
+              ),
             },
           },
         };
@@ -81,13 +95,19 @@ export const ssgPlugin = (
       },
       configureServer: {
         order: "pre",
-        handler(server) {
+        async handler(server) {
           const moduleRunner = createServerModuleRunner(
             server.environments.ssr,
             {
               hmr: { logger: false },
             },
           );
+
+          for (let chunk of Object.keys(
+            server.config.build.rollupOptions.input as Record<string, string>,
+          )) {
+            await server.warmupRequest(server.config.base + chunk);
+          }
 
           return () => {
             server.middlewares.use(
@@ -104,7 +124,7 @@ export const ssgPlugin = (
           }
           const config = this.environment.config;
 
-          if (isViteResolveUrl(source)) {
+          if (isSSGResolveURI(source)) {
             const params = parseQueryParams(source);
 
             if ("importer" in params) {
@@ -128,7 +148,7 @@ export const ssgPlugin = (
               return undefined;
             }
 
-            return `\0ssg-url:${resolved.id}`;
+            return createSSGResolveURI(resolved.id);
           }
 
           if (isSSgId(source)) {
@@ -140,11 +160,16 @@ export const ssgPlugin = (
               );
             } else {
               if (config.command === "build") {
+                const name = path
+                  .relative(config.root, source)
+                  .replace(path.extname(source), "");
+
                 this.emitFile({
                   id: path.join(
                     path.dirname(source),
                     path.basename(cleanUrl(source)) + "-virtual.html",
                   ),
+                  name,
                   type: "chunk",
                   importer: source,
                 });
@@ -155,6 +180,38 @@ export const ssgPlugin = (
                 options,
               );
             }
+          }
+
+          if (isPageURL(source)) {
+            const resolved = await this.resolve(source, importer, options);
+
+            if (!resolved) {
+              return undefined;
+            }
+
+            if (config.command === "build") {
+              let name = path
+                .relative(config.root, resolved.id)
+                .replace(path.extname(resolved.id), "");
+
+              if (this.environment.name === "ssr") {
+                this.emitFile({
+                  id: addQueryParam(cleanUrl(resolved.id), "ssg"),
+                  fileName: name + ".js",
+                  name,
+                  type: "chunk",
+                });
+                return createSSGResolveURI(resolved.id);
+              } else {
+                this.emitFile({
+                  id: addQueryParam(cleanUrl(resolved.id), "ssg"),
+                  name,
+                  type: "chunk",
+                });
+              }
+            }
+
+            return resolved.id;
           }
 
           return undefined;
@@ -169,13 +226,20 @@ export const ssgPlugin = (
           }
           const config = this.environment.config;
 
-          if (isViteResolveUrl(id)) {
+          if (isSSGResolveURI(id)) {
             if (isMainId(id)) {
               id = addQueryParam(removeMainQuery(id), "ssr-client");
             }
+            id = removeUrlQuery(cleanViteResolveUrl(id));
+            if (config.command === "serve") {
+              id =
+                (config.server.origin || "") +
+                config.base +
+                path.relative(config.root, id);
+            }
             return {
               code: `
-                export default ${JSON.stringify(removeUrlQuery(cleanViteResolveUrl(id)))};
+                export default ${JSON.stringify(id)};
               `,
             };
           }
@@ -185,8 +249,8 @@ export const ssgPlugin = (
               id = JSON.stringify(
                 (config.server.origin || "") +
                   config.base +
-                  path.join(
-                    "@fs",
+                  path.relative(
+                    config.root,
                     addQueryParam(removeMainQuery(id), "ssr-client"),
                   ),
               );
@@ -242,6 +306,19 @@ export const ssgPlugin = (
             };
           }
 
+          if (isPageURL(id)) {
+            id = removePageURL(cleanViteResolveUrl(id));
+            id = path.relative(
+              config.root,
+              id.replace(path.extname(id), ".html"),
+            );
+
+            id = (config.server.origin || "") + config.base + id;
+            return {
+              code: `export default ${JSON.stringify(id)};`,
+            };
+          }
+
           return undefined;
         },
       },
@@ -256,6 +333,7 @@ export const ssgPlugin = (
           delete bundle[key];
         }
         const config = this.environment.config;
+        const ssrConfig = config.environments["ssr"]!;
         const assetsMapping = new Map<string, string>();
 
         for (const chunk of Object.values(bundle)) {
@@ -267,7 +345,7 @@ export const ssgPlugin = (
             }
           } else if (this.environment.name === "ssr") {
             const ssgIds = chunk.moduleIds
-              .filter(isViteResolveUrl)
+              .filter(isSSGResolveURI)
               .map(cleanViteResolveUrl)
               .map(removeUrlQuery)
               .map((id) => {
@@ -298,17 +376,55 @@ export const ssgPlugin = (
               );
             }
           } else {
-            assetsMapping.set(chunk.facadeModuleId!, chunk.fileName);
+            if (chunk.facadeModuleId) {
+              assetsMapping.set(chunk.facadeModuleId, chunk.fileName);
+            }
           }
+        }
+
+        function resolveMainIdFromVirtualChunk(virtualHtmlChunk: OutputAsset) {
+          const mainId = addQueryParam(
+            virtualHtmlChunk.originalFileNames[0]?.replace(
+              "-virtual.html",
+              "",
+            ) || "",
+            "ssr-client",
+          );
+          const mainChunk = Object.values(bundle).find(
+            (c) => c.type == "chunk" && c.facadeModuleId === mainId,
+          );
+          if (
+            mainChunk?.type !== "chunk" ||
+            !mainChunk.isEntry ||
+            !mainChunk.facadeModuleId ||
+            !isSSrClientId(mainChunk.facadeModuleId)
+          ) {
+            return undefined;
+          }
+          return mainChunk;
+        }
+
+        for (const virtualChunk of virtualChunks.values()) {
+          const mainChunk = resolveMainIdFromVirtualChunk(virtualChunk);
+          if (!mainChunk) {
+            continue;
+          }
+          assetsMapping.set(
+            addQueryParam(
+              removeSSrClientQuery(mainChunk.facadeModuleId!),
+              "page-url",
+            ),
+            mainChunk.name + ".html",
+          );
         }
 
         if (this.environment.name === "client") {
           const ssgFiles = await glob(["**/*.ssg"], {
-            cwd: path.join(config.root, config.build.outDir),
+            cwd: path.join(config.root, ssrConfig.build.outDir),
           });
 
           for (let ssg of ssgFiles) {
-            ssg = path.join(config.root, config.build.outDir, ssg);
+            ssg = path.join(config.root, ssrConfig.build.outDir, ssg);
 
             const ssgIds = JSON.parse(
               await readFile(ssg, { encoding: "utf-8" }),
@@ -323,7 +439,7 @@ export const ssgPlugin = (
               const asset = assetsMapping.get(ssgId);
 
               if (asset) {
-                serverChunk = serverChunk.replace(
+                serverChunk = serverChunk.replaceAll(
                   ssgId,
                   path.join(config.base, asset),
                 );
@@ -338,93 +454,80 @@ export const ssgPlugin = (
         }
 
         for (const [, virtualHtmlChunk] of virtualChunks) {
-          const mainId = addQueryParam(
-            virtualHtmlChunk.originalFileNames[0]?.replace(
-              "-virtual.html",
-              "",
-            ) || "",
-            "ssr-client",
-          );
-          const mainChunk = Object.values(bundle).find(
-            (c) => c.type == "chunk" && c.facadeModuleId === mainId,
-          );
-          if (mainChunk?.type !== "chunk" || !mainChunk.isEntry) {
+          const mainChunk = resolveMainIdFromVirtualChunk(virtualHtmlChunk);
+          if (!mainChunk) {
             continue;
           }
 
-          if (
-            mainChunk.facadeModuleId &&
-            isSSrClientId(mainChunk.facadeModuleId)
-          ) {
-            const { render } = await import(
-              path.join(
-                config.root,
-                config.build.outDir,
-                mainChunk.name + ".js",
-              )
-            );
+          const { render } = await import(
+            path.join(
+              config.root,
+              ssrConfig.build.outDir,
+              mainChunk.name + ".js",
+            )
+          );
 
-            const analyzedChunk = new Map<OutputChunk, number>();
-            const htmlTags = parseHtmlTagsFromHtml(
-              String(virtualHtmlChunk.source),
-            );
+          const analyzedChunk = new Map<OutputChunk, number>();
+          const htmlTags = parseHtmlTagsFromHtml(
+            String(virtualHtmlChunk.source),
+          );
 
-            const getCssTagsForChunk = (
-              c: typeof mainChunk,
-              seen: Set<string> = new Set(),
-            ): HtmlTagDescriptor[] => {
-              const tags: HtmlTagDescriptor[] = [];
-              if (!analyzedChunk.has(c)) {
-                analyzedChunk.set(c, 1);
-                c.imports.forEach((file) => {
-                  const importee = bundle[file];
-                  if (importee?.type === "chunk") {
-                    tags.push(...getCssTagsForChunk(importee, seen));
-                  }
-                });
-              }
-
-              c.viteMetadata!.importedCss.forEach((file) => {
-                if (!seen.has(file)) {
-                  seen.add(file);
-                  tags.push({
-                    tag: "link",
-                    injectTo: "head",
-                    attrs: {
-                      rel: "stylesheet",
-                      crossorigin: true,
-                      href: config.base + file,
-                    },
-                  });
+          const getCssTagsForChunk = (
+            c: typeof mainChunk,
+            seen: Set<string> = new Set(),
+          ): HtmlTagDescriptor[] => {
+            const tags: HtmlTagDescriptor[] = [];
+            if (!analyzedChunk.has(c)) {
+              analyzedChunk.set(c, 1);
+              c.imports.forEach((file) => {
+                const importee = bundle[file];
+                if (importee?.type === "chunk") {
+                  tags.push(...getCssTagsForChunk(importee, seen));
                 }
               });
-
-              return tags;
-            };
-
-            htmlTags.push(...getCssTagsForChunk(mainChunk));
-            const s = new MagicString(mainChunk.code);
-            s.replace("__VITE_SSG_HTML_TAGS__", JSON.stringify(htmlTags));
-
-            mainChunk.code = s.toString();
-            if (mainChunk.map) {
-              mainChunk.map = s.generateMap();
             }
 
-            const source = await (render as BoundServerRenderFunction)(
-              mapHtmlTagsToReactTags(htmlTags),
-              {
-                cspNonce: config.html?.cspNonce,
-                base: config.base,
-              },
-              pluginOptions.renderTimeout,
-            );
-            this.emitFile({
-              type: "asset",
-              fileName: mainChunk.name + ".html",
-              source,
+            c.viteMetadata!.importedCss.forEach((file) => {
+              if (!seen.has(file)) {
+                seen.add(file);
+                tags.push({
+                  tag: "link",
+                  injectTo: "head",
+                  attrs: {
+                    rel: "stylesheet",
+                    crossorigin: true,
+                    href: config.base + file,
+                  },
+                });
+              }
             });
+
+            return tags;
+          };
+
+          htmlTags.push(...getCssTagsForChunk(mainChunk));
+          const s = new MagicString(mainChunk.code);
+          s.replace("__VITE_SSG_HTML_TAGS__", JSON.stringify(htmlTags));
+
+          mainChunk.code = s.toString();
+          if (mainChunk.map) {
+            mainChunk.map = s.generateMap();
           }
+
+          const source = await (render as BoundServerRenderFunction)(
+            mapHtmlTagsToReactTags(htmlTags),
+            {
+              cspNonce: config.html?.cspNonce,
+              base: config.base,
+            },
+            pluginOptions.renderTimeout,
+          );
+
+          this.emitFile({
+            type: "asset",
+            fileName: mainChunk.name + ".html",
+            source,
+          });
         }
       },
     },
@@ -440,11 +543,15 @@ function indexHtmlMiddleware(
 
   // Keep the named function. The name is visible in debug logs via `DEBUG=connect:dispatcher ...`
   return async function viteIndexHtmlMiddleware(req, res, next) {
-    if (res.writableEnded || !isDev) {
+    let url = cleanUrl(req.url);
+    if (res.writableEnded || !isDev || url === undefined) {
       return next();
     }
 
-    let url = cleanUrl(req.url);
+    if (url?.endsWith("/")) {
+      url = url + "index.html";
+    }
+
     if (url?.endsWith(".html") && req.headers["sec-fetch-dest"] !== "script") {
       const headers = server.config.server.headers;
 

@@ -64,13 +64,16 @@ To add `@wroud/vite-plugin-ssg` to your Vite application, follow these steps:
    import path from "path";
 
    export default defineConfig({
+     root: "src",
      build: {
+        outDir: "../dist",
        rollupOptions: {
          input: {
-           app: path.resolve("src/index.tsx") + "?ssg",
+           index: path.resolve("src/index.tsx") + "?ssg",
          },
        },
      },
+     appType: "mpa", // you can add this option to enable better support for multi-page applications (when you have several inputs in rollupOptions)
      plugins: [ssgPlugin()],
    });
    ```
@@ -100,7 +103,7 @@ To add `@wroud/vite-plugin-ssg` to your Vite application, follow these steps:
          <Body>
            <App />
          </Body>
-       </html>
+       </Html>
      );
    }
    ```
@@ -108,14 +111,78 @@ To add `@wroud/vite-plugin-ssg` to your Vite application, follow these steps:
    - Use a default export for the `Index` component.
    - Import styles with `?url` and add them as a `<Link>` component.
 
+4. You also can create another page and link it manually:
+
+   ```tsx
+   import type { IndexComponentProps } from "@wroud/vite-plugin-ssg";
+   import { Html, Body, Head, Link } from "@wroud/vite-plugin-ssg/react/components";
+   import profileStyles from "./profile.css?url";
+   import { UserProfile } from "./UserProfile.js";
+
+   export default function Profile(props: IndexComponentProps) {
+     return (
+       <Html lang="en" {...props}>
+         <Head>
+           <meta charSet="utf-8" />
+           <meta
+             name="viewport"
+             content="width=device-width, initial-scale=1"
+           />
+           <title>Profile</title>
+           <Link rel="stylesheet" href={profileStyles} />
+         </Head>
+         <Body>
+           <UserProfile />
+         </Body>
+       </Html>
+     );
+   }
+   ```
+
+   Now you can link this page from Index page (created on step 3):
+
+   ```tsx
+   import type { IndexComponentProps } from "@wroud/vite-plugin-ssg";
+   import { Html, Body, Head, Link } from "@wroud/vite-plugin-ssg/react/components";
+   import indexStyles from "./index.css?url";
+   import { App } from "./App.js";
+   import userProfileUrl from './Profile.js?page-url';
+
+   export default function Index(props: IndexComponentProps) {
+     return (
+       <Html lang="en" {...props}>
+         <Head>
+           <meta charSet="utf-8" />
+           <meta
+             name="viewport"
+             content="width=device-width, initial-scale=1"
+           />
+           <title>Grid</title>
+           <Link rel="stylesheet" href={indexStyles} />
+         </Head>
+         <Body>
+           <a href={userProfileUrl}>Open Profile</a>
+           <App />
+         </Body>
+       </Html>
+     );
+   }
+   ```
+
+   - Import pages with `?page-url` parameter to get link to it
+
 ### Generated Output
 
 When building the project, the following files will be generated:
 
-- `app/index.js`: Contains the exported `render` function for SSG, which can be manually used to generate HTML.
-- `app/index.html`: The statically generated HTML page.
-- `assets/index-[hash].css`: The CSS file with styles.
-- `assets/app/index-[hash].js`: The client bootstrap script.
+- `dist/server/index.js`: Contains the exported `render` function for SSG, which can be manually used to generate HTML.
+- `dist/server/Profile.js`: Contains the exported `render` function for SSG, which can be manually used to generate HTML.
+- `dist/client/index.html`: The statically generated Index HTML page.
+- `dist/client/Profile.html`: The statically generated Profile HTML page.
+- `dist/client/assets/index-[hash].css`: The CSS file with styles.
+- `dist/client/assets/profile-[hash].css`: The CSS file with styles.
+- `dist/client/assets/index-[hash].js`: The client Index page bootstrap script.
+- `dist/client/assets/Profile-[hash].js`: The client Profile page bootstrap script.
 
 ## Documentation
 

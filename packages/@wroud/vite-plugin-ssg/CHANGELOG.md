@@ -3,6 +3,17 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:3.0.0 -->
+## 3.0.0 (2025-02-17)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-ssg-v2.0.1...vite-plugin-ssg-v3.0.0)
+
+<!-- changelog -->
+### ⚠️  Breaking Changes
+
+- support linking multiple pages; split server and client artifacts; better dev experience ([20a1a4f](https://github.com/Wroud/foundation/commit/20a1a4f))
+  - support linking multiple pages; split server and client artifacts; better dev experience
+
 <!-- version:2.0.1 -->
 ## 2.0.1 (2025-02-07)
 

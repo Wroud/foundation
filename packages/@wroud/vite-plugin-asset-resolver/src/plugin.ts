@@ -32,9 +32,9 @@ export function assetResolverPlugin(
   return [
     {
       name: "asset-resolver-plugin",
-      enforce: "pre",
+      enforce: "post",
       resolveId: {
-        order: "pre",
+        order: "post",
         async handler(source, importer, options) {
           if (!importer || !regex.test(source)) {
             return;

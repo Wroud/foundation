@@ -49,9 +49,9 @@
     "!.tsbuildinfo"
   ],
   "scripts": {
-    "ci:release": "ci release --prefix di-v",
-    "ci:git-tag": "ci git-tag --prefix di-v",
-    "ci:release-github": "ci release-github --prefix di-v",
+    "ci:release": "ci release --prefix nav-v",
+    "ci:git-tag": "ci git-tag --prefix nav-v",
+    "ci:release-github": "ci release-github --prefix nav-v",
     "test": "tests-runner",
     "test:ci": "CI=true yarn run test",
     "build": "tsc -b",

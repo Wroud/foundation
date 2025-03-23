@@ -32,6 +32,7 @@
     "@wroud/flow-middleware": "workspace:^",
     "@wroud/git": "workspace:*",
     "@wroud/github": "workspace:*",
+    "@wroud/navigation": "workspace:^",
     "@wroud/preconditions": "workspace:^",
     "@wroud/ts-project-linker": "workspace:*",
     "@wroud/ts-template": "workspace:^",

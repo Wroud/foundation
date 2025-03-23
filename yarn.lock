@@ -4117,6 +4117,7 @@ __metadata:
     "@wroud/flow-middleware": "workspace:^"
     "@wroud/git": "workspace:*"
     "@wroud/github": "workspace:*"
+    "@wroud/navigation": "workspace:^"
     "@wroud/preconditions": "workspace:^"
     "@wroud/ts-project-linker": "workspace:*"
     "@wroud/ts-template": "workspace:^"
@@ -4405,6 +4406,22 @@ __metadata:
     "@wroud/tsconfig": "workspace:*"
     concurrently: "npm:^9"
     rimraf: "npm:^6"
+    typescript: "npm:^5"
+    vitest: "npm:^2"
+  languageName: unknown
+  linkType: soft
+
+"@wroud/navigation@workspace:^, @wroud/navigation@workspace:packages/@wroud/navigation":
+  version: 0.0.0-use.local
+  resolution: "@wroud/navigation@workspace:packages/@wroud/navigation"
+  dependencies:
+    "@vitest/coverage-v8": "npm:^2"
+    "@wroud/ci": "workspace:*"
+    "@wroud/tests-runner": "workspace:*"
+    "@wroud/tsconfig": "workspace:*"
+    concurrently: "npm:^9"
+    rimraf: "npm:^6"
+    tslib: "npm:^2"
     typescript: "npm:^5"
     vitest: "npm:^2"
   languageName: unknown

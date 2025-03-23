@@ -51,6 +51,9 @@
       "path": "../@wroud/github"
     },
     {
+      "path": "../@wroud/navigation"
+    },
+    {
       "path": "../@wroud/preconditions"
     },
     {

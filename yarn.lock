@@ -3381,6 +3381,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/react@npm:^18.0.0 || ^19.0.0":
+  version: 19.0.12
+  resolution: "@types/react@npm:19.0.12"
+  dependencies:
+    csstype: "npm:^3.0.2"
+  checksum: 10c0/c814b6af5c0fbcf5c65d031b1c9bf98c5b857e015254d95811f2851b27b869c3d31c6f35dab127dc6921a3dbda0b0622c6323d493a14b31b231a6a58c41c5e84
+  languageName: node
+  linkType: hard
+
 "@types/react@npm:^19":
   version: 19.0.8
   resolution: "@types/react@npm:19.0.8"
@@ -4119,6 +4128,7 @@ __metadata:
     "@wroud/github": "workspace:*"
     "@wroud/navigation": "workspace:^"
     "@wroud/preconditions": "workspace:^"
+    "@wroud/react-reactive-value": "workspace:^"
     "@wroud/ts-project-linker": "workspace:*"
     "@wroud/ts-template": "workspace:^"
     "@wroud/tsconfig": "workspace:*"
@@ -4435,6 +4445,24 @@ __metadata:
     "@wroud/tsconfig": "workspace:^"
     rimraf: "npm:^6"
     typescript: "npm:^5"
+  languageName: unknown
+  linkType: soft
+
+"@wroud/react-reactive-value@workspace:^, @wroud/react-reactive-value@workspace:packages/@wroud/react-reactive-value":
+  version: 0.0.0-use.local
+  resolution: "@wroud/react-reactive-value@workspace:packages/@wroud/react-reactive-value"
+  dependencies:
+    "@types/react": "npm:^18.0.0 || ^19.0.0"
+    "@vitest/coverage-v8": "npm:^2"
+    "@wroud/ci": "workspace:*"
+    "@wroud/tests-runner": "workspace:*"
+    "@wroud/tsconfig": "workspace:^"
+    react: "npm:^18.0.0 || ^19.0.0"
+    rimraf: "npm:^6"
+    typescript: "npm:^5"
+    vitest: "npm:^2"
+  peerDependencies:
+    react: ^17.0.0 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -10199,6 +10227,13 @@ __metadata:
   dependencies:
     loose-envify: "npm:^1.1.0"
   checksum: 10c0/283e8c5efcf37802c9d1ce767f302dd569dd97a70d9bb8c7be79a789b9902451e0d16334b05d73299b20f048cbc3c7d288bbbde10b701fa194e2089c237dbea3
+  languageName: node
+  linkType: hard
+
+"react@npm:^18.0.0 || ^19.0.0":
+  version: 19.0.0
+  resolution: "react@npm:19.0.0"
+  checksum: 10c0/9cad8f103e8e3a16d15cb18a0d8115d8bd9f9e1ce3420310aea381eb42aa0a4f812cf047bb5441349257a05fba8a291515691e3cb51267279b2d2c3253f38471
   languageName: node
   linkType: hard
 

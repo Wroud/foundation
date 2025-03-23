@@ -1,0 +1,68 @@
+{
+  "name": "@wroud/react-reactive-value",
+  "version": "0.0.1",
+  "type": "module",
+  "sideEffects": [],
+  "license": "MIT",
+  "author": "Wroud",
+  "homepage": "https://wroud.dev/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Wroud/foundation",
+    "directory": "packages/@wroud/react-reactive-value"
+  },
+  "description": "A lightweight library for managing reactive values in React applications that efficiently triggers re-renders when values change",
+  "keywords": [
+    "react",
+    "reactive",
+    "state",
+    "hooks",
+    "performance",
+    "typescript",
+    "esm"
+  ],
+  "exports": {
+    ".": "./lib/index.js",
+    "./*": "./lib/*.js"
+  },
+  "scripts": {
+    "ci:release": "ci release --prefix react-reactive-value-v",
+    "ci:git-tag": "ci git-tag --prefix react-reactive-value-v",
+    "ci:release-github": "ci release-github --prefix react-reactive-value-v",
+    "test": "tests-runner",
+    "test:ci": "CI=true yarn run test",
+    "build": "tsc -b",
+    "watch:tsc": "tsc -b -w",
+    "dev": "concurrently \"npm:watch:*\"",
+    "clear": "rimraf lib"
+  },
+  "files": [
+    "package.json",
+    "LICENSE",
+    "README.md",
+    "CHANGELOG.md",
+    "lib",
+    "!lib/**/*.d.ts.map",
+    "!lib/**/*.test.js",
+    "!lib/**/*.test.d.ts",
+    "!lib/**/*.test.d.ts.map",
+    "!lib/**/*.test.js.map",
+    "!lib/tests",
+    "!.tsbuildinfo"
+  ],
+  "packageManager": "yarn@4.6.0",
+  "devDependencies": {
+    "@types/react": "^18.0.0 || ^19.0.0",
+    "@vitest/coverage-v8": "^2",
+    "@wroud/ci": "workspace:*",
+    "@wroud/tests-runner": "workspace:*",
+    "@wroud/tsconfig": "workspace:^",
+    "react": "^18.0.0 || ^19.0.0",
+    "rimraf": "^6",
+    "typescript": "^5",
+    "vitest": "^2"
+  },
+  "peerDependencies": {
+    "react": "^17.0.0 || ^18.0.0 || ^19.0.0"
+  }
+}

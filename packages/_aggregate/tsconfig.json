@@ -57,6 +57,9 @@
       "path": "../@wroud/preconditions"
     },
     {
+      "path": "../@wroud/react-reactive-value"
+    },
+    {
       "path": "../@wroud/ts-project-linker"
     },
     {

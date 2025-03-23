@@ -34,6 +34,7 @@
     "@wroud/github": "workspace:*",
     "@wroud/navigation": "workspace:^",
     "@wroud/preconditions": "workspace:^",
+    "@wroud/react-reactive-value": "workspace:^",
     "@wroud/ts-project-linker": "workspace:*",
     "@wroud/ts-template": "workspace:^",
     "@wroud/tsconfig": "workspace:*",

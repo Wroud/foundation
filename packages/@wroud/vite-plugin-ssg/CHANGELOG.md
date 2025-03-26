@@ -3,6 +3,17 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:4.0.0 -->
+## 4.0.0 (2025-03-26)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-ssg-v3.0.0...vite-plugin-ssg-v4.0.0)
+
+<!-- changelog -->
+### ⚠️  Breaking Changes
+
+- better support for `base`; built-in navigation; dynamic routes pre-render ([0dfa60c](https://github.com/Wroud/foundation/commit/0dfa60c))
+  - better support for `base`; built-in navigation; dynamic routes pre-render
+
 <!-- version:3.0.0 -->
 ## 3.0.0 (2025-02-17)
 

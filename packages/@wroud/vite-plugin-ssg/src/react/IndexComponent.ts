@@ -1,6 +1,7 @@
 import type React from "react";
 
 export interface IndexComponentContext {
+  href?: string | null;
   cspNonce?: string;
   base?: string;
 }

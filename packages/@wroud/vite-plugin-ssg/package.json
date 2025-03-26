@@ -45,6 +45,7 @@
     "vite": "^6"
   },
   "dependencies": {
+    "@wroud/navigation": "workspace:^",
     "change-case": "^5",
     "magic-string": "^0",
     "style-to-object": "^1",

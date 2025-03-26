@@ -5,69 +5,104 @@ import type {
   IndexComponent,
   IndexComponentContext,
 } from "./IndexComponent.js";
-import { renderViteTags } from "./ssg-common.js";
+import { renderViteTags } from "@wroud/vite-plugin-ssg/react/ssg-common";
+import { SSGContext } from "@wroud/vite-plugin-ssg/react/components/SSGContext";
+import type { IAppStartData } from "../app.js";
+import { AppStartDataContext } from "@wroud/vite-plugin-ssg/react/components/AppStartDataContext";
+import { AppInstance } from "@wroud/vite-plugin-ssg/app/AppInstance";
 
-export type ServerRenderFunction = (
-  Index: IndexComponent,
-  htmlTags: HtmlTagDescriptor[],
+export type BoundServerApiFunction = (
   context: IndexComponentContext,
-  timeout?: number,
+) => Promise<IServerAPI>;
+
+export interface IServerAPI {
+  appStartData: IAppStartData;
+  context: IndexComponentContext;
+  render: (htmlTags: HtmlTagDescriptor[], timeout?: number) => Promise<string>;
+  getPathsToPrerender: () => Promise<string[]>;
+  dispose: () => Promise<void>;
+}
+
+export async function create(
+  indexOrApp: IndexComponent | AppInstance,
+  context: IndexComponentContext,
   mainScriptUrl?: string,
-) => Promise<string>;
+): Promise<IServerAPI> {
+  if (!(indexOrApp instanceof AppInstance)) {
+    indexOrApp = new AppInstance(indexOrApp);
+  }
 
-export type BoundServerRenderFunction = (
-  htmlTags: HtmlTagDescriptor[],
-  context: IndexComponentContext,
-  timeout?: number,
-) => Promise<string>;
+  const appStartData = await indexOrApp.start(context);
+  context.base = appStartData.base;
 
-export const render: ServerRenderFunction = async function render(
-  Index,
-  htmlTags,
-  context,
-  timeout = 10000,
-  mainScriptUrl,
-) {
-  let htmlContent = "";
+  return {
+    appStartData,
+    context,
 
-  await new Promise<void>(async (resolve, reject) => {
-    try {
-      const writable = new Writable({
-        write(chunk, encoding, callback) {
-          htmlContent += chunk.toString();
-          callback();
-        },
-        final(callback) {
-          resolve();
-          callback();
-        },
+    async render(htmlTags, timeout = 10000) {
+      let htmlContent = "";
+
+      await new Promise<void>(async (resolve, reject) => {
+        try {
+          const writable = new Writable({
+            write(chunk, encoding, callback) {
+              htmlContent += chunk.toString();
+              callback();
+            },
+            final(callback) {
+              resolve();
+              callback();
+            },
+          });
+
+          const renderTags = renderViteTags.bind(undefined, htmlTags, context);
+
+          const Index = indexOrApp.index;
+          const { pipe, abort } = renderToPipeableStream(
+            <AppStartDataContext value={appStartData}>
+              <SSGContext value={{ context, renderTags, mainScriptUrl }}>
+                <Index
+                  renderTags={renderTags}
+                  context={context}
+                  mainScriptUrl={mainScriptUrl}
+                />
+              </SSGContext>
+            </AppStartDataContext>,
+            {
+              nonce: context.cspNonce,
+              onAllReady() {
+                clearTimeout(timeoutId);
+                pipe(writable);
+              },
+              onError(error) {
+                reject(error);
+              },
+            },
+          );
+
+          const timeoutId = setTimeout(() => {
+            abort(new Error("SSG render timeout"));
+          }, timeout);
+        } catch (error) {
+          reject(error);
+        }
       });
 
-      const { pipe, abort } = renderToPipeableStream(
-        <Index
-          renderTags={renderViteTags.bind(undefined, htmlTags, context)}
-          context={context}
-          mainScriptUrl={mainScriptUrl}
-        />,
-        {
-          nonce: context.cspNonce,
-          onAllReady() {
-            clearTimeout(timeoutId);
-            pipe(writable);
-          },
-          onError(error) {
-            reject(error);
-          },
-        },
-      );
+      return htmlContent;
+    },
 
-      const timeoutId = setTimeout(() => {
-        abort(new Error("SSG render timeout"));
-      }, timeout);
-    } catch (error) {
-      reject(error);
-    }
-  });
+    async getPathsToPrerender() {
+      const routes = await indexOrApp.getRoutesPrerender(appStartData);
 
-  return htmlContent;
-};
+      return routes
+        .map((state) =>
+          appStartData.navigation.router.matcher?.stateToUrl(state),
+        )
+        .filter((url) => url !== null) as string[];
+    },
+
+    async dispose() {
+      await indexOrApp.stop();
+    },
+  };
+}

@@ -56,7 +56,11 @@ export function RenderViteTag({ tag, context }: IRenderViteTagProps) {
     }
 
     if (typeof tag.children === "string") {
-      tag.children = tag.children.replace('from "/', `from "${context.base}`);
+      tag.children = tag.children.replace(
+        /from\s+(['"])([^'"]+)\1/gi,
+        (_, quote, url) =>
+          `from ${quote}${pathUrlWithBase(context.base, url)}${quote}`,
+      );
     }
 
     if (tag.tag === "meta" && attrs["property"] === "base") {
@@ -70,7 +74,7 @@ export function RenderViteTag({ tag, context }: IRenderViteTagProps) {
     }
 
     if (typeof tag.children === "string") {
-      tag.children = tag.children.replace("{{nonce}}", context.cspNonce);
+      tag.children = tag.children.replaceAll("{{nonce}}", context.cspNonce);
     }
 
     if (tag.tag === "script" && !attrs["nonce"]) {

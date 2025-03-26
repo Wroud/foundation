@@ -4570,6 +4570,7 @@ __metadata:
     "@types/react": "npm:^19"
     "@types/react-dom": "npm:^19"
     "@wroud/ci": "workspace:*"
+    "@wroud/navigation": "workspace:^"
     "@wroud/tsconfig": "workspace:^"
     change-case: "npm:^5"
     magic-string: "npm:^0"

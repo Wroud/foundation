@@ -1,4 +1,4 @@
-import path from "node:path";
+import nodePath from "node:path";
 import {
   type Connect,
   createServerModuleRunner,
@@ -6,7 +6,7 @@ import {
   send,
   type ViteDevServer,
   type PluginOption,
-  type HtmlTagDescriptor,
+  type ResolvedConfig,
 } from "vite";
 import type { ModuleRunner } from "vite/module-runner";
 import { isUrlId, removeUrlQuery } from "./utils/removeUrlQuery.js";
@@ -15,17 +15,13 @@ import { isSSgId, removeSSgQuery } from "./utils/ssgQuery.js";
 import { isSSrServerId } from "./utils/ssrServerQuery.js";
 import { isSSrClientId, removeSSrClientQuery } from "./utils/ssrClientQuery.js";
 import { isMainId, removeMainQuery } from "./utils/mainQuery.js";
-import {
-  addQueryParam,
-  parseQueryParams,
-  removeQueryParam,
-} from "./utils/queryParam.js";
+import { addQueryParam } from "./utils/queryParam.js";
 import {
   cleanViteResolveUrl,
   createSSGResolveURI,
   isSSGResolveURI,
 } from "./utils/isSSGResolveURI.js";
-import type { BoundServerRenderFunction } from "./react/server.js";
+import type { BoundServerApiFunction } from "./react/server.js";
 import { mapHtmlTagsToReactTags } from "./react/mapHtmlTagsToReactTags.js";
 import { parseHtmlTagsFromHtml } from "./parseHtmlTagsFromHtml.js";
 import type { OutputAsset, OutputChunk } from "rollup";
@@ -34,6 +30,11 @@ import { isSSgHtmlTagsId } from "./utils/ssgHtmlTags.js";
 import { glob } from "tinyglobby";
 import { mkdir, readFile, unlink, writeFile } from "node:fs/promises";
 import { isPageURL, removePageURL } from "./utils/isPageURL.js";
+import { createSsgUrl, isSsgUrl, removeSsgUrl } from "./utils/isSsgUrl.js";
+import { getPathsToLookup } from "./utils/getPathsToLookup.js";
+import { existsSync } from "node:fs";
+import { removeNoInlineQuery } from "./utils/removeNoInlineQuery.js";
+import { loadServerApi } from "./api/loadServerApi.js";
 
 export * from "./react/IndexComponent.js";
 
@@ -46,9 +47,10 @@ export const ssgPlugin = (
     renderTimeout: 10000,
   },
 ): PluginOption => {
+  const prerenderedPaths = new Set<string>();
   return [
     {
-      name: "wroud:ssg",
+      name: "@wroud/vite-plugin-ssg",
       enforce: "post",
 
       config(userConfig, env) {
@@ -60,29 +62,18 @@ export const ssgPlugin = (
               ...userConfig.environments?.["ssr"]?.optimizeDeps,
               noDiscovery: false,
             },
+
             build: {
               ...userConfig.environments?.["ssr"]?.build,
               ssr: true,
-              emptyOutDir: true,
-              outDir: path.join(
-                userConfig.environments?.["ssr"]?.build?.outDir ||
+              rollupOptions: {
+                ...userConfig.environments?.["ssr"]?.build?.rollupOptions,
+                external: [/^@wroud\/vite-plugin-ssg.*/],
+              },
+              outDir:
+                (userConfig.environments?.["ssr"]?.build?.outDir ||
                   userConfig.build?.outDir ||
-                  "dist",
-                "server",
-              ),
-            },
-          },
-          client: {
-            ...userConfig.environments?.["client"],
-            build: {
-              ...userConfig.environments?.["client"]?.build,
-              emptyOutDir: true,
-              outDir: path.join(
-                userConfig.environments?.["client"]?.build?.outDir ||
-                  userConfig.build?.outDir ||
-                  "dist",
-                "client",
-              ),
+                  "dist") + "-server",
             },
           },
         };
@@ -93,6 +84,11 @@ export const ssgPlugin = (
           },
         };
       },
+      buildStart: {
+        handler() {
+          prerenderedPaths.clear();
+        },
+      },
       configureServer: {
         order: "pre",
         async handler(server) {
@@ -102,12 +98,6 @@ export const ssgPlugin = (
               hmr: { logger: false },
             },
           );
-
-          for (let chunk of Object.keys(
-            server.config.build.rollupOptions.input as Record<string, string>,
-          )) {
-            await server.warmupRequest(server.config.base + chunk);
-          }
 
           return () => {
             server.middlewares.use(
@@ -120,19 +110,16 @@ export const ssgPlugin = (
         order: "pre",
         async handler(source, importer, options) {
           if (source.endsWith("-virtual.html")) {
+            this.debug(`Resolving virtual HTML: ${source}`);
             return { id: source, moduleSideEffects: true };
           }
           const config = this.environment.config;
 
           if (isSSGResolveURI(source)) {
-            const params = parseQueryParams(source);
-
-            if ("importer" in params) {
-              importer = path.join(config.root, params["importer"]!);
-              source = removeQueryParam(source, "importer");
-            }
+            this.debug(`Handling SSG resolve URI: ${source}`);
 
             source = cleanViteResolveUrl(source);
+            this.debug(`Cleaned source: ${source}`);
             return await this.resolve(source, importer, options);
           }
 
@@ -142,67 +129,161 @@ export const ssgPlugin = (
               config?.assetsInclude(cleanUrl(source))) &&
             this.environment.name === "ssr"
           ) {
+            this.debug(`Handling main/URL/asset ID in SSR: ${source}`);
             const resolved = await this.resolve(source, importer, options);
 
             if (!resolved) {
+              this.debug(`Failed to resolve: ${source}`);
               return undefined;
             }
 
+            if (isSSGResolveURI(resolved.id)) {
+              this.debug(`Already a SSG resolve URI: ${resolved.id}`);
+              return resolved;
+            }
+
+            this.debug(`Creating SSG resolve URI for: ${resolved.id}`);
             return createSSGResolveURI(resolved.id);
           }
 
+          if (isSSrClientId(source) || isSSrServerId(source)) {
+            this.debug(`Bypassing SSR client/server ID: ${source}`);
+            return await this.resolve(source, importer, options);
+          }
+
           if (isSSgId(source)) {
+            this.debug(`Handling SSG ID: ${source}`);
             if (this.environment.name === "ssr") {
+              this.debug(`Resolving SSG ID in SSR environment: ${source}`);
               return await this.resolve(
                 addQueryParam(removeSSgQuery(source), "ssr-server"),
                 importer,
-                options,
+                { ...options, skipSelf: false },
               );
             } else {
               if (config.command === "build") {
-                const name = path
-                  .relative(config.root, source)
-                  .replace(path.extname(source), "");
+                const name = removeSSgQuery(
+                  nodePath.posix
+                    .relative(config.root, source)
+                    .replace(nodePath.posix.extname(source), ""),
+                );
 
+                this.debug(`Emitting virtual HTML file for: ${source}`);
                 this.emitFile({
-                  id: path.join(
-                    path.dirname(source),
-                    path.basename(cleanUrl(source)) + "-virtual.html",
+                  id: nodePath.posix.join(
+                    nodePath.posix.dirname(source),
+                    nodePath.posix.basename(cleanUrl(source)) + "-virtual.html",
                   ),
                   name,
                   type: "chunk",
                   importer: source,
                 });
+                try {
+                  const ssrConfig = config.environments["ssr"]!;
+
+                  const lookUpPaths = getPathsToLookup(name);
+                  let serverModulePath: string | undefined;
+
+                  for (const possiblePath of lookUpPaths) {
+                    const exists = existsSync(
+                      nodePath.join(
+                        config.root,
+                        ssrConfig.build.outDir,
+                        possiblePath + ".js",
+                      ),
+                    );
+
+                    if (exists) {
+                      this.debug(`Found SSG chunk for: ${possiblePath}`);
+                      serverModulePath = possiblePath;
+                      break;
+                    }
+                  }
+
+                  if (!serverModulePath) {
+                    this.error(`No SSG chunk found for: ${name}`);
+                  }
+
+                  const serverApiProvider = await loadServerApi(
+                    nodePath.join(
+                      config.root,
+                      ssrConfig.build.outDir,
+                      serverModulePath + `.js`,
+                    ),
+                  );
+
+                  const serverApi = await serverApiProvider.create({
+                    base: mapBaseToUrl("/", config),
+                    href: getHrefFromPath(name, config),
+                  });
+
+                  const routes = await serverApi.getPathsToPrerender();
+
+                  await serverApi.dispose();
+                  await serverApiProvider.dispose();
+
+                  for (let route of routes) {
+                    route = stripBase(route, config.base);
+                    const id = createSsgUrl(route);
+                    if (prerenderedPaths.has(id)) {
+                      continue;
+                    }
+                    prerenderedPaths.add(id);
+                    this.emitFile({
+                      id,
+                      name: route.replace(/^\//, "").replace(/\/$/, "/index"),
+                      type: "chunk",
+                    });
+                  }
+                } catch (error) {
+                  this.error(`Failed to import routes prerender: ${error}`);
+                }
               }
+              this.debug(`Resolving SSG ID in client environment: ${source}`);
               return await this.resolve(
                 addQueryParam(removeSSgQuery(source), "ssr-client"),
                 importer,
-                options,
+                { ...options, skipSelf: false },
               );
             }
           }
 
           if (isPageURL(source)) {
+            this.debug(`Handling page URL: ${source}`);
             const resolved = await this.resolve(source, importer, options);
 
             if (!resolved) {
+              this.debug(`Failed to resolve page URL: ${source}`);
               return undefined;
             }
 
             if (config.command === "build") {
-              let name = path
+              let name = nodePath.posix
                 .relative(config.root, resolved.id)
-                .replace(path.extname(resolved.id), "");
+                .replace(nodePath.posix.extname(resolved.id), "");
 
               if (this.environment.name === "ssr") {
+                this.debug(
+                  `Emitting SSG chunk for SSR environment: ${resolved.id}`,
+                );
                 this.emitFile({
                   id: addQueryParam(cleanUrl(resolved.id), "ssg"),
                   fileName: name + ".js",
                   name,
                   type: "chunk",
                 });
-                return createSSGResolveURI(resolved.id);
+                return this.resolve(
+                  createSSGResolveURI(resolved.id),
+                  importer,
+                  {
+                    ...options,
+                    skipSelf: false,
+                  },
+                );
               } else {
+                this.debug(
+                  `Emitting SSG chunk for client environment: ${resolved.id}`,
+                );
                 this.emitFile({
                   id: addQueryParam(cleanUrl(resolved.id), "ssg"),
                   name,
@@ -214,6 +295,31 @@ export const ssgPlugin = (
             return resolved.id;
           }
 
+          if (isSsgUrl(source)) {
+            this.debug(`Handling SSG URL with path traversal: ${source}`);
+            const lookUpPaths = getPathsToLookup(removeSsgUrl(source));
+
+            for (const path of lookUpPaths) {
+              let possiblePathId = nodePath.posix.join(config.root, path);
+
+              this.debug(`Trying path: ${possiblePathId}`);
+              const query = "?ssg";
+
+              let resolved = await this.resolve(
+                possiblePathId + query,
+                importer,
+                { ...options, skipSelf: false },
+              );
+
+              if (resolved) {
+                this.debug(`Found match for SSG URL at: ${possiblePathId}`);
+                return resolved;
+              }
+            }
+
+            this.warn(`No match found for SSG URL: ${source}`);
+          }
+
           return undefined;
         },
       },
@@ -222,21 +328,28 @@ export const ssgPlugin = (
         order: "pre",
         async handler(id) {
           if (id.endsWith("-virtual.html")) {
+            this.debug(`Loading virtual HTML: ${id}`);
             return "";
           }
           const config = this.environment.config;
 
           if (isSSGResolveURI(id)) {
+            this.debug(`Loading SSG resolve URI: ${id}`);
             if (isMainId(id)) {
               id = addQueryParam(removeMainQuery(id), "ssr-client");
+              this.debug(`Transformed to SSR client: ${id}`);
             }
             id = removeUrlQuery(cleanViteResolveUrl(id));
             if (config.command === "serve") {
-              id =
-                (config.server.origin || "") +
-                config.base +
-                path.relative(config.root, id);
+              if (id.startsWith(config.root)) {
+                id = nodePath.posix.relative(config.root, id);
+                this.debug(`Transformed to server URL: ${id}`);
+              } else {
+                id = mapBaseToUrl("/@fs" + id, config);
+                this.debug(`Transformed to fs path: ${id}`);
+              }
             }
+
             return {
               code: `
                 export default ${JSON.stringify(id)};
@@ -245,16 +358,17 @@ export const ssgPlugin = (
           }
 
           if (isMainId(id)) {
+            this.debug(`Loading main ID: ${id}`);
             if (config.command === "serve") {
               id = JSON.stringify(
-                (config.server.origin || "") +
-                  config.base +
-                  path.relative(
-                    config.root,
-                    addQueryParam(removeMainQuery(id), "ssr-client"),
-                  ),
+                nodePath.posix.relative(
+                  config.root,
+                  addQueryParam(removeMainQuery(id), "ssr-client"),
+                ),
               );
+              this.debug(`Transformed to server URL string: ${id}`);
             } else {
+              this.debug(`Emitting chunk for main ID: ${id}`);
               id = `import.meta.ROLLUP_FILE_URL_${this.emitFile({
                 type: "chunk",
                 id: addQueryParam(removeMainQuery(id), "ssr-client"),
@@ -268,52 +382,57 @@ export const ssgPlugin = (
             };
           }
 
-          const basenameCleanId = path.basename(cleanUrl(id));
+          const basenameCleanId = nodePath.posix.basename(cleanUrl(id));
 
           if (isSSrServerId(id)) {
+            this.debug(`Loading SSR server module: ${id}`);
             return {
               code: `
-                import { render as renderServer } from "@wroud/vite-plugin-ssg/react/server";
+                import { create as createServer } from "@wroud/vite-plugin-ssg/react/server";
                 import Index from "./${basenameCleanId}";
                 import mainScriptUrl from "./${addQueryParam(basenameCleanId, "ssg-main")}";
 
-                export async function render(htmlTags, context, timeout) {
-                  return await renderServer(Index, htmlTags, context, timeout, mainScriptUrl);
+                export async function create(context) {
+                  return await createServer(Index, context, mainScriptUrl);
                 }
               `,
             };
           }
 
           if (isSSrClientId(id)) {
+            this.debug(`Loading SSR client module: ${id}`);
             return {
               code: `
-                import { hydrate } from "@wroud/vite-plugin-ssg/react/client";
+                import { create } from "@wroud/vite-plugin-ssg/react/client";
                 import htmlTags from "./${addQueryParam(basenameCleanId, "ssg-html-tags")}";
                 import Index from "./${basenameCleanId}";
                 import mainScriptUrl from "./${addQueryParam(basenameCleanId, "ssg-main")}";
                 import { hydrateRoot } from "react-dom/client";
                 const context = {}
 
-                hydrate(Index, htmlTags, context, mainScriptUrl);
+                const api = await create(Index, context, mainScriptUrl);
+                await api.hydrate(htmlTags);
               `,
               moduleSideEffects: true,
             };
           }
 
           if (isSSgHtmlTagsId(id)) {
+            this.debug(`Loading SSG HTML tags: ${id}`);
             return {
               code: `export default __VITE_SSG_HTML_TAGS__;`,
             };
           }
 
           if (isPageURL(id)) {
+            this.debug(`Loading page URL: ${id}`);
             id = removePageURL(cleanViteResolveUrl(id));
-            id = path.relative(
+            id = nodePath.posix.relative(
               config.root,
-              id.replace(path.extname(id), ".html"),
+              id.replace(nodePath.posix.extname(id), ".html"),
             );
 
-            id = (config.server.origin || "") + config.base + id;
+            this.debug(`Transformed page URL: ${id}`);
             return {
               code: `export default ${JSON.stringify(id)};`,
             };
@@ -323,6 +442,25 @@ export const ssgPlugin = (
         },
       },
       async generateBundle(options, bundle) {
+        const config = this.environment.config;
+        const ssrConfig = config.environments["ssr"]!;
+        const assetsMapping = new Map<string, string>();
+
+        const serverApiProviderCache = new Map<
+          string,
+          Awaited<ReturnType<typeof loadServerApi>>
+        >();
+
+        const getCachedServerApi = async (modulePath: string) => {
+          if (!serverApiProviderCache.has(modulePath)) {
+            serverApiProviderCache.set(
+              modulePath,
+              await loadServerApi(modulePath),
+            );
+          }
+          return serverApiProviderCache.get(modulePath)!;
+        };
+
         const virtualChunks = new Map(
           Object.entries(bundle).filter(([, chunk]) =>
             chunk.fileName.endsWith("-virtual.html"),
@@ -332,99 +470,112 @@ export const ssgPlugin = (
         for (const [key] of virtualChunks) {
           delete bundle[key];
         }
-        const config = this.environment.config;
-        const ssrConfig = config.environments["ssr"]!;
-        const assetsMapping = new Map<string, string>();
 
         for (const chunk of Object.values(bundle)) {
           if (chunk.type === "asset") {
             if (this.environment.name === "client") {
               for (const fileName of chunk.originalFileNames) {
-                assetsMapping.set(fileName, chunk.fileName);
+                let absoluteName = fileName;
+                if (fileName.startsWith(".")) {
+                  absoluteName = nodePath.posix.join(config.root, fileName);
+                }
+                assetsMapping.set(absoluteName, chunk.fileName);
               }
             }
-          } else if (this.environment.name === "ssr") {
-            const ssgIds = chunk.moduleIds
-              .filter(isSSGResolveURI)
-              .map(cleanViteResolveUrl)
-              .map(removeUrlQuery)
-              .map((id) => {
-                if (isMainId(id)) {
-                  id = addQueryParam(removeMainQuery(id), "ssr-client");
-                }
-                return id;
-              });
+          } else if (chunk.type === "chunk") {
+            if (this.environment.name === "ssr") {
+              const ssgIds = chunk.moduleIds
+                .filter(isSSGResolveURI)
+                .map((id) => {
+                  id = cleanViteResolveUrl(id);
+                  id = removeUrlQuery(id);
+                  id = removeNoInlineQuery(id);
 
-            if (ssgIds.length > 0) {
-              await mkdir(
-                path.join(
+                  if (isMainId(id)) {
+                    id = addQueryParam(removeMainQuery(id), "ssr-client");
+                  }
+                  return id;
+                });
+
+              if (ssgIds.length > 0) {
+                const outDir = nodePath.join(
                   config.root,
                   config.build.outDir,
-                  path.dirname(chunk.fileName),
-                ),
-                {
-                  recursive: true,
-                },
-              );
-              await writeFile(
-                path.join(
+                  nodePath.dirname(chunk.fileName),
+                );
+                const ssgFilePath = nodePath.join(
                   config.root,
                   config.build.outDir,
                   chunk.fileName + ".ssg",
-                ),
-                JSON.stringify(ssgIds, null, 2),
-              );
-            }
-          } else {
-            if (chunk.facadeModuleId) {
+                );
+
+                try {
+                  await mkdir(outDir, { recursive: true });
+                  await writeFile(ssgFilePath, JSON.stringify(ssgIds, null, 2));
+                  this.debug(`Generated SSG file: ${ssgFilePath}`);
+                } catch (error: unknown) {
+                  if (error instanceof Error) {
+                    this.error(
+                      new Error(`Failed to generate SSG file: ${ssgFilePath}`, {
+                        cause: error,
+                      }),
+                    );
+                  } else {
+                    this.error(
+                      `Failed to generate SSG file: ${ssgFilePath} - ${String(error)}`,
+                    );
+                  }
+                }
+              }
+            } else if (chunk.facadeModuleId) {
               assetsMapping.set(chunk.facadeModuleId, chunk.fileName);
             }
           }
         }
 
         function resolveMainIdFromVirtualChunk(virtualHtmlChunk: OutputAsset) {
-          const mainId = addQueryParam(
+          let mainId =
             virtualHtmlChunk.originalFileNames[0]?.replace(
               "-virtual.html",
               "",
-            ) || "",
-            "ssr-client",
-          );
+            ) || "";
+
+          mainId = mainId.replace(nodePath.extname(mainId), "");
+
           const mainChunk = Object.values(bundle).find(
-            (c) => c.type == "chunk" && c.facadeModuleId === mainId,
-          );
-          if (
-            mainChunk?.type !== "chunk" ||
-            !mainChunk.isEntry ||
-            !mainChunk.facadeModuleId ||
-            !isSSrClientId(mainChunk.facadeModuleId)
-          ) {
-            return undefined;
-          }
+            (c) =>
+              c.type === "chunk" &&
+              c.facadeModuleId?.replace(
+                nodePath.extname(c.facadeModuleId),
+                "",
+              ) === mainId &&
+              c.isEntry &&
+              isSSrClientId(c.facadeModuleId),
+          ) as (OutputChunk & { facadeModuleId: string }) | undefined;
+
           return mainChunk;
         }
 
         for (const virtualChunk of virtualChunks.values()) {
           const mainChunk = resolveMainIdFromVirtualChunk(virtualChunk);
-          if (!mainChunk) {
-            continue;
+          if (mainChunk) {
+            assetsMapping.set(
+              addQueryParam(
+                removeSSrClientQuery(mainChunk.facadeModuleId),
+                "page-url",
+              ),
+              mainChunk.name + ".html",
+            );
           }
-          assetsMapping.set(
-            addQueryParam(
-              removeSSrClientQuery(mainChunk.facadeModuleId!),
-              "page-url",
-            ),
-            mainChunk.name + ".html",
-          );
         }
 
         if (this.environment.name === "client") {
           const ssgFiles = await glob(["**/*.ssg"], {
-            cwd: path.join(config.root, ssrConfig.build.outDir),
+            cwd: nodePath.join(config.root, ssrConfig.build.outDir),
           });
 
           for (let ssg of ssgFiles) {
-            ssg = path.join(config.root, ssrConfig.build.outDir, ssg);
+            ssg = nodePath.join(config.root, ssrConfig.build.outDir, ssg);
 
             const ssgIds = JSON.parse(
               await readFile(ssg, { encoding: "utf-8" }),
@@ -439,12 +590,9 @@ export const ssgPlugin = (
               const asset = assetsMapping.get(ssgId);
 
               if (asset) {
-                serverChunk = serverChunk.replaceAll(
-                  ssgId,
-                  path.join(config.base, asset),
-                );
+                serverChunk = serverChunk.replaceAll(ssgId, asset);
               } else {
-                this.error(`Asset not found: ${ssgId}`);
+                this.error(new Error(`Asset not found: ${ssgId}`));
               }
             }
 
@@ -453,81 +601,141 @@ export const ssgPlugin = (
           }
         }
 
-        for (const [, virtualHtmlChunk] of virtualChunks) {
-          const mainChunk = resolveMainIdFromVirtualChunk(virtualHtmlChunk);
-          if (!mainChunk) {
-            continue;
-          }
+        try {
+          for (const [, virtualHtmlChunk] of virtualChunks) {
+            const mainChunk = resolveMainIdFromVirtualChunk(virtualHtmlChunk);
+            if (!mainChunk) {
+              continue;
+            }
 
-          const { render } = await import(
-            path.join(
+            const href = mainChunk.name.replace(/\/index$/, "/");
+            const lookUpPaths = getPathsToLookup(
+              stripBase(mainChunk.name, config.base),
+            );
+            let serverModulePath: string | undefined;
+
+            for (const possiblePath of lookUpPaths) {
+              const exists = existsSync(
+                nodePath.join(
+                  config.root,
+                  ssrConfig.build.outDir,
+                  possiblePath + ".js",
+                ),
+              );
+
+              if (exists) {
+                this.debug(`Found SSG chunk for: ${possiblePath}`);
+                serverModulePath = possiblePath;
+                break;
+              }
+            }
+
+            if (!serverModulePath) {
+              this.error(`No SSG chunk found for: ${mainChunk.name}`);
+            }
+
+            const serverModuleFullPath = nodePath.join(
               config.root,
               ssrConfig.build.outDir,
-              mainChunk.name + ".js",
-            )
-          );
+              serverModulePath + ".js",
+            );
 
-          const analyzedChunk = new Map<OutputChunk, number>();
-          const htmlTags = parseHtmlTagsFromHtml(
-            String(virtualHtmlChunk.source),
-          );
+            const serverApiProvider =
+              await getCachedServerApi(serverModuleFullPath);
 
-          const getCssTagsForChunk = (
-            c: typeof mainChunk,
-            seen: Set<string> = new Set(),
-          ): HtmlTagDescriptor[] => {
-            const tags: HtmlTagDescriptor[] = [];
-            if (!analyzedChunk.has(c)) {
-              analyzedChunk.set(c, 1);
-              c.imports.forEach((file) => {
-                const importee = bundle[file];
-                if (importee?.type === "chunk") {
-                  tags.push(...getCssTagsForChunk(importee, seen));
+            const analyzedChunk = new Set<string>();
+            const cssFiles = new Set<string>();
+            const htmlTags = parseHtmlTagsFromHtml(
+              String(virtualHtmlChunk.source),
+            );
+
+            function collectCssForChunk(chunk: OutputChunk): void {
+              const chunkId = chunk.fileName;
+              if (analyzedChunk.has(chunkId)) return;
+              analyzedChunk.add(chunkId);
+
+              if (chunk.imports.length > 0) {
+                for (const importFile of chunk.imports) {
+                  const importedChunk = bundle[importFile];
+                  if (importedChunk?.type === "chunk") {
+                    collectCssForChunk(importedChunk);
+                  }
                 }
+              }
+
+              if (chunk.viteMetadata?.importedCss) {
+                for (const cssFile of chunk.viteMetadata.importedCss) {
+                  cssFiles.add(cssFile);
+                }
+              }
+            }
+
+            if (mainChunk) {
+              collectCssForChunk(mainChunk);
+            }
+
+            for (const cssFile of cssFiles) {
+              htmlTags.push({
+                tag: "link",
+                injectTo: "head",
+                attrs: {
+                  rel: "stylesheet",
+                  crossorigin: true,
+                  href: cssFile,
+                },
               });
             }
 
-            c.viteMetadata!.importedCss.forEach((file) => {
-              if (!seen.has(file)) {
-                seen.add(file);
-                tags.push({
-                  tag: "link",
-                  injectTo: "head",
-                  attrs: {
-                    rel: "stylesheet",
-                    crossorigin: true,
-                    href: config.base + file,
-                  },
-                });
+            function replaceSsgHtmlTagsInChunk(chunk: OutputChunk) {
+              const s = new MagicString(chunk.code);
+              s.replace("__VITE_SSG_HTML_TAGS__", JSON.stringify(htmlTags));
+
+              chunk.code = s.toString();
+              if (chunk.map) {
+                chunk.map = s.generateMap();
               }
+            }
+            if (mainChunk.moduleIds.some((m) => m.includes("?ssg-html-tag"))) {
+              replaceSsgHtmlTagsInChunk(mainChunk);
+            } else {
+              for (const importedModule of mainChunk.imports) {
+                const importedModuleChunk = bundle[importedModule];
+                if (
+                  importedModuleChunk?.type === "chunk" &&
+                  importedModuleChunk.moduleIds.some((m) =>
+                    m.includes("?ssg-html-tag"),
+                  )
+                ) {
+                  replaceSsgHtmlTagsInChunk(importedModuleChunk);
+                  break;
+                }
+              }
+            }
+
+            const serverApi = await serverApiProvider.create({
+              href: getHrefFromPath(href, config),
+              cspNonce: config.html?.cspNonce,
+              base: getBaseInHTML(href, config),
             });
 
-            return tags;
-          };
+            const source = await serverApi.render(
+              mapHtmlTagsToReactTags(htmlTags),
+              pluginOptions.renderTimeout,
+            );
 
-          htmlTags.push(...getCssTagsForChunk(mainChunk));
-          const s = new MagicString(mainChunk.code);
-          s.replace("__VITE_SSG_HTML_TAGS__", JSON.stringify(htmlTags));
+            await serverApi.dispose();
 
-          mainChunk.code = s.toString();
-          if (mainChunk.map) {
-            mainChunk.map = s.generateMap();
+            this.emitFile({
+              type: "asset",
+              fileName: mainChunk.name + ".html",
+              source,
+            });
           }
-
-          const source = await (render as BoundServerRenderFunction)(
-            mapHtmlTagsToReactTags(htmlTags),
-            {
-              cspNonce: config.html?.cspNonce,
-              base: config.base,
-            },
-            pluginOptions.renderTimeout,
-          );
-
-          this.emitFile({
-            type: "asset",
-            fileName: mainChunk.name + ".html",
-            source,
-          });
+        } finally {
+          for (const provider of serverApiProviderCache.values()) {
+            await provider.dispose();
+          }
+          serverApiProviderCache.clear();
         }
       },
     },
@@ -543,6 +751,7 @@ function indexHtmlMiddleware(
 
   // Keep the named function. The name is visible in debug logs via `DEBUG=connect:dispatcher ...`
   return async function viteIndexHtmlMiddleware(req, res, next) {
+    const urlSearch = req.url?.split("?")[1] || "";
     let url = cleanUrl(req.url);
     if (res.writableEnded || !isDev || url === undefined) {
       return next();
@@ -552,7 +761,10 @@ function indexHtmlMiddleware(
       url = url + "index.html";
     }
 
-    if (url?.endsWith(".html") && req.headers["sec-fetch-dest"] !== "script") {
+    if (
+      (url?.endsWith("/") || url?.endsWith(".html")) &&
+      req.headers["sec-fetch-dest"] !== "script"
+    ) {
       const headers = server.config.server.headers;
 
       try {
@@ -560,14 +772,13 @@ function indexHtmlMiddleware(
 
         const htmlTags = parseHtmlTagsFromHtml(html);
 
-        const entry = path.join(
-          server.config.root,
-          path.relative(server.config.base, decodeURIComponent(url)),
+        let entry = decodeURIComponent(url);
+        entry = nodePath.posix.join(
+          "/@ssg/",
+          entry.replace(nodePath.posix.extname(entry), ""),
         );
 
-        const entryModule = await server.moduleGraph.ensureEntryFromUrl(
-          entry.replace(path.extname(entry), "?ssg"),
-        );
+        const entryModule = await server.moduleGraph.ensureEntryFromUrl(entry);
 
         if (entryModule.id) {
           const tagsModule = await server.moduleGraph.ensureEntryFromUrl(
@@ -580,27 +791,74 @@ function indexHtmlMiddleware(
           });
         }
 
-        const { render } = await moduleRunner.import(
-          entry.replace(path.extname(entry), "?ssg"),
-        );
+        const { create: createServerApi } = await moduleRunner.import(entry);
+        const href =
+          url.replace(/^\//, "").replace(/\/index\.html$/, "/") +
+          (urlSearch ? "?" + urlSearch : "");
 
-        const renderedHtml = await (render as BoundServerRenderFunction)(
+        const serverApi = await (createServerApi as BoundServerApiFunction)({
+          href: getHrefFromPath(href, server.config),
+          cspNonce: server.config.html?.cspNonce,
+          base:
+            (server.config.server.origin ?? "") +
+            getBaseInHTML(href, server.config),
+        });
+
+        const renderedHtml = await serverApi.render(
           htmlTags,
-          {
-            cspNonce: server.config.html?.cspNonce,
-            base: (server.config.server.origin || "") + server.config.base,
-          },
           pluginOptions.renderTimeout,
         );
+
+        await serverApi.dispose();
 
         return send(req, res, renderedHtml, "html", {
           headers,
           cacheControl: "no-cache",
         });
       } catch (e) {
+        if (e instanceof Error) {
+          const error = new Error(`SSG HTML processing failed: ${e.message}`, {
+            cause: e,
+          });
+          error.stack = error.stack ?? "" + e.stack;
+          return next(error);
+        }
         return next(e);
       }
     }
     next();
   };
+}
+
+function getHrefFromPath(url: string, config: ResolvedConfig) {
+  return new URL(mapBaseToUrl(url, config), "http://localhost/").href;
+}
+
+function getBaseInHTML(urlRelativePath: string, config: ResolvedConfig) {
+  return config.base === "./" || config.base === ""
+    ? nodePath.posix.join(nodePath.posix.relative(urlRelativePath, ""), "./")
+    : config.base;
+}
+
+function withTrailingSlash(path: string): string {
+  if (path[path.length - 1] !== "/") {
+    return `${path}/`;
+  }
+  return path;
+}
+
+function stripBase(path: string, base: string): string {
+  if (path === base) {
+    return "/";
+  }
+  const devBase = withTrailingSlash(base);
+  return path.startsWith(devBase) ? path.slice(devBase.length - 1) : path;
+}
+
+function mapBaseToUrl(url: string, config: ResolvedConfig) {
+  if (config.base === "./" || config.base === "") {
+    return url;
+  }
+
+  return nodePath.posix.join(config.base, url);
 }

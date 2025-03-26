@@ -90,7 +90,7 @@ To add `@wroud/vite-plugin-ssg` to your Vite application, follow these steps:
 
    export default function Index(props: IndexComponentProps) {
      return (
-       <Html lang="en" {...props}>
+       <Html lang="en">
          <Head>
            <meta charSet="utf-8" />
            <meta
@@ -121,7 +121,7 @@ To add `@wroud/vite-plugin-ssg` to your Vite application, follow these steps:
 
    export default function Profile(props: IndexComponentProps) {
      return (
-       <Html lang="en" {...props}>
+       <Html lang="en">
          <Head>
            <meta charSet="utf-8" />
            <meta
@@ -150,7 +150,7 @@ To add `@wroud/vite-plugin-ssg` to your Vite application, follow these steps:
 
    export default function Index(props: IndexComponentProps) {
      return (
-       <Html lang="en" {...props}>
+       <Html lang="en">
          <Head>
            <meta charSet="utf-8" />
            <meta
@@ -175,14 +175,14 @@ To add `@wroud/vite-plugin-ssg` to your Vite application, follow these steps:
 
 When building the project, the following files will be generated:
 
-- `dist/server/index.js`: Contains the exported `render` function for SSG, which can be manually used to generate HTML.
-- `dist/server/Profile.js`: Contains the exported `render` function for SSG, which can be manually used to generate HTML.
-- `dist/client/index.html`: The statically generated Index HTML page.
-- `dist/client/Profile.html`: The statically generated Profile HTML page.
-- `dist/client/assets/index-[hash].css`: The CSS file with styles.
-- `dist/client/assets/profile-[hash].css`: The CSS file with styles.
-- `dist/client/assets/index-[hash].js`: The client Index page bootstrap script.
-- `dist/client/assets/Profile-[hash].js`: The client Profile page bootstrap script.
+- `dist-server/index.js`: Contains the exported `render` function for SSG, which can be manually used to generate HTML.
+- `dist-server/Profile.js`: Contains the exported `render` function for SSG, which can be manually used to generate HTML.
+- `dist/index.html`: The statically generated Index HTML page.
+- `dist/Profile.html`: The statically generated Profile HTML page.
+- `dist/assets/index-[hash].css`: The CSS file with styles.
+- `dist/assets/profile-[hash].css`: The CSS file with styles.
+- `dist/assets/index-[hash].js`: The client Index page bootstrap script.
+- `dist/assets/Profile-[hash].js`: The client Profile page bootstrap script.
 
 ## Documentation
 

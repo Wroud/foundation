@@ -1,51 +1,49 @@
-import { Navigation, type IRouteState } from "@wroud/navigation";
 import type { IndexComponent, IndexComponentContext } from "../ssgPlugin.js";
-import type { IAppStartData } from "./IAppStartData.js";
+import type { IAppContext } from "./IAppContext.js";
 
-interface IAppInitializer {
-  (context: IndexComponentContext): IAppStartData | Promise<IAppStartData>;
+interface IAppInitializer<T extends IAppContext> {
+  (context: IndexComponentContext): T | Promise<T>;
 }
 
-export interface IAppConfigOptions {
-  onAppStart?: IAppInitializer;
-  onRoutesPrerender?: IRoutesPrerender;
+export interface IAppConfigOptions<T extends IAppContext> {
+  onAppStart?: IAppInitializer<T>;
+  onRoutesPrerender?: IRoutesPrerender<NoInfer<T>>;
 }
 
-export interface IRoutesPrerender {
-  (app: IAppStartData): IRouteState[] | Promise<IRouteState[]>;
+export interface IRoutesPrerender<T extends IAppContext> {
+  (app: T): string[] | Promise<string[]>;
 }
 
-export class AppInstance {
+export class AppInstance<T extends IAppContext> {
   index: IndexComponent;
-  private onAppStart?: IAppInitializer;
-  private onRoutesPrerender?: IRoutesPrerender;
+  private onAppStart?: IAppInitializer<T>;
+  private onRoutesPrerender?: IRoutesPrerender<T>;
 
-  constructor(index: IndexComponent, config?: IAppConfigOptions) {
+  constructor(index: IndexComponent, config?: IAppConfigOptions<T>) {
     this.index = index;
     this.onAppStart = config?.onAppStart;
     this.onRoutesPrerender = config?.onRoutesPrerender;
   }
 
-  async start(context: IndexComponentContext): Promise<IAppStartData> {
+  async start(context: IndexComponentContext): Promise<T> {
     if (this.onAppStart) {
       return await this.onAppStart(context);
     }
     return {
       base: context.base ?? "/",
-      navigation: new Navigation(),
-    };
+    } as T;
   }
 
-  async getRoutesPrerender(startData: IAppStartData): Promise<IRouteState[]> {
+  async getRoutesPrerender(startData: T): Promise<string[]> {
     return (await this.onRoutesPrerender?.(startData)) ?? [];
   }
 
   async stop() {}
 }
 
-export function createAppConfig(
+export function createAppConfig<T extends IAppContext>(
   index: IndexComponent,
-  config?: IAppConfigOptions,
-) {
+  config?: IAppConfigOptions<T>,
+): AppInstance<T> {
   return new AppInstance(index, config);
 }

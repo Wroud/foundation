@@ -1,8 +1,8 @@
 import path from "node:path";
-import { trailingSeparatorRE } from "./trailingSeparatorRE.js";
+import { getPageName } from "../utils/getPageName.js";
 
 export function removeSsgUrl(url: string): string {
-  return url.slice(6).replace(trailingSeparatorRE, "");
+  return getPageName(url.replace("/@ssg/", ""));
 }
 
 export function isSsgUrl(id: string) {

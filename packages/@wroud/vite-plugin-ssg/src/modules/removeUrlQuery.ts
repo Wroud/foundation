@@ -1,4 +1,4 @@
-import { trailingSeparatorRE } from "./trailingSeparatorRE.js";
+import { trailingSeparatorRE } from "../utils/trailingSeparatorRE.js";
 
 export const urlRE = /(\?|&)url(?:&|$)/;
 export function removeUrlQuery(url: string): string {

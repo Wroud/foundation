@@ -2,6 +2,7 @@ import { fork } from "child_process";
 import type { BoundServerApiFunction, IServerAPI } from "../react/server.js";
 import type { HtmlTagDescriptor } from "vite";
 import { fileURLToPath } from "url";
+import type { IAppContext } from "../app.js";
 
 export async function loadServerApi(module: string) {
   const process = fork(
@@ -11,10 +12,10 @@ export async function loadServerApi(module: string) {
   let messageId = 0;
 
   return {
-    create: async (
-      ...args: Parameters<BoundServerApiFunction>
+    create: async <T extends IAppContext>(
+      ...args: Parameters<BoundServerApiFunction<T>>
     ): Promise<
-      Pick<IServerAPI, "render" | "getPathsToPrerender" | "dispose">
+      Pick<IServerAPI<T>, "render" | "getPathsToPrerender" | "dispose">
     > => {
       // Helper function to send message and wait for response
       const sendMessageAndWaitForResponse = (

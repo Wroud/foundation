@@ -1,4 +1,5 @@
-import { trailingSeparatorRE } from "./trailingSeparatorRE.js";
+import { addQueryParam } from "../utils/queryParam.js";
+import { trailingSeparatorRE } from "../utils/trailingSeparatorRE.js";
 
 export const ssgMainRE = /(\?|&)ssg-main(?:&|$)/;
 export function removeMainQuery(url: string): string {
@@ -7,4 +8,8 @@ export function removeMainQuery(url: string): string {
 
 export function isMainId(id: string) {
   return ssgMainRE.test(id);
+}
+
+export function addMainQuery(id: string) {
+  return addQueryParam(id, "ssg-main");
 }

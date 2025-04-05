@@ -5,23 +5,23 @@ import type {
   IndexComponentContext,
 } from "./IndexComponent.js";
 import type { HtmlTagDescriptor } from "vite";
-import { renderViteTags } from "./ssg-common.js";
-import { SSGContext } from "./components/SSGContext.js";
-import { type IAppStartData } from "../app/IAppStartData.js";
-import { AppStartDataContext } from "./components/AppStartDataContext.js";
+import type { IAppContext } from "../app/IAppContext.js";
 import { AppInstance } from "../app/AppInstance.js";
+import { renderViteTags } from "./ssg-common.js";
+import { AppContext } from "./components/AppContext.js";
+import { SSGContext } from "./components/SSGContext.js";
 
-export interface IClientAPI {
-  appStartData: IAppStartData;
+export interface IClientAPI<T extends IAppContext> {
+  appStartData: T;
   context: IndexComponentContext;
   hydrate: (htmlTags: HtmlTagDescriptor[]) => Promise<void>;
 }
 
-export async function create(
-  indexOrApp: IndexComponent | AppInstance,
+export async function create<T extends IAppContext>(
+  indexOrApp: IndexComponent | AppInstance<T>,
   context: IndexComponentContext,
   mainScriptUrl?: string,
-): Promise<IClientAPI> {
+): Promise<IClientAPI<T>> {
   context = getContext(context);
 
   if (!(indexOrApp instanceof AppInstance)) {
@@ -41,7 +41,7 @@ export async function create(
 
       hydrateRoot(
         document,
-        <AppStartDataContext value={appStartData}>
+        <AppContext value={appStartData}>
           <SSGContext value={{ context, renderTags, mainScriptUrl }}>
             <Index
               renderTags={renderTags}
@@ -49,7 +49,7 @@ export async function create(
               mainScriptUrl={mainScriptUrl}
             />
           </SSGContext>
-        </AppStartDataContext>,
+        </AppContext>,
       );
     },
   };

@@ -5,29 +5,29 @@ import type {
   IndexComponent,
   IndexComponentContext,
 } from "./IndexComponent.js";
-import { renderViteTags } from "@wroud/vite-plugin-ssg/react/ssg-common";
-import { SSGContext } from "@wroud/vite-plugin-ssg/react/components/SSGContext";
-import type { IAppStartData } from "../app.js";
-import { AppStartDataContext } from "@wroud/vite-plugin-ssg/react/components/AppStartDataContext";
-import { AppInstance } from "@wroud/vite-plugin-ssg/app/AppInstance";
+import type { IAppContext } from "../app/IAppContext.js";
+import { AppInstance } from "../app/AppInstance.js";
+import { renderViteTags } from "./ssg-common.js";
+import { AppContext } from "./components/AppContext.js";
+import { SSGContext } from "./components/SSGContext.js";
 
-export type BoundServerApiFunction = (
+export type BoundServerApiFunction<T extends IAppContext = IAppContext> = (
   context: IndexComponentContext,
-) => Promise<IServerAPI>;
+) => Promise<IServerAPI<T>>;
 
-export interface IServerAPI {
-  appStartData: IAppStartData;
+export interface IServerAPI<T extends IAppContext> {
+  appStartData: T;
   context: IndexComponentContext;
   render: (htmlTags: HtmlTagDescriptor[], timeout?: number) => Promise<string>;
   getPathsToPrerender: () => Promise<string[]>;
   dispose: () => Promise<void>;
 }
 
-export async function create(
-  indexOrApp: IndexComponent | AppInstance,
+export async function create<T extends IAppContext>(
+  indexOrApp: IndexComponent | AppInstance<T>,
   context: IndexComponentContext,
   mainScriptUrl?: string,
-): Promise<IServerAPI> {
+): Promise<IServerAPI<T>> {
   if (!(indexOrApp instanceof AppInstance)) {
     indexOrApp = new AppInstance(indexOrApp);
   }
@@ -58,8 +58,9 @@ export async function create(
           const renderTags = renderViteTags.bind(undefined, htmlTags, context);
 
           const Index = indexOrApp.index;
+
           const { pipe, abort } = renderToPipeableStream(
-            <AppStartDataContext value={appStartData}>
+            <AppContext value={appStartData}>
               <SSGContext value={{ context, renderTags, mainScriptUrl }}>
                 <Index
                   renderTags={renderTags}
@@ -67,7 +68,7 @@ export async function create(
                   mainScriptUrl={mainScriptUrl}
                 />
               </SSGContext>
-            </AppStartDataContext>,
+            </AppContext>,
             {
               nonce: context.cspNonce,
               onAllReady() {
@@ -92,13 +93,7 @@ export async function create(
     },
 
     async getPathsToPrerender() {
-      const routes = await indexOrApp.getRoutesPrerender(appStartData);
-
-      return routes
-        .map((state) =>
-          appStartData.navigation.router.matcher?.stateToUrl(state),
-        )
-        .filter((url) => url !== null) as string[];
+      return await indexOrApp.getRoutesPrerender(appStartData);
     },
 
     async dispose() {

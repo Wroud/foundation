@@ -69,16 +69,15 @@ To add `@wroud/vite-plugin-ssg` to your Vite application, follow these steps:
         outDir: "../dist",
        rollupOptions: {
          input: {
-           index: path.resolve("src/index.tsx") + "?ssg",
+           index: path.resolve("src/index.tsx") + "?ssg-entry",
          },
        },
      },
-     appType: "mpa", // you can add this option to enable better support for multi-page applications (when you have several inputs in rollupOptions)
      plugins: [ssgPlugin()],
    });
    ```
 
-   Here, we specify the entry point with a `?ssg` query to signal SSG processing.
+   Here, we specify the entry point with a `?ssg-entry` query to signal SSG processing.
 
 3. Create your `index.tsx` file with a default export for the `Index` component:
 

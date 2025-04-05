@@ -6,6 +6,11 @@ import type { IRouteState } from "./IRouteState.js";
  */
 export type RouteParams = Record<string, string | string[]>;
 
+export type RouteMatcherState<T extends IRouteMatcher> = Exclude<
+  ReturnType<T["match"]>,
+  null
+>;
+
 /**
  * Defines the API required for route pattern matching
  */

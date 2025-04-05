@@ -1,5 +1,6 @@
 import type { INavigation } from "./INavigation.js";
 import type { INavigationState } from "./INavigationState.js";
+import type { IRouteMatcher, RouteMatcherState } from "./IRouteMatcher.js";
 import type { IRouteState } from "./IRouteState.js";
 import type { IRouter } from "./IRouter.js";
 import {
@@ -9,12 +10,14 @@ import {
 import { Router } from "./Router.js";
 import { LinkedList } from "./sdk/LinkedList.js";
 
-export class Navigation implements INavigation {
-  get state(): IRouteState | null {
-    return this.innerState.history.get(this.innerState.position) || null;
+export class Navigation<TMatcher extends IRouteMatcher = IRouteMatcher>
+  implements INavigation<TMatcher>
+{
+  get state(): RouteMatcherState<TMatcher> | null {
+    return this.innerState.history.get(this.innerState.position)!;
   }
 
-  get history(): IRouteState[] {
+  get history(): RouteMatcherState<TMatcher>[] {
     return this.innerState.history.toArray();
   }
 
@@ -22,11 +25,11 @@ export class Navigation implements INavigation {
     return this.innerState.position;
   }
 
-  private innerState: INavigationState;
+  private innerState: INavigationState<RouteMatcherState<TMatcher>>;
   private readonly listeners: Set<NavigationListener>;
-  readonly router: IRouter;
+  readonly router: IRouter<TMatcher>;
 
-  constructor(router?: IRouter) {
+  constructor(router?: IRouter<TMatcher>) {
     this.router = router || new Router();
     this.listeners = new Set();
     this.innerState = {
@@ -41,14 +44,14 @@ export class Navigation implements INavigation {
   /**
    * Get the current navigation state
    */
-  getState(): IRouteState | null {
+  getState(): RouteMatcherState<TMatcher> | null {
     return this.state;
   }
 
   /**
    * Set the navigation state and position
    */
-  setState(position: number, state?: IRouteState[]) {
+  setState(position: number, state?: RouteMatcherState<TMatcher>[]) {
     this.innerState = {
       position,
       history: new LinkedList(state || []),
@@ -58,7 +61,7 @@ export class Navigation implements INavigation {
   /**
    * Replace the current state with a new one
    */
-  async replace(state: IRouteState | null) {
+  async replace(state: RouteMatcherState<TMatcher> | null) {
     if (state) {
       const route = this.router.getRoute(state.id);
 
@@ -88,7 +91,7 @@ export class Navigation implements INavigation {
   /**
    * Navigate to a new state
    */
-  async navigate(state: IRouteState | null) {
+  async navigate(state: RouteMatcherState<TMatcher> | null) {
     if (state) {
       const route = this.router.getRoute(state.id);
 

@@ -361,6 +361,9 @@ export class TriePatternMatching implements TypedPatternMatcher, IRouteMatcher {
    */
   private addBaseToUrl(url: string): string {
     if (this.options.base && url.startsWith("/")) {
+      if (this.options.base.endsWith("/")) {
+        return this.options.base + url.replace(/^\//, "");
+      }
       return this.options.base + url;
     }
     return url;

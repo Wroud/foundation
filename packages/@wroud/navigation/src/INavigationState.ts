@@ -4,7 +4,7 @@ import type { LinkedList } from "./sdk/LinkedList.js";
 /**
  * Represents the internal state of navigation with history and current position
  */
-export interface INavigationState {
+export interface INavigationState<TState = IRouteState> {
   position: number;
-  history: LinkedList<IRouteState>;
+  history: LinkedList<TState>;
 }

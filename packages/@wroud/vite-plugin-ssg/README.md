@@ -73,6 +73,7 @@ To add `@wroud/vite-plugin-ssg` to your Vite application, follow these steps:
          },
        },
      },
+     appType: "mpa", // you can add this option to enable better support for multi-page applications (when you have several inputs in rollupOptions)
      plugins: [ssgPlugin()],
    });
    ```

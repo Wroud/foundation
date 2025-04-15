@@ -117,7 +117,9 @@ export const ssgPlugin = (
       configureServer: {
         order: "pre",
         async handler(server) {
-          server.middlewares.use(pagesMiddleware(server, pluginOptions));
+          return () => {
+            server.middlewares.use(pagesMiddleware(server, pluginOptions));
+          };
         },
       },
       resolveId: {

@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:5.0.1 -->
+## 5.0.1 (2025-04-15)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-ssg-v5.0.0...vite-plugin-ssg-v5.0.1)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- revert pages middleware registration ([4e1f86d](https://github.com/Wroud/foundation/commit/4e1f86d))
+
 <!-- version:5.0.0 -->
 ## 5.0.0 (2025-04-05)
 

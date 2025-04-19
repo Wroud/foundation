@@ -1,6 +1,8 @@
+import { serializeError } from "../utils/error/serializeError.js";
+
 const [serverModulePath] = process.argv.slice(2);
 
-const instances: Record<number, any> = {};
+let instances: Record<number, any> = {};
 let instanceId = 0;
 
 try {
@@ -34,7 +36,15 @@ try {
           break;
 
         case "dispose":
-          await instances[message.instanceId].dispose();
+          if (message.instanceId !== undefined) {
+            await instances[message.instanceId].dispose();
+            instances[message.instanceId] = undefined;
+          } else {
+            for (const id in instances) {
+              await instances[id]?.dispose();
+            }
+            instances = {};
+          }
           process.send?.({ messageId, success: true });
           break;
 
@@ -49,7 +59,7 @@ try {
       process.send?.({
         messageId,
         success: false,
-        error: error instanceof Error ? error.message : String(error),
+        error: serializeError(error),
       });
     }
   });

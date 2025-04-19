@@ -14,12 +14,13 @@ import { addQueryParam } from "../utils/queryParam.js";
 import type { SsgPluginOptions } from "../SsgPluginOptions.js";
 import { getBaseInHTML } from "../utils/getBaseInHTML.js";
 import { getHrefFromPath } from "../utils/getHrefFromPath.js";
+import { isDevServer } from "../utils/isDevServer.js";
 
 export function pagesMiddleware(
   server: ViteDevServer | PreviewServer,
   pluginOptions: SsgPluginOptions,
 ): Connect.NextHandleFunction {
-  const isDev = "pluginContainer" in server;
+  const isDev = isDevServer(server);
 
   // Keep the named function. The name is visible in debug logs via `DEBUG=connect:dispatcher ...`
   return async function viteIndexHtmlMiddleware(req, res, next) {
@@ -99,11 +100,11 @@ export function pagesMiddleware(
           cacheControl: "no-cache",
         });
       } catch (e) {
+        console.error(e);
         if (e instanceof Error) {
           const error = new Error(`SSG HTML processing failed: ${e.message}`, {
             cause: e,
           });
-          error.stack = error.stack ?? "" + e.stack;
           return next(error);
         }
         return next(e);

@@ -74,7 +74,7 @@ export const ssgPlugin = (
       name: "@wroud/vite-plugin-ssg",
       enforce: "post",
 
-      config(userConfig) {
+      config(userConfig, env) {
         userConfig.environments = {
           ...userConfig.environments,
           ssr: {
@@ -88,12 +88,18 @@ export const ssgPlugin = (
                 });
               },
             },
+            // resolve: {
+            //   dedupe: ["@wroud/vite-plugin-ssg"],
+            // },
             build: {
               ...userConfig.environments?.["ssr"]?.build,
               ssr: true,
               rollupOptions: {
                 ...userConfig.environments?.["ssr"]?.build?.rollupOptions,
-                external: [/^@wroud\/vite-plugin-ssg.*/],
+                // external:
+                //   env.command === "build"
+                //     ? [/^@wroud\/vite-plugin-ssg.*/]
+                //     : undefined,
               },
               outDir:
                 (userConfig.environments?.["ssr"]?.build?.outDir ||
@@ -101,6 +107,13 @@ export const ssgPlugin = (
                   "dist") + "-server",
             },
           },
+        };
+        userConfig.resolve = {
+          ...userConfig.resolve,
+          // dedupe: [
+          //   ...(userConfig.resolve?.dedupe || []),
+          //   "@wroud/vite-plugin-ssg",
+          // ],
         };
         userConfig.builder = {
           async buildApp(builder) {

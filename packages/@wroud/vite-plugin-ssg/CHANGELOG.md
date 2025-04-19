@@ -3,6 +3,21 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:5.1.0 -->
+## 5.1.0 (2025-04-19)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-ssg-v5.0.1...vite-plugin-ssg-v5.1.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- better memory usage and resources disposing, better error logging ([4cdfa3c](https://github.com/Wroud/foundation/commit/4cdfa3c))
+
+### 🩹 Fixes
+
+- error when using multiple packages ([7560925](https://github.com/Wroud/foundation/commit/7560925))
+- assets resolving (when asset resolved by another plugin) ([f8b44e9](https://github.com/Wroud/foundation/commit/f8b44e9))
+
 <!-- version:5.0.1 -->
 ## 5.0.1 (2025-04-15)
 

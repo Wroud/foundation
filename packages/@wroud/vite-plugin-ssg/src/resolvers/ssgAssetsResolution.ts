@@ -14,13 +14,23 @@ export function ssgAssetsResolutionPlugin(): PluginOption {
       async handler(source, importer, options) {
         const config = this.environment.config;
 
+        if (options.custom?.["ssg-assets-resolution"]) {
+          return null;
+        }
+
         if (
           isMainId(source) ||
           isUrlId(source) ||
           isSsgPageUrlId(source) ||
           config?.assetsInclude(cleanUrl(source))
         ) {
-          const resolved = await this.resolve(source, importer, options);
+          const resolved = await this.resolve(source, importer, {
+            ...options,
+            custom: {
+              ...options.custom,
+              "ssg-assets-resolution": true,
+            },
+          });
 
           if (!resolved) {
             return undefined;

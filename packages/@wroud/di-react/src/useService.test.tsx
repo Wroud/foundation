@@ -17,7 +17,9 @@ import {
   createService,
   injectable,
   lazy,
+  Service,
   ServiceContainerBuilder,
+  type ServiceType,
 } from "@wroud/di/development.js";
 import { ServiceProvider } from "./ServiceProvider.js";
 import { Suspense } from "react";
@@ -140,5 +142,162 @@ describe("useService", () => {
     expect(consoleWarn).toHaveBeenCalledWith(
       'Service implementation for "TestService" is async and cannot be validated synchronously. You can use builder.validate() to validate dependencies asynchronously.',
     );
+  });
+
+  it("should dispose transient service", async () => {
+    const builder = new ServiceContainerBuilder();
+    const dispose = vi.fn();
+
+    @injectable()
+    class TestService extends Service {
+      override dispose() {
+        dispose();
+      }
+    }
+
+    builder.addTransient(TestService, TestService);
+    const serviceProvider = builder.build();
+
+    const { result, rerender, unmount } = renderHook(
+      () => useService(TestService),
+      {
+        wrapper: ({ children }) => (
+          <ServiceProvider provider={serviceProvider}>
+            {children}
+          </ServiceProvider>
+        ),
+      },
+    );
+
+    let testService = result.current;
+    expect(testService).toBeInstanceOf(TestService);
+    expect(dispose).not.toHaveBeenCalled();
+
+    rerender();
+
+    expect(result.current).equal(testService);
+    expect(dispose).not.toHaveBeenCalled();
+
+    unmount();
+    expect(dispose).toHaveBeenCalledOnce();
+  });
+
+  it("should dispose transient service when changing type", async () => {
+    const builder = new ServiceContainerBuilder();
+    const dispose = vi.fn();
+
+    @injectable()
+    class TestService extends Service {
+      override dispose() {
+        dispose();
+      }
+    }
+
+    @injectable()
+    class TestServiceB {}
+
+    builder
+      .addTransient(TestService, TestService)
+      .addSingleton(TestServiceB, TestServiceB);
+    const serviceProvider = builder.build();
+
+    const { result, rerender } = renderHook(
+      (service: ServiceType<TestService> | ServiceType<TestServiceB>) =>
+        useService(service),
+      {
+        initialProps: TestService as
+          | ServiceType<TestService>
+          | ServiceType<TestServiceB>,
+        wrapper: ({ children }) => (
+          <ServiceProvider provider={serviceProvider}>
+            {children}
+          </ServiceProvider>
+        ),
+      },
+    );
+
+    expect(result.current).toBeInstanceOf(TestService);
+    expect(dispose).not.toHaveBeenCalled();
+
+    rerender(TestServiceB);
+
+    expect(result.current).toBeInstanceOf(TestServiceB);
+    expect(dispose).toHaveBeenCalledOnce();
+  });
+
+  it("should not dispose singleton service", async () => {
+    const builder = new ServiceContainerBuilder();
+    const dispose = vi.fn();
+
+    @injectable()
+    class TestService extends Service {
+      override dispose() {
+        dispose();
+      }
+    }
+
+    builder.addSingleton(TestService, TestService);
+    const serviceProvider = builder.build();
+
+    const { result, rerender, unmount } = renderHook(
+      () => useService(TestService),
+      {
+        wrapper: ({ children }) => (
+          <ServiceProvider provider={serviceProvider}>
+            {children}
+          </ServiceProvider>
+        ),
+      },
+    );
+
+    let testService = result.current;
+    expect(testService).toBeInstanceOf(TestService);
+    expect(dispose).not.toHaveBeenCalled();
+
+    rerender();
+
+    expect(result.current).equal(testService);
+    expect(dispose).not.toHaveBeenCalled();
+
+    unmount();
+    expect(dispose).not.toHaveBeenCalled();
+  });
+  it("should not dispose scoped service", async () => {
+    const builder = new ServiceContainerBuilder();
+    const dispose = vi.fn();
+
+    @injectable()
+    class TestService extends Service {
+      override dispose() {
+        dispose();
+      }
+    }
+
+    builder.addScoped(TestService, TestService);
+    const serviceProvider = builder.build();
+    const scopeServiceProvider = serviceProvider.createScope().serviceProvider;
+
+    const { result, rerender, unmount } = renderHook(
+      () => useService(TestService),
+      {
+        wrapper: ({ children }) => (
+          <ServiceProvider provider={scopeServiceProvider}>
+            {children}
+          </ServiceProvider>
+        ),
+      },
+    );
+
+    let testService = result.current;
+    expect(testService).toBeInstanceOf(TestService);
+    expect(dispose).not.toHaveBeenCalled();
+
+    rerender();
+
+    expect(result.current).equal(testService);
+    expect(dispose).not.toHaveBeenCalled();
+
+    unmount();
+    expect(dispose).not.toHaveBeenCalled();
   });
 });

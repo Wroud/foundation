@@ -108,13 +108,13 @@ export const ssgPlugin = (
             },
           },
         };
-        userConfig.resolve = {
-          ...userConfig.resolve,
-          // dedupe: [
-          //   ...(userConfig.resolve?.dedupe || []),
-          //   "@wroud/vite-plugin-ssg",
-          // ],
-        };
+        // userConfig.resolve = {
+        //   ...userConfig.resolve,
+        //   dedupe: [
+        //     ...(userConfig.resolve?.dedupe || []),
+        //     "@wroud/vite-plugin-ssg",
+        //   ],
+        // };
         userConfig.builder = {
           async buildApp(builder) {
             await builder.build(builder.environments["ssr"]!);

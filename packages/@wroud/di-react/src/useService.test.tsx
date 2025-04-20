@@ -300,4 +300,41 @@ describe("useService", () => {
     unmount();
     expect(dispose).not.toHaveBeenCalled();
   });
+  it("should dispose async service", async () => {
+    const builder = new ServiceContainerBuilder();
+    const dispose = vi.fn();
+
+    @injectable()
+    class TestService {
+      [Symbol.asyncDispose]() {
+        dispose();
+      }
+    }
+
+    builder.addTransient(TestService, TestService);
+    const serviceProvider = builder.build();
+
+    const { result, rerender, unmount } = renderHook(
+      () => useService(TestService),
+      {
+        wrapper: ({ children }) => (
+          <ServiceProvider provider={serviceProvider}>
+            {children}
+          </ServiceProvider>
+        ),
+      },
+    );
+
+    let testService = result.current;
+    expect(testService).toBeInstanceOf(TestService);
+    expect(dispose).not.toHaveBeenCalled();
+
+    rerender();
+
+    expect(result.current).equal(testService);
+    expect(dispose).not.toHaveBeenCalled();
+
+    unmount();
+    expect(dispose).toHaveBeenCalledOnce();
+  });
 });

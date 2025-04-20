@@ -8,6 +8,7 @@ import {
   createService,
   injectable,
   lazy,
+  Service,
   ServiceContainerBuilder,
 } from "@wroud/di/development.js";
 import { ServiceProvider } from "./ServiceProvider.js";
@@ -144,5 +145,56 @@ describe("useServices", () => {
     expect(consoleWarn).toHaveBeenCalledWith(
       'Service implementation for "TestService" is async and cannot be validated synchronously. You can use builder.validate() to validate dependencies asynchronously.',
     );
+  });
+  it("should dispose all transient services", async () => {
+    const builder = new ServiceContainerBuilder();
+    const dispose = vi.fn();
+    const disposeB = vi.fn();
+
+    @injectable()
+    class TestService extends Service {
+      override dispose() {
+        dispose();
+      }
+    }
+    @injectable()
+    class TestServiceB extends Service {
+      override dispose() {
+        disposeB();
+      }
+    }
+
+    builder
+      .addTransient(TestService, TestService)
+      .addTransient(TestService, TestServiceB);
+    const serviceProvider = builder.build();
+
+    const { result, rerender, unmount } = renderHook(
+      () => useServices(TestService),
+      {
+        wrapper: ({ children }) => (
+          <ServiceProvider provider={serviceProvider}>
+            {children}
+          </ServiceProvider>
+        ),
+      },
+    );
+
+    let testService = result.current;
+    expect(testService).toHaveLength(2);
+    expect(testService[0]).toBeInstanceOf(TestService);
+    expect(testService[1]).toBeInstanceOf(TestServiceB);
+    expect(dispose).not.toHaveBeenCalled();
+    expect(disposeB).not.toHaveBeenCalled();
+
+    rerender();
+
+    expect(result.current).equal(testService);
+    expect(dispose).not.toHaveBeenCalled();
+    expect(disposeB).not.toHaveBeenCalled();
+
+    unmount();
+    expect(dispose).toHaveBeenCalledOnce();
+    expect(disposeB).toHaveBeenCalledOnce();
   });
 });

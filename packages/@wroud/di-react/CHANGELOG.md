@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.5.0 -->
+## 0.5.0 (2025-04-20)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/di-react-v0.4.3...di-react-v0.5.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- memo and auto dispose for transient services ([6e116c4](https://github.com/Wroud/foundation/commit/6e116c4))
+
 <!-- version:0.4.3 -->
 ## 0.4.3 (2025-02-07)
 

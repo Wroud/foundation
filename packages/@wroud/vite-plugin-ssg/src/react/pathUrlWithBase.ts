@@ -2,7 +2,10 @@ export function pathUrlWithBase<T extends string | undefined>(
   base: string | undefined,
   url: T,
 ): T {
-  if (url === undefined || url.startsWith("/")) {
+  if (url === undefined) {
+    return url;
+  }
+  if (url.startsWith("/")) {
     if (base?.startsWith("http")) {
       return new URL(url ?? "/", base).href as T;
     }

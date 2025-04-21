@@ -60,6 +60,12 @@
       "path": "../@wroud/react-reactive-value"
     },
     {
+      "path": "../@wroud/react-split-view"
+    },
+    {
+      "path": "../@wroud/react-tree"
+    },
+    {
       "path": "../@wroud/ts-project-linker"
     },
     {
@@ -67,6 +73,9 @@
     },
     {
       "path": "../@wroud/vite-plugin-asset-resolver"
+    },
+    {
+      "path": "../@wroud/vite-plugin-playground"
     },
     {
       "path": "../@wroud/vite-plugin-ssg"

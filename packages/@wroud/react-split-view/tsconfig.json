@@ -1,0 +1,16 @@
+{
+  "extends": "@wroud/tsconfig/tsconfig.react.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "./lib/.tsbuildinfo",
+    "rootDir": "src",
+    "rootDirs": [
+      "src"
+    ],
+    "outDir": "lib",
+    "incremental": true,
+    "composite": true
+  },
+  "include": [
+    "src"
+  ]
+}

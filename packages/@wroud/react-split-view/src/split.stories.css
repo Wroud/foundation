@@ -1,0 +1,66 @@
+.sash {
+  position: relative;
+  flex-basis: 0;
+  cursor: ew-resize;
+}
+.sash::before {
+  content: "";
+  position: absolute;
+  top: -0.5px;
+  left: -0.5px;
+  width: calc(100% + 1px);
+  height: calc(100% + 1px);
+  min-width: 1px;
+  min-height: 1px;
+  z-index: 1;
+  background-color: #c9c9c9;
+  mix-blend-mode: difference;
+}
+.sash::after {
+  content: "";
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  width: calc(100% + 4px);
+  height: calc(100% + 4px);
+  min-width: 8px;
+  min-height: 8px;
+}
+
+.container {
+  display: flex;
+  flex: auto;
+  overflow: hidden;
+  height: 100%;
+}
+
+.panel {
+  flex: auto;
+  flex-basis: 0;
+  max-width: 100%;
+  overflow: auto;
+}
+
+/* Add padding to panels that don't have .container as a direct child */
+.panel:not(:has(> .container)) {
+  padding: 1rem;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  color: #111827;
+}
+
+@media (prefers-color-scheme: dark) {
+  /* Remove the dark mode specific color since mix-blend-mode handles contrast automatically */
+  /* .sash::before {
+    background-color: #374151;
+  } */
+
+  body {
+    color: #f3f4f6;
+  }
+}

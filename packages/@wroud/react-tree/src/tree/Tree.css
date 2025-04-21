@@ -1,0 +1,148 @@
+/**
+ * Base styles optimized for rendering performance
+ * These styles focus on hardware acceleration, preventing layout shifts,
+ * and optimizing the rendering pipeline
+ */
+
+/* Root container */
+.react-tree-root {
+  /* Enable hardware acceleration */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000;
+  /* Create proper stacking context */
+  position: relative;
+  /* Prevent text selection for better performance */
+  user-select: none;
+  /* Ensure proper box sizing */
+  box-sizing: border-box;
+  /* Prevent layout shifts */
+  width: 100%;
+  height: 100%;
+  /* High-performance scrolling */
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+/* Content wrapper - holds all nodes */
+.react-tree-content {
+  /* Contain layout calculations */
+  position: relative;
+  /* Tone down containment for better visibility */
+  contain: style;
+  /* Tell browser this element will change */
+  will-change: transform;
+  /* Ensure proper box sizing */
+  box-sizing: border-box;
+  /* Prevent layout shifts */
+  width: 100%;
+  /* Ensure content is visible */
+  overflow: visible;
+}
+
+/* Node styles */
+.react-tree-node {
+  /* Less aggressive containment */
+  contain: style;
+  /* Prevent layout shifts */
+  box-sizing: border-box;
+  width: 100%;
+  /* Layer promotion, only animate opacity & transform */
+  will-change: opacity;
+  /* Don't hide overflow */
+  overflow: visible;
+  /* Allow z-index to work properly */
+  position: relative;
+}
+
+/* Selected node */
+.react-tree-node-selected {
+  /* Performance optimized state change */
+  will-change: background-color;
+}
+
+/* Expanded node */
+.react-tree-node-expanded {
+  /* Performance optimized state change */
+  will-change: height;
+}
+
+/* Node control container */
+.react-tree-node-control {
+  /* Use flexbox for efficient layout */
+  display: flex;
+  align-items: center;
+  /* Ensure proper box sizing */
+  box-sizing: border-box;
+  /* Prevent text wrapping for better performance */
+  white-space: nowrap;
+  /* Prevent text overflow for more predictable layout */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  /* Enhance touch/click areas */
+  cursor: pointer;
+  /* Prevent layout shifts */
+  width: 100%;
+  /* Layer promotion for interaction effects */
+  will-change: background-color;
+}
+
+/* Expand/collapse control */
+.react-tree-expand-control {
+  /* Fixed size for performance */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  min-width: 16px;
+  cursor: pointer;
+  /* Ensure content appears above tree */
+  position: relative;
+  z-index: 1;
+}
+
+/* Node content */
+.react-tree-node-content {
+  /* Efficient content management */
+  flex-grow: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  box-sizing: border-box;
+  /* Keep text aligned with potential icons */
+  display: flex;
+  align-items: center;
+}
+
+/* Children container */
+.react-tree-children {
+  /* Less aggressive containment for better visibility */
+  contain: style;
+  position: relative;
+  /* Ensure proper nesting */
+  width: 100%;
+  box-sizing: border-box;
+  /* Allow children to be visible */
+  overflow: visible;
+  /* Give some spacing for better visualization */
+  padding-left: 12px;
+}
+
+.react-tree-root-children {
+  padding-left: 0;
+}
+
+/* Virtual gaps - used for virtualization */
+.react-tree-virtual-gap {
+  /* Prevent interaction with invisible elements */
+  pointer-events: none;
+  /* Less aggressive containment */
+  contain: size layout;
+  /* Fix the height issue - only use the explicit height passed in style prop */
+  position: relative;
+  /* Make sure it doesn't affect the flow of other nodes */
+  display: block;
+}

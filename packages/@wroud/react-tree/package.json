@@ -1,0 +1,55 @@
+{
+  "name": "@wroud/react-tree",
+  "type": "module",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "exports": {
+    ".": "./lib/index.js",
+    "./*": "./lib/*.js",
+    "./styles.css": "./src/tree/Tree.css"
+  },
+  "scripts": {
+    "ci:release": "ci release --prefix react-tree-v",
+    "ci:git-tag": "ci git-tag --prefix react-tree-v",
+    "ci:release-github": "ci release-github --prefix react-tree-v",
+    "build": "tsc -b",
+    "watch:tsc": "tsc -b -w",
+    "clear": "rimraf lib"
+  },
+  "files": [
+    "package.json",
+    "LICENSE",
+    "README.md",
+    "CHANGELOG.md",
+    "lib",
+    "src/**/*.css",
+    "!lib/**/*.d.ts.map",
+    "!lib/**/*.test.js",
+    "!lib/**/*.test.d.ts",
+    "!lib/**/*.test.d.ts.map",
+    "!lib/**/*.test.js.map",
+    "!lib/tests",
+    "!.tsbuildinfo"
+  ],
+  "packageManager": "yarn@4.6.0",
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@vscode/codicons": "^0",
+    "@wroud/tsconfig": "workspace:^",
+    "react": "^19",
+    "rimraf": "^6",
+    "typescript": "^5",
+    "vite": "^6"
+  },
+  "optionalDependencies": {
+    "@wroud/vite-plugin-playground": "workspace:^"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0"
+  },
+  "dependencies": {
+    "@wroud/react-reactive-value": "workspace:^",
+    "clsx": "^2"
+  }
+}

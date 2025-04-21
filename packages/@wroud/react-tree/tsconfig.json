@@ -15,6 +15,9 @@
   ],
   "references": [
     {
+      "path": "../playground-react"
+    },
+    {
       "path": "../react-reactive-value"
     }
   ]

@@ -36,17 +36,21 @@
   "devDependencies": {
     "@types/react": "^19.0.0",
     "@vscode/codicons": "^0",
+    "@wroud/playground-react": "workspace:^",
     "@wroud/tsconfig": "workspace:^",
     "react": "^19",
     "rimraf": "^6",
     "typescript": "^5",
     "vite": "^6"
   },
-  "optionalDependencies": {
-    "@wroud/vite-plugin-playground": "workspace:^"
-  },
   "peerDependencies": {
+    "@wroud/playground-react": "workspace:^",
     "react": "^19.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@wroud/playground-react": {
+      "optional": true
+    }
   },
   "dependencies": {
     "@wroud/react-reactive-value": "workspace:^",

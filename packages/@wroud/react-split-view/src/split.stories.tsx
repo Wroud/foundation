@@ -1,4 +1,4 @@
-import { describe, Link, story } from "@wroud/vite-plugin-playground";
+import { describe, Link, story } from "@wroud/playground-react";
 import { useSplitView } from "./useSplitView.js";
 import splitStylesUrl from "./split.stories.css?url";
 

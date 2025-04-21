@@ -29,11 +29,9 @@
     "!.tsbuildinfo"
   ],
   "packageManager": "yarn@4.6.0",
-  "optionalDependencies": {
-    "@wroud/vite-plugin-playground": "workspace:^"
-  },
   "devDependencies": {
     "@types/react": "^19.0.0",
+    "@wroud/playground-react": "workspace:^",
     "@wroud/tsconfig": "workspace:^",
     "react": "^19",
     "rimraf": "^6",
@@ -41,6 +39,12 @@
     "vite": "^6"
   },
   "peerDependencies": {
+    "@wroud/playground-react": "workspace:^",
     "react": ">=19.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@wroud/playground-react": {
+      "optional": true
+    }
   }
 }

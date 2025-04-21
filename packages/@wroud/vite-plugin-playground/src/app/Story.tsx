@@ -1,5 +1,5 @@
+import { useStory } from "@wroud/playground-react/views";
 import { Template } from "./pages/Template.js";
-import { useStory } from "./hooks/useStory.js";
 
 interface Props {
   activeStoryId: string | null;

@@ -1,9 +1,9 @@
 import { useState, useCallback } from "react";
-import { useNavigation } from "../../useNavigation.js";
-import { PlaygroundRoutes } from "../../PlaygroundRoutes.js";
 import { DescribeGroup } from "./DescribeGroup.js";
 import { SearchInput } from "./SearchInput.js";
 import { useDescribeGroup } from "./useDescribeGroup.js";
+import { PlaygroundRoutes } from "@wroud/playground";
+import { useNavigation } from "@wroud/playground-react/views";
 
 export function ComponentsGrid() {
   const navigation = useNavigation();

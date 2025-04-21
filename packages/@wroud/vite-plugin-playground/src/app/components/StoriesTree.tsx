@@ -1,16 +1,17 @@
-import { useStories } from "../hooks/useStories.js";
-import { useDescribes } from "../hooks/useDescribes.js";
 import { Link } from "@wroud/vite-plugin-ssg/react/components";
-import { PlaygroundRoutes } from "../PlaygroundRoutes.js";
 import { Tree, useTree } from "@wroud/react-tree";
 import { useCreateReactiveValue } from "@wroud/react-reactive-value";
 import { useStoriesTreeData } from "./useStoriesTreeData.js";
 import { TreeNodeRenderer } from "./TreeNodeRenderer.js";
-import { fetchStoryById } from "../../registry/stories.js";
+import { fetchStoryById, fetchDocById } from "@wroud/playground-react/registry";
 import { useMemo } from "react";
-import { fetchDocById } from "../../registry/docs.js";
 import treeStyles from "@wroud/react-tree/styles.css?url";
-import { useNavigation } from "../useNavigation.js";
+import { PlaygroundRoutes } from "@wroud/playground";
+import {
+  useDescribes,
+  useStories,
+  useNavigation,
+} from "@wroud/playground-react/views";
 
 interface Props {
   root: string;

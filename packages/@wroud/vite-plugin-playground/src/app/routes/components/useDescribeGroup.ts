@@ -1,9 +1,9 @@
-import { useStories } from "../../hooks/useStories.js";
-import { useDescribes } from "../../hooks/useDescribes.js";
-import type { IStory } from "../../../IStory.js";
-import type { IDescribe } from "../../../IDescribe.js";
-import { fetchStoriesForDescribe } from "../../../registry/stories.js";
-import { fetchChildDescribes } from "../../../registry/describes.js";
+import type { IDescribe, IStory } from "@wroud/playground-react";
+import {
+  fetchChildDescribes,
+  fetchStoriesForDescribe,
+} from "@wroud/playground-react/registry";
+import { useDescribes, useStories } from "@wroud/playground-react/views";
 
 export interface DescribeGroupResult {
   stories: IStory[];

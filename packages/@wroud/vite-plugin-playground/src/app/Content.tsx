@@ -1,6 +1,5 @@
-import { useNode } from "./hooks/useNode.js";
 import { NodeContent } from "./NodeContent.js";
-import { IframeView } from "../views/IframeView.js";
+import { IframeView, useNode } from "@wroud/playground-react/views";
 
 interface Props {
   activeNodeId: string | null;

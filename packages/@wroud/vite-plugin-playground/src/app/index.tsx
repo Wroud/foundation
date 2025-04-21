@@ -6,9 +6,11 @@ import info from "@wroud/vite-plugin-playground/info";
 import type { IPatternRouteState } from "@wroud/navigation";
 import { App } from "./App.js";
 import { Navigation, Router, TriePatternMatching } from "@wroud/navigation";
-import { fetchAllStories } from "../registry/stories.js";
-import { PlaygroundRoutes } from "./PlaygroundRoutes.js";
-import { fetchAllDocs } from "../registry/docs.js";
+import {
+  fetchAllDocs,
+  fetchAllStories,
+} from "@wroud/playground-react/registry";
+import { PlaygroundRoutes } from "@wroud/playground";
 
 export default createAppConfig(App, {
   async onAppStart({ href, base }) {

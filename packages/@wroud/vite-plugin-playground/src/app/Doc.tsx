@@ -1,5 +1,5 @@
+import { useDoc } from "@wroud/playground-react/views";
 import { Template } from "./pages/Template.js";
-import { useDoc } from "./hooks/useDoc.js";
 
 interface Props {
   activeDocId: string | null;

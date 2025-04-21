@@ -1,7 +1,7 @@
 import { Template } from "./pages/Template.js";
-import { useNode } from "./hooks/useNode.js";
 import { Story } from "./Story.js";
 import { Doc } from "./Doc.js";
+import { useNode } from "@wroud/playground-react/views";
 interface Props {
   activeNodeId: string | null;
   preview?: boolean;

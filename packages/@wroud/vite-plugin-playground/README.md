@@ -23,13 +23,13 @@
 Install via npm:
 
 ```sh
-npm install @wroud/vite-plugin-playground
+npm install @wroud/vite-plugin-playground @wroud/playground-react
 ```
 
 Install via yarn:
 
 ```sh
-yarn add @wroud/vite-plugin-playground
+yarn add @wroud/vite-plugin-playground @wroud/playground-react
 ```
 
 ## Usage
@@ -67,7 +67,7 @@ Create story files that match your configured patterns:
 
 ```ts
 // Button.stories.tsx
-import { describe, story, Link } from "@wroud/vite-plugin-playground";
+import { describe, story, Link } from "@wroud/playground-react";
 import { Button } from "./Button";
 
 describe("Button Component", () => {

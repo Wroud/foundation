@@ -185,8 +185,8 @@ export function playground({
             }
 
             code = `
-import { MarkdownView } from "@wroud/vite-plugin-playground/views";
-import { describe, doc } from "@wroud/vite-plugin-playground";
+import { MarkdownView } from "@wroud/playground-react/views";
+import { describe, doc } from "@wroud/playground-react";
 
 describe(${JSON.stringify(describe)}, () => doc(${JSON.stringify(title)}, MarkdownView, { content: ${JSON.stringify(body)} }));
 `;
@@ -307,7 +307,7 @@ function addDevHmr(code: string) {
 
   // Prepend HMR setup code
   s.prepend(`
-import { beginUnsubscribeCollection, endUnsubscribeCollection } from "@wroud/vite-plugin-playground/registry";
+import { beginUnsubscribeCollection, endUnsubscribeCollection } from "@wroud/playground-react/registry";
 
 if(import.meta.hot) {
   import.meta.hot.accept();

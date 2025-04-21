@@ -1,7 +1,6 @@
+import type { IDescribe, IStory } from "@wroud/playground-react";
 import { StoryCard } from "./StoryCard.js";
 import { useDescribeGroup } from "./useDescribeGroup.js";
-import type { IStory } from "../../../IStory.js";
-import type { IDescribe } from "../../../IDescribe.js";
 
 export interface DescribeGroupProps {
   describeId: string;

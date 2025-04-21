@@ -1,7 +1,7 @@
 import type { DialogStore } from "@ariakit/react";
 import { HomeLink } from "./components/HomeLink.js";
-import { useNavigation } from "./useNavigation.js";
-import { PlaygroundRoutes } from "./PlaygroundRoutes.js";
+import { PlaygroundRoutes } from "@wroud/playground";
+import { useNavigation } from "@wroud/playground-react/views";
 
 interface Props {
   theme: string;

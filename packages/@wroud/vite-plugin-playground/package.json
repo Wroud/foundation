@@ -1,7 +1,6 @@
 {
   "name": "@wroud/vite-plugin-playground",
   "type": "module",
-  "private": true,
   "sideEffects": [],
   "exports": {
     ".": "./lib/index.js",
@@ -34,7 +33,6 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@wroud/tsconfig": "workspace:*",
-    "@wroud/vite-plugin-ssg": "workspace:^",
     "magic-string": "^0",
     "picomatch": "^4",
     "rimraf": "^6",
@@ -44,13 +42,22 @@
     "vite": "^6",
     "vitest": "^2"
   },
+  "peerDependencies": {
+    "@wroud/vite-plugin-ssg": "workspace:^",
+    "@wroud/playground-react": "workspace:^",
+    "react": "^19",
+    "react-dom": "^19"
+  },
   "dependencies": {
     "@ariakit/react": "^0",
     "@vscode/codicons": "^0",
     "@wroud/navigation": "workspace:^",
+    "@wroud/playground": "workspace:^",
+    "@wroud/playground-react": "workspace:^",
     "@wroud/react-reactive-value": "workspace:^",
     "@wroud/react-split-view": "workspace:^",
     "@wroud/react-tree": "workspace:^",
+    "@wroud/vite-plugin-ssg": "workspace:^",
     "front-matter": "^4",
     "react": "^19",
     "react-dom": "^19",

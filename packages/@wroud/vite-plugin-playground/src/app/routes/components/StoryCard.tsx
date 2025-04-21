@@ -1,5 +1,5 @@
-import { IframeView } from "../../../views/IframeView.js";
-import type { IStory } from "../../../IStory.js";
+import type { IStory } from "@wroud/playground-react";
+import { IframeView } from "@wroud/playground-react/views";
 
 export interface StoryCardProps {
   story: IStory;

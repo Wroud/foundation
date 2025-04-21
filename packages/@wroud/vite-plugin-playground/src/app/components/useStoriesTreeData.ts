@@ -6,11 +6,14 @@ import {
   useSyncExternalStore,
   useState,
 } from "react";
-import { useStoriesListener } from "../hooks/useStoriesListener.js";
-import { fetchStoryById } from "../../registry/stories.js";
-import { fetchDescribeById } from "../../registry/describes.js";
-import { fetchDocById } from "../../registry/docs.js";
-import { getRegistryChildren, getRegistryNode } from "../../registry/tree.js";
+import {
+  fetchDescribeById,
+  fetchDocById,
+  fetchStoryById,
+  getRegistryChildren,
+  getRegistryNode,
+} from "@wroud/playground-react/registry";
+import { useStoriesListener } from "@wroud/playground-react/views";
 
 export function useStoriesTreeData(): ITreeData {
   const syncRef = useRef({});

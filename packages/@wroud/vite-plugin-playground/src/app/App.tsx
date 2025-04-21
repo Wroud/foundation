@@ -1,9 +1,9 @@
 import type { IndexComponentProps } from "@wroud/vite-plugin-ssg";
 import codicon from "@vscode/codicons/dist/codicon.css?url";
 import { Link } from "@wroud/vite-plugin-ssg/react/components";
-import { PlaygroundRoutes } from "./PlaygroundRoutes.js";
+import { PlaygroundRoutes } from "@wroud/playground";
 import { lazy, useSyncExternalStore } from "react";
-import { useNavigation } from "./useNavigation.js";
+import { useNavigation } from "@wroud/playground-react/views";
 
 // Layouts
 const Layout = lazy(() =>

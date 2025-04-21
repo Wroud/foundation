@@ -7,9 +7,8 @@ import {
   TreeNodeIcon,
   type NodeControlProps,
 } from "@wroud/react-tree";
-import { getRegistryNode } from "../../registry/tree.js";
-import { PlaygroundRoutes } from "../PlaygroundRoutes.js";
-import { useNavigation } from "../useNavigation.js";
+import { PlaygroundRoutes } from "@wroud/playground";
+import { useNode, useNavigation } from "@wroud/playground-react/views";
 
 export const TreeNodeRenderer = memo(
   forwardRef<HTMLDivElement, NodeControlProps>(function TreeNodeRenderer(
@@ -20,7 +19,7 @@ export const TreeNodeRenderer = memo(
     const data = useContext(TreeDataContext)!;
     const node = data.getNode(nodeId);
 
-    const registryNode = getRegistryNode(nodeId);
+    const registryNode = useNode(nodeId);
     const isDescribe = registryNode?.type === "describe";
     const isDoc = registryNode?.type === "doc";
     return (

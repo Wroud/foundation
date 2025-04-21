@@ -18,6 +18,12 @@
       "path": "../navigation"
     },
     {
+      "path": "../playground"
+    },
+    {
+      "path": "../playground-react"
+    },
+    {
       "path": "../react-reactive-value"
     },
     {

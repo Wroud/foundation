@@ -42,13 +42,15 @@
     "@wroud/playground-react": "workspace:^",
     "@wroud/tsconfig": "workspace:^",
     "react": "^19",
+    "react-dom": "^19",
     "rimraf": "^6",
     "typescript": "^5",
     "vite": "^6"
   },
   "peerDependencies": {
     "@wroud/playground-react": "workspace:^",
-    "react": "^19.0.0"
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   },
   "peerDependenciesMeta": {
     "@wroud/playground-react": {

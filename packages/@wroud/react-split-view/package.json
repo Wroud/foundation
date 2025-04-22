@@ -34,17 +34,20 @@
   "packageManager": "yarn@4.6.0",
   "devDependencies": {
     "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
     "@wroud/ci": "workspace:^",
     "@wroud/playground-react": "workspace:^",
     "@wroud/tsconfig": "workspace:^",
-    "react": "^19",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
     "rimraf": "^6",
     "typescript": "^5",
     "vite": "^6"
   },
   "peerDependencies": {
     "@wroud/playground-react": "workspace:^",
-    "react": ">=19.0.0"
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   },
   "peerDependenciesMeta": {
     "@wroud/playground-react": {

@@ -38,8 +38,8 @@
     "@types/react-dom": "^19",
     "@wroud/ci": "workspace:^",
     "@wroud/tsconfig": "workspace:^",
+    "@wroud/vite-plugin-ssg": "workspace:^",
     "react": "^19",
-    "react-dom": "^19",
     "rimraf": "^6",
     "typescript": "^5",
     "vitest": "^2"
@@ -47,11 +47,16 @@
   "dependencies": {
     "@wroud/navigation": "workspace:^",
     "@wroud/playground": "workspace:^",
-    "@wroud/vite-plugin-ssg": "workspace:^",
     "react-markdown": "^10"
   },
   "peerDependencies": {
+    "@wroud/vite-plugin-ssg": "workspace:^",
     "react": "^19",
     "react-dom": "^19"
+  },
+  "peerDependenciesMeta": {
+    "@wroud/vite-plugin-ssg": {
+      "optional": true
+    }
   }
 }

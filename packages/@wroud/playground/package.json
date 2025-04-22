@@ -33,15 +33,10 @@
   "packageManager": "yarn@4.6.0",
   "devDependencies": {
     "@wroud/ci": "workspace:^",
+    "@wroud/navigation": "workspace:^",
     "@wroud/tsconfig": "workspace:^",
     "@wroud/vite-plugin-ssg": "workspace:^",
     "rimraf": "^6",
     "typescript": "^5"
-  },
-  "dependencies": {
-    "@wroud/navigation": "workspace:^"
-  },
-  "peerDependencies": {
-    "@wroud/vite-plugin-ssg": "workspace:^"
   }
 }

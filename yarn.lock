@@ -4969,6 +4969,7 @@ __metadata:
   dependencies:
     "@types/react": "npm:^19"
     "@types/react-dom": "npm:^19"
+    "@wroud/ci": "workspace:^"
     "@wroud/navigation": "workspace:^"
     "@wroud/playground": "workspace:^"
     "@wroud/tsconfig": "workspace:^"
@@ -4989,6 +4990,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@wroud/playground@workspace:packages/@wroud/playground"
   dependencies:
+    "@wroud/ci": "workspace:^"
     "@wroud/navigation": "workspace:^"
     "@wroud/tsconfig": "workspace:^"
     "@wroud/vite-plugin-ssg": "workspace:^"
@@ -5033,6 +5035,7 @@ __metadata:
   resolution: "@wroud/react-split-view@workspace:packages/@wroud/react-split-view"
   dependencies:
     "@types/react": "npm:^19.0.0"
+    "@wroud/ci": "workspace:^"
     "@wroud/playground-react": "workspace:^"
     "@wroud/tsconfig": "workspace:^"
     react: "npm:^19"
@@ -5054,6 +5057,7 @@ __metadata:
   dependencies:
     "@types/react": "npm:^19.0.0"
     "@vscode/codicons": "npm:^0"
+    "@wroud/ci": "workspace:^"
     "@wroud/playground-react": "workspace:^"
     "@wroud/react-reactive-value": "workspace:^"
     "@wroud/tsconfig": "workspace:^"
@@ -5179,6 +5183,7 @@ __metadata:
     "@types/react": "npm:^19"
     "@types/react-dom": "npm:^19"
     "@vscode/codicons": "npm:^0"
+    "@wroud/ci": "workspace:^"
     "@wroud/navigation": "workspace:^"
     "@wroud/playground": "workspace:^"
     "@wroud/playground-react": "workspace:^"

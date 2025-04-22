@@ -31,6 +31,7 @@
   ],
   "packageManager": "yarn@4.6.0",
   "devDependencies": {
+    "@wroud/ci": "workspace:^",
     "@wroud/tsconfig": "workspace:^",
     "@wroud/vite-plugin-ssg": "workspace:^",
     "rimraf": "^6",

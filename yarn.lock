@@ -2123,7 +2123,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-codegen/plugin-helpers@npm:^5, @graphql-codegen/plugin-helpers@npm:^5.1.0":
+"@graphql-codegen/plugin-helpers@npm:^5, @graphql-codegen/plugin-helpers@npm:^5.0.3, @graphql-codegen/plugin-helpers@npm:^5.1.0":
   version: 5.1.0
   resolution: "@graphql-codegen/plugin-helpers@npm:5.1.0"
   dependencies:
@@ -2139,9 +2139,53 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-codegen/visitor-plugin-common@npm:^5":
-  version: 5.6.1
-  resolution: "@graphql-codegen/visitor-plugin-common@npm:5.6.1"
+"@graphql-codegen/schema-ast@npm:^4.0.2":
+  version: 4.1.0
+  resolution: "@graphql-codegen/schema-ast@npm:4.1.0"
+  dependencies:
+    "@graphql-codegen/plugin-helpers": "npm:^5.0.3"
+    "@graphql-tools/utils": "npm:^10.0.0"
+    tslib: "npm:~2.6.0"
+  peerDependencies:
+    graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
+  checksum: 10c0/ff7ab73f46f1ae4882eda0af8c3f78d37e904108aba37d52288028ee34e9bc56236b6a032a1e2fe1283030ba5f6a5f75224285af12b3f56a76e90843e1eff0e0
+  languageName: node
+  linkType: hard
+
+"@graphql-codegen/typescript-operations@npm:^4":
+  version: 4.6.0
+  resolution: "@graphql-codegen/typescript-operations@npm:4.6.0"
+  dependencies:
+    "@graphql-codegen/plugin-helpers": "npm:^5.1.0"
+    "@graphql-codegen/typescript": "npm:^4.1.6"
+    "@graphql-codegen/visitor-plugin-common": "npm:5.8.0"
+    auto-bind: "npm:~4.0.0"
+    tslib: "npm:~2.6.0"
+  peerDependencies:
+    graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
+    graphql-sock: ^1.0.0
+  checksum: 10c0/8d3b90224a20a9b08fda3ce80094de2bf2419d5ae6f92b83a3e93a95032edc55faf7bf3a7256f41053ff335a9676ca95206f742ae4f8c666df043a91ace2ea81
+  languageName: node
+  linkType: hard
+
+"@graphql-codegen/typescript@npm:^4.1.6":
+  version: 4.1.6
+  resolution: "@graphql-codegen/typescript@npm:4.1.6"
+  dependencies:
+    "@graphql-codegen/plugin-helpers": "npm:^5.1.0"
+    "@graphql-codegen/schema-ast": "npm:^4.0.2"
+    "@graphql-codegen/visitor-plugin-common": "npm:5.8.0"
+    auto-bind: "npm:~4.0.0"
+    tslib: "npm:~2.6.0"
+  peerDependencies:
+    graphql: ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
+  checksum: 10c0/5cc56b795d1c65b676251f07534296246a2de2936df6db83effd1e18a1150f739fe67d5b3ad19b75804cad2925e9957cfcd32cb6469e48c6544c498974acf351
+  languageName: node
+  linkType: hard
+
+"@graphql-codegen/visitor-plugin-common@npm:5.8.0, @graphql-codegen/visitor-plugin-common@npm:^5":
+  version: 5.8.0
+  resolution: "@graphql-codegen/visitor-plugin-common@npm:5.8.0"
   dependencies:
     "@graphql-codegen/plugin-helpers": "npm:^5.1.0"
     "@graphql-tools/optimize": "npm:^2.0.0"
@@ -2155,7 +2199,7 @@ __metadata:
     tslib: "npm:~2.6.0"
   peerDependencies:
     graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
-  checksum: 10c0/cdffcac8f7ebdea19a5d23b5111fc7c932fec71d45339100ba0969056954ea9f335527b8676c492ff65b94cdc03d4a9578cc6a935d5b2312053bcbd9f78f2326
+  checksum: 10c0/7f3284f5b4c6a9bac873081c308c3386f3cfcb3ebcd5ba296506b1cce4c142ef7699336047dc0ef3b82d6db9a66eb449ddacd89732b3c08de683e496696d7fbb
   languageName: node
   linkType: hard
 
@@ -3680,14 +3724,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/estree@npm:*":
+"@types/estree@npm:*, @types/estree@npm:^1.0.0":
   version: 1.0.7
   resolution: "@types/estree@npm:1.0.7"
   checksum: 10c0/be815254316882f7c40847336cd484c3bc1c3e34f710d197160d455dc9d6d050ffbf4c3bc76585dba86f737f020ab20bdb137ebe0e9116b0c86c7c0342221b8c
   languageName: node
   linkType: hard
 
-"@types/estree@npm:1.0.6, @types/estree@npm:^1.0.0":
+"@types/estree@npm:1.0.6":
   version: 1.0.6
   resolution: "@types/estree@npm:1.0.6"
   checksum: 10c0/cdfd751f6f9065442cd40957c07fd80361c962869aa853c1c2fd03e101af8b9389d8ff4955a43a6fcfa223dd387a089937f95be0f3eec21ca527039fd2d9859a
@@ -3776,12 +3820,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*":
-  version: 22.13.1
-  resolution: "@types/node@npm:22.13.1"
+"@types/node@npm:*, @types/node@npm:^22":
+  version: 22.14.1
+  resolution: "@types/node@npm:22.14.1"
   dependencies:
-    undici-types: "npm:~6.20.0"
-  checksum: 10c0/d4e56d41d8bd53de93da2651c0a0234e330bd7b1b6d071b1a94bd3b5ee2d9f387519e739c52a15c1faa4fb9d97e825b848421af4b2e50e6518011e7adb4a34b7
+    undici-types: "npm:~6.21.0"
+  checksum: 10c0/d49c4d00403b1c2348cf0701b505fd636d80aabe18102105998dc62fdd36dcaf911e73c7a868c48c21c1022b825c67b475b65b1222d84b704d8244d152bb7f86
   languageName: node
   linkType: hard
 
@@ -3800,15 +3844,6 @@ __metadata:
   dependencies:
     undici-types: "npm:~6.19.2"
   checksum: 10c0/6aebc8053b96f1b6d82c3a3fe5fc20d9f7eeb507d79d967221bbecaa2b26665fa1c9efe460be2a2f4aaae4e98f37797df7d5a4189f2b6edf8abf9f82f7fd8b1f
-  languageName: node
-  linkType: hard
-
-"@types/node@npm:^22":
-  version: 22.14.1
-  resolution: "@types/node@npm:22.14.1"
-  dependencies:
-    undici-types: "npm:~6.21.0"
-  checksum: 10c0/d49c4d00403b1c2348cf0701b505fd636d80aabe18102105998dc62fdd36dcaf911e73c7a868c48c21c1022b825c67b475b65b1222d84b704d8244d152bb7f86
   languageName: node
   linkType: hard
 
@@ -3854,25 +3889,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:^18.0.0 || ^19.0.0":
-  version: 19.0.12
-  resolution: "@types/react@npm:19.0.12"
-  dependencies:
-    csstype: "npm:^3.0.2"
-  checksum: 10c0/c814b6af5c0fbcf5c65d031b1c9bf98c5b857e015254d95811f2851b27b869c3d31c6f35dab127dc6921a3dbda0b0622c6323d493a14b31b231a6a58c41c5e84
-  languageName: node
-  linkType: hard
-
-"@types/react@npm:^19":
-  version: 19.0.8
-  resolution: "@types/react@npm:19.0.8"
-  dependencies:
-    csstype: "npm:^3.0.2"
-  checksum: 10c0/5fa7236356b1476de03519c66ef65d4fd904826956105619e2ad60cb0b55ae7b251dd5fff02234076225b5e15333d0d936bf9dbe1d461406f8a2ba01c197ddcd
-  languageName: node
-  linkType: hard
-
-"@types/react@npm:^19.0.0":
+"@types/react@npm:^18.0.0 || ^19.0.0, @types/react@npm:^19, @types/react@npm:^19.0.0":
   version: 19.1.2
   resolution: "@types/react@npm:19.1.2"
   dependencies:
@@ -4609,6 +4626,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@wroud/_aggregate@workspace:packages/_aggregate"
   dependencies:
+    "@graphql-codegen/typescript-operations": "npm:^4"
+    "@types/react": "npm:^19"
+    "@types/react-dom": "npm:^19"
     "@wroud/api-logger": "workspace:^"
     "@wroud/ci": "workspace:*"
     "@wroud/conventional-commits-bump": "workspace:^"
@@ -4623,6 +4643,8 @@ __metadata:
     "@wroud/git": "workspace:*"
     "@wroud/github": "workspace:*"
     "@wroud/navigation": "workspace:^"
+    "@wroud/playground": "workspace:^"
+    "@wroud/playground-react": "workspace:^"
     "@wroud/preconditions": "workspace:^"
     "@wroud/react-reactive-value": "workspace:^"
     "@wroud/react-split-view": "workspace:^"
@@ -4635,8 +4657,12 @@ __metadata:
     "@wroud/vite-plugin-ssg": "workspace:^"
     "@wroud/vite-plugin-tsc": "workspace:^"
     concurrently: "npm:^9"
+    graphql: "npm:^16"
     graphql-codegen-fragment-masking: "workspace:^"
     graphql-codegen-typed-document-nodes: "workspace:^"
+    graphql-sock: "npm:^1"
+    react: "npm:^19"
+    react-dom: "npm:^19"
     rimraf: "npm:^6"
     tslib: "npm:^2"
     typescript: "npm:^5"
@@ -4765,7 +4791,8 @@ __metadata:
     typescript: "npm:^5"
     vitest: "npm:^2"
   peerDependencies:
-    react: ">=18.0.0"
+    react: ">=18.0.0 || >=19.0.0"
+    react-dom: ">=18.0.0 || >=19.0.0"
   languageName: unknown
   linkType: soft
 
@@ -4936,6 +4963,42 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@wroud/playground-react@workspace:^, @wroud/playground-react@workspace:packages/@wroud/playground-react":
+  version: 0.0.0-use.local
+  resolution: "@wroud/playground-react@workspace:packages/@wroud/playground-react"
+  dependencies:
+    "@types/react": "npm:^19"
+    "@types/react-dom": "npm:^19"
+    "@wroud/navigation": "workspace:^"
+    "@wroud/playground": "workspace:^"
+    "@wroud/tsconfig": "workspace:^"
+    "@wroud/vite-plugin-ssg": "workspace:^"
+    react: "npm:^19"
+    react-dom: "npm:^19"
+    react-markdown: "npm:^10"
+    rimraf: "npm:^6"
+    typescript: "npm:^5"
+    vitest: "npm:^2"
+  peerDependencies:
+    react: ^19
+    react-dom: ^19
+  languageName: unknown
+  linkType: soft
+
+"@wroud/playground@workspace:^, @wroud/playground@workspace:packages/@wroud/playground":
+  version: 0.0.0-use.local
+  resolution: "@wroud/playground@workspace:packages/@wroud/playground"
+  dependencies:
+    "@wroud/navigation": "workspace:^"
+    "@wroud/tsconfig": "workspace:^"
+    "@wroud/vite-plugin-ssg": "workspace:^"
+    rimraf: "npm:^6"
+    typescript: "npm:^5"
+  peerDependencies:
+    "@wroud/vite-plugin-ssg": "workspace:^"
+  languageName: unknown
+  linkType: soft
+
 "@wroud/preconditions@workspace:^, @wroud/preconditions@workspace:packages/@wroud/preconditions":
   version: 0.0.0-use.local
   resolution: "@wroud/preconditions@workspace:packages/@wroud/preconditions"
@@ -4970,16 +5033,17 @@ __metadata:
   resolution: "@wroud/react-split-view@workspace:packages/@wroud/react-split-view"
   dependencies:
     "@types/react": "npm:^19.0.0"
+    "@wroud/playground-react": "workspace:^"
     "@wroud/tsconfig": "workspace:^"
-    "@wroud/vite-plugin-playground": "workspace:^"
     react: "npm:^19"
     rimraf: "npm:^6"
     typescript: "npm:^5"
     vite: "npm:^6"
   peerDependencies:
+    "@wroud/playground-react": "workspace:^"
     react: ">=19.0.0"
-  dependenciesMeta:
-    "@wroud/vite-plugin-playground":
+  peerDependenciesMeta:
+    "@wroud/playground-react":
       optional: true
   languageName: unknown
   linkType: soft
@@ -4990,18 +5054,19 @@ __metadata:
   dependencies:
     "@types/react": "npm:^19.0.0"
     "@vscode/codicons": "npm:^0"
+    "@wroud/playground-react": "workspace:^"
     "@wroud/react-reactive-value": "workspace:^"
     "@wroud/tsconfig": "workspace:^"
-    "@wroud/vite-plugin-playground": "workspace:^"
     clsx: "npm:^2"
     react: "npm:^19"
     rimraf: "npm:^6"
     typescript: "npm:^5"
     vite: "npm:^6"
   peerDependencies:
+    "@wroud/playground-react": "workspace:^"
     react: ^19.0.0
-  dependenciesMeta:
-    "@wroud/vite-plugin-playground":
+  peerDependenciesMeta:
+    "@wroud/playground-react":
       optional: true
   languageName: unknown
   linkType: soft
@@ -5115,6 +5180,8 @@ __metadata:
     "@types/react-dom": "npm:^19"
     "@vscode/codicons": "npm:^0"
     "@wroud/navigation": "workspace:^"
+    "@wroud/playground": "workspace:^"
+    "@wroud/playground-react": "workspace:^"
     "@wroud/react-reactive-value": "workspace:^"
     "@wroud/react-split-view": "workspace:^"
     "@wroud/react-tree": "workspace:^"
@@ -5132,6 +5199,11 @@ __metadata:
     typescript: "npm:^5"
     vite: "npm:^6"
     vitest: "npm:^2"
+  peerDependencies:
+    "@wroud/playground-react": "workspace:^"
+    "@wroud/vite-plugin-ssg": "workspace:^"
+    react: ^19
+    react-dom: ^19
   languageName: unknown
   linkType: soft
 
@@ -5155,7 +5227,11 @@ __metadata:
   peerDependencies:
     react: ">=19.0.0"
     react-dom: ">=19.0.0"
-    vite: ">=6.2.5"
+  peerDependenciesMeta:
+    react:
+      optional: true
+    react-dom:
+      optional: true
   languageName: unknown
   linkType: soft
 
@@ -7458,7 +7534,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esbuild@npm:^0.20.2 || ^0.21.0 || ^0.22.0 || ^0.23.0 || ^0.24.0, esbuild@npm:^0.24.2":
+"esbuild@npm:^0.20.2 || ^0.21.0 || ^0.22.0 || ^0.23.0 || ^0.24.0":
   version: 0.24.2
   resolution: "esbuild@npm:0.24.2"
   dependencies:
@@ -8422,6 +8498,18 @@ __metadata:
     "@graphql-codegen/typescript-operations": "*"
   languageName: unknown
   linkType: soft
+
+"graphql-sock@npm:^1":
+  version: 1.0.1
+  resolution: "graphql-sock@npm:1.0.1"
+  peerDependencies:
+    graphql: 15.x || 16.x || 17.x
+  bin:
+    semantic-to-nullable: dist/cli/to-nullable.js
+    semantic-to-strict: dist/cli/to-strict.js
+  checksum: 10c0/12b88e6b53ca48a11164410f7064be206c351a6cec400094599c10da1b3e891d1387b3781546e1f422dbae1e6ed48b1076949e6ef202bd908f75e9d0298b8401
+  languageName: node
+  linkType: hard
 
 "graphql-tag@npm:^2.11.0":
   version: 2.12.6
@@ -11007,18 +11095,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss@npm:^8.4.43, postcss@npm:^8.4.48, postcss@npm:^8.4.49, postcss@npm:^8.5.1":
-  version: 8.5.1
-  resolution: "postcss@npm:8.5.1"
-  dependencies:
-    nanoid: "npm:^3.3.8"
-    picocolors: "npm:^1.1.1"
-    source-map-js: "npm:^1.2.1"
-  checksum: 10c0/c4d90c59c98e8a0c102b77d3f4cac190f883b42d63dc60e2f3ed840f16197c0c8e25a4327d2e9a847b45a985612317dc0534178feeebd0a1cf3eb0eecf75cae4
-  languageName: node
-  linkType: hard
-
-"postcss@npm:^8.5.3":
+"postcss@npm:^8.4.43, postcss@npm:^8.4.48, postcss@npm:^8.4.49, postcss@npm:^8.5.3":
   version: 8.5.3
   resolution: "postcss@npm:8.5.3"
   dependencies:
@@ -11261,14 +11338,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:^18.0.0 || ^19.0.0":
-  version: 19.0.0
-  resolution: "react@npm:19.0.0"
-  checksum: 10c0/9cad8f103e8e3a16d15cb18a0d8115d8bd9f9e1ce3420310aea381eb42aa0a4f812cf047bb5441349257a05fba8a291515691e3cb51267279b2d2c3253f38471
-  languageName: node
-  linkType: hard
-
-"react@npm:^19":
+"react@npm:^18.0.0 || ^19.0.0, react@npm:^19":
   version: 19.1.0
   resolution: "react@npm:19.1.0"
   checksum: 10c0/530fb9a62237d54137a13d2cfb67a7db6a2156faed43eecc423f4713d9b20c6f2728b026b45e28fcd72e8eadb9e9ed4b089e99f5e295d2f0ad3134251bdd3698
@@ -12631,13 +12701,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"undici-types@npm:~6.20.0":
-  version: 6.20.0
-  resolution: "undici-types@npm:6.20.0"
-  checksum: 10c0/68e659a98898d6a836a9a59e6adf14a5d799707f5ea629433e025ac90d239f75e408e2e5ff086afc3cace26f8b26ee52155293564593fbb4a2f666af57fc59bf
-  languageName: node
-  linkType: hard
-
 "undici-types@npm:~6.21.0":
   version: 6.21.0
   resolution: "undici-types@npm:6.21.0"
@@ -12961,59 +13024,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:^6":
-  version: 6.1.0
-  resolution: "vite@npm:6.1.0"
-  dependencies:
-    esbuild: "npm:^0.24.2"
-    fsevents: "npm:~2.3.3"
-    postcss: "npm:^8.5.1"
-    rollup: "npm:^4.30.1"
-  peerDependencies:
-    "@types/node": ^18.0.0 || ^20.0.0 || >=22.0.0
-    jiti: ">=1.21.0"
-    less: "*"
-    lightningcss: ^1.21.0
-    sass: "*"
-    sass-embedded: "*"
-    stylus: "*"
-    sugarss: "*"
-    terser: ^5.16.0
-    tsx: ^4.8.1
-    yaml: ^2.4.2
-  dependenciesMeta:
-    fsevents:
-      optional: true
-  peerDependenciesMeta:
-    "@types/node":
-      optional: true
-    jiti:
-      optional: true
-    less:
-      optional: true
-    lightningcss:
-      optional: true
-    sass:
-      optional: true
-    sass-embedded:
-      optional: true
-    stylus:
-      optional: true
-    sugarss:
-      optional: true
-    terser:
-      optional: true
-    tsx:
-      optional: true
-    yaml:
-      optional: true
-  bin:
-    vite: bin/vite.js
-  checksum: 10c0/e1cad1cfbd29923a37d2dbd60f7387901ed8356758073a0226cbe844fd032425ba3bf41651332cab4965d5c54d0b51d208889ff32ce81bd282d230c0c9f0f8f1
-  languageName: node
-  linkType: hard
-
-"vite@npm:^6.2.5":
+"vite@npm:^6, vite@npm:^6.2.5":
   version: 6.2.5
   resolution: "vite@npm:6.2.5"
   dependencies:

@@ -4967,6 +4967,7 @@ __metadata:
     "@wroud/tests-runner": "workspace:*"
     "@wroud/tsconfig": "workspace:*"
     concurrently: "npm:^9"
+    esbuild: "npm:^0.25.2"
     rimraf: "npm:^6"
     tslib: "npm:^2"
     typescript: "npm:^5"
@@ -7494,7 +7495,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esbuild@npm:^0.25.0":
+"esbuild@npm:^0.25.0, esbuild@npm:^0.25.2":
   version: 0.25.2
   resolution: "esbuild@npm:0.25.2"
   dependencies:

@@ -1,14 +1,9 @@
-import path from "path";
 import { DEFAULT_DIST, DEFAULT_SRC, KNOWN_ASSET_TYPES } from "./constants.js";
 import type { PluginOption } from "vite";
+import type { IResolveAssetsOptions } from "./IResolveAssetsOptions.js";
+import { getPossiblePaths } from "./getPossiblePaths.js";
 
 export { DEFAULT_DIST, DEFAULT_SRC, KNOWN_ASSET_TYPES };
-
-interface IResolveAssetsOptions {
-  dist?: string[];
-  src?: string[];
-  extensions?: string[];
-}
 
 export function assetResolverPlugin(
   options?: IResolveAssetsOptions,
@@ -46,35 +41,19 @@ export function assetResolverPlugin(
             return resolved;
           }
 
-          const pathParts = importer.split(path.posix.sep);
+          for (const adjustedImporter of getPossiblePaths(
+            importer,
+            dist,
+            src,
+          )) {
+            const resolvedId = await this.resolve(
+              source,
+              adjustedImporter,
+              options,
+            );
 
-          let distIndex = -1;
-          for (let i = pathParts.length - 1; i >= 0; i--) {
-            if (dist.includes(pathParts[i]!)) {
-              distIndex = i;
-              break;
-            }
-          }
-
-          if (distIndex !== -1) {
-            for (const srcAlias of src) {
-              pathParts[distIndex] = srcAlias;
-
-              let adjustedImporter = path.posix.join(...pathParts);
-
-              if (importer.startsWith("/")) {
-                adjustedImporter = "/" + adjustedImporter;
-              }
-
-              const resolvedId = await this.resolve(
-                source,
-                adjustedImporter,
-                options,
-              );
-
-              if (resolvedId) {
-                return resolvedId;
-              }
+            if (resolvedId) {
+              return resolvedId;
             }
           }
 

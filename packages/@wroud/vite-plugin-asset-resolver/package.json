@@ -51,6 +51,7 @@
     "@wroud/tests-runner": "workspace:*",
     "@wroud/tsconfig": "workspace:*",
     "concurrently": "^9",
+    "esbuild": "^0.25.2",
     "rimraf": "^6",
     "tslib": "^2",
     "typescript": "^5",

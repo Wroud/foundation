@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.8.2 -->
+## 0.8.2 (2025-04-22)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/flow-middleware-v0.8.1...flow-middleware-v0.8.2)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- middleware subscribe type to return `Promise<void>` ([2144aaa](https://github.com/Wroud/foundation/commit/2144aaa))
+
 <!-- version:0.8.1 -->
 ## 0.8.1 (2025-02-07)
 

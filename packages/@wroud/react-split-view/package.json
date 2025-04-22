@@ -20,6 +20,8 @@
     "LICENSE",
     "README.md",
     "CHANGELOG.md",
+    "src/**/*.css",
+    "src/**/*.md",
     "lib",
     "!lib/**/*.d.ts.map",
     "!lib/**/*.test.js",

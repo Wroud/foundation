@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.2.0 -->
+## 0.2.0 (2025-04-22)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vp-asset-resolver-v0.1.6...vp-asset-resolver-v0.2.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- add `esbuild` plugin ([a2d7506](https://github.com/Wroud/foundation/commit/a2d7506))
+
 <!-- version:0.1.6 -->
 ## 0.1.6 (2025-03-23)
 

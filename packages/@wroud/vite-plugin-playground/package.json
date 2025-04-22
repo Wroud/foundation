@@ -43,8 +43,8 @@
     "vitest": "^2"
   },
   "peerDependencies": {
-    "@wroud/vite-plugin-ssg": "workspace:^",
     "@wroud/playground-react": "workspace:^",
+    "@wroud/vite-plugin-ssg": "workspace:^",
     "react": "^19",
     "react-dom": "^19"
   },

@@ -1,5 +1,5 @@
 export const PlaygroundRoutes = {
-  root: "/",
+  root: ".",
   story: "/story/:story*",
   isolated: "/isolated/:story*",
   preview: "/preview/:story*",

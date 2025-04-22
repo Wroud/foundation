@@ -39,8 +39,8 @@ export function htmlVirtualEntryResolution(): HtmlVirtualEntryResolutionPlugin {
       handler(options: NormalizedOutputOptions, bundle: OutputBundle) {
         // Extract virtual HTML chunks
         const virtualChunks = new Map(
-          Object.entries(bundle).filter(([, chunk]) =>
-            isVirtualHtmlEntry((chunk as OutputAsset).fileName),
+          Object.entries(bundle).filter(
+            ([, chunk]) => chunk.fileName && isVirtualHtmlEntry(chunk.fileName),
           ) as [string, OutputAsset][],
         );
 

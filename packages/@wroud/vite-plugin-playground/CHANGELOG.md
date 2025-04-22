@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.1.2 -->
+## 0.1.2 (2025-04-22)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-playground-v0.1.1...vite-plugin-playground-v0.1.2)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- include css and svg in package ([dcaa600](https://github.com/Wroud/foundation/commit/dcaa600))
+
 <!-- version:0.1.1 -->
 ## 0.1.1 (2025-04-22)
 

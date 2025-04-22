@@ -54,6 +54,12 @@
       "path": "../@wroud/navigation"
     },
     {
+      "path": "../@wroud/playground"
+    },
+    {
+      "path": "../@wroud/playground-react"
+    },
+    {
       "path": "../@wroud/preconditions"
     },
     {

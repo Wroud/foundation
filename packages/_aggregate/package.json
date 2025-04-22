@@ -19,6 +19,9 @@
     "tslib": "^2"
   },
   "devDependencies": {
+    "@graphql-codegen/typescript-operations": "^4",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
     "@wroud/api-logger": "workspace:^",
     "@wroud/ci": "workspace:*",
     "@wroud/conventional-commits-bump": "workspace:^",
@@ -33,6 +36,8 @@
     "@wroud/git": "workspace:*",
     "@wroud/github": "workspace:*",
     "@wroud/navigation": "workspace:^",
+    "@wroud/playground": "workspace:^",
+    "@wroud/playground-react": "workspace:^",
     "@wroud/preconditions": "workspace:^",
     "@wroud/react-reactive-value": "workspace:^",
     "@wroud/react-split-view": "workspace:^",
@@ -45,8 +50,12 @@
     "@wroud/vite-plugin-ssg": "workspace:^",
     "@wroud/vite-plugin-tsc": "workspace:^",
     "concurrently": "^9",
+    "graphql": "^16",
     "graphql-codegen-fragment-masking": "workspace:^",
     "graphql-codegen-typed-document-nodes": "workspace:^",
+    "graphql-sock": "^1",
+    "react": "^19",
+    "react-dom": "^19",
     "rimraf": "^6",
     "typescript": "^5"
   }

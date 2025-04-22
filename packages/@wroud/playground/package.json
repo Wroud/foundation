@@ -1,6 +1,7 @@
 {
   "name": "@wroud/playground",
   "type": "module",
+  "version": "0.0.0",
   "sideEffects": [],
   "exports": {
     ".": "./lib/index.js",

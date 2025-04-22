@@ -40,12 +40,8 @@
     "@types/react-dom": "^19",
     "@wroud/ci": "workspace:^",
     "@wroud/tsconfig": "workspace:*",
-    "magic-string": "^0",
-    "picomatch": "^4",
     "rimraf": "^6",
     "tailwindcss": "^4",
-    "tinyglobby": "^0",
-    "typescript": "^5",
     "vite": "^6",
     "vitest": "^2"
   },
@@ -66,8 +62,12 @@
     "@wroud/react-tree": "workspace:^",
     "@wroud/vite-plugin-ssg": "workspace:^",
     "front-matter": "^4",
+    "magic-string": "^0",
+    "picomatch": "^4",
     "react": "^19",
     "react-dom": "^19",
-    "react-markdown": "^10"
+    "react-markdown": "^10",
+    "tinyglobby": "^0",
+    "typescript": "^5"
   }
 }

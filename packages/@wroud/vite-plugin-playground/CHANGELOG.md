@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.1.5 -->
+## 0.1.5 (2025-04-24)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-playground-v0.1.4...vite-plugin-playground-v0.1.5)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- improve module resolution logic ([ae24fa8](https://github.com/Wroud/foundation/commit/ae24fa8))
+
 <!-- version:0.1.4 -->
 ## 0.1.4 (2025-04-24)
 

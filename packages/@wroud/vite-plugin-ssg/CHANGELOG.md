@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:5.1.4 -->
+## 5.1.4 (2025-04-24)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-ssg-v5.1.3...vite-plugin-ssg-v5.1.4)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- improve module resolution logic ([ae24fa8](https://github.com/Wroud/foundation/commit/ae24fa8))
+
 <!-- version:5.1.3 -->
 ## 5.1.3 (2025-04-24)
 

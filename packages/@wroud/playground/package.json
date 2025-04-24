@@ -36,6 +36,8 @@
     "@wroud/navigation": "workspace:^",
     "@wroud/tsconfig": "workspace:^",
     "@wroud/vite-plugin-ssg": "workspace:^",
+    "react": "^19",
+    "react-dom": "^19",
     "rimraf": "^6",
     "typescript": "^5"
   }

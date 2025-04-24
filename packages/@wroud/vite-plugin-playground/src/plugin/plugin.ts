@@ -48,9 +48,9 @@ export function playground({
 
   function getPlaygroundModuleId(root?: string): string {
     if (root) {
-      return nodePath.posix.resolve(root, path) + "/index";
+      return nodePath.posix.resolve(root, path) + "/index.js";
     }
-    return path + "/index";
+    return path + "/index.js";
   }
 
   return [
@@ -72,6 +72,7 @@ export function playground({
                   ? path + "/index.js"
                   : undefined,
               type: "chunk",
+              preserveSignature: "strict",
             });
           }
         },
@@ -101,6 +102,7 @@ export function playground({
             };
             return {
               code: `export default ${JSON.stringify(info)};`,
+              moduleType: "js",
             };
           }
 
@@ -140,6 +142,7 @@ export function playground({
               return {
                 code: storyFiles,
                 moduleSideEffects: true,
+                moduleType: "js",
               };
             } catch (err) {
               this.error(
@@ -148,10 +151,6 @@ export function playground({
             }
           }
 
-          if (id === getPlaygroundModuleId(this.environment.config.root)) {
-            return `import { default as Index } from "@wroud/vite-plugin-playground/app/index";
-            export default Index;`;
-          }
           return null;
         },
       },
@@ -231,7 +230,6 @@ describe(${JSON.stringify(describe)}, () => doc(${JSON.stringify(title)}, Markdo
             importer = undefined;
           }
 
-          // console.log("source", source, importer);
           let absoluteSource = source;
           if (!absoluteSource.startsWith("/") && importer) {
             absoluteSource = nodePath.posix.resolve(
@@ -240,14 +238,16 @@ describe(${JSON.stringify(describe)}, () => doc(${JSON.stringify(title)}, Markdo
             );
           }
 
-          // console.log("absoluteSource", absoluteSource);
           let [sourcePath, params] = absoluteSource.split("?");
           const suffix = params ? `?${params}` : "";
 
-          if (sourcePath === getPlaygroundModuleId(config.root)) {
-            // const resolvedId = getPlaygroundModuleId(config.root) + suffix;
-            const resolvedId =
-              "@wroud/vite-plugin-playground/app/index" + suffix;
+          if (
+            sourcePath === getPlaygroundModuleId(config.root) ||
+            sourcePath + ".js" === getPlaygroundModuleId(config.root)
+          ) {
+            const resolvedId = getPlaygroundModuleId(config.root) + suffix;
+            // const resolvedId =
+            //   "@wroud/vite-plugin-playground/app/index" + suffix;
 
             // This way, plugins may attach additional meta information to the
             // resolved id or make it external. We do not skip node-resolve here
@@ -285,6 +285,25 @@ describe(${JSON.stringify(describe)}, () => doc(${JSON.stringify(title)}, Markdo
       },
     },
     {
+      name: "@wroud/vite-plugin-playground-index",
+      // enforce: "post",
+      load: {
+        // order: "post",
+        async handler(id) {
+          const config = this.environment.config;
+          if (id.startsWith(getPlaygroundModuleId(config.root))) {
+            return {
+              code: `import Index from "@wroud/vite-plugin-playground/app/index";
+            export default Index;`,
+              moduleType: "js",
+            };
+          }
+
+          return null;
+        },
+      },
+    },
+    {
       name: "@wroud/vite-plugin-playground-stories",
       load: {
         order: "pre",
@@ -293,6 +312,7 @@ describe(${JSON.stringify(describe)}, () => doc(${JSON.stringify(title)}, Markdo
             return {
               code: `import.meta.glob(${JSON.stringify([...stories, ...docs].map((pattern) => `./${pattern}`))}, { eager: true })`,
               moduleSideEffects: "no-treeshake",
+              moduleType: "js",
             };
           }
           return null;

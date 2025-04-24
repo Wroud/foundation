@@ -39,12 +39,24 @@ export function assetResolverPlugin(options?: IResolveAssetsOptions): Plugin {
           try {
             const result = await build.resolve(source, {
               kind: args.kind,
-              resolveDir: path.dirname(importer),
+              namespace: args.namespace,
+              resolveDir: args.resolveDir,
               pluginData: { "asset-resolver-plugin": true },
+              importer,
+              with: args.with,
             });
 
             if (!result.errors.length) {
-              return { path: result.path };
+              return {
+                path: result.path,
+                errors: result.errors,
+                external: result.external,
+                namespace: result.namespace,
+                pluginData: result.pluginData,
+                sideEffects: result.sideEffects,
+                warnings: result.warnings,
+                suffix: result.suffix,
+              };
             }
           } catch (error) {
             // Continue with custom resolution if default fails
@@ -59,11 +71,23 @@ export function assetResolverPlugin(options?: IResolveAssetsOptions): Plugin {
               const result = await build.resolve(source, {
                 kind: args.kind,
                 resolveDir: path.dirname(adjustedImporter),
+                importer: adjustedImporter,
+                namespace: args.namespace,
+                with: args.with,
                 pluginData: { "asset-resolver-plugin": true },
               });
 
               if (!result.errors.length) {
-                return { path: result.path };
+                return {
+                  path: result.path,
+                  errors: result.errors,
+                  external: result.external,
+                  namespace: result.namespace,
+                  pluginData: result.pluginData,
+                  sideEffects: result.sideEffects,
+                  warnings: result.warnings,
+                  suffix: result.suffix,
+                };
               }
             } catch (error) {
               // Try next srcAlias

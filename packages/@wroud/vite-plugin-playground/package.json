@@ -45,7 +45,7 @@
     "react": "^19",
     "react-dom": "^19",
     "rimraf": "^6",
-    "vite": "^6",
+    "vite": "^6.3.0",
     "vitest": "^2"
   },
   "peerDependencies": {

@@ -1,1 +1,1 @@
-export * from "@wroud/playground-react";
+export * from "./plugin.js";

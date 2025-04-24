@@ -1,10 +1,6 @@
 import type { Plugin } from "vite";
 import { isVirtualHtmlEntry } from "../modules/isVirtualHtmlEntry.js";
-import type {
-  OutputAsset,
-  OutputBundle,
-  NormalizedOutputOptions,
-} from "rollup";
+import type { OutputAsset } from "rollup";
 
 // Define the interface for the plugin that extends Vite's Plugin interface
 export interface HtmlVirtualEntryResolutionPlugin extends Plugin {
@@ -17,6 +13,8 @@ export function htmlVirtualEntryResolution(): HtmlVirtualEntryResolutionPlugin {
     name: "@wroud/vite-plugin-ssg:html-virtual-entry-resolution",
     virtualHtmlChunks: undefined,
     enforce: "post",
+    apply: "build",
+    applyToEnvironment: (env) => env.name === "client",
     resolveId: {
       order: "pre",
       handler(source: string) {
@@ -36,7 +34,8 @@ export function htmlVirtualEntryResolution(): HtmlVirtualEntryResolutionPlugin {
       },
     },
     generateBundle: {
-      handler(options: NormalizedOutputOptions, bundle: OutputBundle) {
+      order: "post",
+      handler(options, bundle) {
         // Extract virtual HTML chunks
         const virtualChunks = new Map(
           Object.entries(bundle).filter(

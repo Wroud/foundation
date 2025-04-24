@@ -1,6 +1,4 @@
 import type { IndexComponentProps } from "@wroud/vite-plugin-ssg";
-import codicon from "@vscode/codicons/dist/codicon.css?url";
-import { Link } from "@wroud/vite-plugin-ssg/react/components";
 import { PlaygroundRoutes } from "@wroud/playground";
 import { lazy, useSyncExternalStore } from "react";
 import { useNavigation } from "@wroud/playground-react/views";
@@ -65,8 +63,6 @@ export function App(props: IndexComponentProps) {
   // For non-isolated views, use Layout with MainLayout inside
   return (
     <Layout {...props}>
-      <Link rel="stylesheet" href={codicon} precedence="high" />
-
       {/* Handle components route */}
       {navigation.router.matcher?.isRoute(
         navigationState,

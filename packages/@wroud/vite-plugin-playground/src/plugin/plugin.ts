@@ -245,26 +245,29 @@ describe(${JSON.stringify(describe)}, () => doc(${JSON.stringify(title)}, Markdo
             sourcePath === getPlaygroundModuleId(config.root) ||
             sourcePath + ".js" === getPlaygroundModuleId(config.root)
           ) {
-            const resolvedId = getPlaygroundModuleId(config.root) + suffix;
-            // const resolvedId =
-            //   "@wroud/vite-plugin-playground/app/index" + suffix;
+            const resolvedId = getPlaygroundModuleId(config.root);
+            const resolvedIdFull = resolvedId + suffix;
 
             // This way, plugins may attach additional meta information to the
             // resolved id or make it external. We do not skip node-resolve here
             // because another plugin might again use `this.resolve` in its
             // `resolveId` hook, in which case we want to add the correct
             // `moduleSideEffects` information.
-            const resolvedResolved = await this.resolve(resolvedId, importer, {
-              ...resolveOptions,
-              skipSelf: false,
-              custom: {
-                ...custom,
-                "@wroud/vite-plugin-playground/resolve": {
-                  ...custom["@wroud/vite-plugin-playground/resolve"],
-                  resolved: resolvedId,
+            const resolvedResolved = await this.resolve(
+              resolvedIdFull,
+              importer,
+              {
+                ...resolveOptions,
+                skipSelf: false,
+                custom: {
+                  ...custom,
+                  "@wroud/vite-plugin-playground/resolve": {
+                    ...custom["@wroud/vite-plugin-playground/resolve"],
+                    resolved: resolvedId,
+                  },
                 },
               },
-            });
+            );
 
             if (resolvedResolved) {
               // Handle plugins that manually make the result external
@@ -273,11 +276,11 @@ describe(${JSON.stringify(describe)}, () => doc(${JSON.stringify(title)}, Markdo
               }
               // Allow other plugins to take over resolution. Rollup core will not
               // change the id if it corresponds to an existing file
-              if (resolvedResolved.id !== resolvedId) {
+              if (resolvedResolved.id !== resolvedIdFull) {
                 return resolvedResolved;
               }
               // Pass on meta information added by other plugins
-              return { id: resolvedId, meta: resolvedResolved.meta };
+              return { id: resolvedIdFull, meta: resolvedResolved.meta };
             }
           }
           return null;
@@ -286,12 +289,10 @@ describe(${JSON.stringify(describe)}, () => doc(${JSON.stringify(title)}, Markdo
     },
     {
       name: "@wroud/vite-plugin-playground-index",
-      // enforce: "post",
       load: {
-        // order: "post",
         async handler(id) {
           const config = this.environment.config;
-          if (id.startsWith(getPlaygroundModuleId(config.root))) {
+          if (id === getPlaygroundModuleId(config.root)) {
             return {
               code: `import Index from "@wroud/vite-plugin-playground/app/index";
             export default Index;`,

@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.1.8 -->
+## 0.1.8 (2025-04-26)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-playground-v0.1.7...vite-plugin-playground-v0.1.8)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- enable proper deps optimization + serve assets statically ([e88282d](https://github.com/Wroud/foundation/commit/e88282d))
+
 <!-- version:0.1.7 -->
 ## 0.1.7 (2025-04-24)
 

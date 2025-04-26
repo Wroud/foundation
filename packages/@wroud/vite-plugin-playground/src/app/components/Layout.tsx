@@ -5,10 +5,10 @@ import {
   Head,
   Link,
 } from "@wroud/vite-plugin-ssg/react/components";
-import indexStyles from "./Layout.css?url";
 import { Theme } from "./Theme.js";
 import { useTheme } from "../useTheme.js";
-import logo from "./logo.svg?no-inline";
+import { useNavigation } from "@wroud/playground-react/views";
+import { PlaygroundRoutes } from "@wroud/playground";
 
 interface Props extends IndexComponentProps {
   children?: React.ReactNode;
@@ -16,6 +16,17 @@ interface Props extends IndexComponentProps {
 
 export function Layout({ children }: Props) {
   const theme = useTheme();
+  const navigation = useNavigation();
+  const iconUrl =
+    navigation.router.matcher?.stateToUrl({
+      id: PlaygroundRoutes.assets,
+      params: {},
+    }) + "logo.svg";
+  const stylesUrl =
+    navigation.router.matcher?.stateToUrl({
+      id: PlaygroundRoutes.assets,
+      params: {},
+    }) + "Layout.css";
 
   return (
     <Theme value={theme}>
@@ -32,8 +43,8 @@ export function Layout({ children }: Props) {
           <meta charSet="utf-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
           <title>Playground</title>
-          <Link rel="icon" type="image/svg+xml" href={logo} />
-          <Link rel="stylesheet" href={indexStyles} />
+          {iconUrl && <Link rel="icon" type="image/svg+xml" href={iconUrl} />}
+          {stylesUrl && <Link rel="stylesheet" href={stylesUrl} />}
         </Head>
         <Body className="twp:flex twp:h-full twp:bg-white twp:antialiased twp:dark:bg-zinc-900 twp:overflow-hidden">
           <div className="twp:w-full">{children}</div>

@@ -1,5 +1,4 @@
 import type { PluginOption } from "vite";
-import { isStoriesModule } from "./storiesModule.js";
 import { globSync } from "tinyglobby";
 import picomatch from "picomatch";
 import nodePath from "node:path";
@@ -9,7 +8,10 @@ import {
   createVirtualStoriesModule,
   isVirtualStoriesModule,
 } from "./virtualStoriesModule.js";
-import { isInfoModule } from "./infoModule.js";
+import { assetsMiddleware } from "./assetsMiddleware.js";
+import { existsSync } from "fs";
+import { readFile } from "fs/promises";
+import { glob } from "tinyglobby";
 
 const DEFAULT_STORIES_INCLUDE = [
   "**/*.stories.ts",
@@ -53,6 +55,10 @@ export function playground({
     return path + "/index.js";
   }
 
+  function getStoriesModuleId(root?: string) {
+    return getPlaygroundModuleId(root) + "?stories";
+  }
+
   return [
     {
       name: "@wroud/vite-plugin-playground",
@@ -83,11 +89,12 @@ export function playground({
           // ignore IDs with null character, these belong to other plugins
           if (source && source.includes("\0")) return null;
 
-          if (isStoriesModule(source)) {
+          const config = this.environment.config;
+          if (source === getStoriesModuleId(config.root)) {
             return source;
           }
 
-          if (root && importer && isStoriesModule(importer)) {
+          if (root && importer === getStoriesModuleId(config.root)) {
             return this.resolve(nodePath.posix.join(root, source), root);
           }
           return null;
@@ -96,17 +103,8 @@ export function playground({
       load: {
         order: "pre",
         handler(id) {
-          if (isInfoModule(id)) {
-            const info = {
-              path,
-            };
-            return {
-              code: `export default ${JSON.stringify(info)};`,
-              moduleType: "js",
-            };
-          }
-
-          if (isStoriesModule(id)) {
+          const config = this.environment.config;
+          if (id === getStoriesModuleId(config.root)) {
             try {
               const storyFiles = stories
                 .flatMap((pattern) => {
@@ -294,8 +292,9 @@ describe(${JSON.stringify(describe)}, () => doc(${JSON.stringify(title)}, Markdo
           const config = this.environment.config;
           if (id === getPlaygroundModuleId(config.root)) {
             return {
-              code: `import Index from "@wroud/vite-plugin-playground/app/index";
-            export default Index;`,
+              code: `import { configure } from "@wroud/vite-plugin-playground/app/index";
+            import "${getStoriesModuleId(config.root)}";
+            export default configure(${JSON.stringify(path)});`,
               moduleType: "js",
             };
           }
@@ -317,6 +316,47 @@ describe(${JSON.stringify(describe)}, () => doc(${JSON.stringify(title)}, Markdo
             };
           }
           return null;
+        },
+      },
+    },
+    {
+      name: "@wroud/vite-plugin-playground/assets",
+      enforce: "pre",
+      configureServer: {
+        order: "pre",
+        async handler(server) {
+          server.middlewares.use(assetsMiddleware(server, path));
+        },
+      },
+      generateBundle: {
+        order: "post",
+        async handler() {
+          if (!bundle || this.environment.name === "ssr") {
+            return;
+          }
+
+          // Copy all files from the ../../public directory to the /${path}/assets/ directory with emitFile
+          const publicDir = nodePath.join(import.meta.dirname, "../../public");
+
+          if (!existsSync(publicDir)) {
+            return;
+          }
+
+          // Use glob to find all files in the public directory recursively
+          const publicFiles = await glob("**/*", {
+            cwd: publicDir,
+            onlyFiles: true,
+          });
+
+          for (const file of publicFiles) {
+            const source = await readFile(nodePath.join(publicDir, file));
+
+            this.emitFile({
+              type: "asset",
+              fileName: `${path}/assets/${file}`,
+              source,
+            });
+          }
         },
       },
     },

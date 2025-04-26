@@ -4,4 +4,5 @@ export const PlaygroundRoutes = {
   isolated: "/isolated/:story*",
   preview: "/preview/:story*",
   components: "/components",
+  assets: "/assets",
 } as const;

@@ -1,0 +1,32 @@
+@import url("@vscode/codicons/dist/codicon.css");
+@import "tailwindcss" prefix(twp);
+@plugin "@tailwindcss/typography";
+@custom-variant dark (&:where(.dark, .dark *));
+
+.sash {
+  position: relative;
+  flex-basis: 0;
+  cursor: ew-resize;
+  &::before {
+    content: "";
+    position: absolute;
+    top: -0.5px;
+    left: -0.5px;
+    width: calc(100% + 1px);
+    height: calc(100% + 1px);
+    min-width: 1px;
+    min-height: 1px;
+    z-index: 1;
+  }
+  &::after {
+    content: "";
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    width: calc(100% + 4px);
+    height: calc(100% + 4px);
+    min-width: 8px;
+    min-height: 8px;
+    z-index: 1;
+  }
+}

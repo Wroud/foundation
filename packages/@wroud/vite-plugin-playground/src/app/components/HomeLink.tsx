@@ -1,11 +1,14 @@
-import { useBase } from "@wroud/vite-plugin-ssg/react/components";
 import { useNavigation } from "@wroud/playground-react/views";
 import { PlaygroundRoutes } from "@wroud/playground";
-import logo from "./logo.svg?no-inline";
 
 export function HomeLink() {
-  const base = useBase();
   const navigation = useNavigation();
+  const iconUrl =
+    navigation.router.matcher?.stateToUrl({
+      id: PlaygroundRoutes.assets,
+      params: {},
+    }) + "logo.svg";
+
   return (
     <a
       aria-label="Home"
@@ -24,7 +27,9 @@ export function HomeLink() {
         });
       }}
     >
-      <img src={base(logo)} alt="Playground" className="twp:w-6 twp:h-6" />
+      {iconUrl && (
+        <img src={iconUrl} alt="Playground" className="twp:w-6 twp:h-6" />
+      )}
       <div className="twp:text-sm twp:font-bold">Playground</div>
     </a>
   );

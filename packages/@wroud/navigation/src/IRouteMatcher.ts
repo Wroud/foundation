@@ -1,10 +1,15 @@
 import type { IRouteState } from "./IRouteState.js";
 
 /**
- * Parameter values extracted from URL routes.
- * Can be either a single string value or an array of strings for wildcard routes.
+ * Primitive parameter type supported by the router.
  */
-export type RouteParams = Record<string, string | string[]>;
+export type RouteParamValue = string | number | boolean;
+
+/**
+ * Parameter values extracted from URL routes.
+ * Can be either a single primitive value or an array of primitive values for wildcard routes.
+ */
+export type RouteParams = Record<string, RouteParamValue | RouteParamValue[]>;
 
 export type RouteMatcherState<T extends IRouteMatcher> = Exclude<
   ReturnType<T["match"]>,

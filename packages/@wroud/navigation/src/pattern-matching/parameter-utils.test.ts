@@ -63,6 +63,19 @@ describe("Parameter Utilities", () => {
         );
       }
     });
+
+    test("should allow numeric and boolean parameter values", () => {
+      const pattern = "/item/:id";
+      const segments = ["/", "item", ":id"];
+
+      expect(() =>
+        parameterUtils.validateParameters(pattern, segments, { id: 0 }),
+      ).not.toThrow();
+
+      expect(() =>
+        parameterUtils.validateParameters(pattern, segments, { id: false }),
+      ).not.toThrow();
+    });
   });
 
   describe("buildUrlSegments", () => {
@@ -75,11 +88,26 @@ describe("Parameter Utilities", () => {
       });
       expect(result).toEqual(["user", "123", "profile"]);
 
+      // Numeric and boolean parameters
+      result = parameterUtils.buildUrlSegments(["item", ":id"], { id: 42 });
+      expect(result).toEqual(["item", "42"]);
+
+      result = parameterUtils.buildUrlSegments(["flag", ":active"], { active: false });
+      expect(result).toEqual(["flag", "false"]);
+
       // Wildcard array parameter
       result = parameterUtils.buildUrlSegments(["files", ":path*"], {
         path: ["docs", "reports", "annual.pdf"],
       });
       expect(result).toEqual(["files", "docs", "reports", "annual.pdf"]);
+
+      // Wildcard array with numeric values
+      result = parameterUtils.buildUrlSegments(["ids", ":ids*"], { ids: [1, 2] });
+      expect(result).toEqual(["ids", "1", "2"]);
+
+      // Wildcard array with boolean values
+      result = parameterUtils.buildUrlSegments(["flags", ":flags*"], { flags: [true, false] });
+      expect(result).toEqual(["flags", "true", "false"]);
 
       // Wildcard string parameter
       result = parameterUtils.buildUrlSegments(["files", ":path*"], {

@@ -2,7 +2,7 @@ import { execa } from "execa";
 import { join } from "path";
 import { writeFile } from "fs/promises";
 import { getTsConfigTemplate } from "./getTsConfigTemplate.js";
-import type { IParsedPackageName } from "../../pasrsePackageName.js";
+import type { IParsedPackageName } from "../../parsePackageName.js";
 
 export interface IInitTsConfigOptions {
   path: string;

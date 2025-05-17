@@ -3,7 +3,7 @@ import { join } from "path";
 import { writeFile, mkdir, readFile } from "fs/promises";
 import { getTsConfigTemplate } from "./getTsConfigTemplate.js";
 import picocolors from "picocolors";
-import type { IParsedPackageName } from "../../pasrsePackageName.js";
+import type { IParsedPackageName } from "../../parsePackageName.js";
 import { getTsWithVersion } from "../../getTsWithVersion.js";
 
 export interface IInitTsProjectOptions {

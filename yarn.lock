@@ -5016,6 +5016,7 @@ __metadata:
     "@types/node": "npm:^20"
     "@types/react": "npm:^19"
     "@types/react-dom": "npm:^19"
+    "@vitest/coverage-v8": "npm:^2"
     "@wroud/ci": "workspace:*"
     "@wroud/tsconfig": "workspace:^"
     change-case: "npm:^5"
@@ -5026,6 +5027,7 @@ __metadata:
     tinyglobby: "npm:^0"
     typescript: "npm:^5"
     vite: "npm:^6.3.0"
+    vitest: "npm:^2"
   peerDependencies:
     react: ^19.0.0
     react-dom: ^19.0.0

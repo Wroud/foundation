@@ -2,7 +2,7 @@
  * Types for the Trie-based pattern matching system
  */
 
-import type { RouteParams } from "../IRouteMatcher.js";
+import type { RouteParams, RouteParamValue } from "../IRouteMatcher.js";
 import type { IRouteState } from "../IRouteState.js";
 
 /**
@@ -48,7 +48,9 @@ export type ExtractRouteParams<Pattern extends string> = Pattern extends
         ? Name
         : K extends `:${infer Name}`
           ? Name
-          : never]: K extends `:${string}*` ? string[] : string;
+          : never]: K extends `:${string}*`
+        ? RouteParamValue[]
+        : RouteParamValue;
     };
 
 /**

@@ -4490,6 +4490,7 @@ __metadata:
     "@wroud/tsconfig": "workspace:*"
     concurrently: "npm:^9"
     execa: "npm:^9"
+    memfs: "npm:^4"
     rimraf: "npm:^6"
     semver: "npm:^7"
     tempy: "npm:^3"

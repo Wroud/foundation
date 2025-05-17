@@ -33,6 +33,7 @@
     "@vitest/coverage-v8": "^2",
     "@wroud/tsconfig": "workspace:*",
     "concurrently": "^9",
+    "memfs": "^4",
     "rimraf": "^6",
     "typescript": "^5",
     "vitest": "^2"

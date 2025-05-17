@@ -3,7 +3,7 @@ import { hideBin } from "yargs/helpers";
 import { initTsProject } from "./templates/project/initTsProject.js";
 import { initTsConfig } from "./templates/tsconfig/initTsConfig.js";
 import { ES_TARGETS } from "./ES_TARGETS.js";
-import { parsePackageName } from "./pasrsePackageName.js";
+import { parsePackageName } from "./parsePackageName.js";
 import { getDefaultProjectName } from "./getDefaultProjectName.js";
 
 export function configureYargs(args: string[], cwd?: string) {

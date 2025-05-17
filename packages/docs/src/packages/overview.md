@@ -9,6 +9,7 @@ The Wroud Foundation offers a suite of tools to help developers implement best p
 ## Available Packages
 
 - **@wroud/di**: A lightweight dependency injection library for JavaScript inspired by [.NET's DI](https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection) system. Written in TypeScript, it supports modern JavaScript features, including decorators, and provides robust dependency management capabilities.
+- **@wroud/navigation**: Framework-agnostic router and navigation utilities with pattern-based matching, history management and optional browser integration.
 
 - **Other Packages**: More tools to come, each aimed at addressing specific challenges in JavaScript development.
 
@@ -22,6 +23,13 @@ Use the sidebar to navigate through the documentation. Each package has its own 
 - **[Installation](./di/install)**: Step-by-step guide to installing the package.
 - **[Usage](./di/usage)**: Examples of how to use the package in different environments.
 - **[API](./di/api)**: Detailed reference of the API provided by the package.
+
+## Navigation (`@wroud/navigation`)
+
+- **[Overview](./navigation/overview)**: Introduction and key features.
+- **[Installation](./navigation/install)**: How to install the package.
+- **[Usage](./navigation/usage)**: Basic usage example.
+- **[API](./navigation/api)**: Summary of the main exports.
 
 ### React Integration (`@wroud/di-react`)
 

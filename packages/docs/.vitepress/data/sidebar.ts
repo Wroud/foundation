@@ -120,6 +120,16 @@ export const sidebar: DefaultTheme.Sidebar = {
               },
             ],
           },
+          {
+            text: "Navigation",
+            base: "/packages/navigation/",
+            items: [
+              { text: "Overview", link: "overview" },
+              { text: "Installation", link: "install" },
+              { text: "Usage", link: "usage" },
+              { text: "API", link: "api" },
+            ],
+          },
         ],
       },
     ],

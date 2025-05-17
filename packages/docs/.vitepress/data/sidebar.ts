@@ -120,6 +120,15 @@ export const sidebar: DefaultTheme.Sidebar = {
               },
             ],
           },
+          {
+            text: "Vite Plugin TSC",
+            base: "/packages/vite-plugin-tsc/",
+            items: [
+              { text: "Overview", link: "overview" },
+              { text: "Installation", link: "install" },
+              { text: "Usage", link: "usage" },
+            ],
+          },
         ],
       },
     ],

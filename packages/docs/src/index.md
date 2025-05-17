@@ -41,4 +41,9 @@ features:
   - icon: 🧠
     title: Simple by Default
     details: Get started quickly without needing extensive knowledge, thanks to straightforward and intuitive design.
+  - icon: ⚙️
+    title: TypeScript Build Support
+    details: Use the TypeScript compiler with Vite via `@wroud/vite-plugin-tsc`.
+    link: /packages/vite-plugin-tsc/overview
+    linkText: See documentation
 ---

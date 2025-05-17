@@ -9,6 +9,7 @@ The Wroud Foundation offers a suite of tools to help developers implement best p
 ## Available Packages
 
 - **@wroud/di**: A lightweight dependency injection library for JavaScript inspired by [.NET's DI](https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection) system. Written in TypeScript, it supports modern JavaScript features, including decorators, and provides robust dependency management capabilities.
+- **@wroud/vite-plugin-tsc**: A Vite plugin that runs the TypeScript compiler to transpile project references and perform background type checking.
 
 - **@wroud/react-split-view**: A React hook for building resizable split panes with optional sticky edges.
 

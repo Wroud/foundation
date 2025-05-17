@@ -20,6 +20,9 @@ jobs:
           - "main"
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ matrix.branch }}
+          fetch-depth: 0
 
       - run: corepack enable
       - uses: actions/setup-node@v4

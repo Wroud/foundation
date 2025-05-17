@@ -19,13 +19,13 @@
 Install via npm:
 
 ```bash
-npm install -D ts-template
+npm install -D @wroud/ts-template
 ```
 
 Install via yarn:
 
 ```bash
-yarn add -D ts-template
+yarn add -D @wroud/ts-template
 ```
 
 ## Example

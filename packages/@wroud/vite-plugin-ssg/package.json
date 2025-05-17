@@ -14,7 +14,8 @@
     "ci:release-github": "ci release-github --prefix vite-plugin-ssg-v",
     "build": "tsc -b",
     "watch:tsc": "tsc -b -w",
-    "clear": "rimraf lib"
+    "clear": "rimraf lib",
+    "test": "tests-runner"
   },
   "files": [
     "package.json",
@@ -39,6 +40,7 @@
     "@types/react-dom": "^19",
     "@vitest/coverage-v8": "^2",
     "@wroud/ci": "workspace:*",
+    "@wroud/tests-runner": "workspace:*",
     "@wroud/tsconfig": "workspace:^",
     "rimraf": "^6",
     "rollup": "^4.40.0",

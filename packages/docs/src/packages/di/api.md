@@ -30,7 +30,7 @@ The `ServiceContainerBuilder` class is used to register services and build the s
 
 - **`addSingleton<T>(service: SingleServiceType<T>, resolver: IServiceImplementationResolver<T>): this`**
 
-  - Registers a singleton service with an service resolver as implementation.
+  - Registers a singleton service with a service resolver as implementation.
 
 - **`addTransient<T>(service: SingleServiceImplementation<T>): this`**
 

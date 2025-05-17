@@ -6,12 +6,23 @@ import { getTagPrefix } from "./config.js";
 vi.mock("fs", () => fs);
 vi.mock("fs/promises", () => fs.promises);
 
+let configMock = {};
+
+vi.doMock("/project/wroud.ci.config.js", () => {
+  return {
+    get default() {
+      return configMock;
+    },
+  };
+});
+
 const CWD = path.normalize("/project");
 let cwdSpy: ReturnType<typeof vi.spyOn>;
 
 beforeEach(() => {
   vol.reset();
   cwdSpy = vi.spyOn(process, "cwd").mockReturnValue(CWD);
+  vi.resetModules();
 });
 
 afterEach(() => {
@@ -19,17 +30,19 @@ afterEach(() => {
   cwdSpy.mockRestore();
   delete process.env["TAG_PREFIX"];
   vi.resetModules();
+  vi.clearAllMocks();
+  configMock = {};
 });
 
-describe("getTagPrefix", () => {
+describe.sequential("getTagPrefix", () => {
   it("from env", async () => {
     process.env["TAG_PREFIX"] = "v";
     expect(await getTagPrefix()).toBe("v");
   });
 
   it("from config", async () => {
-    vol.fromJSON({ "wroud.ci.config.js": "export default { tagPrefix: 'v' };" }, CWD);
-    expect(await getTagPrefix()).toBe("v");
+    configMock = { tagPrefix: "vv" };
+    expect(await getTagPrefix()).toBe("vv");
   });
 
   it("from package.json", async () => {

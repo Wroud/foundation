@@ -4487,6 +4487,7 @@ __metadata:
     "@wroud/conventional-commits-parser": "workspace:*"
     "@wroud/git": "workspace:*"
     "@wroud/github": "workspace:*"
+    "@wroud/tests-runner": "workspace:*"
     "@wroud/tsconfig": "workspace:*"
     concurrently: "npm:^9"
     execa: "npm:^9"

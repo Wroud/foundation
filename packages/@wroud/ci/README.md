@@ -1,14 +1,38 @@
 # @wroud/ci
 
+[![ESM-only package][package]][esm-info-url]
+[![NPM version][npm]][npm-url]
+
+<!-- [![Install size][size]][size-url] -->
+
+[package]: https://img.shields.io/badge/package-ESM--only-ffe536.svg
+[esm-info-url]: https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c
+[npm]: https://img.shields.io/npm/v/@wroud/ci.svg
+[npm-url]: https://npmjs.com/package/@wroud/ci
+[size]: https://packagephobia.com/badge?p=@wroud/ci
+[size-url]: https://packagephobia.com/result?p=@wroud/ci
+
 A small CLI for automating releases based on conventional commits. It bumps versions, updates your changelog and publishes GitHub releases.
 
 > **Note**: This tool currently works only with Yarn.
 
 ## Installation
 
+Install via npm:
+
 ```sh
-yarn add -D @wroud/ci
+npm install @wroud/ci
 ```
+
+Install via yarn
+
+```sh
+yarn add @wroud/ci
+```
+
+## Documentation
+
+For detailed usage and API reference, visit the [documentation site](https://wroud.dev).
 
 ## Configuration
 
@@ -48,9 +72,9 @@ Add scripts to your `package.json`:
 ```json
 {
   "scripts": {
-    "ci:release": "ci release --prefix v",
-    "ci:git-tag": "ci git-tag --prefix v",
-    "ci:release-github": "ci release-github --prefix v"
+    "ci:release": "ci release",
+    "ci:git-tag": "ci git-tag",
+    "ci:release-github": "ci release-github"
   }
 }
 ```
@@ -85,15 +109,15 @@ jobs:
           cache: 'yarn'
       - run: yarn install --immutable
       - run: yarn build
-      - run: npx @wroud/ci release-github --prefix v
+      - run: npx @wroud/ci release-github
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 ## Changelog
 
-Changes are documented in the [CHANGELOG](./CHANGELOG.md).
+All notable changes to this project will be documented in the [CHANGELOG](./CHANGELOG.md) file.
 
 ## License
 
-MIT
+This project is licensed under the MIT License. See the [LICENSE](./LICENSE) file for details.

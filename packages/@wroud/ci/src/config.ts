@@ -10,11 +10,7 @@ const CONFIG_FILE = "wroud.ci.config.js";
 
 export async function loadConfig(): Promise<ICIConfig> {
   try {
-    const configPath = path.resolve(process.cwd(), CONFIG_FILE);
-    const code = await readFile(configPath, "utf8");
-    const mod = await import(
-      `data:text/javascript;base64,${Buffer.from(code).toString("base64")}`
-    );
+    const mod = await import(path.resolve(process.cwd(), CONFIG_FILE));
     return mod.default ?? mod;
   } catch {
     return {};

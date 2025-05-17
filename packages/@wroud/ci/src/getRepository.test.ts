@@ -1,41 +1,61 @@
-import { describe, it, expect, afterEach } from "vitest";
-import { writeFile } from "fs/promises";
-import { temporaryDirectory } from "tempy";
+import { describe, it, expect, afterEach, vi, beforeEach } from "vitest";
+import { fs, vol } from "memfs";
 import path from "path";
 import { getRepository } from "./config.js";
 
-const cwd = process.cwd();
+vi.mock("fs", () => fs);
+vi.mock("fs/promises", () => fs.promises);
 
-afterEach(() => {
-  process.chdir(cwd);
-  delete process.env["GITHUB_REPOSITORY"];
+let configMock = {};
+
+vi.doMock("/project/wroud.ci.config.js", () => {
+  return {
+    get default() {
+      return configMock;
+    },
+  };
 });
 
-describe("getRepository", () => {
+const CWD = path.normalize("/project");
+let cwdSpy: ReturnType<typeof vi.spyOn>;
+
+beforeEach(() => {
+  vol.reset();
+  cwdSpy = vi.spyOn(process, "cwd").mockReturnValue(CWD);
+  vi.resetModules();
+});
+
+afterEach(() => {
+  vol.reset();
+  cwdSpy.mockRestore();
+  delete process.env["GITHUB_REPOSITORY"];
+  vi.resetModules();
+  vi.clearAllMocks();
+  configMock = {};
+});
+
+describe.sequential("getRepository", () => {
   it("from env", async () => {
     process.env["GITHUB_REPOSITORY"] = "owner/env";
     expect(await getRepository()).toBe("owner/env");
   });
 
   it("from config", async () => {
-    const dir = temporaryDirectory();
-    await writeFile(
-      path.join(dir, "wroud.ci.config.js"),
-      "export default { repository: 'owner/config' };",
-    );
-    process.chdir(dir);
-
+    configMock = { repository: "owner/config" };
     expect(await getRepository()).toBe("owner/config");
   });
 
   it("from package.json", async () => {
-    const dir = temporaryDirectory();
-    await writeFile(
-      path.join(dir, "package.json"),
-      JSON.stringify({ repository: { url: "https://github.com/owner/pkg" } }),
+    vol.fromJSON(
+      {
+        "package.json": JSON.stringify({
+          repository: { url: "https://github.com/owner/pkg" },
+        }),
+      },
+      CWD,
     );
-    process.chdir(dir);
 
+    console.log("try");
     expect(await getRepository()).toBe("owner/pkg");
   });
 });

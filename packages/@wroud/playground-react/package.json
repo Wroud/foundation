@@ -14,7 +14,7 @@
     "build": "tsc -b",
     "watch:tsc": "tsc -b -w",
     "clear": "rimraf lib",
-    "test": "vitest run"
+    "test": "tests-runner"
   },
   "files": [
     "package.json",
@@ -36,7 +36,9 @@
   "devDependencies": {
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitest/coverage-v8": "^2",
     "@wroud/ci": "workspace:^",
+    "@wroud/tests-runner": "workspace:^",
     "@wroud/tsconfig": "workspace:^",
     "@wroud/vite-plugin-ssg": "workspace:^",
     "react": "^19",

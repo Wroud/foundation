@@ -120,6 +120,15 @@ export const sidebar: DefaultTheme.Sidebar = {
               },
             ],
           },
+          {
+            text: "Preconditions",
+            base: "/packages/preconditions/",
+            items: [
+              { text: "Overview", link: "overview" },
+              { text: "Installation", link: "install" },
+              { text: "Usage", link: "usage" },
+            ],
+          },
         ],
       },
     ],

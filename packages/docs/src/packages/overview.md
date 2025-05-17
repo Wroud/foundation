@@ -9,6 +9,7 @@ The Wroud Foundation offers a suite of tools to help developers implement best p
 ## Available Packages
 
 - **@wroud/di**: A lightweight dependency injection library for JavaScript inspired by [.NET's DI](https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection) system. Written in TypeScript, it supports modern JavaScript features, including decorators, and provides robust dependency management capabilities.
+- **@wroud/preconditions**: Manage entity preconditions with dynamic applicability and fulfillment logic.
 
 - **Other Packages**: More tools to come, each aimed at addressing specific challenges in JavaScript development.
 
@@ -29,6 +30,12 @@ Use the sidebar to navigate through the documentation. Each package has its own 
 - **[Installation](./di/integrations/react/install)**: Step-by-step guide to setting it up in your React application.
 - **[Usage](./di/integrations/react/usage)**: Practical examples and patterns for using it within React components.
 - **[API](./di/integrations/react/api)**: Complete API reference.
+
+## Preconditions (`@wroud/preconditions`)
+
+- **[Overview](./preconditions/overview)**: Introduction and key features.
+- **[Installation](./preconditions/install)**: Step-by-step guide to installing the package.
+- **[Usage](./preconditions/usage)**: Example of defining and applying preconditions.
 
 ## Future Tools
 

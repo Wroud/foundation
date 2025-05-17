@@ -9,3 +9,5 @@ How to test:
 Ignore files and folders presented in .gitignore
 
 Always ensure that tests passed before finishing task
+
+Commit messages and PR titles should follow conventional commits format

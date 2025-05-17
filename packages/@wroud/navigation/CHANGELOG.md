@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.1.2 -->
+## 0.1.2 (2025-05-17)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/nav-v0.1.1...nav-v0.1.2)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- support numeric and boolean params ([#20](https://github.com/Wroud/foundation/issues/20)) ([174a6d0](https://github.com/Wroud/foundation/commit/174a6d0))
+
 <!-- version:0.1.1 -->
 ## 0.1.1 (2025-04-05)
 

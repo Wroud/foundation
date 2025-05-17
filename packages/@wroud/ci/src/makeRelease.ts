@@ -32,7 +32,7 @@ import { stdout } from "process";
 import { readPackageJson } from "./readPackageJson.js";
 import { defaultChangelogFile } from "./defaultChangelogFile.js";
 import { getGithubLink, gitGithubLinks, GithubURL } from "@wroud/github";
-import { REPOSITORY } from "./REPOSITORY.js";
+import { getRepository } from "./config.js";
 
 export interface IMakeReleaseOptions {
   changeLogFile?: string;
@@ -50,6 +50,8 @@ export async function makeRelease({
   const lastRelease = await getGitLastSemverTag({
     prefix,
   });
+
+  const repository = await getRepository();
 
   if (dryRun) {
     console.log("Last release: ", lastRelease);
@@ -112,9 +114,9 @@ export async function makeRelease({
   }
 
   await pipeline(
-    Readable.from(changelogHead(version, commits, lastRelease, prefix)).map(
-      (line) => line + "\n",
-    ),
+    Readable.from(
+      changelogHead(version, commits, repository, lastRelease, prefix),
+    ).map((line) => line + "\n"),
     mockWritableStream(dryRun, () =>
       createWriteStream(tmpFile, { flags: "w" }),
     ),
@@ -171,6 +173,7 @@ export async function makeRelease({
 async function* changelogHead(
   version: string,
   commits: IConventionalCommit[],
+  repository: string | undefined,
   previousVersion?: string | null,
   tagPrefix?: string,
 ): AsyncGenerator<string> {
@@ -178,18 +181,33 @@ async function* changelogHead(
 
   yield* createConventionalChangelogHeader(
     version,
-    getCompareUrl(getGitPrefixedTag(version, tagPrefix), previousVersion),
+    repository
+      ? getCompareUrl(
+          repository,
+          getGitPrefixedTag(version, tagPrefix),
+          previousVersion,
+        )
+      : undefined,
   );
   yield* createConventionalChangelog(commits, {
     getMetadata: async (commit) => {
       return {
-        url: GithubURL.commit(REPOSITORY, commit.commitInfo.hash),
+        url: repository
+          ? GithubURL.commit(repository, commit.commitInfo.hash)
+          : undefined,
         formatter(message) {
-          for (const [token, link] of Object.entries(commit.commitInfo.links)) {
-            const githubLink = getGithubLink(link, REPOSITORY);
+          if (repository) {
+            for (const [token, link] of Object.entries(
+              commit.commitInfo.links,
+            )) {
+              const githubLink = getGithubLink(link, repository);
 
-            if (githubLink) {
-              message = message.replaceAll(token, `[${token}](${githubLink})`);
+              if (githubLink) {
+                message = message.replaceAll(
+                  token,
+                  `[${token}](${githubLink})`,
+                );
+              }
             }
           }
 
@@ -216,11 +234,12 @@ function mockWritableStream<T extends WriteStream>(
 }
 
 function getCompareUrl(
+  repository: string,
   version: string,
   previousVersion?: string | null,
 ): string | undefined {
   if (!previousVersion) {
     return undefined;
   }
-  return `https://github.com/Wroud/foundation/compare/${previousVersion}...${version}`;
+  return `https://github.com/${repository}/compare/${previousVersion}...${version}`;
 }

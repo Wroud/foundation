@@ -4,6 +4,7 @@ import { hideBin } from "yargs/helpers";
 import { makeRelease } from "./makeRelease.js";
 import { createReleaseTag } from "./createReleaseTag.js";
 import { publishGithubRelease } from "./publishGithubRelease.js";
+import { getTagPrefix } from "./config.js";
 import { createActionAuth } from "@octokit/auth-action";
 
 await yargs(hideBin(process.argv))
@@ -34,7 +35,7 @@ await yargs(hideBin(process.argv))
     },
     async (argv) => {
       await makeRelease({
-        prefix: argv.prefix,
+        prefix: argv.prefix ?? (await getTagPrefix()),
         changeLogFile: argv.changeLogFile,
         dryRun: argv.dryRun,
         path: argv.path,
@@ -64,7 +65,7 @@ await yargs(hideBin(process.argv))
     },
     async (argv) => {
       await createReleaseTag({
-        prefix: argv.prefix,
+        prefix: argv.prefix ?? (await getTagPrefix()),
         dryRun: argv.dryRun,
       });
     },
@@ -107,7 +108,7 @@ await yargs(hideBin(process.argv))
         authStrategy,
         owner,
         repository,
-        prefix: argv.prefix,
+        prefix: argv.prefix ?? (await getTagPrefix()),
         dryRun,
       });
     },

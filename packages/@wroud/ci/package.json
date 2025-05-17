@@ -1,8 +1,17 @@
 {
   "name": "@wroud/ci",
   "private": true,
+  "version": "0.0.0",
   "type": "module",
   "packageManager": "yarn@4.6.0",
+  "license": "MIT",
+  "author": "Wroud",
+  "homepage": "https://wroud.dev",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Wroud/foundation",
+    "directory": "packages/@wroud/ci"
+  },
   "bin": "./lib/cli.js",
   "scripts": {
     "test": "tests-runner",
@@ -31,8 +40,10 @@
     "@types/semver": "^7",
     "@types/yargs": "^17",
     "@vitest/coverage-v8": "^2",
+    "@wroud/tests-runner": "workspace:*",
     "@wroud/tsconfig": "workspace:*",
     "concurrently": "^9",
+    "memfs": "^4",
     "rimraf": "^6",
     "typescript": "^5",
     "vitest": "^2"

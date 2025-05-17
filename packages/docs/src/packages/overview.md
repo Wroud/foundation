@@ -9,6 +9,7 @@ The Wroud Foundation offers a suite of tools to help developers implement best p
 ## Available Packages
 
 - **@wroud/di**: A lightweight dependency injection library for JavaScript inspired by [.NET's DI](https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection) system. Written in TypeScript, it supports modern JavaScript features, including decorators, and provides robust dependency management capabilities.
+- **@wroud/vite-plugin-asset-resolver**: A Vite plugin that resolves assets from source directories when your compiled files live elsewhere.
 
 - **Other Packages**: More tools to come, each aimed at addressing specific challenges in JavaScript development.
 
@@ -29,6 +30,13 @@ Use the sidebar to navigate through the documentation. Each package has its own 
 - **[Installation](./di/integrations/react/install)**: Step-by-step guide to setting it up in your React application.
 - **[Usage](./di/integrations/react/usage)**: Practical examples and patterns for using it within React components.
 - **[API](./di/integrations/react/api)**: Complete API reference.
+
+## Asset Resolver (`@wroud/vite-plugin-asset-resolver`)
+
+- **[Overview](./vite-plugin-asset-resolver/overview)**: Introduction and key features.
+- **[Installation](./vite-plugin-asset-resolver/install)**: How to install the plugin.
+- **[Usage](./vite-plugin-asset-resolver/usage)**: Example configuration.
+- **[API](./vite-plugin-asset-resolver/api)**: Reference for available options.
 
 ## Future Tools
 

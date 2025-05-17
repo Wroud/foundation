@@ -16,6 +16,9 @@ hero:
     - theme: alt
       text: "@wroud/di-react"
       link: packages/di/integrations/react/overview
+    - theme: alt
+      text: "@wroud/vite-plugin-asset-resolver"
+      link: /packages/vite-plugin-asset-resolver/overview
   image:
     src: /icon-big.svg
     alt: Wroud Foundation

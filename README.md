@@ -9,6 +9,7 @@ The Wroud Foundation provides tools to help developers implement best practices 
 ### Available Packages
 
 - **@wroud/di**: A lightweight dependency injection library for JavaScript inspired by [.NET's DI](https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection) system. Written in TypeScript, it supports modern JavaScript features, including decorators, and provides robust dependency management capabilities.
+- **@wroud/vite-plugin-asset-resolver**: A Vite plugin that maps compiled asset paths back to source directories for custom resolution.
 
 ### Future Tools
 

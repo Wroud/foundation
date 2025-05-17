@@ -21,6 +21,12 @@ Explore the tools available for analyzing and visualizing your dependency graph.
 - [DI Tools](/guide/package/di-tools/)
 - [@wroud/di-tools-analyzer](/guide/package/di-tools/analyzer/introduction)
 
+### Vite Plugins
+
+Enhance your Vite workflow with dedicated plugins.
+
+- [@wroud/vite-plugin-asset-resolver](/guide/package/vite-plugin-asset-resolver/)
+
 ## Getting Started
 
 If you're new to Wroud Foundation, we recommend starting with the Dependency Injection (DI) guide. It provides a comprehensive overview of the `@wroud/di` package's capabilities and how to integrate it into your projects.

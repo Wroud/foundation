@@ -3,6 +3,20 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.5.3 -->
+## 0.5.3 (2025-05-17)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/ts-template-v0.5.2...ts-template-v0.5.3)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- correct parsePackageName filename and imports ([#18](https://github.com/Wroud/foundation/issues/18)) ([7e8e0b2](https://github.com/Wroud/foundation/commit/7e8e0b2))
+
+### 📖 Documentation
+
+- fix installation instructions ([#17](https://github.com/Wroud/foundation/issues/17)) ([430d737](https://github.com/Wroud/foundation/commit/430d737))
+
 <!-- version:0.5.2 -->
 ## 0.5.2 (2025-02-07)
 

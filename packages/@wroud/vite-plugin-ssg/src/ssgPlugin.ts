@@ -18,7 +18,7 @@ import {
 } from "./modules/mainQuery.js";
 import { addQueryParam, parseQueryParams } from "./utils/queryParam.js";
 import { cleanSsgAssetId, isSsgAssetId } from "./modules/isSsgAssetId.js";
-import { isSSgHtmlTagsId } from "./utils/ssgHtmlTags.js";
+import { isSsgHtmlTagsId } from "./utils/ssgHtmlTags.js";
 import {
   createSsgPageUrlId,
   isSsgPageUrlId,
@@ -134,7 +134,7 @@ export const ssgPlugin = (
           if (
             isSsgClientEntryId(source) ||
             isSsgServerEntryId(source) ||
-            isSSgHtmlTagsId(source) ||
+            isSsgHtmlTagsId(source) ||
             (importer &&
               isMainId(source) &&
               (isSsgClientEntryId(importer) || isSsgServerEntryId(importer)))
@@ -440,7 +440,7 @@ export const ssgPlugin = (
             };
           }
 
-          if (isSSgHtmlTagsId(id)) {
+          if (isSsgHtmlTagsId(id)) {
             return {
               code: `export default __VITE_SSG_HTML_TAGS__;`,
               moduleType: "js",

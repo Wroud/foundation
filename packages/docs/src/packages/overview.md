@@ -10,6 +10,8 @@ The Wroud Foundation offers a suite of tools to help developers implement best p
 
 - **@wroud/di**: A lightweight dependency injection library for JavaScript inspired by [.NET's DI](https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection) system. Written in TypeScript, it supports modern JavaScript features, including decorators, and provides robust dependency management capabilities.
 
+- **@wroud/react-split-view**: A React hook for building resizable split panes with optional sticky edges.
+
 - **Other Packages**: More tools to come, each aimed at addressing specific challenges in JavaScript development.
 
 # Navigation
@@ -29,6 +31,13 @@ Use the sidebar to navigate through the documentation. Each package has its own 
 - **[Installation](./di/integrations/react/install)**: Step-by-step guide to setting it up in your React application.
 - **[Usage](./di/integrations/react/usage)**: Practical examples and patterns for using it within React components.
 - **[API](./di/integrations/react/api)**: Complete API reference.
+
+## React Split View (`@wroud/react-split-view`)
+
+- **[Overview](./react-split-view/overview)**: Introduction and key features.
+- **[Installation](./react-split-view/install)**: Steps to add it to your project.
+- **[Usage](./react-split-view/usage)**: Examples for horizontal and vertical splits.
+- **[API](./react-split-view/api)**: Complete API reference.
 
 ## Future Tools
 

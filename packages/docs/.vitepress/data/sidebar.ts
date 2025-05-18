@@ -139,6 +139,16 @@ export const sidebar: DefaultTheme.Sidebar = {
               { text: "API", link: "api" },
             ],
           },
+          {
+            text: "React Tree",
+            base: "/packages/react-tree/",
+            items: [
+              { text: "Overview", link: "overview" },
+              { text: "Installation", link: "install" },
+              { text: "Usage", link: "usage" },
+              { text: "API", link: "api" },
+            ],
+          },
         ],
       },
     ],

@@ -2,7 +2,7 @@
   "name": "@wroud/_aggregate",
   "version": "0.0.1",
   "private": true,
-  "packageManager": "yarn@4.6.0",
+  "packageManager": "yarn@4.9.1",
   "type": "module",
   "license": "MIT",
   "author": "Wroud",

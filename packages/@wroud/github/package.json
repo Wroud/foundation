@@ -3,7 +3,7 @@
   "description": "A lightweight GitHub integration library for working with git history, co-authors, issues, and commit links. Supports extracting GitHub metadata, generating GitHub URLs, and managing commit trailers in TypeScript.",
   "version": "0.1.3",
   "type": "module",
-  "packageManager": "yarn@4.6.0",
+  "packageManager": "yarn@4.9.1",
   "exports": {
     ".": "./lib/index.js"
   },

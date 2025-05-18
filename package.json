@@ -2,7 +2,7 @@
   "name": "foundation",
   "private": true,
   "version": "0.0.1",
-  "packageManager": "yarn@4.6.0",
+  "packageManager": "yarn@4.9.1",
   "type": "module",
   "license": "MIT",
   "author": "Wroud",
@@ -31,9 +31,9 @@
     "husky": "^9",
     "is-ci": "^3",
     "pinst": "^3",
-    "prettier": "^3",
+    "prettier": "^3.5.3",
     "rimraf": "^6",
-    "typescript": "^5",
+    "typescript": "^5.8.3",
     "vitest": "^2"
   },
   "dependencies": {

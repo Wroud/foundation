@@ -3,7 +3,7 @@
   "description": "A flexible, pattern-matching navigation system for JavaScript applications with built-in routing, browser integration, and navigation state management",
   "version": "0.1.2",
   "type": "module",
-  "packageManager": "yarn@4.6.0",
+  "packageManager": "yarn@4.9.1",
   "license": "MIT",
   "author": "Wroud",
   "homepage": "https://wroud.dev/",

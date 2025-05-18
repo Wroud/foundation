@@ -2,7 +2,7 @@
   "name": "@wroud/tests-runner",
   "private": true,
   "type": "module",
-  "packageManager": "yarn@4.6.0",
+  "packageManager": "yarn@4.9.1",
   "bin": {
     "benchmark": "./bin/benchmark.mjs",
     "tests-runner": "./bin/tests-runner.mjs"

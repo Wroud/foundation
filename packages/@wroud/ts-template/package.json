@@ -2,7 +2,7 @@
   "name": "@wroud/ts-template",
   "description": "",
   "version": "0.5.3",
-  "packageManager": "yarn@4.6.0",
+  "packageManager": "yarn@4.9.1",
   "license": "MIT",
   "author": "Wroud",
   "homepage": "https://wroud.dev/",

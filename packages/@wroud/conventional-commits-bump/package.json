@@ -3,7 +3,7 @@
   "description": "A utility for determining version bump types (major, minor, patch) based on conventional commit messages, facilitating semantic versioning in your projects.",
   "version": "0.1.3",
   "type": "module",
-  "packageManager": "yarn@4.6.0",
+  "packageManager": "yarn@4.9.1",
   "bin": "./lib/cli.js",
   "exports": {
     ".": "./lib/index.js"

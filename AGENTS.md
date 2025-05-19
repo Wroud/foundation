@@ -8,6 +8,7 @@
 
 ## Testing Instructions
 - Find the CI plan in the .github/workflows folder.
+- After deleting or renaming test files or source files you need to run `yarn clear` before building sources.
 - Run `yarn workspace <project_name> build` to build sources for that package.
 - Run `yarn workspace <project_name> test run` to run every check defined for that package.
 - From the package root you can just call `yarn build` and after `yarn test run`. The commit should pass all tests before you merge.
@@ -18,6 +19,10 @@
 - Add or update tests for the code you change, even if nobody asked.
 - Keep formatting using `yarn prettier <path_to_file> --write`.
 
+## @wroud/docs
+- To build docs first you need to build all packages. Run command `yarn build` from root directory
+- Docs doesn't have tests, do not try to run tests.
+
 ## PR instructions
 Title format: conventional commits format
 
@@ -25,3 +30,4 @@ Title format: conventional commits format
 - Ignore files and folders presented in .gitignore
 - Always ensure that tests passed before finishing task
 - Commit messages and PR titles should follow conventional commits format
+- In case you see failing tests that doesn't exists try to run `yarn clear` to remove `lib` files that may contain old tests or source files.

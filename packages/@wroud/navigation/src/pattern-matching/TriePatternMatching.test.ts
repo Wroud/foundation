@@ -394,6 +394,27 @@ describe("TriePatternMatching", () => {
       patternMatcher.decode(newPattern, "/new-route/456");
       expect(addPatternSpy).toHaveBeenCalledWith(newPattern);
     });
+
+    test("should decode typed number and boolean parameters", () => {
+      const pattern = "/blog/:year<number>/:month<number>/:slug";
+      const url = "/blog/2023/1/hello";
+      const params = patternMatcher.decode(pattern, url);
+      expect(params).toEqual({ year: 2023, month: 1, slug: "hello" });
+    });
+
+    test("should decode boolean parameter", () => {
+      const pattern = "/user/enable/:state<boolean>";
+      const url = "/user/enable/true";
+      const params = patternMatcher.decode(pattern, url);
+      expect(params).toEqual({ state: true });
+    });
+
+    test("should decode typed wildcard parameters", () => {
+      const pattern = "/users/:id<number>*";
+      const url = "/users/1/2/3";
+      const params = patternMatcher.decode(pattern, url);
+      expect(params).toEqual({ id: [1, 2, 3] });
+    });
   });
 
   describe("Encoding parameters", () => {

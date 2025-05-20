@@ -1,8 +1,11 @@
-import type { RouteParams } from "../IRouteMatcher.js";
+import type { RouteParams, RouteParamValue } from "../IRouteMatcher.js";
 import {
   isParameterSegment,
   isWildcardSegment,
   extractParamName,
+  extractParamType,
+  splitPath,
+  type ParamType,
 } from "./path-utils.js";
 
 /**
@@ -74,4 +77,51 @@ export function buildUrlSegments(
 
     return result;
   }, []);
+}
+
+/**
+ * Convert a raw string value according to declared parameter type.
+ */
+export function convertParamValue(
+  value: string,
+  type: ParamType,
+): RouteParamValue {
+  switch (type) {
+    case "number":
+      return Number(value);
+    case "boolean":
+      return value === "true" || value === "1";
+    default:
+      return value;
+  }
+}
+
+/**
+ * Parse parameters from matched segments according to types defined in pattern
+ */
+export function parseParameters(
+  pattern: string,
+  params: RouteParams,
+): RouteParams {
+  const segments = splitPath(pattern);
+  const result: RouteParams = {};
+
+  segments.forEach((segment) => {
+    if (!isParameterSegment(segment)) return;
+
+    const name = extractParamName(segment);
+    const type = extractParamType(segment);
+    const value = params[name];
+
+    if (value === undefined) return;
+
+    if (isWildcardSegment(segment)) {
+      const arrayValue = Array.isArray(value) ? value : [value];
+      result[name] = arrayValue.map((v) => convertParamValue(String(v), type));
+    } else {
+      result[name] = convertParamValue(String(value), type);
+    }
+  });
+
+  return result;
 }

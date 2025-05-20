@@ -2,12 +2,16 @@ import { TrieNode } from "./TrieNode.js";
 import { matchSegments } from "./matcher.js";
 import {
   extractParamName,
+  extractParamType,
   isParameterSegment,
   isWildcardSegment,
   joinPath,
   splitPath,
 } from "./path-utils.js";
-import { buildUrlSegments, validateParameters } from "./parameter-utils.js";
+import {
+  buildUrlSegments,
+  validateParameters,
+} from "./parameter-utils.js";
 import type {
   TypedPatternMatcher,
   ExtractRouteParams,
@@ -49,7 +53,10 @@ export class TriePatternMatching implements TypedPatternMatcher, IRouteMatcher {
   }
 
   /**
-   * Add a pattern to the trie (e.g., "/user/:id/:action")
+   * Add a pattern to the trie (e.g., "/user/:id<number>")
+   *
+   * Parameter nodes store declared type information which
+   * is later used to convert matched values.
    */
   addPattern(pattern: string): void {
     if (this.patterns.has(pattern)) return;
@@ -69,9 +76,10 @@ export class TriePatternMatching implements TypedPatternMatcher, IRouteMatcher {
 
       if (isParameterSegment(segment)) {
         const paramName = extractParamName(segment);
+        const paramType = extractParamType(segment);
         current = isWildcardSegment(segment)
-          ? current.getOrCreateWildcardChild(paramName)
-          : current.getOrCreateParamChild(paramName);
+          ? current.getOrCreateWildcardChild(paramName, paramType)
+          : current.getOrCreateParamChild(paramName, paramType);
       } else {
         current = current.addStaticChild(segment);
       }

@@ -1,5 +1,6 @@
 import type { RouteParams } from "../IRouteMatcher.js";
 import { TrieNode } from "./TrieNode.js";
+import { convertParamValue } from "./parameter-utils.js";
 import type { ExtendedMatchResult } from "./types.js";
 
 // Default empty match result to use instead of undefined
@@ -14,6 +15,9 @@ const emptyMatchResult: ExtendedMatchResult = { matched: false, params: {} };
  * @param index Current index in segments
  * @param params Accumulated parameters
  * @returns Array of match results
+ *
+ * Converts the current segment to the correct primitive type
+ * using the parameter type stored on the trie node.
  */
 function matchStaticSegment(
   node: TrieNode,
@@ -40,6 +44,9 @@ function matchStaticSegment(
  * @param index Current index in segments
  * @param params Accumulated parameters
  * @returns Array of match results
+ *
+ * Consumes one or more segments and converts them to the
+ * declared parameter type stored on the wildcard node.
  */
 function matchParameterSegment(
   node: TrieNode,
@@ -51,7 +58,9 @@ function matchParameterSegment(
   if (!node.paramChild) return [];
 
   const paramName = node.paramChild.name;
-  const newParams = { ...params, [paramName]: segment };
+  const paramType = node.paramChild.paramType;
+  const value = convertParamValue(segment, paramType);
+  const newParams = { ...params, [paramName]: value };
   const result = matchSegments(node.paramChild, segments, index + 1, newParams);
 
   return result.matched ? [result] : [];
@@ -75,6 +84,7 @@ function matchWildcardSegment(
   if (!node.wildcardChild) return [];
 
   const paramName = node.wildcardChild.name;
+  const paramType = node.wildcardChild.paramType;
   const remainingSegments = segments.length - index;
   if (remainingSegments <= 0) return [];
 
@@ -82,7 +92,7 @@ function matchWildcardSegment(
 
   // Optimization for wildcards at the end of pattern
   if (node.wildcardChild.isEndOfPattern) {
-    const validSegments = segments.slice(index);
+    const validSegments = segments.slice(index).map((s) => convertParamValue(s, paramType));
     if (!validSegments.includes(undefined as any)) {
       results.push({
         matched: true,
@@ -98,7 +108,10 @@ function matchWildcardSegment(
   // 1. Non-greedy (minimal) match - just one segment
   const segment = segments[index];
   if (segment !== undefined) {
-    const nonGreedyParams = { ...params, [paramName]: [segment] };
+    const nonGreedyParams = {
+      ...params,
+      [paramName]: [convertParamValue(segment, paramType)],
+    };
     const nonGreedyResult = matchSegments(
       node.wildcardChild,
       segments,
@@ -115,7 +128,9 @@ function matchWildcardSegment(
   if (remainingSegments > 1) {
     // Start with max segments and work backwards for efficiency
     for (let i = remainingSegments; i > 1; i--) {
-      const consumedSegments = segments.slice(index, index + i);
+      const consumedSegments = segments
+        .slice(index, index + i)
+        .map((s) => convertParamValue(s, paramType));
       if (consumedSegments.includes(undefined as any)) continue;
 
       const greedyParams = { ...params, [paramName]: consumedSegments };

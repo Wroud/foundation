@@ -1,6 +1,6 @@
 {
   "name": "@wroud/ci",
-  "private": true,
+  "description": "A small CLI for automating releases based on conventional commits. It bumps versions, updates your changelog and publishes GitHub releases.",
   "version": "0.0.0",
   "type": "module",
   "packageManager": "yarn@4.9.1",
@@ -13,7 +13,24 @@
     "directory": "packages/@wroud/ci"
   },
   "bin": "./lib/cli.js",
+  "files": [
+    "package.json",
+    "LICENSE",
+    "README.md",
+    "CHANGELOG.md",
+    "lib",
+    "!lib/**/*.d.ts.map",
+    "!lib/**/*.test.js",
+    "!lib/**/*.test.d.ts",
+    "!lib/**/*.test.d.ts.map",
+    "!lib/**/*.test.js.map",
+    "!lib/tests",
+    "!.tsbuildinfo"
+  ],
   "scripts": {
+    "ci:release": "ci release",
+    "ci:git-tag": "ci git-tag",
+    "ci:release-github": "ci release-github",
     "test": "tests-runner",
     "test:ci": "CI=true yarn run test",
     "build": "tsc -b",
@@ -47,5 +64,18 @@
     "rimraf": "^6",
     "typescript": "^5",
     "vitest": "^2"
-  }
+  },
+  "release": {
+    "tagPrefix": "ci-v"
+  },
+  "keywords": [
+    "ci",
+    "github",
+    "release",
+    "git",
+    "cli",
+    "conventional-commits",
+    "typescript",
+    "javascript"
+  ]
 }

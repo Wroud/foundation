@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.2.0 -->
+## 0.2.0 (2025-05-21)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/nav-v0.1.2...nav-v0.2.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- parse typed route params ([#36](https://github.com/Wroud/foundation/issues/36)) ([0c41d5f](https://github.com/Wroud/foundation/commit/0c41d5f))
+
 <!-- version:0.1.2 -->
 ## 0.1.2 (2025-05-17)
 

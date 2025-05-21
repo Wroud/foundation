@@ -16,7 +16,7 @@
     "react": "^18",
     "react-dom": "^18",
     "unocss": "^66",
-    "unplugin-vue-components": "^0",
+    "unplugin-vue-components": "^28",
     "vite": "^6",
     "vitepress": "^1",
     "vitepress-plugin-tabs": "^0",

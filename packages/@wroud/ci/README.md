@@ -14,7 +14,7 @@
 
 A small CLI for automating releases based on conventional commits. It bumps versions, updates your changelog and publishes GitHub releases.
 
-> **Note**: This tool currently works only with Yarn.
+> **Note**: This tool works with Yarn, npm and pnpm.
 
 ## Installation
 

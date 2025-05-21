@@ -4,6 +4,7 @@ import { readFile } from "node:fs/promises";
 export interface ICIConfig {
   repository?: string;
   tagPrefix?: string;
+  packageManager?: "yarn" | "npm" | "pnpm";
 }
 
 const CONFIG_FILE = "wroud.ci.config.js";
@@ -63,6 +64,29 @@ export async function getTagPrefix(): Promise<string | undefined> {
     }
     if (typeof pkg.release?.tagPrefix === "string") {
       return pkg.release.tagPrefix;
+    }
+  } catch {}
+
+  return undefined;
+}
+
+export async function getPackageManager(): Promise<"yarn" | "npm" | "pnpm" | undefined> {
+  const config = await loadConfig();
+  if (
+    config.packageManager === "yarn" ||
+    config.packageManager === "npm" ||
+    config.packageManager === "pnpm"
+  ) {
+    return config.packageManager;
+  }
+
+  try {
+    const pkgPath = path.resolve(process.cwd(), "package.json");
+    const pkgCode = await readFile(pkgPath, "utf8");
+    const pkg = JSON.parse(pkgCode);
+    const pm = pkg.packageManager?.split("@")[0];
+    if (pm === "yarn" || pm === "npm" || pm === "pnpm") {
+      return pm;
     }
   } catch {}
 

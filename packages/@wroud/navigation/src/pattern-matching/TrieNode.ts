@@ -1,5 +1,4 @@
 import type { NodeType } from "./types.js";
-import type { ParamType } from "./path-utils.js";
 
 /**
  * TrieNode represents a node in the pattern matching trie
@@ -11,7 +10,7 @@ export class TrieNode {
   paramChild: TrieNode | null;
   wildcardChild: TrieNode | null;
   /** Type of the parameter for param/wildcard nodes */
-  paramType: ParamType;
+  paramType: string;
   isEndOfPattern: boolean;
   pattern: string | null;
   parent: TrieNode | null;
@@ -20,7 +19,7 @@ export class TrieNode {
     type: NodeType = "static",
     name: string = "",
     parent: TrieNode | null = null,
-    paramType: ParamType = "string",
+    paramType: string = "string",
   ) {
     this.type = type;
     this.name = name;
@@ -78,11 +77,9 @@ export class TrieNode {
    * @param paramName Parameter name
    * @param paramType Declared parameter type
    */
-  getOrCreateParamChild(paramName: string, paramType: ParamType): TrieNode {
+  getOrCreateParamChild(paramName: string, paramType: string): TrieNode {
     if (!this.paramChild) {
       this.paramChild = new TrieNode("param", paramName, this, paramType);
-    } else if (this.paramChild.paramType === "string") {
-      this.paramChild.paramType = paramType;
     }
     return this.paramChild;
   }
@@ -93,10 +90,7 @@ export class TrieNode {
    * @param wildcardName Parameter name for the wildcard
    * @param paramType Declared parameter type
    */
-  getOrCreateWildcardChild(
-    wildcardName: string,
-    paramType: ParamType,
-  ): TrieNode {
+  getOrCreateWildcardChild(wildcardName: string, paramType: string): TrieNode {
     if (!this.wildcardChild) {
       this.wildcardChild = new TrieNode(
         "wildcard",
@@ -104,8 +98,6 @@ export class TrieNode {
         this,
         paramType,
       );
-    } else if (this.wildcardChild.paramType === "string") {
-      this.wildcardChild.paramType = paramType;
     }
     return this.wildcardChild;
   }

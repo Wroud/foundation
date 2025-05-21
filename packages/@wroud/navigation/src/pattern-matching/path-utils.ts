@@ -43,15 +43,15 @@ export function extractParamName(segment: string): string {
   return name;
 }
 
-export type ParamType = "string" | "number" | "boolean";
+export function extractParamType(segment: string): string {
+  const startIndex = segment.indexOf("<");
+  const endIndex = segment.indexOf(">");
 
-export function extractParamType(segment: string): ParamType {
-  const match = segment.match(/<([^>]+)>/);
-  const type = match?.[1];
-  if (type === "number" || type === "boolean") {
-    return type;
+  if (startIndex === -1 || endIndex === -1) {
+    return "string";
   }
-  return "string";
+
+  return segment.slice(startIndex + 1, endIndex);
 }
 
 const pathCache = new Map<string, string>();

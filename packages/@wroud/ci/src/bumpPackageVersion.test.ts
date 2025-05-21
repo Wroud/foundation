@@ -25,12 +25,15 @@ afterEach(() => {
 
 describe.sequential("bumpPackageVersion", () => {
   it("yarn", async () => {
-    vol.fromJSON({
-      "package.json": JSON.stringify({ name: "pkg", version: "1.0.0" })
-    }, CWD);
+    vol.fromJSON(
+      {
+        "package.json": JSON.stringify({ name: "pkg", version: "1.0.0" }),
+      },
+      CWD,
+    );
     process.env["npm_config_user_agent"] = "yarn/4.0.0";
 
-    const { bumpPackageVersion } = await import("./packageManager.js");
+    const { bumpPackageVersion } = await import("./bumpPackageVersion.js");
 
     if (vi.isMockFunction(execa)) {
       execa.mockImplementationOnce(async () => {
@@ -43,17 +46,22 @@ describe.sequential("bumpPackageVersion", () => {
 
     const version = await bumpPackageVersion("patch");
 
-    expect(execa).toHaveBeenCalledWith("yarn", ["version", "patch"], { stdout: "inherit" });
+    expect(execa).toHaveBeenCalledWith("yarn", ["version", "patch"], {
+      stdout: "inherit",
+    });
     expect(version).toBe("1.0.1");
   });
 
   it("npm", async () => {
-    vol.fromJSON({
-      "package.json": JSON.stringify({ name: "pkg", version: "1.0.0" })
-    }, CWD);
+    vol.fromJSON(
+      {
+        "package.json": JSON.stringify({ name: "pkg", version: "1.0.0" }),
+      },
+      CWD,
+    );
     process.env["npm_config_user_agent"] = "npm/9.0.0";
 
-    const { bumpPackageVersion } = await import("./packageManager.js");
+    const { bumpPackageVersion } = await import("./bumpPackageVersion.js");
 
     if (vi.isMockFunction(execa)) {
       execa.mockImplementationOnce(async () => {
@@ -66,31 +74,26 @@ describe.sequential("bumpPackageVersion", () => {
 
     const version = await bumpPackageVersion("patch");
 
-    expect(execa).toHaveBeenCalledWith("npm", ["version", "patch"], { stdout: "inherit" });
+    expect(execa).toHaveBeenCalledWith("npm", ["version", "patch"], {
+      stdout: "inherit",
+    });
     expect(version).toBe("1.0.1");
   });
 
   it("pnpm", async () => {
-    vol.fromJSON({
-      "package.json": JSON.stringify({ name: "pkg", version: "1.0.0" })
-    }, CWD);
+    vol.fromJSON(
+      {
+        "package.json": JSON.stringify({ name: "pkg", version: "1.0.0" }),
+      },
+      CWD,
+    );
     process.env["npm_config_user_agent"] = "pnpm/8.0.0";
 
-    const { bumpPackageVersion } = await import("./packageManager.js");
+    const { bumpPackageVersion } = await import("./bumpPackageVersion.js");
 
     const version = await bumpPackageVersion("patch");
 
     expect(execa).not.toHaveBeenCalled();
     expect(version).toBe("1.0.1");
-  });
-
-  it("config", async () => {
-    vi.doMock("./config.js", () => ({ getPackageManager: () => Promise.resolve("npm") }));
-
-    const { detectPackageManager } = await import("./packageManager.js");
-
-    const pm = await detectPackageManager();
-
-    expect(pm).toBe("npm");
   });
 });

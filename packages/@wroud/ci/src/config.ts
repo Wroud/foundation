@@ -8,21 +8,22 @@ export interface ICIConfig {
 }
 
 const CONFIG_FILE = "wroud.ci.config.js";
+let configCache: ICIConfig | undefined;
 
 export async function loadConfig(): Promise<ICIConfig> {
-  try {
-    const mod = await import(path.resolve(process.cwd(), CONFIG_FILE));
-    return mod.default ?? mod;
-  } catch {
-    return {};
+  if (configCache === undefined) {
+    try {
+      const mod = await import(path.resolve(process.cwd(), CONFIG_FILE));
+      configCache = mod.default ?? mod;
+    } catch {
+      configCache = {};
+    }
   }
+
+  return configCache!;
 }
 
 export async function getRepository(): Promise<string | undefined> {
-  if (process.env["GITHUB_REPOSITORY"]) {
-    return process.env["GITHUB_REPOSITORY"];
-  }
-
   const config = await loadConfig();
   if (config.repository) {
     return config.repository;
@@ -41,6 +42,10 @@ export async function getRepository(): Promise<string | undefined> {
       }
     }
   } catch {}
+
+  if (process.env["GITHUB_REPOSITORY"]) {
+    return process.env["GITHUB_REPOSITORY"];
+  }
 
   return undefined;
 }
@@ -70,7 +75,9 @@ export async function getTagPrefix(): Promise<string | undefined> {
   return undefined;
 }
 
-export async function getPackageManager(): Promise<"yarn" | "npm" | "pnpm" | undefined> {
+export async function getPackageManager(): Promise<
+  "yarn" | "npm" | "pnpm" | undefined
+> {
   const config = await loadConfig();
   if (
     config.packageManager === "yarn" ||
@@ -90,5 +97,18 @@ export async function getPackageManager(): Promise<"yarn" | "npm" | "pnpm" | und
     }
   } catch {}
 
-  return undefined;
+  const userAgent = process.env["npm_config_user_agent"];
+  if (userAgent) {
+    if (userAgent.startsWith("yarn")) {
+      return "yarn";
+    }
+    if (userAgent.startsWith("pnpm")) {
+      return "pnpm";
+    }
+    if (userAgent.startsWith("npm")) {
+      return "npm";
+    }
+  }
+
+  return "yarn";
 }

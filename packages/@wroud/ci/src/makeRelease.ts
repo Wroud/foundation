@@ -30,7 +30,7 @@ import { createInterface } from "readline";
 import semver from "semver";
 import { stdout } from "process";
 import { readPackageJson } from "./readPackageJson.js";
-import { bumpPackageVersion } from "./packageManager.js";
+import { bumpPackageVersion } from "./bumpPackageVersion.js";
 import { defaultChangelogFile } from "./defaultChangelogFile.js";
 import { getGithubLink, gitGithubLinks, GithubURL } from "@wroud/github";
 import { getRepository } from "./config.js";

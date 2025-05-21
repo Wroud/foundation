@@ -1,3 +1,6 @@
+---
+applyTo: "**"
+---
 
 # Contributor Guide
 

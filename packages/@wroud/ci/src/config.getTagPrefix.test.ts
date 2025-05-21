@@ -1,7 +1,6 @@
-import { describe, it, expect, afterEach, vi, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { fs, vol } from "memfs";
 import path from "path";
-import { getRepository } from "./config.js";
 
 vi.mock("fs", () => fs);
 vi.mock("fs/promises", () => fs.promises);
@@ -28,34 +27,28 @@ beforeEach(() => {
 afterEach(() => {
   vol.reset();
   cwdSpy.mockRestore();
-  delete process.env["GITHUB_REPOSITORY"];
+  delete process.env["TAG_PREFIX"];
   vi.resetModules();
   vi.clearAllMocks();
   configMock = {};
 });
 
-describe.sequential("getRepository", () => {
+describe.sequential("getTagPrefix", () => {
   it("from env", async () => {
-    process.env["GITHUB_REPOSITORY"] = "owner/env";
-    expect(await getRepository()).toBe("owner/env");
+    process.env["TAG_PREFIX"] = "v";
+    const { getTagPrefix } = await import("./config.js");
+    expect(await getTagPrefix()).toBe("v");
   });
 
   it("from config", async () => {
-    configMock = { repository: "owner/config" };
-    expect(await getRepository()).toBe("owner/config");
+    configMock = { tagPrefix: "vv" };
+    const { getTagPrefix } = await import("./config.js");
+    expect(await getTagPrefix()).toBe("vv");
   });
 
   it("from package.json", async () => {
-    vol.fromJSON(
-      {
-        "package.json": JSON.stringify({
-          repository: { url: "https://github.com/owner/pkg" },
-        }),
-      },
-      CWD,
-    );
-
-    console.log("try");
-    expect(await getRepository()).toBe("owner/pkg");
+    vol.fromJSON({ "package.json": JSON.stringify({ tagPrefix: "v" }) }, CWD);
+    const { getTagPrefix } = await import("./config.js");
+    expect(await getTagPrefix()).toBe("v");
   });
 });

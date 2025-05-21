@@ -21,13 +21,19 @@ A small CLI for automating releases based on conventional commits. It bumps vers
 Install via npm:
 
 ```sh
-npm install @wroud/ci
+npm install --save-dev @wroud/ci
 ```
 
-Install via yarn
+Install via yarn:
 
 ```sh
-yarn add @wroud/ci
+yarn add --dev @wroud/ci
+```
+
+Install via pnpm:
+
+```sh
+pnpm add -D @wroud/ci
 ```
 
 ## Documentation
@@ -36,16 +42,19 @@ For detailed usage and API reference, visit the [documentation site](https://wro
 
 ## Configuration
 
-Create an optional `wroud.ci.config.js` in the project root:
+`@wroud/ci` looks for an optional `wroud.ci.config.js` file located next to the `package.json` it relates to. A minimal configuration may look like:
 
 ```js
 export default {
-  repository: "owner/repo",
-  tagPrefix: "v",
+  repository: "owner/repo", // used for changelog links
+  tagPrefix: "v",           // prefix for git tags
+  packageManager: "npm",    // npm | yarn | pnpm
 };
 ```
 
-`repository` is used to generate links in the changelog. If omitted, `GITHUB_REPOSITORY` or the `repository.url` field from `package.json` is used. `tagPrefix` sets the prefix for git tags. It can also be provided via the `TAG_PREFIX` environment variable or the `tagPrefix` field in `package.json`.
+- `repository` is required when publishing GitHub releases. It can also be provided via the `repository.url` field in `package.json`.
+- `tagPrefix` sets the prefix for git tags. It can alternatively be defined in `release.tagPrefix` inside `package.json`.
+- `packageManager` is only needed if the package manager cannot be detected automatically. You can specify it here or via the `packageManager` field in `package.json`.
 
 ## Commands
 
@@ -67,27 +76,22 @@ Publish GitHub releases for new tags.
 
 ## Single Package Repository
 
-Add scripts to your `package.json`:
+1. **Install** `@wroud/ci` as a dev dependency.
+2. **Add scripts** to `package.json`:
 
 ```json
 {
   "scripts": {
     "ci:release": "ci release",
     "ci:git-tag": "ci git-tag",
-    "ci:release-github": "ci release-github"
+    "ci:release-github": "ci release-github" // optional
   }
 }
 ```
 
-## Workspace with Multiple Packages
+3. **Configure** the repository URL and tag prefix in `package.json` or in a local `wroud.ci.config.js` file next to it.
 
-Run the commands for each package using `yarn workspaces foreach`:
-
-```sh
-yarn workspaces foreach -A --topological-dev run ci:release
-```
-
-## Example Workflow
+4. **Example GitHub Action** (`.github/workflows/release.yml`):
 
 ```yaml
 name: Release
@@ -100,18 +104,69 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      id-token: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - run: corepack enable
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 'lts/*'
+          registry-url: 'https://registry.npmjs.org'
           cache: 'yarn'
       - run: yarn install --immutable
       - run: yarn build
-      - run: npx @wroud/ci release-github
+      - run: yarn ci:release
+      - run: yarn ci:git-tag
+      - run: git push --follow-tags
+      - run: yarn ci:release-github
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+```
+
+## Multiple Package Workspace
+
+1. **Install** `@wroud/ci` in each package that should be released.
+2. **Add scripts** to each package's `package.json` as shown above.
+3. **Configure** a unique `tagPrefix` for every package using either `release.tagPrefix` in its `package.json` or an adjacent `wroud.ci.config.js` file. Ensure `repository.url` is set if GitHub releases are required.
+4. **Example GitHub Action** for a monorepo:
+
+```yaml
+name: Release
+on:
+  push:
+    tags:
+      - '*'
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - run: corepack enable
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          registry-url: 'https://registry.npmjs.org'
+          cache: 'yarn'
+      - run: yarn install --immutable
+      - run: yarn workspaces foreach -A --topological --no-private run ci:release
+      - run: git commit -m "chore: release" && yarn workspaces foreach -A --no-private run ci:git-tag
+      - run: git push --follow-tags
+      - run: yarn workspaces foreach -A --no-private run ci:release-github
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: yarn workspaces foreach -A --topological --no-private npm publish --access public --tolerate-republish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 ```
 
 ## Changelog

@@ -30,6 +30,7 @@ import { createInterface } from "readline";
 import semver from "semver";
 import { stdout } from "process";
 import { readPackageJson } from "./readPackageJson.js";
+import { bumpPackageVersion } from "./bumpPackageVersion.js";
 import { defaultChangelogFile } from "./defaultChangelogFile.js";
 import { getGithubLink, gitGithubLinks, GithubURL } from "@wroud/github";
 import { getRepository } from "./config.js";
@@ -81,22 +82,17 @@ export async function makeRelease({
     return;
   }
 
+  let version: string;
+
   if (dryRun) {
     console.log("Bump type: ", bump);
+    const pkg = await readPackageJson();
+    if (!pkg.version) {
+      throw new Error("Version not found in package.json");
+    }
+    version = semver.inc(pkg.version, bump)!;
   } else {
-    await execa("yarn", ["version", bump], {
-      stdout: "inherit",
-    });
-  }
-
-  let { version } = await readPackageJson();
-
-  if (!version) {
-    throw new Error("Version not found in package.json");
-  }
-
-  if (dryRun) {
-    version = semver.inc(version, bump)!;
+    version = await bumpPackageVersion(bump);
   }
 
   if (!existsSync(changeLogFile)) {

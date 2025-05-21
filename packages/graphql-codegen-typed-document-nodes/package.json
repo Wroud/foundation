@@ -50,8 +50,8 @@
     "graphql": "^16"
   },
   "devDependencies": {
-    "@types/node": "^20",
-    "@vitest/coverage-v8": "^2",
+    "@types/node": "^22",
+    "@vitest/coverage-v8": "^3",
     "@wroud/ci": "workspace:^0",
     "@wroud/tests-runner": "workspace:*",
     "@wroud/tsconfig": "workspace:*",
@@ -59,7 +59,7 @@
     "rimraf": "^6",
     "tslib": "^2",
     "typescript": "^5",
-    "vitest": "^2"
+    "vitest": "^3"
   },
   "peerDependencies": {
     "@graphql-codegen/typescript-operations": "*"

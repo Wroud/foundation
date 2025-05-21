@@ -39,7 +39,7 @@
     "clear": "rimraf ./lib"
   },
   "dependencies": {
-    "@octokit/auth-action": "^5",
+    "@octokit/auth-action": "^6",
     "@octokit/rest": "^21",
     "@wroud/conventional-commits-bump": "workspace:*",
     "@wroud/conventional-commits-changelog": "workspace:*",
@@ -53,17 +53,17 @@
   },
   "devDependencies": {
     "@tsconfig/node20": "^20",
-    "@types/node": "^20",
+    "@types/node": "^22",
     "@types/semver": "^7",
     "@types/yargs": "^17",
-    "@vitest/coverage-v8": "^2",
+    "@vitest/coverage-v8": "^3",
     "@wroud/tests-runner": "workspace:*",
     "@wroud/tsconfig": "workspace:*",
     "concurrently": "^9",
     "memfs": "^4",
     "rimraf": "^6",
     "typescript": "^5",
-    "vitest": "^2"
+    "vitest": "^3"
   },
   "release": {
     "tagPrefix": "ci-v"

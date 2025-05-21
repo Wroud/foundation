@@ -93,7 +93,12 @@ export function transformDecorators(
     newDecorators.push(createInjectableDecorator(j, dependencies));
 
     if (path.node.id) {
-      decoratedClasses.push(path.node.id.name);
+      const name = path.node.id.name;
+      if (typeof name === "string") {
+        decoratedClasses.push(name);
+      } else if (name && typeof name.name === "string") {
+        decoratedClasses.push(name.name);
+      }
     }
 
     (path.node as any).decorators = newDecorators;

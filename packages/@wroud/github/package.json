@@ -37,15 +37,15 @@
   },
   "devDependencies": {
     "@tsconfig/node20": "^20",
-    "@types/node": "^20",
-    "@vitest/coverage-v8": "^2",
+    "@types/node": "^22",
+    "@vitest/coverage-v8": "^3",
     "@wroud/ci": "workspace:^0",
     "@wroud/tests-runner": "workspace:*",
     "@wroud/tsconfig": "workspace:*",
     "concurrently": "^9",
     "rimraf": "^6",
     "typescript": "^5",
-    "vitest": "^2"
+    "vitest": "^3"
   },
   "keywords": [
     "GitHub",

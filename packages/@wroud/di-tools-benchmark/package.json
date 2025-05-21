@@ -43,6 +43,6 @@
     "reflect-metadata": "^0",
     "tslib": "^2",
     "tsyringe": "^4",
-    "vitest": "^2"
+    "vitest": "^3"
   }
 }

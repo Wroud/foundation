@@ -32,10 +32,26 @@ export function isWildcardSegment(segment: string): boolean {
  * Extracts parameter name from a parameter segment
  */
 export function extractParamName(segment: string): string {
-  if (isWildcardSegment(segment)) {
-    return segment.slice(1, -1); // Remove ":" and "*"
+  let name = segment.slice(1); // remove initial ':'
+  if (name.endsWith("*")) {
+    name = name.slice(0, -1);
   }
-  return segment.slice(1); // Remove ":"
+  const typeStart = name.indexOf("<");
+  if (typeStart !== -1) {
+    name = name.slice(0, typeStart);
+  }
+  return name;
+}
+
+export function extractParamType(segment: string): string {
+  const startIndex = segment.indexOf("<");
+  const endIndex = segment.indexOf(">");
+
+  if (startIndex === -1 || endIndex === -1) {
+    return "string";
+  }
+
+  return segment.slice(startIndex + 1, endIndex);
 }
 
 const pathCache = new Map<string, string>();

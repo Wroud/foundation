@@ -1,4 +1,4 @@
-import type { RouteParams } from "../IRouteMatcher.js";
+import type { RouteParams, RouteParamValue } from "../IRouteMatcher.js";
 import {
   isParameterSegment,
   isWildcardSegment,
@@ -74,4 +74,21 @@ export function buildUrlSegments(
 
     return result;
   }, []);
+}
+
+/**
+ * Convert a raw string value according to declared parameter type.
+ */
+export function convertParamValue(
+  value: string,
+  type: string,
+): RouteParamValue {
+  switch (type) {
+    case "number":
+      return Number(value);
+    case "boolean":
+      return value === "true" || value === "1";
+    default:
+      return value;
+  }
 }

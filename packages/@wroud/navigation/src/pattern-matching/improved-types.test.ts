@@ -70,6 +70,20 @@ describe("Improved Type Representation", () => {
     // Simple runtime confirmation
     const param7: RootParams = {};
     expect(Object.keys(param7).length).toBe(0);
+
+    // Typed parameters should infer correct primitive types
+    type BlogTyped =
+      ExtractRouteParams<"/blog/:year<number>/:month<number>/:slug">;
+    const typed1: BlogTyped = { year: 2024, month: 5, slug: "post" };
+    expect(typeof typed1.year).toBe("number");
+
+    type EnableParams = ExtractRouteParams<"/user/enable/:state<boolean>">;
+    const typed2: EnableParams = { state: false };
+    expect(typeof typed2.state).toBe("boolean");
+
+    type UsersParams = ExtractRouteParams<"/users/:id<number>*">;
+    const typed3: UsersParams = { id: [1, 2] };
+    expect(typeof typed3.id[0]).toBe("number");
   });
 
   test("tooltip issue with function return types", () => {

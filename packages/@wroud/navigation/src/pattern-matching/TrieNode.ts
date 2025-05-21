@@ -9,6 +9,8 @@ export class TrieNode {
   readonly children: Map<string, TrieNode>;
   paramChild: TrieNode | null;
   wildcardChild: TrieNode | null;
+  /** Type of the parameter for param/wildcard nodes */
+  paramType: string;
   isEndOfPattern: boolean;
   pattern: string | null;
   parent: TrieNode | null;
@@ -17,12 +19,14 @@ export class TrieNode {
     type: NodeType = "static",
     name: string = "",
     parent: TrieNode | null = null,
+    paramType: string = "string",
   ) {
     this.type = type;
     this.name = name;
     this.children = new Map();
     this.paramChild = null;
     this.wildcardChild = null;
+    this.paramType = paramType;
     this.isEndOfPattern = false;
     this.pattern = null;
     this.parent = parent;
@@ -69,20 +73,31 @@ export class TrieNode {
 
   /**
    * Get or create a parameter child node
+   *
+   * @param paramName Parameter name
+   * @param paramType Declared parameter type
    */
-  getOrCreateParamChild(paramName: string): TrieNode {
+  getOrCreateParamChild(paramName: string, paramType: string): TrieNode {
     if (!this.paramChild) {
-      this.paramChild = new TrieNode("param", paramName, this);
+      this.paramChild = new TrieNode("param", paramName, this, paramType);
     }
     return this.paramChild;
   }
 
   /**
    * Get or create a wildcard child node
+   *
+   * @param wildcardName Parameter name for the wildcard
+   * @param paramType Declared parameter type
    */
-  getOrCreateWildcardChild(wildcardName: string): TrieNode {
+  getOrCreateWildcardChild(wildcardName: string, paramType: string): TrieNode {
     if (!this.wildcardChild) {
-      this.wildcardChild = new TrieNode("wildcard", wildcardName, this);
+      this.wildcardChild = new TrieNode(
+        "wildcard",
+        wildcardName,
+        this,
+        paramType,
+      );
     }
     return this.wildcardChild;
   }

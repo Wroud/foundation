@@ -2,7 +2,7 @@
  * Types for the Trie-based pattern matching system
  */
 
-import type { RouteParams, RouteParamValue } from "../IRouteMatcher.js";
+import type { RouteParams } from "../IRouteMatcher.js";
 import type { IRouteState } from "../IRouteState.js";
 
 /**
@@ -29,6 +29,32 @@ type GetParameterSegments<Pattern extends string> = Pattern extends "/" | ""
   ? []
   : Extract<Split<TrimSlashes<Pattern>, "/">[number], `:${string}`>;
 
+type StripWildcard<S extends string> = S extends `${infer R}*` ? R : S;
+type StripParam<S extends string> = S extends `:${infer R}` ? R : S;
+type StripType<S extends string> = S extends `${infer N}<${string}>` ? N : S;
+type ExtractName<S extends string> = StripType<StripWildcard<StripParam<S>>>;
+type ExtractType<S extends string> = S extends `${string}<${infer T}>${string}`
+  ? T
+  : "string";
+type IsWildcard<S extends string> = S extends `${string}*` ? true : false;
+type ParamInfo<S extends string> = {
+  name: ExtractName<S>;
+  type: ExtractType<S>;
+  wildcard: IsWildcard<S>;
+};
+type ParamInfoUnion<Pattern extends string> =
+  GetParameterSegments<Pattern> extends infer S
+    ? S extends string
+      ? ParamInfo<S>
+      : never
+    : never;
+
+type PrimitiveFromType<T extends string> = T extends "number"
+  ? number
+  : T extends "boolean"
+    ? boolean
+    : string;
+
 /**
  * Extract route parameters from a pattern string.
  * Returns a clean object type with parameter names as keys.
@@ -44,13 +70,9 @@ export type ExtractRouteParams<Pattern extends string> = Pattern extends
   | ""
   ? {}
   : {
-      [K in GetParameterSegments<Pattern> as K extends `:${infer Name}*`
-        ? Name
-        : K extends `:${infer Name}`
-          ? Name
-          : never]: K extends `:${string}*`
-        ? RouteParamValue[]
-        : RouteParamValue;
+      [P in ParamInfoUnion<Pattern> as P["name"]]: P["wildcard"] extends true
+        ? PrimitiveFromType<P["type"]>[]
+        : PrimitiveFromType<P["type"]>;
     };
 
 /**
@@ -88,6 +110,7 @@ export interface IPatternRouteState<Pattern extends string>
   id: Pattern;
   params: ExtractRouteParams<this["id"]>;
 }
+
 
 /**
  * Types of nodes in the trie structure

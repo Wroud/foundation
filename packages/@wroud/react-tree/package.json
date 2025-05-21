@@ -38,7 +38,7 @@
   "devDependencies": {
     "@types/react": "^19.0.0",
     "@vscode/codicons": "^0",
-    "@wroud/ci": "workspace:^",
+    "@wroud/ci": "workspace:^0",
     "@wroud/playground-react": "workspace:^",
     "@wroud/tsconfig": "workspace:^",
     "react": "^19",

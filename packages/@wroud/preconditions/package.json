@@ -32,7 +32,7 @@
   ],
   "packageManager": "yarn@4.9.1",
   "devDependencies": {
-    "@wroud/ci": "workspace:^",
+    "@wroud/ci": "workspace:^0",
     "@wroud/tsconfig": "workspace:^",
     "rimraf": "^6",
     "typescript": "^5"

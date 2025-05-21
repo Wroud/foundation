@@ -46,7 +46,7 @@ jobs:
           git config user.email 'github-actions[bot]@users.noreply.github.com'
 
       - name: Release
-        run: yarn workspaces foreach -A --topological-dev --no-private run ci:release
+        run: yarn workspaces foreach -A --topological --no-private run ci:release
 
       - name: Check for changes
         id: check-changes
@@ -61,7 +61,7 @@ jobs:
         if: steps.check-changes.outputs.no-changes != 'true'
         run: |
           git commit -m "chore: release"
-          yarn workspaces foreach -A --topological-dev --no-private run ci:git-tag
+          yarn workspaces foreach -A --no-private run ci:git-tag
           git push --follow-tags
 
   publish-github-release:
@@ -95,7 +95,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
-        run: yarn workspaces foreach -A --topological-dev --no-private run ci:release-github
+        run: yarn workspaces foreach -A --no-private run ci:release-github
 
   publish-npm:
     needs: release
@@ -135,7 +135,7 @@ jobs:
       - name: Publish to npm
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: yarn workspaces foreach -A --topological-dev --no-private npm publish --access public --tolerate-republish
+        run: yarn workspaces foreach -A --topological --no-private npm publish --access public --tolerate-republish
 
       # - name: 🔴 Delete remote badges branch
       #   if: github.event_name == 'push' && github.ref == 'refs/heads/main'

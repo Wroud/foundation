@@ -54,7 +54,7 @@
     "@types/node": "^20",
     "@types/uuid": "^10",
     "@vitest/coverage-v8": "^2",
-    "@wroud/ci": "workspace:*",
+    "@wroud/ci": "workspace:^0",
     "@wroud/tests-runner": "workspace:*",
     "@wroud/tsconfig": "workspace:*",
     "concurrently": "^9",

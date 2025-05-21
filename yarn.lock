@@ -4421,18 +4421,18 @@ __metadata:
     "@types/react": "npm:^19"
     "@types/react-dom": "npm:^19"
     "@wroud/api-logger": "workspace:^"
-    "@wroud/ci": "workspace:*"
+    "@wroud/ci": "workspace:^"
     "@wroud/conventional-commits-bump": "workspace:^"
-    "@wroud/conventional-commits-changelog": "workspace:*"
-    "@wroud/conventional-commits-parser": "workspace:*"
-    "@wroud/di": "workspace:*"
-    "@wroud/di-react": "workspace:*"
-    "@wroud/di-tools-analyzer": "workspace:*"
-    "@wroud/di-tools-codemod": "workspace:*"
-    "@wroud/docs": "workspace:*"
+    "@wroud/conventional-commits-changelog": "workspace:^"
+    "@wroud/conventional-commits-parser": "workspace:^"
+    "@wroud/di": "workspace:^"
+    "@wroud/di-react": "workspace:^"
+    "@wroud/di-tools-analyzer": "workspace:^"
+    "@wroud/di-tools-codemod": "workspace:^"
+    "@wroud/docs": "workspace:^"
     "@wroud/flow-middleware": "workspace:^"
-    "@wroud/git": "workspace:*"
-    "@wroud/github": "workspace:*"
+    "@wroud/git": "workspace:^"
+    "@wroud/github": "workspace:^"
     "@wroud/navigation": "workspace:^"
     "@wroud/playground": "workspace:^"
     "@wroud/playground-react": "workspace:^"
@@ -4440,9 +4440,9 @@ __metadata:
     "@wroud/react-reactive-value": "workspace:^"
     "@wroud/react-split-view": "workspace:^"
     "@wroud/react-tree": "workspace:^"
-    "@wroud/ts-project-linker": "workspace:*"
+    "@wroud/ts-project-linker": "workspace:^"
     "@wroud/ts-template": "workspace:^"
-    "@wroud/tsconfig": "workspace:*"
+    "@wroud/tsconfig": "workspace:^"
     "@wroud/vite-plugin-asset-resolver": "workspace:^"
     "@wroud/vite-plugin-playground": "workspace:^"
     "@wroud/vite-plugin-ssg": "workspace:^"
@@ -4464,14 +4464,14 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@wroud/api-logger@workspace:packages/@wroud/api-logger"
   dependencies:
-    "@wroud/ci": "workspace:^"
+    "@wroud/ci": "workspace:^0"
     "@wroud/tsconfig": "workspace:^"
     rimraf: "npm:^6"
     typescript: "npm:^5"
   languageName: unknown
   linkType: soft
 
-"@wroud/ci@workspace:*, @wroud/ci@workspace:^, @wroud/ci@workspace:packages/@wroud/ci":
+"@wroud/ci@workspace:^, @wroud/ci@workspace:^0, @wroud/ci@workspace:packages/@wroud/ci":
   version: 0.0.0-use.local
   resolution: "@wroud/ci@workspace:packages/@wroud/ci"
   dependencies:
@@ -4510,7 +4510,7 @@ __metadata:
     "@tsconfig/node20": "npm:^20"
     "@types/node": "npm:^20"
     "@vitest/coverage-v8": "npm:^2"
-    "@wroud/ci": "workspace:*"
+    "@wroud/ci": "workspace:^0"
     "@wroud/conventional-commits-parser": "workspace:^0"
     "@wroud/tests-runner": "workspace:*"
     "@wroud/tsconfig": "workspace:*"
@@ -4523,14 +4523,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wroud/conventional-commits-changelog@workspace:*, @wroud/conventional-commits-changelog@workspace:packages/@wroud/conventional-commits-changelog":
+"@wroud/conventional-commits-changelog@workspace:*, @wroud/conventional-commits-changelog@workspace:^, @wroud/conventional-commits-changelog@workspace:packages/@wroud/conventional-commits-changelog":
   version: 0.0.0-use.local
   resolution: "@wroud/conventional-commits-changelog@workspace:packages/@wroud/conventional-commits-changelog"
   dependencies:
     "@tsconfig/node20": "npm:^20"
     "@types/node": "npm:^20"
     "@vitest/coverage-v8": "npm:^2"
-    "@wroud/ci": "workspace:*"
+    "@wroud/ci": "workspace:^0"
     "@wroud/conventional-commits-parser": "workspace:^0"
     "@wroud/tests-runner": "workspace:*"
     "@wroud/tsconfig": "workspace:*"
@@ -4541,14 +4541,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wroud/conventional-commits-parser@workspace:*, @wroud/conventional-commits-parser@workspace:^0, @wroud/conventional-commits-parser@workspace:packages/@wroud/conventional-commits-parser":
+"@wroud/conventional-commits-parser@workspace:*, @wroud/conventional-commits-parser@workspace:^, @wroud/conventional-commits-parser@workspace:^0, @wroud/conventional-commits-parser@workspace:packages/@wroud/conventional-commits-parser":
   version: 0.0.0-use.local
   resolution: "@wroud/conventional-commits-parser@workspace:packages/@wroud/conventional-commits-parser"
   dependencies:
     "@tsconfig/node20": "npm:^20"
     "@types/node": "npm:^20"
     "@vitest/coverage-v8": "npm:^2"
-    "@wroud/ci": "workspace:*"
+    "@wroud/ci": "workspace:^0"
     "@wroud/git": "workspace:^0"
     "@wroud/tests-runner": "workspace:*"
     "@wroud/tsconfig": "workspace:*"
@@ -4559,7 +4559,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wroud/di-react@workspace:*, @wroud/di-react@workspace:packages/@wroud/di-react":
+"@wroud/di-react@workspace:*, @wroud/di-react@workspace:^, @wroud/di-react@workspace:packages/@wroud/di-react":
   version: 0.0.0-use.local
   resolution: "@wroud/di-react@workspace:packages/@wroud/di-react"
   dependencies:
@@ -4571,7 +4571,7 @@ __metadata:
     "@types/react": "npm:^18"
     "@types/react-dom": "npm:^18"
     "@vitest/coverage-v8": "npm:^2"
-    "@wroud/ci": "workspace:*"
+    "@wroud/ci": "workspace:^0"
     "@wroud/di": "workspace:^0"
     "@wroud/tests-runner": "workspace:*"
     "@wroud/tsconfig": "workspace:*"
@@ -4589,7 +4589,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wroud/di-tools-analyzer@workspace:*, @wroud/di-tools-analyzer@workspace:packages/@wroud/di-tools-analyzer":
+"@wroud/di-tools-analyzer@workspace:*, @wroud/di-tools-analyzer@workspace:^, @wroud/di-tools-analyzer@workspace:packages/@wroud/di-tools-analyzer":
   version: 0.0.0-use.local
   resolution: "@wroud/di-tools-analyzer@workspace:packages/@wroud/di-tools-analyzer"
   dependencies:
@@ -4598,7 +4598,7 @@ __metadata:
     "@types/node": "npm:^20"
     "@types/uuid": "npm:^10"
     "@vitest/coverage-v8": "npm:^2"
-    "@wroud/ci": "workspace:*"
+    "@wroud/ci": "workspace:^0"
     "@wroud/di": "workspace:^0"
     "@wroud/tests-runner": "workspace:*"
     "@wroud/tsconfig": "workspace:*"
@@ -4630,14 +4630,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wroud/di-tools-codemod@workspace:*, @wroud/di-tools-codemod@workspace:packages/@wroud/di-tools-codemod":
+"@wroud/di-tools-codemod@workspace:^, @wroud/di-tools-codemod@workspace:packages/@wroud/di-tools-codemod":
   version: 0.0.0-use.local
   resolution: "@wroud/di-tools-codemod@workspace:packages/@wroud/di-tools-codemod"
   dependencies:
     "@types/jscodeshift": "npm:^0"
     "@types/node": "npm:^20"
     "@vitest/coverage-v8": "npm:^2"
-    "@wroud/ci": "workspace:*"
+    "@wroud/ci": "workspace:^0"
     "@wroud/tests-runner": "workspace:*"
     "@wroud/tsconfig": "workspace:*"
     jscodeshift: "npm:^17"
@@ -4654,7 +4654,7 @@ __metadata:
   dependencies:
     "@types/node": "npm:^20"
     "@vitest/coverage-v8": "npm:^2"
-    "@wroud/ci": "workspace:*"
+    "@wroud/ci": "workspace:^0"
     "@wroud/tests-runner": "workspace:*"
     "@wroud/tsconfig": "workspace:*"
     concurrently: "npm:^9"
@@ -4665,7 +4665,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wroud/docs@workspace:*, @wroud/docs@workspace:packages/docs":
+"@wroud/docs@workspace:^, @wroud/docs@workspace:packages/docs":
   version: 0.0.0-use.local
   resolution: "@wroud/docs@workspace:packages/docs"
   dependencies:
@@ -4694,14 +4694,14 @@ __metadata:
   resolution: "@wroud/flow-middleware@workspace:packages/@wroud/flow-middleware"
   dependencies:
     "@wroud/api-logger": "workspace:^"
-    "@wroud/ci": "workspace:^"
+    "@wroud/ci": "workspace:^0"
     "@wroud/tsconfig": "workspace:^"
     rimraf: "npm:^6"
     typescript: "npm:^5"
   languageName: unknown
   linkType: soft
 
-"@wroud/git@workspace:*, @wroud/git@workspace:^0, @wroud/git@workspace:packages/@wroud/git":
+"@wroud/git@workspace:*, @wroud/git@workspace:^, @wroud/git@workspace:^0, @wroud/git@workspace:packages/@wroud/git":
   version: 0.0.0-use.local
   resolution: "@wroud/git@workspace:packages/@wroud/git"
   dependencies:
@@ -4709,7 +4709,7 @@ __metadata:
     "@types/node": "npm:^20"
     "@types/uuid": "npm:^10"
     "@vitest/coverage-v8": "npm:^2"
-    "@wroud/ci": "workspace:*"
+    "@wroud/ci": "workspace:^0"
     "@wroud/tests-runner": "workspace:*"
     "@wroud/tsconfig": "workspace:*"
     concurrently: "npm:^9"
@@ -4722,14 +4722,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wroud/github@workspace:*, @wroud/github@workspace:packages/@wroud/github":
+"@wroud/github@workspace:*, @wroud/github@workspace:^, @wroud/github@workspace:packages/@wroud/github":
   version: 0.0.0-use.local
   resolution: "@wroud/github@workspace:packages/@wroud/github"
   dependencies:
     "@tsconfig/node20": "npm:^20"
     "@types/node": "npm:^20"
     "@vitest/coverage-v8": "npm:^2"
-    "@wroud/ci": "workspace:*"
+    "@wroud/ci": "workspace:^0"
     "@wroud/git": "workspace:^0"
     "@wroud/tests-runner": "workspace:*"
     "@wroud/tsconfig": "workspace:*"
@@ -4745,7 +4745,7 @@ __metadata:
   resolution: "@wroud/navigation@workspace:packages/@wroud/navigation"
   dependencies:
     "@vitest/coverage-v8": "npm:^2"
-    "@wroud/ci": "workspace:*"
+    "@wroud/ci": "workspace:^0"
     "@wroud/tests-runner": "workspace:*"
     "@wroud/tsconfig": "workspace:*"
     concurrently: "npm:^9"
@@ -4763,7 +4763,7 @@ __metadata:
     "@types/react": "npm:^19"
     "@types/react-dom": "npm:^19"
     "@vitest/coverage-v8": "npm:^2"
-    "@wroud/ci": "workspace:^"
+    "@wroud/ci": "workspace:^0"
     "@wroud/navigation": "workspace:^"
     "@wroud/playground": "workspace:^"
     "@wroud/tests-runner": "workspace:^"
@@ -4786,7 +4786,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@wroud/playground@workspace:packages/@wroud/playground"
   dependencies:
-    "@wroud/ci": "workspace:^"
+    "@wroud/ci": "workspace:^0"
     "@wroud/navigation": "workspace:^"
     "@wroud/tsconfig": "workspace:^"
     "@wroud/vite-plugin-ssg": "workspace:^"
@@ -4801,7 +4801,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@wroud/preconditions@workspace:packages/@wroud/preconditions"
   dependencies:
-    "@wroud/ci": "workspace:^"
+    "@wroud/ci": "workspace:^0"
     "@wroud/tsconfig": "workspace:^"
     rimraf: "npm:^6"
     typescript: "npm:^5"
@@ -4814,7 +4814,7 @@ __metadata:
   dependencies:
     "@types/react": "npm:^18.0.0 || ^19.0.0"
     "@vitest/coverage-v8": "npm:^2"
-    "@wroud/ci": "workspace:*"
+    "@wroud/ci": "workspace:^0"
     "@wroud/tests-runner": "workspace:*"
     "@wroud/tsconfig": "workspace:^"
     react: "npm:^18.0.0 || ^19.0.0"
@@ -4832,7 +4832,7 @@ __metadata:
   dependencies:
     "@types/react": "npm:^19.0.0"
     "@types/react-dom": "npm:^19.0.0"
-    "@wroud/ci": "workspace:^"
+    "@wroud/ci": "workspace:^0"
     "@wroud/playground-react": "workspace:^"
     "@wroud/tsconfig": "workspace:^"
     react: "npm:^19.0.0"
@@ -4856,7 +4856,7 @@ __metadata:
   dependencies:
     "@types/react": "npm:^19.0.0"
     "@vscode/codicons": "npm:^0"
-    "@wroud/ci": "workspace:^"
+    "@wroud/ci": "workspace:^0"
     "@wroud/playground-react": "workspace:^"
     "@wroud/react-reactive-value": "workspace:^"
     "@wroud/tsconfig": "workspace:^"
@@ -4902,7 +4902,7 @@ __metadata:
     "@types/node": "npm:^20"
     "@types/yargs": "npm:^17"
     "@vitest/coverage-v8": "npm:^2"
-    "@wroud/ci": "workspace:*"
+    "@wroud/ci": "workspace:^0"
     "@wroud/tests-runner": "workspace:*"
     "@wroud/tsconfig": "workspace:*"
     comment-json: "npm:^4"
@@ -4928,7 +4928,7 @@ __metadata:
     "@types/node": "npm:^20"
     "@types/yargs": "npm:^17"
     "@vitest/coverage-v8": "npm:^2"
-    "@wroud/ci": "workspace:^"
+    "@wroud/ci": "workspace:^0"
     "@wroud/tests-runner": "workspace:^"
     "@wroud/tsconfig": "workspace:^"
     concurrently: "npm:^9"
@@ -4958,7 +4958,7 @@ __metadata:
   dependencies:
     "@types/node": "npm:^20"
     "@vitest/coverage-v8": "npm:^2"
-    "@wroud/ci": "workspace:*"
+    "@wroud/ci": "workspace:^0"
     "@wroud/tests-runner": "workspace:*"
     "@wroud/tsconfig": "workspace:*"
     concurrently: "npm:^9"
@@ -4984,7 +4984,7 @@ __metadata:
     "@types/react": "npm:^19"
     "@types/react-dom": "npm:^19"
     "@vscode/codicons": "npm:^0"
-    "@wroud/ci": "workspace:^"
+    "@wroud/ci": "workspace:^0"
     "@wroud/navigation": "workspace:^"
     "@wroud/playground": "workspace:^"
     "@wroud/playground-react": "workspace:^"
@@ -5021,7 +5021,7 @@ __metadata:
     "@types/react": "npm:^19"
     "@types/react-dom": "npm:^19"
     "@vitest/coverage-v8": "npm:^2"
-    "@wroud/ci": "workspace:*"
+    "@wroud/ci": "workspace:^0"
     "@wroud/tests-runner": "workspace:*"
     "@wroud/tsconfig": "workspace:^"
     change-case: "npm:^5"
@@ -5046,7 +5046,7 @@ __metadata:
   dependencies:
     "@types/node": "npm:^20"
     "@vitest/coverage-v8": "npm:^2"
-    "@wroud/ci": "workspace:*"
+    "@wroud/ci": "workspace:^0"
     "@wroud/tests-runner": "workspace:*"
     "@wroud/tsconfig": "workspace:*"
     concurrently: "npm:^9"
@@ -8252,7 +8252,7 @@ __metadata:
   dependencies:
     "@graphql-codegen/plugin-helpers": "npm:^5"
     "@vitest/coverage-v8": "npm:^2"
-    "@wroud/ci": "workspace:*"
+    "@wroud/ci": "workspace:^0"
     "@wroud/tests-runner": "workspace:*"
     "@wroud/tsconfig": "workspace:*"
     concurrently: "npm:^9"
@@ -8272,7 +8272,7 @@ __metadata:
     "@graphql-codegen/visitor-plugin-common": "npm:^5"
     "@types/node": "npm:^20"
     "@vitest/coverage-v8": "npm:^2"
-    "@wroud/ci": "workspace:*"
+    "@wroud/ci": "workspace:^0"
     "@wroud/tests-runner": "workspace:*"
     "@wroud/tsconfig": "workspace:*"
     change-case-all: "npm:^2"

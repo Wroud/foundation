@@ -50,7 +50,7 @@
     "@types/jscodeshift": "^0",
     "@types/node": "^20",
     "@vitest/coverage-v8": "^2",
-    "@wroud/ci": "workspace:*",
+    "@wroud/ci": "workspace:^0",
     "@wroud/tests-runner": "workspace:*",
     "@wroud/tsconfig": "workspace:*",
     "typescript": "^5",

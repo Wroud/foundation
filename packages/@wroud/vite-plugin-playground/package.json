@@ -39,7 +39,7 @@
     "@types/picomatch": "^3",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@wroud/ci": "workspace:^",
+    "@wroud/ci": "workspace:^0",
     "@wroud/playground-react": "workspace:^",
     "@wroud/tsconfig": "workspace:*",
     "@wroud/vite-plugin-ssg": "workspace:^",

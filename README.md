@@ -8,7 +8,34 @@ The Wroud Foundation provides tools to help developers implement best practices 
 
 ### Available Packages
 
-- **@wroud/di**: A lightweight dependency injection library for JavaScript inspired by [.NET's DI](https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection) system. Written in TypeScript, it supports modern JavaScript features, including decorators, and provides robust dependency management capabilities.
+The following packages are available on npm:
+
+- **@wroud/api-logger**: Lightweight logging interface for JavaScript and TypeScript applications.
+- **@wroud/conventional-commits-bump**: Determine semantic version bumps from commit messages.
+- **@wroud/conventional-commits-changelog**: Generate markdown changelogs from conventional commits.
+- **@wroud/conventional-commits-parser**: Parse conventional commit messages with metadata support.
+- **@wroud/di**: Simple dependency injection library for JavaScript and TypeScript.
+- **@wroud/di-react**: React bindings for the @wroud/di library.
+- **@wroud/di-tools-analyzer**: Analyze @wroud/di containers and visualize dependencies.
+- **@wroud/di-tools-codemod**: Codemod for migrating from Inversify to @wroud/di.
+- **@wroud/flow-middleware**: Manage middleware chains with re-runs and error handling.
+- **@wroud/git**: Utilities for reading commits and tags from git repositories.
+- **@wroud/github**: Parse git history for GitHub issues and commit links.
+- **@wroud/navigation**: Framework-agnostic navigation and routing system.
+- **@wroud/playground**: Core runtime for the component playground system.
+- **@wroud/playground-react**: React components for interactive playground stories.
+- **@wroud/preconditions**: Framework for defining and applying preconditions.
+- **@wroud/react-reactive-value**: Manage reactive values in React with automatic re-renders.
+- **@wroud/react-split-view**: React hook for resizable split views.
+- **@wroud/react-tree**: Virtualized tree component for hierarchical data.
+- **@wroud/ts-project-linker**: Sync TypeScript project references with package dependencies.
+- **@wroud/ts-template**: CLI generator for TypeScript project templates.
+- **@wroud/vite-plugin-asset-resolver**: Custom asset resolution plugin for Vite.
+- **@wroud/vite-plugin-playground**: Vite plugin for component playground stories.
+- **@wroud/vite-plugin-ssg**: Static site generation plugin for React with Vite.
+- **@wroud/vite-plugin-tsc**: Transpile TypeScript using tsc during Vite builds.
+- **graphql-codegen-fragment-masking**: GraphQL Codegen plugin for fragment masking helpers.
+- **graphql-codegen-typed-document-nodes**: GraphQL Codegen plugin for typed document nodes.
 
 ### Future Tools
 
@@ -16,14 +43,7 @@ We plan to expand our toolset with more packages to address various JavaScript d
 
 ## 📖 Documentation
 
-Find comprehensive documentation for all packages on our [documentation site](https://wroud.dev). Each package has sections with guides and API references.
-
-### Dependency Injection (@wroud/di)
-
-- **Overview**: Introduction and key features.
-- **Installation**: Step-by-step guide.
-- **Usage**: Usage examples in different environments.
-- **API**: Detailed API reference.
+Find comprehensive documentation for all packages on our [documentation site](https://wroud.dev). Every package README also provides a brief overview.
 
 ## 🚀 Getting Started
 

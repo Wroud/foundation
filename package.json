@@ -22,19 +22,19 @@
     "@commitlint/config-conventional": "^19",
     "@swc/core": "^1",
     "@testing-library/dom": "^10",
-    "@vitest/coverage-v8": "^2",
+    "@vitest/coverage-v8": "^3",
     "@wroud/tests-runner": "workspace:*",
     "@wroud/ts-project-linker": "workspace:*",
     "@wroud/ts-template": "workspace:^",
     "concurrently": "^9",
-    "happy-dom": "^15",
+    "happy-dom": "^17",
     "husky": "^9",
-    "is-ci": "^3",
+    "is-ci": "^4",
     "pinst": "^3",
     "prettier": "^3.5.3",
     "rimraf": "^6",
     "typescript": "^5.8.3",
-    "vitest": "^2"
+    "vitest": "^3"
   },
   "dependencies": {
     "tslib": "^2"

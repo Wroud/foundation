@@ -10,11 +10,11 @@
   "devDependencies": {
     "@tsconfig/node20": "^20",
     "@tsconfig/strictest": "^2",
-    "@types/node": "^20",
-    "@vitest/coverage-v8": "^2",
+    "@types/node": "^22",
+    "@vitest/coverage-v8": "^3",
     "@wroud/tsconfig": "workspace:*",
-    "jest-extended": "^4",
+    "jest-extended": "^5",
     "vite": "^6",
-    "vitest": "^2"
+    "vitest": "^3"
   }
 }

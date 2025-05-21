@@ -167,7 +167,12 @@ function getFreeImportName(
   root.find(j.ImportDeclaration).forEach((path) => {
     path.value.specifiers?.forEach((specifier) => {
       if (specifier.type === "ImportSpecifier") {
-        importNames.add(specifier.local?.name || specifier.imported.name);
+        let name = specifier.local?.name || specifier.imported.name;
+        if (typeof name !== "string" && name && typeof name.name === "string") {
+          importNames.add(name.name);
+        } else if (typeof name === "string") {
+          importNames.add(name);
+        }
       }
     });
   });

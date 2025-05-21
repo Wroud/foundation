@@ -47,14 +47,14 @@
     "build": "tsc -b && yarn tsc -b tsconfig.commonjs.json"
   },
   "devDependencies": {
-    "@types/jscodeshift": "^0",
-    "@types/node": "^20",
-    "@vitest/coverage-v8": "^2",
+    "@types/jscodeshift": "^17",
+    "@types/node": "^22",
+    "@vitest/coverage-v8": "^3",
     "@wroud/ci": "workspace:^0",
     "@wroud/tests-runner": "workspace:*",
     "@wroud/tsconfig": "workspace:*",
     "typescript": "^5",
-    "vitest": "^2"
+    "vitest": "^3"
   },
   "dependencies": {
     "jscodeshift": "^17"

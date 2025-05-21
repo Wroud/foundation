@@ -53,14 +53,14 @@
   "packageManager": "yarn@4.9.1",
   "devDependencies": {
     "@types/react": "^18.0.0 || ^19.0.0",
-    "@vitest/coverage-v8": "^2",
+    "@vitest/coverage-v8": "^3",
     "@wroud/ci": "workspace:^0",
     "@wroud/tests-runner": "workspace:*",
     "@wroud/tsconfig": "workspace:^",
     "react": "^18.0.0 || ^19.0.0",
     "rimraf": "^6",
     "typescript": "^5",
-    "vitest": "^2"
+    "vitest": "^3"
   },
   "peerDependencies": {
     "react": "^17.0.0 || ^18.0.0 || ^19.0.0"

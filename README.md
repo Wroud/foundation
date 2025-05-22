@@ -11,6 +11,7 @@ The Wroud Foundation provides tools to help developers implement best practices 
 The following packages are available on npm:
 
 - **@wroud/api-logger**: Lightweight logging interface for JavaScript and TypeScript applications.
+- **@wroud/ci**: Automate releases via conventional commits and GitHub Actions.
 - **@wroud/conventional-commits-bump**: Determine semantic version bumps from commit messages.
 - **@wroud/conventional-commits-changelog**: Generate markdown changelogs from conventional commits.
 - **@wroud/conventional-commits-parser**: Parse conventional commit messages with metadata support.

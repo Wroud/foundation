@@ -1,6 +1,5 @@
 import nodePath from "node:path";
 import { type PluginOption, createRunnableDevEnvironment } from "vite";
-import { removeUrlQuery } from "./modules/removeUrlQuery.js";
 import { cleanUrl } from "./utils/cleanUrl.js";
 import { createSsgId, isSsgId, removeSsgQuery } from "./modules/isSsgId.js";
 import {
@@ -17,7 +16,7 @@ import {
   removeMainQuery,
 } from "./modules/mainQuery.js";
 import { addQueryParam, parseQueryParams } from "./utils/queryParam.js";
-import { cleanSsgAssetId, isSsgAssetId } from "./modules/isSsgAssetId.js";
+import { cleanSsgAssetId } from "./modules/isSsgAssetId.js";
 import { isSsgHtmlTagsId } from "./utils/ssgHtmlTags.js";
 import {
   createSsgPageUrlId,
@@ -342,46 +341,6 @@ export const ssgPlugin = (
         order: "pre",
         async handler(id) {
           const config = this.environment.config;
-
-          if (isSsgAssetId(id)) {
-            if (isSsgPageUrlId(id)) {
-              id = changePathExt(id, "");
-
-              if (config.command === "serve") {
-                id = removeSsgPageUrlId(cleanSsgAssetId(id));
-                id = changePathExt(
-                  nodePath.posix.relative(config.root, id),
-                  ".html",
-                );
-
-                return {
-                  code: `export default ${JSON.stringify(id)};`,
-                  moduleType: "js",
-                };
-              }
-            }
-
-            if (isMainId(id)) {
-              id = createSsgClientEntryId(removeMainQuery(id));
-            }
-            id = removeUrlQuery(cleanSsgAssetId(id));
-            if (config.command === "serve") {
-              if (id.startsWith(config.root)) {
-                id = nodePath.posix.relative(config.root, id);
-                this.debug(`Transformed to server URL: ${id}`);
-              } else {
-                id = mapBaseToUrl("/@fs" + id, config);
-                this.debug(`Transformed to fs path: ${id}`);
-              }
-            }
-
-            return {
-              code: `
-                export default ${JSON.stringify(id)};
-              `,
-              moduleType: "js",
-            };
-          }
 
           if (isMainId(id)) {
             if (config.command === "serve") {

@@ -6,6 +6,7 @@ applyTo: "**"
 
 ## Dev Environment
 
+- Use `yarn` for package management.
 - Use `yarn workspaces list` to list packages.
 - Add a package: `yarn workspace <project> add <package>`.
 - To create a package: make a folder in `packages` or `packages/@wroud`, run `yarn tst project` inside, update `tsconfig.json` pick correct extending config: `tsconfig.json`, `tsconfig.node.json`, `tsconfig.react.json`, and add as a dev dependency to `@wroud/_aggregate`.

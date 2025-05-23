@@ -1,13 +1,9 @@
 import { useNavigation } from "@wroud/playground-react/views";
 import { PlaygroundRoutes } from "@wroud/playground";
+import logoUrl from "./logo.svg?url";
 
 export function HomeLink() {
   const navigation = useNavigation();
-  const iconUrl =
-    navigation.router.matcher?.stateToUrl({
-      id: PlaygroundRoutes.assets,
-      params: {},
-    }) + "logo.svg";
 
   return (
     <a
@@ -27,9 +23,7 @@ export function HomeLink() {
         });
       }}
     >
-      {iconUrl && (
-        <img src={iconUrl} alt="Playground" className="twp:w-6 twp:h-6" />
-      )}
+      <img src={logoUrl} alt="Playground" className="twp:w-6 twp:h-6" />
       <div className="twp:text-sm twp:font-bold">Playground</div>
     </a>
   );

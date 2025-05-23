@@ -8,10 +8,6 @@ import {
   createVirtualStoriesModule,
   isVirtualStoriesModule,
 } from "./virtualStoriesModule.js";
-import { assetsMiddleware } from "./assetsMiddleware.js";
-import { existsSync } from "fs";
-import { readFile } from "fs/promises";
-import { glob } from "tinyglobby";
 
 const DEFAULT_STORIES_INCLUDE = [
   "**/*.stories.ts",
@@ -316,47 +312,6 @@ describe(${JSON.stringify(describe)}, () => doc(${JSON.stringify(title)}, Markdo
             };
           }
           return null;
-        },
-      },
-    },
-    {
-      name: "@wroud/vite-plugin-playground/assets",
-      enforce: "pre",
-      configureServer: {
-        order: "pre",
-        async handler(server) {
-          server.middlewares.use(assetsMiddleware(server, path));
-        },
-      },
-      generateBundle: {
-        order: "post",
-        async handler() {
-          if (!bundle || this.environment.name === "ssr") {
-            return;
-          }
-
-          // Copy all files from the ../../public directory to the /${path}/assets/ directory with emitFile
-          const publicDir = nodePath.join(import.meta.dirname, "../../public");
-
-          if (!existsSync(publicDir)) {
-            return;
-          }
-
-          // Use glob to find all files in the public directory recursively
-          const publicFiles = await glob("**/*", {
-            cwd: publicDir,
-            onlyFiles: true,
-          });
-
-          for (const file of publicFiles) {
-            const source = await readFile(nodePath.join(publicDir, file));
-
-            this.emitFile({
-              type: "asset",
-              fileName: `${path}/assets/${file}`,
-              source,
-            });
-          }
         },
       },
     },

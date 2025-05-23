@@ -63,10 +63,16 @@ export function configure(playgroundPath: string) {
       const docs = fetchAllDocs();
 
       const routes = [
+        {
+          id: PlaygroundRoutes.components,
+          params: {},
+        },
         ...stories
           .map<
             IPatternRouteState<
-              typeof PlaygroundRoutes.story | typeof PlaygroundRoutes.isolated
+              | typeof PlaygroundRoutes.story
+              | typeof PlaygroundRoutes.isolated
+              | typeof PlaygroundRoutes.preview
             >[]
           >((story) => [
             {
@@ -81,6 +87,16 @@ export function configure(playgroundPath: string) {
                 story: story.id.slice(1).split("/"),
               },
             },
+            ...(story.options.preview
+              ? [
+                  {
+                    id: PlaygroundRoutes.preview,
+                    params: {
+                      story: story.id.slice(1).split("/"),
+                    },
+                  },
+                ]
+              : []),
           ])
           .flat(),
         ...docs

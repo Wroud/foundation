@@ -3,6 +3,20 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:5.2.0 -->
+## 5.2.0 (2025-05-23)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-ssg-v5.1.4...vite-plugin-ssg-v5.2.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- support assets inlining ([1d5208f](https://github.com/Wroud/foundation/commit/1d5208f))
+
+### ⚙️  Refactor
+
+- rename html tag utilities ([#25](https://github.com/Wroud/foundation/issues/25)) ([4bab8f2](https://github.com/Wroud/foundation/commit/4bab8f2))
+
 <!-- version:5.1.4 -->
 ## 5.1.4 (2025-04-24)
 

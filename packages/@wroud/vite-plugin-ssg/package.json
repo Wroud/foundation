@@ -1,7 +1,7 @@
 {
   "name": "@wroud/vite-plugin-ssg",
   "description": "A Vite plugin for static site generation (SSG) with React. Renders React applications to static HTML for faster load times and improved SEO. ",
-  "version": "5.1.4",
+  "version": "5.2.0",
   "type": "module",
   "sideEffects": [],
   "exports": {

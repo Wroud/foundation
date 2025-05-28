@@ -4470,6 +4470,8 @@ __metadata:
     vitest: "npm:^3"
   peerDependencies:
     vite: "*"
+  bin:
+    vp-asset-resolver: ./lib/cli.js
   languageName: unknown
   linkType: soft
 
@@ -4510,6 +4512,7 @@ __metadata:
     "@wroud/vite-plugin-ssg": "workspace:^"
     react: ^19
     react-dom: ^19
+    vite: ^6.3.0
   languageName: unknown
   linkType: soft
 
@@ -4524,6 +4527,7 @@ __metadata:
     "@wroud/ci": "workspace:^0"
     "@wroud/tests-runner": "workspace:*"
     "@wroud/tsconfig": "workspace:^"
+    "@wroud/vite-plugin-asset-resolver": "workspace:^"
     change-case: "npm:^5"
     magic-string: "npm:^0"
     rimraf: "npm:^6"

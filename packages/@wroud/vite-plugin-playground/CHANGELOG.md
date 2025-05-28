@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.1.10 -->
+## 0.1.10 (2025-05-28)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-playground-v0.1.9...vite-plugin-playground-v0.1.10)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- optimize deps in vite dev mode ([105042d](https://github.com/Wroud/foundation/commit/105042d))
+
 <!-- version:0.1.9 -->
 ## 0.1.9 (2025-05-28)
 

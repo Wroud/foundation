@@ -61,6 +61,40 @@ export function playground({
       configResolved: {
         handler(config) {
           root = config.root;
+
+          if (config.command === "serve") {
+            config.optimizeDeps.include = [
+              ...(config.optimizeDeps.include || []),
+              "react",
+              "react-dom",
+              "react-dom/client",
+              "react/jsx-runtime",
+              "@wroud/vite-plugin-playground > @ariakit/react",
+              "@wroud/playground-react > react-markdown",
+            ];
+            config.optimizeDeps.exclude = [
+              ...(config.optimizeDeps.exclude || []),
+              "@wroud/vite-plugin-ssg/react/client",
+              "@wroud/vite-plugin-playground/app/index",
+            ];
+          }
+
+          if (config.environments["ssr"]) {
+            let noExternal = config.environments["ssr"].resolve.noExternal;
+
+            if (noExternal === true) {
+              return;
+            }
+
+            if (!Array.isArray(noExternal)) {
+              noExternal = [noExternal];
+            }
+
+            config.environments["ssr"].resolve.noExternal = [
+              ...noExternal,
+              "@wroud/vite-plugin-playground",
+            ];
+          }
         },
       },
       buildStart: {

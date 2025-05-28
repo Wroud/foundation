@@ -53,7 +53,8 @@
     "@wroud/playground-react": "workspace:^",
     "@wroud/vite-plugin-ssg": "workspace:^",
     "react": "^19",
-    "react-dom": "^19"
+    "react-dom": "^19",
+    "vite": "^6.3.0"
   },
   "dependencies": {
     "@ariakit/react": "^0",

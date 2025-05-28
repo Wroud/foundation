@@ -14,8 +14,12 @@
   },
   "sideEffects": [],
   "module": "./lib/plugin.js",
+  "bin": {
+    "vp-asset-resolver": "./lib/cli.js"
+  },
   "exports": {
     ".": "./lib/plugin.js",
+    "./*": "./lib/*.js",
     "./*.js": "./lib/*.js",
     "./package.json": "./package.json"
   },

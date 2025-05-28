@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.3.0 -->
+## 0.3.0 (2025-05-28)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vp-asset-resolver-v0.2.1...vp-asset-resolver-v0.3.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- add nodejs loader ([be0befa](https://github.com/Wroud/foundation/commit/be0befa))
+
 <!-- version:0.2.1 -->
 ## 0.2.1 (2025-04-24)
 

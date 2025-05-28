@@ -3,6 +3,20 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.1.9 -->
+## 0.1.9 (2025-05-28)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-playground-v0.1.8...vite-plugin-playground-v0.1.9)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- support for external workspaces ([7f04186](https://github.com/Wroud/foundation/commit/7f04186))
+
+### ⚙️  Refactor
+
+- remove assets handling ([9cdf61d](https://github.com/Wroud/foundation/commit/9cdf61d))
+
 <!-- version:0.1.8 -->
 ## 0.1.8 (2025-04-26)
 

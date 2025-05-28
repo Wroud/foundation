@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:5.3.0 -->
+## 5.3.0 (2025-05-28)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-ssg-v5.2.0...vite-plugin-ssg-v5.3.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- better logging and builtin assets resolver for server API ([d46d1bf](https://github.com/Wroud/foundation/commit/d46d1bf))
+
 <!-- version:5.2.0 -->
 ## 5.2.0 (2025-05-23)
 

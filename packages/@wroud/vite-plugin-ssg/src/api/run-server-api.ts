@@ -1,4 +1,7 @@
+import { registerAssetResolver } from "@wroud/vite-plugin-asset-resolver/node-loader-register";
 import { serializeError } from "../utils/error/serializeError.js";
+
+registerAssetResolver();
 
 const [serverModulePath] = process.argv.slice(2);
 

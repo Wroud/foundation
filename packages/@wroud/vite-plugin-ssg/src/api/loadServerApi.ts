@@ -9,6 +9,9 @@ export async function loadServerApi(module: string) {
   let process = fork(
     fileURLToPath(import.meta.resolve("./run-server-api.js")),
     [module],
+    {
+      stdio: "inherit", // This automatically forwards stdout/stderr to parent
+    },
   );
   let messageId = 0;
 

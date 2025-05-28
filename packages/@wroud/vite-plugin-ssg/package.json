@@ -49,6 +49,7 @@
     "vitest": "^3"
   },
   "dependencies": {
+    "@wroud/vite-plugin-asset-resolver": "workspace:^",
     "change-case": "^5",
     "magic-string": "^0",
     "style-to-object": "^1",

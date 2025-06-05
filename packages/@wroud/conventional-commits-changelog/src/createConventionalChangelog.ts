@@ -142,6 +142,9 @@ function* createChangesList(
     yield message;
 
     for (const breakingChange of commit.breakingChanges) {
+      if (!commit.body && breakingChange === commit.description) {
+        continue;
+      }
       const lines = formatMessage(
         commit.metadata?.formatter
           ? commit.metadata.formatter(breakingChange)

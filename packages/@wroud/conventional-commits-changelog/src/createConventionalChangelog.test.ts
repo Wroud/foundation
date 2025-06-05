@@ -127,4 +127,49 @@ describe("createConventionalChangelog", () => {
 
     expect(changelog).toMatchSnapshot();
   });
+
+  it("skip duplicate breaking change", async () => {
+    const commitNoBody: IConventionalCommit = {
+      commitInfo: {
+        hash: "1111111",
+        tags: [],
+        authorName: "Tester",
+        authorEmail: "tester@example.com",
+        subject: "feat!: change",
+        body: "",
+        trailers: [],
+        links: {},
+      },
+      type: "feat",
+      description: "change",
+      breakingChanges: ["change"],
+    };
+
+    const commitWithBody: IConventionalCommit = {
+      commitInfo: {
+        hash: "2222222",
+        tags: [],
+        authorName: "Tester",
+        authorEmail: "tester@example.com",
+        subject: "feat!: new api",
+        body: "breaking details\n",
+        trailers: [],
+        links: {},
+      },
+      type: "feat",
+      description: "new api",
+      body: "breaking details",
+      breakingChanges: ["breaking details"],
+    };
+
+    const changelog: string[] = [];
+    for await (const line of createConventionalChangelog([
+      commitNoBody,
+      commitWithBody,
+    ])) {
+      changelog.push(line);
+    }
+
+    expect(changelog).toMatchSnapshot();
+  });
 });

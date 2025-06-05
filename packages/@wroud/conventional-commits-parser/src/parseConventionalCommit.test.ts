@@ -15,4 +15,19 @@ describe("parseConventionalCommit", () => {
     const commits = JSON.parse(data);
     expect(commits.map(parseConventionalCommit)).toMatchSnapshot();
   });
+
+  it("breaking body", () => {
+    const commit = {
+      hash: "abcdef1",
+      tags: [],
+      authorName: "Tester",
+      authorEmail: "tester@example.com",
+      subject: "feat!: changed API",
+      body: "This change breaks things\n",
+      trailers: [],
+      links: {},
+    };
+
+    expect(parseConventionalCommit(commit)).toMatchSnapshot();
+  });
 });

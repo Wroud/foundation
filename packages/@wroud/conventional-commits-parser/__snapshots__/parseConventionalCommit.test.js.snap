@@ -1,5 +1,28 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`parseConventionalCommit > breaking body 1`] = `
+{
+  "body": "This change breaks things",
+  "breakingChanges": [
+    "This change breaks things",
+  ],
+  "commitInfo": {
+    "authorEmail": "tester@example.com",
+    "authorName": "Tester",
+    "body": "This change breaks things
+",
+    "hash": "abcdef1",
+    "links": {},
+    "subject": "feat!: changed API",
+    "tags": [],
+    "trailers": [],
+  },
+  "description": "changed API",
+  "scope": undefined,
+  "type": "feat",
+}
+`;
+
 exports[`parseConventionalCommit > without 1`] = `
 [
   {

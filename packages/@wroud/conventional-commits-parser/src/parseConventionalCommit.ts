@@ -20,8 +20,14 @@ export function parseConventionalCommit(
     description: string;
   };
 
+  const rawBody = commitInfo.body?.trim() || "";
+
   if (breaking) {
-    breakingChanges.push(description);
+    if (rawBody) {
+      breakingChanges.push(rawBody);
+    } else {
+      breakingChanges.push(description);
+    }
   }
 
   for (const trailer of commitInfo.trailers) {
@@ -36,7 +42,9 @@ export function parseConventionalCommit(
     }
   }
 
-  const body = commitInfo.body?.trim() || undefined;
+  const body = rawBody || undefined;
+
+  const uniqueBreakingChanges = Array.from(new Set(breakingChanges));
 
   return {
     commitInfo,
@@ -44,6 +52,6 @@ export function parseConventionalCommit(
     scope: scope || undefined,
     description,
     body,
-    breakingChanges,
+    breakingChanges: uniqueBreakingChanges,
   };
 }

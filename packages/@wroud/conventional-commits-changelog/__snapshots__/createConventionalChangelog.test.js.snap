@@ -62,7 +62,6 @@ exports[`createConventionalChangelog > default 1`] = `
   "- test commit with something (1dfaff1)",
   "  - Some breaky change",
   "- disable auto release (5a84e8d)",
-  "  - disable auto release",
   "- release @wroud/di@0.9.1 (cde6098)",
   "  - Some breaky change",
   "",
@@ -79,6 +78,18 @@ exports[`createConventionalChangelog > default 1`] = `
   "- collect jest statistic for provided package (f98f7b1)",
   "- add installation section (6fb62f9)",
   "- add dependency injection overview page (fc9ef0f)",
+  "",
+]
+`;
+
+exports[`createConventionalChangelog > skip duplicate breaking change 1`] = `
+[
+  "<!-- changelog -->",
+  "### ⚠️  Breaking Changes",
+  "",
+  "- change (1111111)",
+  "- new api (2222222)",
+  "  - breaking details",
   "",
 ]
 `;
@@ -145,7 +156,6 @@ exports[`createConventionalChangelog > with metadata co-authors 1`] = `
   "- test commit with something (1dfaff1)",
   "  - Some breaky change",
   "- disable auto release (5a84e8d)",
-  "  - disable auto release",
   "- release @wroud/di@0.9.1 (cde6098)",
   "  - Some breaky change",
   "",
@@ -236,7 +246,6 @@ exports[`createConventionalChangelog > with metadata formatter 1`] = `
   "- (1dfaff1) test commit with something (1dfaff1)",
   "  - (1dfaff1) Some breaky change",
   "- (5a84e8d) disable auto release (5a84e8d)",
-  "  - (5a84e8d) disable auto release",
   "- (cde6098) release @wroud/di@0.9.1 (cde6098)",
   "  - (cde6098) Some breaky change",
   "",
@@ -319,7 +328,6 @@ exports[`createConventionalChangelog > with metadata url 1`] = `
   "- test commit with something ([1dfaff1](https://example.com/1dfaff1))",
   "  - Some breaky change",
   "- disable auto release ([5a84e8d](https://example.com/5a84e8d))",
-  "  - disable auto release",
   "- release @wroud/di@0.9.1 ([cde6098](https://example.com/cde6098))",
   "  - Some breaky change",
   "",

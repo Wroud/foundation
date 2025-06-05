@@ -1,7 +1,7 @@
 {
   "name": "@wroud/conventional-commits-parser",
   "description": "A lightweight parser for conventional commits that supports extracting commit metadata, generating commit messages, and managing commit trailers in TypeScript.",
-  "version": "0.1.3",
+  "version": "0.2.0",
   "type": "module",
   "packageManager": "yarn@4.9.1",
   "exports": {

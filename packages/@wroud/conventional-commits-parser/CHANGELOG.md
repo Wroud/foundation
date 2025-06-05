@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.2.0 -->
+## 0.2.0 (2025-06-05)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/cc-parser-v0.1.3...cc-parser-v0.2.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- include body as breaking change with bang ([#42](https://github.com/Wroud/foundation/issues/42)) ([2af5458](https://github.com/Wroud/foundation/commit/2af5458))
+
 <!-- version:0.1.3 -->
 ## 0.1.3 (2025-02-07)
 

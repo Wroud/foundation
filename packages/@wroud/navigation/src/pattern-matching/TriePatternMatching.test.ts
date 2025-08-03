@@ -459,7 +459,7 @@ describe("TriePatternMatching", () => {
         ExtractRouteParams<"/user/:id/:action">
       >;
       expect(() => patternMatcher.encode(pattern, params as any)).toThrow(
-        /missing or invalid/i,
+        /Parameter 'action' is not of type 'string'/i,
       );
     });
 
@@ -467,7 +467,7 @@ describe("TriePatternMatching", () => {
       const pattern = "/posts/:path*/edit";
       const params = {} as Partial<ExtractRouteParams<"/posts/:path*/edit">>;
       expect(() => patternMatcher.encode(pattern, params as any)).toThrow(
-        /missing required/i,
+        /Parameter 'path' is not of type 'string'/i,
       );
     });
 
@@ -476,8 +476,9 @@ describe("TriePatternMatching", () => {
       const params = {
         path: ["docs", undefined as unknown as string, "file.txt"],
       } as ExtractRouteParams<"/files/:path*">;
-      const url = patternMatcher.encode(pattern, params);
-      expect(url).toBe("/files/docs/file.txt");
+      expect(() => patternMatcher.encode(pattern, params)).toThrow(
+        "Parameter 'path' at index 1 is not of type 'string'",
+      );
     });
 
     test("should handle invalid parameter values", () => {
@@ -486,7 +487,7 @@ describe("TriePatternMatching", () => {
         id: [] as unknown as string,
       } as ExtractRouteParams<"/user/:id">;
       expect(() => patternMatcher.encode(pattern, params)).toThrow(
-        /Missing or invalid required parameter/i,
+        /Parameter 'id' is not of type 'string'/i,
       );
     });
   });
@@ -506,18 +507,17 @@ describe("TriePatternMatching", () => {
       expect(url).toBe("/files/single-file.txt");
     });
 
-    test("should handle undefined values in wildcard arrays", () => {
+    test("should throw error for undefined values in wildcard arrays", () => {
       patternMatcher.addPattern("/nested/:sections*/:id");
 
-      // Include undefined in the array to test filtering
-      const url = patternMatcher.encode("/nested/:sections*/:id", {
-        // @ts-expect-error - Intentionally including undefined to test filtering
-        sections: ["valid", undefined, "also-valid"],
-        id: "123",
-      });
-
-      // Should filter out undefined and keep valid values
-      expect(url).toBe("/nested/valid/also-valid/123");
+      // Intentionally include undefined in the array to test error throwing
+      expect(() =>
+        patternMatcher.encode("/nested/:sections*/:id", {
+          // @ts-expect-error - Intentionally including undefined to test error
+          sections: ["valid", undefined, "also-valid"],
+          id: "123",
+        }),
+      ).toThrow("Parameter 'sections' at index 1 is not of type 'string'");
     });
   });
 

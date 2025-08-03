@@ -76,6 +76,81 @@ describe("Parameter Utilities", () => {
         parameterUtils.validateParameters(pattern, segments, { id: false }),
       ).not.toThrow();
     });
+
+    test("should validate date and json parameter types", () => {
+      const pattern = "/event/:date/:meta";
+      const segments = ["/", "event", ":date", ":meta"];
+      const paramTypes = { date: "date", meta: "json" };
+
+      // Valid date and json
+      expect(() =>
+        parameterUtils.validateParameters(
+          pattern,
+          segments,
+          {
+            date: new Date("2024-01-01T12:00:00Z"),
+            meta: { foo: "bar" },
+          },
+          paramTypes,
+        ),
+      ).not.toThrow();
+
+      // Invalid date (not a Date object)
+      expect(() =>
+        parameterUtils.validateParameters(
+          pattern,
+          segments,
+          {
+            date: "not-a-date",
+            meta: { foo: "bar" },
+          },
+          paramTypes,
+        ),
+      ).toThrow(/date/);
+
+      // Invalid json (not an object)
+      expect(() =>
+        parameterUtils.validateParameters(
+          pattern,
+          segments,
+          {
+            date: new Date("2024-01-01T12:00:00Z"),
+            meta: "not-json",
+          },
+          paramTypes,
+        ),
+      ).toThrow(/json/);
+
+      // Valid wildcard array of dates
+      const pattern2 = "/multi/:dates*";
+      const segments2 = ["/", "multi", ":dates*"];
+      const paramTypes2 = { dates: "date" };
+      expect(() =>
+        parameterUtils.validateParameters(
+          pattern2,
+          segments2,
+          {
+            dates: [
+              new Date("2024-01-01T12:00:00Z"),
+              new Date("2024-01-02T12:00:00Z"),
+            ],
+          },
+          paramTypes2,
+        ),
+      ).not.toThrow();
+
+      // Invalid wildcard array of dates
+      expect(() =>
+        parameterUtils.validateParameters(
+          pattern2,
+          segments2,
+          {
+            dates: [new Date("2024-01-01T12:00:00Z"), "not-a-date"],
+          },
+          paramTypes2,
+        ),
+      ).toThrow(/date/);
+    });
   });
 
   describe("buildUrlSegments", () => {
@@ -92,7 +167,9 @@ describe("Parameter Utilities", () => {
       result = parameterUtils.buildUrlSegments(["item", ":id"], { id: 42 });
       expect(result).toEqual(["item", "42"]);
 
-      result = parameterUtils.buildUrlSegments(["flag", ":active"], { active: false });
+      result = parameterUtils.buildUrlSegments(["flag", ":active"], {
+        active: false,
+      });
       expect(result).toEqual(["flag", "false"]);
 
       // Wildcard array parameter
@@ -102,11 +179,15 @@ describe("Parameter Utilities", () => {
       expect(result).toEqual(["files", "docs", "reports", "annual.pdf"]);
 
       // Wildcard array with numeric values
-      result = parameterUtils.buildUrlSegments(["ids", ":ids*"], { ids: [1, 2] });
+      result = parameterUtils.buildUrlSegments(["ids", ":ids*"], {
+        ids: [1, 2],
+      });
       expect(result).toEqual(["ids", "1", "2"]);
 
       // Wildcard array with boolean values
-      result = parameterUtils.buildUrlSegments(["flags", ":flags*"], { flags: [true, false] });
+      result = parameterUtils.buildUrlSegments(["flags", ":flags*"], {
+        flags: [true, false],
+      });
       expect(result).toEqual(["flags", "true", "false"]);
 
       // Wildcard string parameter
@@ -126,6 +207,54 @@ describe("Parameter Utilities", () => {
         id: "123",
       });
       expect(result).toEqual(["user", "123"]);
+    });
+
+    test("should serialize date and json parameter types", () => {
+      const date = new Date("2024-01-01T12:00:00Z");
+      const meta = { foo: "bar", n: 42 };
+      const pattern = ["event", ":date", ":meta"];
+      const params = { date, meta };
+      const paramTypes = { date: "date", meta: "json" };
+      const result = parameterUtils.buildUrlSegments(
+        pattern,
+        params,
+        paramTypes,
+      );
+      expect(result).toEqual([
+        "event",
+        date.toISOString(),
+        JSON.stringify(meta),
+      ]);
+
+      // Wildcard array of dates
+      const pattern2 = ["multi", ":dates*"];
+      const params2 = { dates: [date, new Date("2024-01-02T12:00:00Z")] };
+      const paramTypes2 = { dates: "date" };
+      const result2 = parameterUtils.buildUrlSegments(
+        pattern2,
+        params2,
+        paramTypes2,
+      );
+      expect(result2).toEqual([
+        "multi",
+        date.toISOString(),
+        new Date("2024-01-02T12:00:00Z").toISOString(),
+      ]);
+
+      // Wildcard array of json
+      const pattern3 = ["multi", ":metas*"];
+      const params3 = { metas: [meta, { bar: "baz" }] };
+      const paramTypes3 = { metas: "json" };
+      const result3 = parameterUtils.buildUrlSegments(
+        pattern3,
+        params3,
+        paramTypes3,
+      );
+      expect(result3).toEqual([
+        "multi",
+        JSON.stringify(meta),
+        JSON.stringify({ bar: "baz" }),
+      ]);
     });
   });
 

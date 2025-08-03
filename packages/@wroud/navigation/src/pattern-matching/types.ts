@@ -53,7 +53,11 @@ type PrimitiveFromType<T extends string> = T extends "number"
   ? number
   : T extends "boolean"
     ? boolean
-    : string;
+    : T extends "date"
+      ? Date
+      : T extends "json"
+        ? object
+        : string;
 
 /**
  * Extract route parameters from a pattern string.
@@ -110,7 +114,6 @@ export interface IPatternRouteState<Pattern extends string>
   id: Pattern;
   params: ExtractRouteParams<this["id"]>;
 }
-
 
 /**
  * Types of nodes in the trie structure

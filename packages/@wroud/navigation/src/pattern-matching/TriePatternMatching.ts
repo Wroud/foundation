@@ -8,10 +8,7 @@ import {
   joinPath,
   splitPath,
 } from "./path-utils.js";
-import {
-  buildUrlSegments,
-  validateParameters,
-} from "./parameter-utils.js";
+import { buildUrlSegments, validateParameters } from "./parameter-utils.js";
 import type {
   TypedPatternMatcher,
   ExtractRouteParams,
@@ -177,9 +174,14 @@ export class TriePatternMatching implements TypedPatternMatcher, IRouteMatcher {
     if (cached !== undefined) return cached;
 
     const segments = splitPath(pattern);
-    validateParameters(pattern, segments, params as RouteParams);
+    const paramTypes = this.extractParameterTypes(pattern, segments);
+    validateParameters(pattern, segments, params as RouteParams, paramTypes);
 
-    const resultSegments = buildUrlSegments(segments, params as RouteParams);
+    const resultSegments = buildUrlSegments(
+      segments,
+      params as RouteParams,
+      paramTypes,
+    );
     let result = this.addBaseToUrl(joinPath(resultSegments));
 
     if (!this.options.trailingSlash) {
@@ -298,6 +300,26 @@ export class TriePatternMatching implements TypedPatternMatcher, IRouteMatcher {
       cache.set(key, new Map());
     }
     return cache.get(key)!;
+  }
+
+  /**
+   * Extract parameter types from a pattern by analyzing its segments
+   */
+  private extractParameterTypes(
+    pattern: string,
+    segments: string[],
+  ): Record<string, string> {
+    const paramTypes: Record<string, string> = {};
+
+    segments.forEach((segment) => {
+      if (isParameterSegment(segment)) {
+        const paramName = extractParamName(segment);
+        const paramType = extractParamType(segment);
+        paramTypes[paramName] = paramType;
+      }
+    });
+
+    return paramTypes;
   }
 
   /**

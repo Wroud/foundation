@@ -3,7 +3,7 @@ import type { IRouteState } from "./IRouteState.js";
 /**
  * Primitive parameter type supported by the router.
  */
-export type RouteParamValue = string | number | boolean;
+export type RouteParamValue = string | number | boolean | Date | object;
 
 /**
  * Parameter values extracted from URL routes.

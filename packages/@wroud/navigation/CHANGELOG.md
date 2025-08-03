@@ -3,6 +3,17 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:1.0.0 -->
+## 1.0.0 (2025-08-03)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/nav-v0.2.0...nav-v1.0.0)
+
+<!-- changelog -->
+### ⚠️  Breaking Changes
+
+- enhance parameter validation for date and JSON types; add tests for new functionality ([5cf229e](https://github.com/Wroud/foundation/commit/5cf229e))
+  - BREAKING CHANGE: empty string now is valid value for required param, undefined is not valid wildcard item anymore.
+
 <!-- version:0.2.0 -->
 ## 0.2.0 (2025-05-21)
 

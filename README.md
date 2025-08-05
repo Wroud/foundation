@@ -34,7 +34,7 @@ The following packages are available on npm:
 - [**@wroud/vite-plugin-asset-resolver**](packages/@wroud/vite-plugin-asset-resolver): Custom asset resolution plugin for Vite.
 - [**@wroud/vite-plugin-playground**](packages/@wroud/vite-plugin-playground): Vite plugin for component playground stories.
 - [**@wroud/vite-plugin-ssg**](packages/@wroud/vite-plugin-ssg): Static site generation plugin for React with Vite.
-- [**@wroud/vite-plugin-tsc**](packages/@wroud/vite-plugin-tsc): Transpile TypeScript using tsc during Vite builds.
+- [**@wroud/vite-plugin-tsc**](packages/@wroud/vite-plugin-tsc): Integrate `tsc` with Vite for background type checking or transpile TypeScript files with project reference support.
 - [**graphql-codegen-fragment-masking**](packages/graphql-codegen-fragment-masking): GraphQL Codegen plugin for fragment masking helpers.
 - [**graphql-codegen-typed-document-nodes**](packages/graphql-codegen-typed-document-nodes): GraphQL Codegen plugin for typed document nodes.
 

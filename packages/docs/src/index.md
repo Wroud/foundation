@@ -43,7 +43,7 @@ features:
     details: Get started quickly without needing extensive knowledge, thanks to straightforward and intuitive design.
   - icon: ⚙️
     title: TypeScript Build Support
-    details: Use the TypeScript compiler with Vite via `@wroud/vite-plugin-tsc`.
+    details: Bring `tsc` to Vite for type checking or transpiling TypeScript files via `@wroud/vite-plugin-tsc`.
     link: /packages/vite-plugin-tsc/overview
     linkText: See documentation
 ---

@@ -8,11 +8,17 @@
 [npm]: https://img.shields.io/npm/v/@wroud/vite-plugin-tsc.svg
 [npm-url]: https://npmjs.com/package/@wroud/vite-plugin-tsc
 
-`@wroud/vite-plugin-tsc` is a Vite plugin designed to transpile TypeScript and its project references using the TypeScript compiler (`tsc`). This plugin allows Vite to seamlessly bundle the transpiled code while also providing background type checking for your project, ensuring type safety and enhancing the development workflow.
+`@wroud/vite-plugin-tsc` brings the TypeScript compiler (`tsc`) to Vite. Vite's default esbuild pipeline skips type checking, so this plugin can run `tsc` to surface type errors during development or builds. It can also transpile TypeScript files that Vite then bundles, keeping all Vite features intact. The plugin supports TypeScript project references.
+
+## Use Cases
+
+- **Type checking**: Run `tsc` in the background to catch type errors that esbuild ignores.
+- **Transpilation**: Transpile TypeScript files with `tsc` and let Vite bundle the output.
 
 ## Features
 
 - **Transpilation**: Automatically transpiles TypeScript code using `tsc`.
+- **Project References**: Supports TypeScript project references.
 - **Background Type Checking**: Performs type checking in the background without blocking Vite, allowing for a smoother development experience.
 - **Watch Mode**: Supports watch mode for continuous development.
 - **Easy Integration**: Simple to add to your Vite project.

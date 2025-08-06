@@ -27,6 +27,7 @@ export function tscPlugin(
   let tsWorker: Worker | null = null;
   let isPrebuilt = false;
   let isWatchMode = false;
+  let skipTerminateError = false;
 
   function handleWorkerMessage(message: any) {
     try {
@@ -95,11 +96,12 @@ export function tscPlugin(
     });
     worker.on("exit", (code) => {
       if (tsWorker === worker) tsWorker = null;
-      if (code !== 0) {
+      if (!skipTerminateError && code !== 0) {
         reject(new Error(`TSC worker exited with code ${code}`));
       } else {
         resolve();
       }
+      skipTerminateError = false;
     });
 
     return promise;
@@ -137,7 +139,12 @@ export function tscPlugin(
         });
         return;
       }
-      startWorker(true, false);
+      startWorker(true, false).catch((e) => {
+        logger.error("TSC watch worker crashed", {
+          timestamp: true,
+          error: e,
+        });
+      });
     }
   }
 
@@ -163,6 +170,7 @@ export function tscPlugin(
 
     async closeBundle() {
       if (tsWorker) {
+        skipTerminateError = true;
         await tsWorker.terminate();
         tsWorker = null;
       }

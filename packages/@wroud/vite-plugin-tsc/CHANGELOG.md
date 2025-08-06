@@ -3,6 +3,20 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.12.0 -->
+## 0.12.0 (2025-08-06)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-tsc-v0.11.6...vite-plugin-tsc-v0.12.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- use typescript api, run process in worker ([a7bf5da](https://github.com/Wroud/foundation/commit/a7bf5da))
+
+### 📖 Documentation
+
+- refine vite-plugin-tsc docs ([#44](https://github.com/Wroud/foundation/issues/44)) ([4eda924](https://github.com/Wroud/foundation/commit/4eda924))
+
 <!-- version:0.11.6 -->
 ## 0.11.6 (2025-02-07)
 

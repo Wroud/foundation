@@ -1,10 +1,16 @@
 ---
+title: "@wroud/di Guides"
+description: Tutorials and references for the @wroud/di dependency injection library.
 outline: deep
 ---
 
 # @wroud/di Guides
 
 Welcome to the @wroud/di library guides! Here you'll find comprehensive documentation and tutorials to help you get started with our dependency injection (DI) library.
+
+<llm-only>
+This section helps AI agents understand service container patterns and dependency resolution steps.
+</llm-only>
 
 ## Getting Started
 

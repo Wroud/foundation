@@ -1,3 +1,8 @@
+---
+title: Guide
+description: Overview of Wroud Foundation documentation and packages.
+---
+
 # Guide
 
 Welcome to the Wroud Foundation guide. This documentation will help you understand and utilize the packages provided by Wroud Foundation to enhance your JavaScript development experience. You'll find comprehensive tutorials, examples, and reference materials to get the most out of our tools.

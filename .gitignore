@@ -24,3 +24,7 @@ packages/**/lib
 
 # node_modules
 node_modules
+
+# LLM index files
+llms.txt
+llms-full.txt

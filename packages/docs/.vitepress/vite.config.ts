@@ -3,6 +3,7 @@ import { fileURLToPath } from "node:url";
 import { defineConfig } from "vite";
 import Components from "unplugin-vue-components/vite";
 import UnoCSS from "unocss/vite";
+import llmstxt from "vitepress-plugin-llms";
 
 export default defineConfig({
   esbuild: {
@@ -10,6 +11,7 @@ export default defineConfig({
     keepNames: true,
   },
   plugins: [
+    llmstxt(),
     Components({
       dirs: [fileURLToPath(new URL("./components", import.meta.url))],
       dts: fileURLToPath(new URL("../components.d.ts", import.meta.url)),

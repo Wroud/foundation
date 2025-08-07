@@ -1,10 +1,12 @@
 ---
+title: "DI Tools"
+description: Tools for analyzing and visualizing @wroud/di dependency graphs.
 outline: deep
 ---
 
 # DI Tools
 
-## Introduction
+## Tool Suite Overview
 
 `@wroud/di` is not just a dependency injection library; it also comes with a suite of tools designed to help you analyze and visualize your application's dependency graph. These tools provide deeper insights into how your services are interconnected, aiding in debugging, optimization, and documentation.
 
@@ -22,3 +24,7 @@ By using `@wroud/di-tools-analyzer`, developers can better understand their serv
 ## Conclusion
 
 The `DI Tools` suite enhances the capabilities of the `@wroud/di` library by providing tools for analyzing and visualizing the dependency graph. These tools are essential for gaining deeper insights into your application's architecture and improving the overall development workflow.
+
+<llm-exclude>
+For workshop schedules and human-only events, contact the project maintainers.
+</llm-exclude>

@@ -19,7 +19,6 @@ import { resolveGeneratorAsync } from "../helpers/resolveGeneratorAsync.js";
 import { resolveGeneratorSync } from "../helpers/resolveGeneratorSync.js";
 import { isServiceProvider } from "../helpers/isServiceProvider.js";
 import { all } from "../service-type-resolvers/all.js";
-import { single } from "../service-type-resolvers/single.js";
 import { isServiceTypeResolver } from "../service-type-resolvers/BaseServiceTypeResolver.js";
 import { Debug } from "../debug.js";
 
@@ -68,11 +67,13 @@ export class ServiceProvider implements IServiceProvider {
   }
 
   private readonly instancesStore: IServiceInstancesStore;
+  private readonly root: ServiceProvider;
   constructor(
     private readonly collection: ServiceCollection,
     private readonly parent?: IServiceProvider,
   ) {
     this.instancesStore = new ServiceInstancesStore();
+    this.root = parent ? (parent as ServiceProvider).root : this;
     this.internalGetService = this.internalGetService.bind(this);
     this.resolveServiceImplementation =
       this.resolveServiceImplementation.bind(this);
@@ -86,7 +87,14 @@ export class ServiceProvider implements IServiceProvider {
 
   getServiceAsync<T>(service: ServiceType<T>): Promise<T> {
     if (!isServiceTypeResolver(service)) {
-      service = single(service);
+      return resolveGeneratorAsync(
+        this.resolveServiceImplementation(
+          this.collection.getDescriptor(service),
+          null,
+          EMPTY_PATH,
+          "async",
+        ),
+      );
     }
 
     return resolveGeneratorAsync(
@@ -96,7 +104,14 @@ export class ServiceProvider implements IServiceProvider {
 
   getService<T>(service: ServiceType<T>): T {
     if (!isServiceTypeResolver(service)) {
-      service = single(service);
+      return resolveGeneratorSync(
+        this.resolveServiceImplementation(
+          this.collection.getDescriptor(service),
+          null,
+          EMPTY_PATH,
+          "sync",
+        ),
+      );
     }
 
     return resolveGeneratorSync(
@@ -154,8 +169,11 @@ export class ServiceProvider implements IServiceProvider {
     requestedPath: RequestPath,
     mode: "sync" | "async",
   ): Generator<Promise<unknown>, T, unknown> {
-    if (descriptor.lifetime === ServiceLifetime.Singleton && this.parent) {
-      return (this.parent as ServiceProvider).resolveServiceImplementation(
+    if (
+      descriptor.lifetime === ServiceLifetime.Singleton &&
+      this !== this.root
+    ) {
+      return this.root.resolveServiceImplementation(
         descriptor,
         requestedBy,
         requestedPath,

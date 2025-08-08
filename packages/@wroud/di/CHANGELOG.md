@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.15.3 -->
+## 0.15.3 (2025-08-08)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/di-v0.15.2...di-v0.15.3)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- slightly improve performance ([46d29bc](https://github.com/Wroud/foundation/commit/46d29bc))
+
 <!-- version:0.15.2 -->
 ## 0.15.2 (2025-02-07)
 

@@ -26,14 +26,16 @@ export type MapServicesCompatible<T extends ServicesCompatible> = {
 export function mapDependenciesCompatible(
   dependencies: ServicesCompatible,
 ): IResolverServiceType<any, any>[] {
-  return dependencies.map((dependency) => {
-    if (isServiceTypeResolver(dependency)) {
-      return dependency;
-    }
+  return dependencies.map(mapDependency);
+}
 
-    if (Array.isArray(dependency)) {
-      return all(dependency[0]);
-    }
-    return single(dependency);
-  });
+function mapDependency(dependency: ServicesCompatible[0]) {
+  if (isServiceTypeResolver(dependency)) {
+    return dependency;
+  }
+
+  if (Array.isArray(dependency)) {
+    return all(dependency[0]);
+  }
+  return single(dependency);
 }

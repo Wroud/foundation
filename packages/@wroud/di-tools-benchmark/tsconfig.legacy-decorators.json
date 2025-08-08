@@ -17,8 +17,8 @@
   },
   "include": [
     "src/inversify",
-    "src/tsyringe",
-    "src/tools"
+    "src/inversify7",
+    "src/tsyringe"
   ],
   "references": [
     {

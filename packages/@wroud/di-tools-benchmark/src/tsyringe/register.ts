@@ -1,34 +1,58 @@
-import { bench } from "vitest";
 import "reflect-metadata";
-import { container, injectable, Lifecycle } from "tsyringe";
+import {
+  container,
+  injectable,
+  Lifecycle,
+  inject,
+  type DependencyContainer,
+} from "tsyringe";
+import { registerLibrary } from "@wroud/di-tools-benchmark/common/tools/registerLibrary";
 
-@injectable()
-class Service {}
-const service = Symbol("singleton");
+registerLibrary<
+  DependencyContainer,
+  DependencyContainer,
+  symbol,
+  new () => any
+>("tsyringe", {
+  setup: {
+    createContainerBuilder: () => container.createChildContainer(),
+    createService: (dependencies) => {
+      @injectable()
+      class Service {
+        constructor() {}
+      }
 
-bench("[tsyringe] singleton", () => {
-  const cont = container.createChildContainer();
-  cont.register(
-    service,
-    { useClass: Service },
-    { lifecycle: Lifecycle.Singleton },
-  );
-});
+      for (let i = 0; i < dependencies.length; i++) {
+        inject(dependencies[i]!)(Service, undefined, i);
+      }
 
-bench("[tsyringe] transient", () => {
-  const cont = container.createChildContainer();
-  cont.register(
-    service,
-    { useClass: Service },
-    { lifecycle: Lifecycle.Transient },
-  );
-});
-
-bench("[tsyringe] scoped", () => {
-  const cont = container.createChildContainer();
-  cont.register(
-    service,
-    { useClass: Service },
-    { lifecycle: Lifecycle.ContainerScoped },
-  );
+      return Service;
+    },
+    createToken() {
+      return Symbol();
+    },
+  },
+  prepare: {
+    createProvider: (builder) => builder,
+    createScopedProvider: (provider) => provider.createChildContainer(),
+    registerSingleton: (builder, token, service) => {
+      builder.register(token, service, { lifecycle: Lifecycle.Singleton });
+    },
+    registerTransient: (builder, token, service) => {
+      builder.register(token, service, { lifecycle: Lifecycle.Transient });
+    },
+    registerScoped: (builder, token, service) => {
+      builder.register(token, service, {
+        lifecycle: Lifecycle.ContainerScoped,
+      });
+    },
+  },
+  resolve: {
+    get: (provider, token) => provider.resolve(token),
+  },
+  dispose: {
+    disposeProvider: (provider) => {
+      provider.dispose();
+    },
+  },
 });

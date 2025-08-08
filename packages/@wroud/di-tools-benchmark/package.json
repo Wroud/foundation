@@ -9,9 +9,10 @@
   },
   "scripts": {
     "build:legacy-decorators": "tsc --build tsconfig.legacy-decorators.json",
+    "build:common": "tsc --build tsconfig.common.json",
     "build:modern": "tsc --build tsconfig.modern.json",
     "build:benchmark": "tsc --build tsconfig.json",
-    "build": "yarn build:modern && yarn build:legacy-decorators && yarn build:benchmark",
+    "build": "yarn build:common && yarn build:modern && yarn build:legacy-decorators && yarn build:benchmark",
     "bench": "benchmark run",
     "clear": "rimraf lib"
   },
@@ -36,10 +37,12 @@
     "typescript": "^5"
   },
   "dependencies": {
+    "@needle-di/core": "^1",
     "@wroud/di": "workspace:^",
     "@wroud/tests-runner": "workspace:^",
     "brandi": "^5",
     "inversify": "^6",
+    "inversify7": "npm:inversify@^7",
     "reflect-metadata": "^0",
     "tslib": "^2",
     "tsyringe": "^4",

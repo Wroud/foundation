@@ -1,19 +1,17 @@
 {
   "extends": "@wroud/tsconfig/tsconfig.json",
   "compilerOptions": {
-    "tsBuildInfoFile": "./lib/modern/.tsbuildinfo",
+    "tsBuildInfoFile": "./lib/common/.tsbuildinfo",
     "rootDir": "src",
     "rootDirs": [
       "src"
     ],
-    "outDir": "lib/modern",
+    "outDir": "lib/common",
     "incremental": true,
     "composite": true
   },
   "include": [
-    "src/@wroud",
-    "src/brandi",
-    "src/needle-di"
+    "src/tools"
   ],
   "references": [
     {

@@ -1,21 +1,37 @@
-import "reflect-metadata";
-import { bench } from "vitest";
-import { Container, token } from "brandi";
+import { registerLibrary } from "@wroud/di-tools-benchmark/common/tools/registerLibrary";
+import { Container, injected, type Token, token } from "brandi";
 
-class A {}
-const serviceASymbol = token("serviceA");
+registerLibrary<Container, Container, Token, new () => any>("brandi", {
+  setup: {
+    createContainerBuilder: () => new Container(),
+    createService: (dependencies) => {
+      class Service {
+        constructor(...deps: any[]) {}
+      }
 
-bench("[brandi] singleton", () => {
-  const singletonContainer = new Container();
-  singletonContainer.bind(serviceASymbol).toInstance(A).inSingletonScope();
-});
+      //@ts-ignore
+      injected(Service, ...dependencies);
 
-bench("[brandi] transient", () => {
-  const singletonContainer = new Container();
-  singletonContainer.bind(serviceASymbol).toInstance(A).inTransientScope();
-});
-
-bench("[brandi] scoped", () => {
-  const singletonContainer = new Container();
-  singletonContainer.bind(serviceASymbol).toInstance(A).inContainerScope();
+      return Service;
+    },
+    createToken() {
+      return token("");
+    },
+  },
+  prepare: {
+    createProvider: (builder) => builder,
+    createScopedProvider: (provider) => new Container().extend(provider),
+    registerSingleton: (builder, token, service) => {
+      builder.bind(token).toInstance(service).inSingletonScope();
+    },
+    registerTransient: (builder, token, service) => {
+      builder.bind(token).toInstance(service).inTransientScope();
+    },
+    registerScoped: (builder, token, service) => {
+      builder.bind(token).toInstance(service).inContainerScope();
+    },
+  },
+  resolve: {
+    get: (provider, token) => provider.get(token) as any,
+  },
 });

@@ -1,7 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { injectable } from "./injectable.js";
 import { ServiceRegistry } from "./ServiceRegistry.js";
-import { single } from "../service-type-resolvers/single.js";
 
 vi.mock(import("./ServiceRegistry.js"), () => ({
   ServiceRegistry: {

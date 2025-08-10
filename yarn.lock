@@ -4139,6 +4139,20 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@wroud/di-15-2@npm:@wroud/di@0.15.2":
+  version: 0.15.2
+  resolution: "@wroud/di@npm:0.15.2"
+  checksum: 10c0/4596255c00518e366e85d47d4059784bf969c96c542b579754129b564a4682f8bb89bff0e03215f90893d920d14cb5fdbd531cc6751c106106342144645cabd6
+  languageName: node
+  linkType: hard
+
+"@wroud/di-latest@npm:@wroud/di@latest":
+  version: 0.16.0
+  resolution: "@wroud/di@npm:0.16.0"
+  checksum: 10c0/d7d93e905ba756f14859ebf52f4732796e3f32fc370b7289aee193b060321d02560cb1e8cf68750f7c7c7f4b0d239a65012fef100a31af37987297470312991c
+  languageName: node
+  linkType: hard
+
 "@wroud/di-react@workspace:*, @wroud/di-react@workspace:^, @wroud/di-react@workspace:packages/@wroud/di-react":
   version: 0.0.0-use.local
   resolution: "@wroud/di-react@workspace:packages/@wroud/di-react"
@@ -4197,7 +4211,8 @@ __metadata:
   resolution: "@wroud/di-tools-benchmark@workspace:packages/@wroud/di-tools-benchmark"
   dependencies:
     "@needle-di/core": "npm:^1"
-    "@wroud/di": "workspace:^"
+    "@wroud/di-15-2": "npm:@wroud/di@0.15.2"
+    "@wroud/di-latest": "npm:@wroud/di@latest"
     "@wroud/tests-runner": "workspace:^"
     "@wroud/tsconfig": "workspace:^"
     brandi: "npm:^5"

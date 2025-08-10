@@ -19,10 +19,5 @@
     "src/inversify",
     "src/inversify7",
     "src/tsyringe"
-  ],
-  "references": [
-    {
-      "path": "../di"
-    }
   ]
 }

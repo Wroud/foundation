@@ -1,0 +1,159 @@
+[needle-di] - create: tokens & service descriptors x8
+  1.35x faster than [@wroud/di]
+  1.38x faster than [@wroud/di 0.15.2]
+  2.22x faster than [tsyringe]
+  2.23x faster than [inversify7]
+  2.46x faster than [inversify]
+
+[needle-di] - create: tokens & service descriptors x32
+  1.11x faster than [@wroud/di]
+  1.41x faster than [@wroud/di 0.15.2]
+  2.07x faster than [tsyringe]
+  2.26x faster than [inversify7]
+  2.63x faster than [inversify]
+
+[@wroud/di 0.15.2] - register: singleton only x8
+  1.01x faster than [@wroud/di]
+  1.49x faster than [needle-di]
+  1.49x faster than [inversify]
+  2.89x faster than [tsyringe]
+  28.60x faster than [inversify7]
+
+[@wroud/di] - register: singleton only x32
+  1.04x faster than [@wroud/di 0.15.2]
+  1.50x faster than [needle-di]
+  1.52x faster than [inversify]
+  3.07x faster than [tsyringe]
+  25.78x faster than [inversify7]
+
+[@wroud/di 0.15.2] - register: transient only x8
+  1.00x faster than [@wroud/di]
+  1.46x faster than [inversify]
+  2.63x faster than [tsyringe]
+  27.76x faster than [inversify7]
+
+[@wroud/di] - register: transient only x32
+  1.04x faster than [@wroud/di 0.15.2]
+  1.50x faster than [inversify]
+  2.76x faster than [tsyringe]
+  25.15x faster than [inversify7]
+
+[@wroud/di] - register: scoped only x8
+  1.03x faster than [@wroud/di 0.15.2]
+  2.88x faster than [tsyringe]
+
+[@wroud/di] - register: scoped only x32
+  1.13x faster than [@wroud/di 0.15.2]
+  3.10x faster than [tsyringe]
+
+[@wroud/di] - build: provider (register + build) x8
+  1.38x faster than [needle-di]
+  1.44x faster than [inversify]
+  2.71x faster than [tsyringe]
+  3.19x faster than [@wroud/di 0.15.2]
+  26.99x faster than [inversify7]
+
+[@wroud/di] - build: provider (register + build) x32
+  1.55x faster than [inversify]
+  1.56x faster than [needle-di]
+  3.03x faster than [tsyringe]
+  3.59x faster than [@wroud/di 0.15.2]
+  26.68x faster than [inversify7]
+
+[@wroud/di] - resolve: cold (all tokens) x8
+  1.05x faster than [needle-di]
+  1.11x faster than [tsyringe]
+  1.30x faster than [@wroud/di 0.15.2]
+  5.68x faster than [inversify]
+  6.04x faster than [inversify7]
+
+[@wroud/di] - resolve: cold (all tokens) x32
+  1.04x faster than [needle-di]
+  1.20x faster than [tsyringe]
+  1.33x faster than [@wroud/di 0.15.2]
+  5.22x faster than [inversify]
+  5.42x faster than [inversify7]
+
+[@wroud/di] - resolve: singleton (warm leaf) x8
+  1.21x faster than [needle-di]
+  1.58x faster than [@wroud/di 0.15.2]
+  1.94x faster than [inversify7]
+  2.66x faster than [tsyringe]
+  11.61x faster than [inversify]
+
+[@wroud/di] - resolve: singleton (warm leaf) x32
+  1.09x faster than [needle-di]
+  1.33x faster than [inversify7]
+  1.53x faster than [@wroud/di 0.15.2]
+  2.59x faster than [tsyringe]
+  10.19x faster than [inversify]
+
+[@wroud/di] - resolve: transient (leaf) x8
+  1.09x faster than [inversify7]
+  1.48x faster than [tsyringe]
+  1.56x faster than [@wroud/di 0.15.2]
+  17.61x faster than [inversify]
+
+[@wroud/di] - resolve: transient (leaf) x32
+  1.13x faster than [inversify7]
+  1.49x faster than [tsyringe]
+  1.57x faster than [@wroud/di 0.15.2]
+  15.39x faster than [inversify]
+
+[@wroud/di 0.15.2] - create: scope x8
+  1.03x faster than [@wroud/di]
+  6.59x faster than [tsyringe]
+
+[@wroud/di 0.15.2] - create: scope x32
+  1.01x faster than [@wroud/di]
+  17.69x faster than [tsyringe]
+
+[inversify] - resolve: miss (unknown token)
+  1.04x faster than [@wroud/di 0.15.2]
+  1.04x faster than [inversify7]
+  1.05x faster than [@wroud/di]
+  1.12x faster than [needle-di]
+  1.13x faster than [tsyringe]
+
+[tsyringe] - resolve: deep chain (cold) depth=16
+  1.03x faster than [@wroud/di]
+  1.13x faster than [needle-di]
+  1.33x faster than [@wroud/di 0.15.2]
+  5.09x faster than [inversify]
+  6.58x faster than [inversify7]
+
+[needle-di] - app: init x8
+  1.01x faster than [@wroud/di]
+  1.31x faster than [@wroud/di 0.15.2]
+  2.76x faster than [tsyringe]
+  3.44x faster than [inversify]
+  3.73x faster than [inversify7]
+
+[@wroud/di] - app: init x32
+  1.06x faster than [needle-di]
+  1.41x faster than [@wroud/di 0.15.2]
+  3.30x faster than [inversify7]
+  3.37x faster than [inversify]
+  3.42x faster than [tsyringe]
+
+[@wroud/di] - app: request (server, ssr) x8
+  1.35x faster than [@wroud/di 0.15.2]
+  1.44x faster than [tsyringe]
+
+[@wroud/di] - app: request (server, ssr) x32
+  1.44x faster than [tsyringe]
+  1.45x faster than [@wroud/di 0.15.2]
+
+[@wroud/di] - app: resolve warm (react, ssr) x8
+  1.24x faster than [needle-di]
+  1.60x faster than [inversify7]
+  1.75x faster than [@wroud/di 0.15.2]
+  2.91x faster than [tsyringe]
+  10.75x faster than [inversify]
+
+[@wroud/di] - app: resolve warm (react, ssr) x32
+  1.06x faster than [needle-di]
+  1.40x faster than [inversify7]
+  1.50x faster than [@wroud/di 0.15.2]
+  2.63x faster than [tsyringe]
+  10.54x faster than [inversify]

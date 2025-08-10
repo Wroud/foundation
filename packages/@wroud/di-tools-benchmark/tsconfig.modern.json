@@ -13,11 +13,7 @@
   "include": [
     "src/@wroud",
     "src/brandi",
+    "src/reatom",
     "src/needle-di"
-  ],
-  "references": [
-    {
-      "path": "../di"
-    }
   ]
 }

@@ -1,9 +1,9 @@
 import "reflect-metadata";
 import {
   container,
+  inject,
   injectable,
   Lifecycle,
-  inject,
   type DependencyContainer,
 } from "tsyringe";
 import { registerLibrary } from "@wroud/di-tools-benchmark/common/tools/registerLibrary";
@@ -17,15 +17,20 @@ registerLibrary<
   setup: {
     createContainerBuilder: () => container.createChildContainer(),
     createService: (dependencies) => {
-      @injectable()
       class Service {
-        constructor() {}
+        constructor(...args: any[]) {}
       }
 
-      for (let i = 0; i < dependencies.length; i++) {
-        inject(dependencies[i]!)(Service, undefined, i);
-      }
+      Reflect.defineMetadata(
+        "design:paramtypes",
+        dependencies.map(() => Object),
+        Service,
+      );
 
+      dependencies.forEach((token, index) => {
+        inject(token)(Service, undefined, index);
+      });
+      injectable()(Service);
       return Service;
     },
     createToken() {

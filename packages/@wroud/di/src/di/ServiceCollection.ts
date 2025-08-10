@@ -20,7 +20,7 @@ import { ValueServiceImplementationResolver } from "../implementation-resolvers/
 export class ServiceCollection implements IServiceCollection {
   protected readonly collection: Map<any, IServiceCollectionElement<unknown>>;
   constructor(collection?: ServiceCollection) {
-    this.collection = new Map(collection?.copy() || []);
+    this.collection = collection ? collection.copy() : new Map();
     if (!this.collection.has(IServiceProvider)) {
       this.addTransient(IServiceProvider);
     }
@@ -128,31 +128,39 @@ export class ServiceCollection implements IServiceCollection {
     return this;
   }
 
-  protected *copy(): Iterable<[any, IServiceCollectionElement<unknown>]> {
+  protected copy(): Map<any, IServiceCollectionElement<unknown>> {
+    const newMap = new Map<any, IServiceCollectionElement<unknown>>();
     for (const [key, descriptors] of this.collection) {
-      const all = [...descriptors.all.map((d) => ({ ...d }))];
-      yield [
-        key,
-        {
-          single: all[all.length - 1]!,
-          all,
-        },
-      ];
+      const src = descriptors.all;
+      const len = src.length;
+      // Pre-allocate exact size to avoid dynamic growth / copying
+      const all: IServiceDescriptor<unknown>[] = new Array(len);
+      for (let i = 0; i < len; i++) {
+        const d = src[i]!;
+        // Manual property copy is faster than object spread for small fixed objects
+        all[i] = {
+          lifetime: d.lifetime,
+          service: d.service,
+          resolver: d.resolver,
+        };
+      }
+      newMap.set(key, { single: all[len - 1]!, all });
     }
+    return newMap;
   }
 
-  private addService<T>(
+  protected addService<T>(
     lifetime: ServiceLifetime,
     service: SingleServiceType<T>,
     implementation: IServiceImplementation<T>,
   ): this {
     let resolver: IServiceImplementationResolver<T>;
-    if (isServiceImplementationResolver(implementation)) {
-      resolver = implementation;
-    } else if (typeof implementation === "function") {
+    if (typeof implementation === "function") {
       resolver = new RegistryServiceImplementationResolver(
         implementation as SingleServiceImplementation<T>,
       );
+    } else if (isServiceImplementationResolver(implementation)) {
+      resolver = implementation;
     } else {
       resolver = new ValueServiceImplementationResolver(implementation);
     }

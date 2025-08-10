@@ -16,7 +16,7 @@ describe("ServiceInstancesStore", () => {
     const instance1 = {};
 
     const instanceInfo = store.addInstance(descriptor, null);
-    instanceInfo.initialize(() => instance1);
+    instanceInfo.initialize(() => instance1, []);
     expect(store.addInstance(descriptor, null)).toBe(instanceInfo);
   });
   it("should has", async () => {

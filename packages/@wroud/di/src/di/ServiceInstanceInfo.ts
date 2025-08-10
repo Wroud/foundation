@@ -1,4 +1,5 @@
 import type {
+  IResolvedServiceImplementationCreator,
   IServiceDescriptor,
   IServiceInstanceInfo,
 } from "../types/index.js";
@@ -33,9 +34,12 @@ export class ServiceInstanceInfo<T> implements IServiceInstanceInfo<T> {
     return this._instance;
   }
 
-  initialize(creator: () => T): T {
+  initialize(
+    creator: IResolvedServiceImplementationCreator<T>,
+    dependencies: any[],
+  ): T {
     if (this._instance === NOT_INITIALIZED) {
-      this._instance = creator();
+      this._instance = creator(dependencies);
     }
 
     return this._instance;

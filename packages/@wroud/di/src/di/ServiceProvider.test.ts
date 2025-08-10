@@ -225,21 +225,6 @@ describe("ServiceProvider", () => {
       serviceProvider.getService(Test),
     );
   });
-  it("should resolve transient service", () => {
-    @injectable(() => [Number])
-    class Test {
-      constructor(public number: Number) {}
-    }
-    const serviceProvider = new ServiceContainerBuilder()
-      .addTransient(Test)
-      .addSingleton(Number, () => 42)
-      .build();
-    expect(serviceProvider.getService(Test)).toBeInstanceOf(Test);
-    expect(serviceProvider.getService(Test).number).toBe(42);
-    expect(serviceProvider.getService(Test)).not.toBe(
-      serviceProvider.getService(Test),
-    );
-  });
   it("should not resolve scoped service without scope", () => {
     @injectable(() => [Number])
     class Test {
@@ -338,6 +323,42 @@ describe("ServiceProvider", () => {
 
     expect(() => serviceProvider.getService(Test2)).toThrowError(
       "Scoped services require a service scope.",
+    );
+  });
+  it("should resolve different instancies and dependencies in different scope", () => {
+    @injectable()
+    class Test {}
+    @injectable(() => [Test])
+    class Test2 {
+      constructor(public test: Test) {}
+    }
+    const serviceProvider = new ServiceContainerBuilder()
+      .addScoped(Test2)
+      .addScoped(Test)
+      .build();
+    const scope = serviceProvider.createScope();
+    expect(scope.serviceProvider.getService(Test2)).toBeInstanceOf(Test2);
+    expect(scope.serviceProvider.getService(Test2).test).toBeInstanceOf(Test);
+    expect(scope.serviceProvider.getService(Test2)).toBe(
+      scope.serviceProvider.getService(Test2),
+    );
+    expect(scope.serviceProvider.getService(Test)).toBeInstanceOf(Test);
+    expect(scope.serviceProvider.getService(Test)).toBe(
+      scope.serviceProvider.getService(Test2).test,
+    );
+    expect(scope.serviceProvider.getService(Test)).toBe(
+      scope.serviceProvider.getService(Test),
+    );
+
+    const scope2 = scope.serviceProvider.createScope();
+    expect(scope.serviceProvider.getService(Test2)).not.equal(
+      scope2.serviceProvider.getService(Test2),
+    );
+    expect(scope.serviceProvider.getService(Test)).not.equal(
+      scope2.serviceProvider.getService(Test),
+    );
+    expect(scope.serviceProvider.getService(Test2).test).not.equal(
+      scope2.serviceProvider.getService(Test2).test,
     );
   });
   it("should not initialize copy of previously resolved service when resolving multiple services", () => {

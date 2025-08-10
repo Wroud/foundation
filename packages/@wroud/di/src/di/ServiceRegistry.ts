@@ -1,7 +1,7 @@
 import type {
   IServiceMetadata,
   MapToServicesType,
-  IResolverServiceType,
+  ServiceType,
 } from "../types/index.js";
 
 export class ServiceRegistry {
@@ -9,7 +9,7 @@ export class ServiceRegistry {
 
   static register<
     TClass extends abstract new (...args: MapToServicesType<TServices>) => any,
-    TServices extends IResolverServiceType<any, any>[] = [],
+    TServices extends ServiceType<any>[] = [],
   >(service: TClass, metadata: IServiceMetadata<TServices>) {
     if (this.meta.has(service)) {
       throw new Error(`Service ${service.name} is already registered`);

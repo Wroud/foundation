@@ -1,3 +1,4 @@
+import { EMPTY_DEPS } from "../helpers/EMPTY_DEPS.js";
 import { getNameOfServiceType } from "../helpers/getNameOfServiceType.js";
 import type {
   IResolvedServiceImplementation,
@@ -32,6 +33,10 @@ export class ProxyServiceImplementationResolver<
       requestedPath,
       mode,
     );
-    return () => implementation;
+    return {
+      implementation,
+      dependencies: EMPTY_DEPS,
+      create: () => implementation,
+    };
   }
 }

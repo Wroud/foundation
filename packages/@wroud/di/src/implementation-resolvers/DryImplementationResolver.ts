@@ -31,7 +31,7 @@ export class DryImplementationResolver<
     requestedPath: RequestPath,
     mode: "sync" | "async",
   ): Generator<Promise<unknown>, IResolvedServiceImplementation<T>, unknown> {
-    yield* this.implementation.resolve(
+    const resolved = yield* this.implementation.resolve(
       internalGetService,
       descriptor,
       requestedBy,
@@ -39,6 +39,10 @@ export class DryImplementationResolver<
       mode,
     );
 
-    return () => null as T;
+    return {
+      implementation: null as T,
+      dependencies: resolved.dependencies,
+      create: () => null as T,
+    };
   }
 }

@@ -1,3 +1,4 @@
+import { EMPTY_DEPS } from "../helpers/EMPTY_DEPS.js";
 import { getNameOfServiceType } from "../helpers/getNameOfServiceType.js";
 import type {
   IResolvedServiceImplementation,
@@ -34,15 +35,19 @@ export class ValueServiceImplementationResolver<
     let implementation = this.implementation;
 
     if (isServiceImplementationResolver<T>(implementation)) {
-      implementation = (yield* implementation.resolve(
+      return yield* implementation.resolve(
         internalGetService,
         descriptor,
         requestedBy,
         requestedPath,
         mode,
-      )) as T;
+      );
     }
 
-    return () => implementation;
+    return {
+      implementation,
+      dependencies: EMPTY_DEPS,
+      create: () => implementation,
+    };
   }
 }

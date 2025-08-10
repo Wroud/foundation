@@ -51,36 +51,20 @@ export class RegistryServiceImplementationResolver<
         requestedBy,
         requestedPath,
         mode,
-      )) as T | SingleServiceImplementation<T>;
+      )).implementation;
     }
 
     const metadata = ServiceRegistry.get(implementation);
 
     if (metadata) {
-      if (metadata.dependencies.length > 0) {
-        const instanceDependencies: any[] = [];
-
-        requestedPath = {
-          value: descriptor,
-          next: requestedPath,
-        };
-        for (const dependency of metadata.dependencies) {
-          instanceDependencies.push(
-            yield* internalGetService(
-              dependency,
-              descriptor,
-              requestedPath,
-              mode,
-            ),
-          );
-        }
-        return () =>
+      return {
+        implementation: implementation as T,
+        dependencies: metadata.dependencies,
+        create: (instanceDependencies) =>
           new (implementation as IServiceConstructor<T>)(
             ...instanceDependencies,
-          );
-      }
-
-      return () => new (implementation as IServiceConstructor<T>)();
+          ),
+      };
     }
 
     return yield* new FactoryServiceImplementationResolver(

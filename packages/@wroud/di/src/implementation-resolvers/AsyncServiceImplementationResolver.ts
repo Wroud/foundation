@@ -50,7 +50,7 @@ export class AsyncServiceImplementationResolver<
       }
     }
 
-    return yield* (this.implementation as any).resolve(
+    return yield* this.implementation.resolve(
       internalGetService,
       descriptor,
       requestedBy,

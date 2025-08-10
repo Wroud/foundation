@@ -8,9 +8,9 @@ import type { IServiceDescriptor } from "../types/IServiceDescriptor.js";
 describe("ServiceInstanceInfo", () => {
   it("should not replace instance", async () => {
     const instanceInfo = new ServiceInstanceInfo(mockDescriptor());
-    instanceInfo.initialize(() => ({}) as any);
+    instanceInfo.initialize(() => ({}) as any, []);
     const inst1 = instanceInfo.instance;
-    instanceInfo.initialize(() => ({}) as any);
+    instanceInfo.initialize(() => ({}) as any, []);
     const inst2 = instanceInfo.instance;
     expect(inst1).toBe(inst2);
   });
@@ -18,9 +18,12 @@ describe("ServiceInstanceInfo", () => {
     const instanceInfo = new ServiceInstanceInfo(mockDescriptor());
     const dispose = vi.fn();
 
-    instanceInfo.initialize(() => ({
-      [Symbol.dispose]: dispose,
-    }));
+    instanceInfo.initialize(
+      () => ({
+        [Symbol.dispose]: dispose,
+      }),
+      [],
+    );
 
     instanceInfo.disposeSync();
     expect(() => instanceInfo.disposeSync()).not.toThrow();
@@ -30,9 +33,12 @@ describe("ServiceInstanceInfo", () => {
     const instanceInfo = new ServiceInstanceInfo(mockDescriptor());
     const dispose = vi.fn();
 
-    instanceInfo.initialize(() => ({
-      [Symbol.asyncDispose]: dispose,
-    }));
+    instanceInfo.initialize(
+      () => ({
+        [Symbol.asyncDispose]: dispose,
+      }),
+      [],
+    );
 
     await instanceInfo.disposeAsync();
     await instanceInfo.disposeAsync();
@@ -44,9 +50,12 @@ describe("ServiceInstanceInfo", () => {
       throw new Error();
     });
 
-    instanceInfo.initialize(() => ({
-      [Symbol.dispose]: dispose,
-    }));
+    instanceInfo.initialize(
+      () => ({
+        [Symbol.dispose]: dispose,
+      }),
+      [],
+    );
 
     expect(() => instanceInfo.disposeSync()).toThrow();
     expect(() => instanceInfo.disposeSync()).toThrow();
@@ -57,9 +66,12 @@ describe("ServiceInstanceInfo", () => {
       throw new Error();
     });
 
-    instanceInfo.initialize(() => ({
-      [Symbol.asyncDispose]: dispose,
-    }));
+    instanceInfo.initialize(
+      () => ({
+        [Symbol.asyncDispose]: dispose,
+      }),
+      [],
+    );
 
     await expect(instanceInfo.disposeAsync()).rejects.toThrow();
     await expect(instanceInfo.disposeAsync()).rejects.toThrow();
@@ -76,13 +88,19 @@ describe("ServiceInstanceInfo", () => {
     const disposeA = vi.fn();
     const disposeDependent = vi.fn();
 
-    instanceInfo.initialize(() => ({
-      [Symbol.dispose]: disposeA,
-    }));
+    instanceInfo.initialize(
+      () => ({
+        [Symbol.dispose]: disposeA,
+      }),
+      [],
+    );
     instanceInfo.addDependent(dependent);
-    dependent.initialize(() => ({
-      [Symbol.dispose]: disposeDependent,
-    }));
+    dependent.initialize(
+      () => ({
+        [Symbol.dispose]: disposeDependent,
+      }),
+      [],
+    );
 
     instanceInfo.disposeSync();
     expect(disposeA).toHaveBeenCalledTimes(1);
@@ -99,13 +117,19 @@ describe("ServiceInstanceInfo", () => {
       () => new Promise((resolve) => setTimeout(resolve, 10)),
     );
 
-    instanceInfo.initialize(() => ({
-      [Symbol.asyncDispose]: disposeA,
-    }));
+    instanceInfo.initialize(
+      () => ({
+        [Symbol.asyncDispose]: disposeA,
+      }),
+      [],
+    );
     instanceInfo.addDependent(dependent);
-    dependent.initialize(() => ({
-      [Symbol.asyncDispose]: disposeDependent,
-    }));
+    dependent.initialize(
+      () => ({
+        [Symbol.asyncDispose]: disposeDependent,
+      }),
+      [],
+    );
 
     await instanceInfo.disposeAsync();
     expect(disposeA).toHaveBeenCalledTimes(1);
@@ -122,13 +146,19 @@ describe("ServiceInstanceInfo", () => {
       () => new Promise((resolve) => setTimeout(resolve, 10)),
     );
 
-    instanceInfo.initialize(() => ({
-      [Symbol.asyncDispose]: disposeA,
-    }));
+    instanceInfo.initialize(
+      () => ({
+        [Symbol.asyncDispose]: disposeA,
+      }),
+      [],
+    );
     instanceInfo.addDependent(dependent);
-    dependent.initialize(() => ({
-      [Symbol.dispose]: disposeDependent,
-    }));
+    dependent.initialize(
+      () => ({
+        [Symbol.dispose]: disposeDependent,
+      }),
+      [],
+    );
 
     await instanceInfo.disposeAsync();
     expect(disposeA).toHaveBeenCalledTimes(1);
@@ -143,13 +173,19 @@ describe("ServiceInstanceInfo", () => {
       () => new Promise((resolve) => setTimeout(resolve, 10)),
     );
 
-    instanceInfo.initialize(() => ({
-      [Symbol.dispose]: disposeA,
-    }));
+    instanceInfo.initialize(
+      () => ({
+        [Symbol.dispose]: disposeA,
+      }),
+      [],
+    );
     instanceInfo.addDependent(dependent);
-    dependent.initialize(() => ({
-      [Symbol.asyncDispose]: disposeDependent,
-    }));
+    dependent.initialize(
+      () => ({
+        [Symbol.asyncDispose]: disposeDependent,
+      }),
+      [],
+    );
 
     instanceInfo.disposeSync();
     expect(disposeA).toHaveBeenCalledTimes(1);
@@ -159,9 +195,12 @@ describe("ServiceInstanceInfo", () => {
     const instanceInfo = new ServiceInstanceInfo(mockDescriptor());
     const dispose = vi.fn();
 
-    instanceInfo.initialize(() => ({
-      dispose,
-    }));
+    instanceInfo.initialize(
+      () => ({
+        dispose,
+      }),
+      [],
+    );
 
     instanceInfo.disposeSync();
     expect(dispose).toHaveBeenCalledTimes(1);
@@ -171,10 +210,13 @@ describe("ServiceInstanceInfo", () => {
     const disposeFn = vi.fn();
     const disposeSymbol = vi.fn();
 
-    instanceInfo.initialize(() => ({
-      [Symbol.dispose]: disposeSymbol,
-      dispose: disposeFn,
-    }));
+    instanceInfo.initialize(
+      () => ({
+        [Symbol.dispose]: disposeSymbol,
+        dispose: disposeFn,
+      }),
+      [],
+    );
 
     instanceInfo.disposeSync();
     expect(disposeSymbol).toHaveBeenCalledTimes(1);
@@ -184,9 +226,12 @@ describe("ServiceInstanceInfo", () => {
     const instanceInfo = new ServiceInstanceInfo(mockDescriptor());
     const dispose = vi.fn();
 
-    instanceInfo.initialize(() => ({
-      dispose,
-    }));
+    instanceInfo.initialize(
+      () => ({
+        dispose,
+      }),
+      [],
+    );
 
     await instanceInfo.disposeAsync();
     expect(dispose).toHaveBeenCalledTimes(1);
@@ -196,10 +241,13 @@ describe("ServiceInstanceInfo", () => {
     const disposeFn = vi.fn();
     const disposeSymbol = vi.fn();
 
-    instanceInfo.initialize(() => ({
-      [Symbol.asyncDispose]: disposeSymbol,
-      dispose: disposeFn,
-    }));
+    instanceInfo.initialize(
+      () => ({
+        [Symbol.asyncDispose]: disposeSymbol,
+        dispose: disposeFn,
+      }),
+      [],
+    );
 
     await instanceInfo.disposeAsync();
     expect(disposeSymbol).toHaveBeenCalledTimes(1);

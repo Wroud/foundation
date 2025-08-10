@@ -15,7 +15,8 @@ import {
 import { Debug } from "../debug.js";
 import { ValueServiceImplementationResolver } from "./ValueServiceImplementationResolver.js";
 import { IServiceProvider } from "../di/IServiceProvider.js";
-import { single } from "../service-type-resolvers/single.js";
+
+const FactoryDeps = [IServiceProvider];
 
 export class FactoryServiceImplementationResolver<
   T,
@@ -53,34 +54,32 @@ export class FactoryServiceImplementationResolver<
         requestedBy,
         requestedPath,
         mode,
-      )) as T | SingleServiceImplementation<T>;
+      )).implementation;
     }
 
     if (typeof implementation === "function") {
-      const serviceProvider = yield* getService(
-        single(IServiceProvider),
-        requestedBy,
-        requestedPath,
-        mode,
-      );
-      return () => {
-        try {
-          return (implementation as IServiceFactory<T>)(serviceProvider);
-        } catch (err) {
-          if (
-            err instanceof TypeError &&
-            err.message.includes("cannot be invoked without 'new'")
-          ) {
-            throw new Error(
-              Debug.errors.classNotDecorated(implementation.name),
-              {
-                cause: err,
-              },
-            );
-          } else {
-            throw err;
+      return {
+        implementation: implementation as T,
+        dependencies: FactoryDeps,
+        create: ([serviceProvider]) => {
+          try {
+            return (implementation as IServiceFactory<T>)(serviceProvider);
+          } catch (err) {
+            if (
+              err instanceof TypeError &&
+              err.message.includes("cannot be invoked without 'new'")
+            ) {
+              throw new Error(
+                Debug.errors.classNotDecorated(implementation.name),
+                {
+                  cause: err,
+                },
+              );
+            } else {
+              throw err;
+            }
           }
-        }
+        },
       };
     }
 

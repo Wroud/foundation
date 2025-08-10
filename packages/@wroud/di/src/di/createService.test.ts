@@ -13,8 +13,6 @@ describe("createService", () => {
 
   it("call throws error", () => {
     const service = createService("name");
-    expect(() => (service as any)()).toThrowError(
-      "Service type name can't be initiated",
-    );
+    expect(() => (service as any)()).toThrowError("is not a function");
   });
 });

@@ -6,31 +6,37 @@ import type {
 export function getNameOfServiceType(
   service: SingleServiceType<any> | IServiceImplementation<any>,
 ): string {
-  if (
-    !["object", "function"].includes(typeof service) ||
-    service === null ||
-    service === undefined
-  ) {
+  if (service === null) return "null";
+  if (service === undefined) return "undefined";
+
+  const serviceType = typeof service;
+
+  // Handle primitives (string, number, boolean, symbol, bigint)
+  if (serviceType !== "object" && serviceType !== "function") {
     return String(service);
   }
 
-  if ("name" in service && service.name) {
+  // Handle functions and objects with name property
+  if (service.name) {
     return String(service.name);
   }
 
-  if ("constructor" in service && service.constructor?.name) {
-    return String(service.constructor.name);
+  // Handle objects/instances via constructor
+  const constructor = service.constructor;
+  if (constructor?.name) {
+    return constructor.name;
   }
 
+  // Traverse prototype chain for complex inheritance scenarios
   let prototype = Object.getPrototypeOf(service);
-
-  while (prototype) {
-    if (prototype && prototype?.name) {
-      return String(prototype?.name);
+  while (prototype && prototype !== Object.prototype) {
+    if (prototype.name) {
+      return String(prototype.name);
     }
 
-    if (prototype && prototype?.constructor?.name) {
-      return String(prototype?.constructor?.name);
+    const prototypeConstructor = prototype.constructor;
+    if (prototypeConstructor?.name) {
+      return prototypeConstructor.name;
     }
 
     prototype = Object.getPrototypeOf(prototype);

@@ -54,6 +54,12 @@ export class ServiceContainerBuilder extends ServiceCollection {
       provider[Symbol.dispose]();
       validateAsyncImplementation(this);
     }
-    return new ServiceProvider(new ServiceCollection(this));
+
+    this.addService = () => {
+      throw new Error(
+        "Cannot add services after the container has been built.",
+      );
+    };
+    return new ServiceProvider(this);
   }
 }

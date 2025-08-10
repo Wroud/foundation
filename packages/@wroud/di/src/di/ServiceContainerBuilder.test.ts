@@ -15,10 +15,9 @@ describe("ServiceContainerBuilder", () => {
   });
   it("should should not mutate created service providers", () => {
     const builder = new ServiceContainerBuilder();
-    const provider = builder.build();
-    builder.addSingleton(String, "Hello");
-    expect(() => provider.getService(String)).toThrowError(
-      'No service of type "String" is registered',
+    builder.build();
+    expect(() => builder.addSingleton(String, "Hello")).toThrowError(
+      "Cannot add services after the container has been built.",
     );
   });
   it("validate should have no side effects", async () => {

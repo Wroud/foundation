@@ -33,7 +33,7 @@ describe("injectable", () => {
     class Test {}
     expect(ServiceRegistry.register).toBeCalledWith(Test, {
       name: "Test",
-      dependencies: [single(Dep)],
+      dependencies: [Dep],
     });
   });
   it("should register service with ts legacy decorator", () => {

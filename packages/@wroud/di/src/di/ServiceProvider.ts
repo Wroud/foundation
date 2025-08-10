@@ -14,6 +14,7 @@ import type {
   ServiceType,
   RequestPath,
   IRequestPathNode,
+  IResolvedServiceImplementation,
 } from "../types/index.js";
 import { resolveGeneratorAsync } from "../helpers/resolveGeneratorAsync.js";
 import { resolveGeneratorSync } from "../helpers/resolveGeneratorSync.js";
@@ -21,6 +22,7 @@ import { isServiceProvider } from "../helpers/isServiceProvider.js";
 import { all } from "../service-type-resolvers/all.js";
 import { isServiceTypeResolver } from "../service-type-resolvers/BaseServiceTypeResolver.js";
 import { Debug } from "../debug.js";
+import { EMPTY_DEPS } from "../helpers/EMPTY_DEPS.js";
 
 const EMPTY_PATH: IRequestPathNode<IServiceDescriptor<any> | null> = {
   value: null,
@@ -66,6 +68,10 @@ export class ServiceProvider implements IServiceProvider {
     return provider.collection.getDescriptors(service);
   }
 
+  private readonly descriptorResolverStore: Map<
+    IServiceDescriptor<unknown>,
+    IResolvedServiceImplementation<unknown>
+  >;
   private readonly instancesStore: IServiceInstancesStore;
   private readonly root: ServiceProvider;
   constructor(
@@ -73,7 +79,18 @@ export class ServiceProvider implements IServiceProvider {
     private readonly parent?: IServiceProvider,
   ) {
     this.instancesStore = new ServiceInstancesStore();
-    this.root = parent ? (parent as ServiceProvider).root : this;
+    if (parent) {
+      this.root = (parent as ServiceProvider).root;
+      this.descriptorResolverStore = (
+        parent as ServiceProvider
+      ).descriptorResolverStore;
+    } else {
+      this.descriptorResolverStore = new Map<
+        IServiceDescriptor<unknown>,
+        IResolvedServiceImplementation<unknown>
+      >();
+      this.root = this;
+    }
     this.internalGetService = this.internalGetService.bind(this);
     this.resolveServiceImplementation =
       this.resolveServiceImplementation.bind(this);
@@ -86,34 +103,12 @@ export class ServiceProvider implements IServiceProvider {
   }
 
   getServiceAsync<T>(service: ServiceType<T>): Promise<T> {
-    if (!isServiceTypeResolver(service)) {
-      return resolveGeneratorAsync(
-        this.resolveServiceImplementation(
-          this.collection.getDescriptor(service),
-          null,
-          EMPTY_PATH,
-          "async",
-        ),
-      );
-    }
-
     return resolveGeneratorAsync(
       this.internalGetService(service, null, EMPTY_PATH, "async"),
     );
   }
 
   getService<T>(service: ServiceType<T>): T {
-    if (!isServiceTypeResolver(service)) {
-      return resolveGeneratorSync(
-        this.resolveServiceImplementation(
-          this.collection.getDescriptor(service),
-          null,
-          EMPTY_PATH,
-          "sync",
-        ),
-      );
-    }
-
     return resolveGeneratorSync(
       this.internalGetService(service, null, EMPTY_PATH, "sync"),
     );
@@ -148,11 +143,19 @@ export class ServiceProvider implements IServiceProvider {
   }
 
   private internalGetService<T>(
-    service: IResolverServiceType<any, T>,
+    service: ServiceType<T>,
     requestedBy: IServiceDescriptor<any> | null,
     requestedPath: RequestPath,
     mode: "sync" | "async",
   ): Generator<Promise<unknown>, T, unknown> {
+    if (!isServiceTypeResolver(service)) {
+      return this.resolveServiceImplementation(
+        this.collection.getDescriptor(service),
+        requestedBy,
+        requestedPath,
+        mode,
+      );
+    }
     return service.resolve(
       this.collection,
       this.instancesStore,
@@ -170,8 +173,8 @@ export class ServiceProvider implements IServiceProvider {
     mode: "sync" | "async",
   ): Generator<Promise<unknown>, T, unknown> {
     if (
-      descriptor.lifetime === ServiceLifetime.Singleton &&
-      this !== this.root
+      this.parent !== undefined &&
+      descriptor.lifetime === ServiceLifetime.Singleton
     ) {
       return this.root.resolveServiceImplementation(
         descriptor,
@@ -213,13 +216,31 @@ export class ServiceProvider implements IServiceProvider {
           return this as unknown as T;
         }
 
-        return (yield* descriptor.resolver.resolve(
-          this.internalGetService,
+        let resolved = this.descriptorResolverStore.get(
           descriptor,
-          requestedBy,
-          requestedPath,
-          mode,
-        ))();
+        ) as IResolvedServiceImplementation<T>;
+
+        if (!resolved) {
+          resolved = yield* descriptor.resolver.resolve(
+            this.internalGetService,
+            descriptor,
+            requestedBy,
+            requestedPath,
+            mode,
+          );
+          this.descriptorResolverStore.set(descriptor, resolved);
+        }
+
+        const dependencies =
+          resolved.dependencies.length > 0
+            ? yield* this.initDependencies(
+                descriptor,
+                requestedPath,
+                mode,
+                resolved.dependencies,
+              )
+            : EMPTY_DEPS;
+        return resolved.create(dependencies);
       }
 
       if (descriptor.lifetime === ServiceLifetime.Scoped) {
@@ -233,23 +254,72 @@ export class ServiceProvider implements IServiceProvider {
         }
       }
 
-      return this.instancesStore
-        .addInstance(descriptor, requestedBy)
-        .initialize(
-          yield* descriptor.resolver.resolve(
-            this.internalGetService,
-            descriptor,
-            requestedBy,
-            requestedPath,
-            mode,
-          ),
+      let resolved = this.descriptorResolverStore.get(
+        descriptor,
+      ) as IResolvedServiceImplementation<T>;
+
+      if (!resolved) {
+        resolved = yield* descriptor.resolver.resolve(
+          this.internalGetService,
+          descriptor,
+          requestedBy,
+          requestedPath,
+          mode,
         );
+        this.descriptorResolverStore.set(descriptor, resolved);
+      }
+
+      const instance = this.instancesStore.addInstance(descriptor, requestedBy);
+
+      const dependencies =
+        resolved.dependencies.length > 0
+          ? yield* this.initDependencies(
+              descriptor,
+              requestedPath,
+              mode,
+              resolved.dependencies,
+            )
+          : EMPTY_DEPS;
+
+      return instance.initialize(resolved.create, dependencies);
     } catch (exception: any) {
       throw new Error(
         `Failed to initiate service ${getNameOfDescriptor(descriptor)}:\n\r${exception.message}`,
         { cause: exception },
       );
     }
+  }
+
+  private *initDependencies<T>(
+    descriptor: IServiceDescriptor<T>,
+    requestedPath: RequestPath,
+    mode: "sync" | "async",
+    dependencies: readonly ServiceType<any>[],
+  ): Generator<Promise<unknown>, any[], unknown> {
+    if (Debug.extended) {
+      requestedPath = { value: descriptor, next: requestedPath };
+    }
+    const len = dependencies.length;
+    if (len === 1) {
+      return [
+        yield* this.internalGetService(
+          dependencies[0]!,
+          descriptor,
+          requestedPath,
+          mode,
+        ),
+      ];
+    }
+    const results = new Array(len);
+    for (let i = 0; i < len; i++) {
+      results[i] = yield* this.internalGetService(
+        dependencies[i]!,
+        descriptor,
+        requestedPath,
+        mode,
+      );
+    }
+    return results;
   }
 
   [Symbol.dispose]() {

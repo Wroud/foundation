@@ -1,6 +1,4 @@
 import { all } from "../../service-type-resolvers/all.js";
-import { single } from "../../service-type-resolvers/single.js";
-import { isServiceTypeResolver } from "../../service-type-resolvers/BaseServiceTypeResolver.js";
 import type {
   ServiceType,
   IResolverServiceType,
@@ -25,17 +23,13 @@ export type MapServicesCompatible<T extends ServicesCompatible> = {
 
 export function mapDependenciesCompatible(
   dependencies: ServicesCompatible,
-): IResolverServiceType<any, any>[] {
+): ServiceType<any>[] {
   return dependencies.map(mapDependency);
 }
 
 function mapDependency(dependency: ServicesCompatible[0]) {
-  if (isServiceTypeResolver(dependency)) {
-    return dependency;
-  }
-
   if (Array.isArray(dependency)) {
     return all(dependency[0]);
   }
-  return single(dependency);
+  return dependency;
 }

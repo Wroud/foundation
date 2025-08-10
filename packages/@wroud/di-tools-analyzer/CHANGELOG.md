@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.6.0 -->
+## 0.6.0 (2025-08-10)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/di-tools-analyzer-v0.5.2...di-tools-analyzer-v0.6.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- performance optimizations ([8c46374](https://github.com/Wroud/foundation/commit/8c46374))
+
 <!-- version:0.5.2 -->
 ## 0.5.2 (2025-02-07)
 

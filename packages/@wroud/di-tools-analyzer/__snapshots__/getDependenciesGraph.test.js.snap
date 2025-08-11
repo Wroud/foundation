@@ -8,32 +8,32 @@ exports[`getDependenciesGraph > should make graph for async services implementat
     "name": "AppImpl (App)",
   },
   {
-    "id": "uuid-2",
+    "id": "uuid-3",
     "lifetime": 0,
     "name": "DatabaseConnectionImpl (DatabaseConnection)",
   },
   {
-    "id": "uuid-4",
+    "id": "uuid-6",
     "lifetime": 2,
     "name": "DatabaseImpl (Database)",
   },
   {
-    "id": "uuid-7",
+    "id": "uuid-9",
     "lifetime": 2,
     "name": "DBArticlesImpl (DBArticles)",
   },
   {
-    "id": "uuid-8",
+    "id": "uuid-10",
     "lifetime": 2,
     "name": "DBCommentsImpl (DBComments)",
   },
   {
-    "id": "uuid-6",
+    "id": "uuid-8",
     "lifetime": 2,
     "name": "DBUsersImpl (DBUsers)",
   },
   {
-    "id": "uuid-3",
+    "id": "uuid-4",
     "lifetime": 0,
     "name": "GQLServerImpl (GQLServer)",
   },
@@ -43,29 +43,122 @@ exports[`getDependenciesGraph > should make graph for async services implementat
     "name": "IServiceProvider",
   },
   {
-    "id": "uuid-10",
-    "lifetime": 1,
-    "name": "ProfileImpl (Profile)",
-  },
-  {
-    "id": "uuid-9",
-    "lifetime": 1,
-    "name": "RequestImpl (Request)",
+    "id": "uuid-2",
+    "lifetime": 2,
+    "name": "Logger",
+    "notFound": true,
   },
   {
     "id": "uuid-11",
     "lifetime": 1,
-    "name": "SessionImpl (Session)",
+    "name": "ProfileImpl (Profile)",
   },
   {
     "id": "uuid-5",
+    "lifetime": 1,
+    "name": "RequestImpl (Request)",
+  },
+  {
+    "id": "uuid-12",
+    "lifetime": 1,
+    "name": "SessionImpl (Session)",
+  },
+  {
+    "id": "uuid-7",
     "lifetime": 2,
     "name": "SessionStoreImpl (SessionStore)",
   },
 ]
 `;
 
-exports[`getDependenciesGraph > should make graph for async services implementations 2`] = `[]`;
+exports[`getDependenciesGraph > should make graph for async services implementations 2`] = `
+[
+  {
+    "name": "AppImpl (App) -> Logger",
+    "optional": false,
+    "source": "uuid-1",
+    "target": "uuid-2",
+  },
+  {
+    "name": "AppImpl (App) -> DatabaseConnectionImpl (DatabaseConnection)",
+    "optional": false,
+    "source": "uuid-1",
+    "target": "uuid-3",
+  },
+  {
+    "name": "AppImpl (App) -> GQLServerImpl (GQLServer)",
+    "optional": false,
+    "source": "uuid-1",
+    "target": "uuid-4",
+  },
+  {
+    "name": "GQLServerImpl (GQLServer) -> Logger",
+    "optional": false,
+    "source": "uuid-4",
+    "target": "uuid-2",
+  },
+  {
+    "name": "GQLServerImpl (GQLServer) -> RequestImpl (Request)",
+    "optional": false,
+    "source": "uuid-4",
+    "target": "uuid-5",
+  },
+  {
+    "name": "DatabaseImpl (Database) -> DatabaseConnectionImpl (DatabaseConnection)",
+    "optional": false,
+    "source": "uuid-6",
+    "target": "uuid-3",
+  },
+  {
+    "name": "SessionStoreImpl (SessionStore) -> DatabaseImpl (Database)",
+    "optional": false,
+    "source": "uuid-7",
+    "target": "uuid-6",
+  },
+  {
+    "name": "DBUsersImpl (DBUsers) -> DatabaseImpl (Database)",
+    "optional": false,
+    "source": "uuid-8",
+    "target": "uuid-6",
+  },
+  {
+    "name": "DBArticlesImpl (DBArticles) -> DatabaseImpl (Database)",
+    "optional": false,
+    "source": "uuid-9",
+    "target": "uuid-6",
+  },
+  {
+    "name": "DBCommentsImpl (DBComments) -> DatabaseImpl (Database)",
+    "optional": false,
+    "source": "uuid-10",
+    "target": "uuid-6",
+  },
+  {
+    "name": "ProfileImpl (Profile) -> RequestImpl (Request)",
+    "optional": false,
+    "source": "uuid-11",
+    "target": "uuid-5",
+  },
+  {
+    "name": "ProfileImpl (Profile) -> DBUsersImpl (DBUsers)",
+    "optional": false,
+    "source": "uuid-11",
+    "target": "uuid-8",
+  },
+  {
+    "name": "SessionImpl (Session) -> RequestImpl (Request)",
+    "optional": false,
+    "source": "uuid-12",
+    "target": "uuid-5",
+  },
+  {
+    "name": "SessionImpl (Session) -> SessionStoreImpl (SessionStore)",
+    "optional": false,
+    "source": "uuid-12",
+    "target": "uuid-7",
+  },
+]
+`;
 
 exports[`getDependenciesGraph > should make graph for sync services implementations 1`] = `
 [
@@ -75,32 +168,32 @@ exports[`getDependenciesGraph > should make graph for sync services implementati
     "name": "App",
   },
   {
-    "id": "uuid-4",
+    "id": "uuid-6",
     "lifetime": 2,
     "name": "Database",
   },
   {
-    "id": "uuid-2",
+    "id": "uuid-3",
     "lifetime": 0,
     "name": "DatabaseConnection",
   },
   {
-    "id": "uuid-7",
+    "id": "uuid-9",
     "lifetime": 2,
     "name": "DBArticles",
   },
   {
-    "id": "uuid-8",
+    "id": "uuid-10",
     "lifetime": 2,
     "name": "DBComments",
   },
   {
-    "id": "uuid-6",
+    "id": "uuid-8",
     "lifetime": 2,
     "name": "DBUsers",
   },
   {
-    "id": "uuid-3",
+    "id": "uuid-4",
     "lifetime": 0,
     "name": "GQLServer",
   },
@@ -110,26 +203,119 @@ exports[`getDependenciesGraph > should make graph for sync services implementati
     "name": "IServiceProvider",
   },
   {
-    "id": "uuid-10",
-    "lifetime": 1,
-    "name": "Profile",
-  },
-  {
-    "id": "uuid-9",
-    "lifetime": 1,
-    "name": "Request",
+    "id": "uuid-2",
+    "lifetime": 2,
+    "name": "Logger",
+    "notFound": true,
   },
   {
     "id": "uuid-11",
     "lifetime": 1,
-    "name": "Session",
+    "name": "Profile",
   },
   {
     "id": "uuid-5",
+    "lifetime": 1,
+    "name": "Request",
+  },
+  {
+    "id": "uuid-12",
+    "lifetime": 1,
+    "name": "Session",
+  },
+  {
+    "id": "uuid-7",
     "lifetime": 2,
     "name": "SessionStore",
   },
 ]
 `;
 
-exports[`getDependenciesGraph > should make graph for sync services implementations 2`] = `[]`;
+exports[`getDependenciesGraph > should make graph for sync services implementations 2`] = `
+[
+  {
+    "name": "App -> Logger",
+    "optional": false,
+    "source": "uuid-1",
+    "target": "uuid-2",
+  },
+  {
+    "name": "App -> DatabaseConnection",
+    "optional": false,
+    "source": "uuid-1",
+    "target": "uuid-3",
+  },
+  {
+    "name": "App -> GQLServer",
+    "optional": false,
+    "source": "uuid-1",
+    "target": "uuid-4",
+  },
+  {
+    "name": "GQLServer -> Logger",
+    "optional": false,
+    "source": "uuid-4",
+    "target": "uuid-2",
+  },
+  {
+    "name": "GQLServer -> Request",
+    "optional": false,
+    "source": "uuid-4",
+    "target": "uuid-5",
+  },
+  {
+    "name": "Database -> DatabaseConnection",
+    "optional": false,
+    "source": "uuid-6",
+    "target": "uuid-3",
+  },
+  {
+    "name": "SessionStore -> Database",
+    "optional": false,
+    "source": "uuid-7",
+    "target": "uuid-6",
+  },
+  {
+    "name": "DBUsers -> Database",
+    "optional": false,
+    "source": "uuid-8",
+    "target": "uuid-6",
+  },
+  {
+    "name": "DBArticles -> Database",
+    "optional": false,
+    "source": "uuid-9",
+    "target": "uuid-6",
+  },
+  {
+    "name": "DBComments -> Database",
+    "optional": false,
+    "source": "uuid-10",
+    "target": "uuid-6",
+  },
+  {
+    "name": "Profile -> Request",
+    "optional": false,
+    "source": "uuid-11",
+    "target": "uuid-5",
+  },
+  {
+    "name": "Profile -> DBUsers",
+    "optional": false,
+    "source": "uuid-11",
+    "target": "uuid-8",
+  },
+  {
+    "name": "Session -> Request",
+    "optional": false,
+    "source": "uuid-12",
+    "target": "uuid-5",
+  },
+  {
+    "name": "Session -> SessionStore",
+    "optional": false,
+    "source": "uuid-12",
+    "target": "uuid-7",
+  },
+]
+`;

@@ -1,17 +1,15 @@
 import { isServiceTypeResolver } from "@wroud/di/service-type-resolvers/BaseServiceTypeResolver.js";
 import { isOptionalServiceTypeResolver } from "@wroud/di/service-type-resolvers/OptionalServiceTypeResolver.js";
-import type { IResolverServiceType } from "@wroud/di/types";
+import type { ServiceType } from "@wroud/di/types";
 
-export function isOptionalDependency(
-  resolver: IResolverServiceType<any, any>,
-): boolean {
-  let current: IResolverServiceType<any, any> | null = resolver;
-  while (current) {
+export function isOptionalDependency(dependency: ServiceType<any>): boolean {
+  let current: ServiceType<any> | null = dependency;
+  while (isServiceTypeResolver(current)) {
     if (isOptionalServiceTypeResolver(current)) {
       return true;
     }
 
-    current = isServiceTypeResolver(resolver.next) ? resolver.next : null;
+    current = current.next;
   }
 
   return false;

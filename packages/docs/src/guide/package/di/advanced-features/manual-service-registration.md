@@ -17,7 +17,7 @@ To manually register services, you can use the `ServiceContainerBuilder` and `Se
 ### Example: Registering Services Manually
 
 ```javascript
-import { ServiceContainerBuilder, ServiceRegistry, single } from '@wroud/di';
+import { ServiceContainerBuilder, createService, constructor, factory } from '@wroud/di';
 
 class Logger {
     log(message: string) {
@@ -36,15 +36,21 @@ class UserService {
     }
 }
 
-// Register services in the service registry
-ServiceRegistry.register(Logger, { name: 'Logger', dependencies: [] });
-ServiceRegistry.register(UserService, { name: 'UserService', dependencies: [single(Logger)] });
+function loggerInterop(logger: Logger) {
+  return {
+    log: (message: string) => logger.log(message);
+  }
+}
+
+const loggerInterface = createService<typeof loggerInterop>('LoggerInterface');
 
 const containerBuilder = new ServiceContainerBuilder();
 
 // Register services in the container builder
-containerBuilder.addSingleton(Logger);
-containerBuilder.addTransient(UserService);
+containerBuilder
+  .addSingleton(Logger, constructor(Logger))
+  .addSingleton(loggerInterface, factory(loggerInterop, Logger))
+  .addTransient(UserService, constructor(UserService, Logger));
 
 const serviceProvider = containerBuilder.build();
 
@@ -128,13 +134,17 @@ Suppose you are using an external library for HTTP requests. You can register a 
 ```typescript
 import {
   ServiceContainerBuilder,
-  ServiceRegistry,
+  constructor,
   createService,
-  single,
+  factory,
 } from "@wroud/di";
 
 // Define a service token for the API key
 const ApiKey = createService<string>("ApiKey");
+
+// Define a service token for the API key
+type ExternalHttpClientAuth = typeof getAuthentication;
+const ExternalHttpClientAuth = createService<typeof getAuthentication>("HttpClientAuth");
 
 // External library class
 class ExternalHttpClient {
@@ -145,35 +155,37 @@ class ExternalHttpClient {
   }
 }
 
+// External library function
+function getAuthentication(private httpClient: ExternalHttpClient) {
+  // internal implementation
+}
+
 // Application service that depends on the external library
 class ApiService {
-  constructor(private httpClient: ExternalHttpClient) {}
+  constructor(private httpClient: ExternalHttpClient, private auth: ExternalHttpClientAuth) {}
+
+  async auth(login: string, password: string) {
+    await this.auth.login(login, password);
+  }
 
   fetchData(endpoint: string) {
     return this.httpClient.request(endpoint);
   }
 }
 
-// Register external library and its dependencies
-ServiceRegistry.register(ExternalHttpClient, {
-  name: "ExternalHttpClient",
-  dependencies: [single(ApiKey)],
-});
-ServiceRegistry.register(ApiService, {
-  name: "ApiService",
-  dependencies: [single(ExternalHttpClient)],
-});
-
 const containerBuilder = new ServiceContainerBuilder();
 
 // Register services in the container builder
-containerBuilder.addSingleton(ApiKey, "your-api-key");
-containerBuilder.addSingleton(ExternalHttpClient);
-containerBuilder.addTransient(ApiService);
+containerBuilder
+  .addSingleton(ApiKey, "your-api-key")
+  .addSingleton(ExternalHttpClient, constructor(ExternalHttpClient, ApiKey))
+  .addSingleton(ExternalHttpClientAuth, factory(setAuthentication, ExternalHttpClient))
+  .addTransient(ApiService, constructor(ApiService, ExternalHttpClient));
 
 const serviceProvider = containerBuilder.build();
 
 const apiService = serviceProvider.getService(ApiService);
+await apiService.auth(env['login'], env['password'])
 apiService.fetchData("https://api.example.com/data");
 ```
 

@@ -145,8 +145,7 @@ To use `@wroud/di` without decorators, you can manually register class dependenc
 import {
   createService,
   ServiceContainerBuilder,
-  ServiceRegistry,
-  single,
+  constructor
 } from "@wroud/di";
 
 interface ILoggerService {
@@ -170,19 +169,9 @@ class CounterService {
 }
 
 function configure() {
-  ServiceRegistry.register(CounterService, {
-    name: "CounterService",
-    dependencies: [single(ILoggerService)],
-  });
-
-  ServiceRegistry.register(ConsoleLoggerService, {
-    name: "ConsoleLoggerService",
-    dependencies: [],
-  });
-
   const serviceProvider = new ServiceContainerBuilder()
-    .addSingleton(CounterService)
-    .addSingleton(ILoggerService, ConsoleLoggerService)
+    .addSingleton(CounterService, constructor(CounterService, ILoggerService))
+    .addSingleton(ILoggerService, constructor(ConsoleLoggerService))
     .build();
 
   const counter = serviceProvider.getService(CounterService);

@@ -175,7 +175,7 @@ The `ServiceRegistry` class allows registering service metadata such as dependen
 ### Example
 
 ```ts
-import { single, all, optional, ServiceRegistry } from "@wroud/di";
+import { all, optional, ServiceRegistry } from "@wroud/di";
 import Logger from "./Logger";
 import Formatter from "./Formatter";
 import LoggerNode from "./LoggerNode";
@@ -183,7 +183,7 @@ import LoggerBrowser from "./LoggerBrowser";
 
 ServiceRegistry.register(Logger, {
   name: "Logger",
-  dependencies: [all(Formatter), single(LoggerNode), optional(LoggerBrowser)],
+  dependencies: [all(Formatter), LoggerNode, optional(LoggerBrowser)],
 });
 ```
 
@@ -248,8 +248,8 @@ class AnotherService {
   }
 }
 
-@injectable(({ single, all, optional }) => [
-  single(Logger),
+@injectable(({ all, optional }) => [
+  Logger,
   all(Service),
   optional(NodeLogger),
 ])

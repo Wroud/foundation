@@ -13,9 +13,7 @@ import type {
 import { IServiceProvider } from "./IServiceProvider.js";
 import { ServiceLifetime } from "./ServiceLifetime.js";
 import { ServiceRegistry } from "./ServiceRegistry.js";
-import { isServiceImplementationResolver } from "../implementation-resolvers/BaseServiceImplementationResolver.js";
-import { RegistryServiceImplementationResolver } from "../implementation-resolvers/RegistryServiceImplementationResolver.js";
-import { ValueServiceImplementationResolver } from "../implementation-resolvers/ValueServiceImplementationResolver.js";
+import { fallback } from "../implementation-resolvers/fallback.js";
 
 export class ServiceCollection implements IServiceCollection {
   protected readonly collection: Map<any, IServiceCollectionElement<unknown>>;
@@ -154,21 +152,10 @@ export class ServiceCollection implements IServiceCollection {
     service: SingleServiceType<T>,
     implementation: IServiceImplementation<T>,
   ): this {
-    let resolver: IServiceImplementationResolver<T>;
-    if (typeof implementation === "function") {
-      resolver = new RegistryServiceImplementationResolver(
-        implementation as SingleServiceImplementation<T>,
-      );
-    } else if (isServiceImplementationResolver(implementation)) {
-      resolver = implementation;
-    } else {
-      resolver = new ValueServiceImplementationResolver(implementation);
-    }
-
     const descriptor: IServiceDescriptor<T> = {
       lifetime,
       service,
-      resolver,
+      resolver: fallback(implementation),
     };
 
     let descriptors = this.collection.get(service);

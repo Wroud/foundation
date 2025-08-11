@@ -16,8 +16,8 @@ export abstract class BaseServiceTypeResolver<In, Out>
     return this.service.name;
   }
   get service(): SingleServiceType<In> {
-    if (isServiceTypeResolver(this.next)) {
-      return this.next.service;
+    if (isServiceTypeResolver<any, any>(this.next)) {
+      return this.next.service as any;
     }
     return this.next;
   }

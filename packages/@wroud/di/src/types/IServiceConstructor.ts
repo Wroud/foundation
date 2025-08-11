@@ -1,1 +1,3 @@
-export type IServiceConstructor<T> = new (...args: any[]) => T;
+export type IServiceConstructor<T, TArgs extends unknown[] = unknown[]> = new (
+  ...args: TArgs
+) => T;

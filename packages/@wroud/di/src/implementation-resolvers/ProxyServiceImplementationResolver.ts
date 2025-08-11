@@ -1,4 +1,3 @@
-import { EMPTY_DEPS } from "../helpers/EMPTY_DEPS.js";
 import { getNameOfServiceType } from "../helpers/getNameOfServiceType.js";
 import type {
   IResolvedServiceImplementation,
@@ -27,16 +26,9 @@ export class ProxyServiceImplementationResolver<
     requestedPath: RequestPath,
     mode: "sync" | "async",
   ): Generator<Promise<unknown>, IResolvedServiceImplementation<T>, unknown> {
-    const implementation = yield* internalGetService(
-      this.service,
-      requestedBy,
-      requestedPath,
-      mode,
-    );
     return {
-      implementation,
-      dependencies: EMPTY_DEPS,
-      create: () => implementation,
+      dependencies: [this.service],
+      create: ([implementation]) => implementation as T,
     };
   }
 }

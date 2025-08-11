@@ -1,34 +1,46 @@
-import { EMPTY_DEPS } from "../helpers/EMPTY_DEPS.js";
 import { getNameOfServiceType } from "../helpers/getNameOfServiceType.js";
 import type {
   IResolvedServiceImplementation,
   IServiceDescriptor,
+  IServiceConstructor,
   IServiceTypeResolver,
   RequestPath,
+  ServiceType,
+  GetServiceTypeImplementation,
 } from "../types/index.js";
 import { BaseServiceImplementationResolver } from "./BaseServiceImplementationResolver.js";
 
-export class ValueServiceImplementationResolver<
+export class ConstructorServiceImplementationResolver<
   T,
+  TArgs extends ServiceType<unknown>[],
 > extends BaseServiceImplementationResolver<T> {
   get name(): string {
     return getNameOfServiceType(this.implementation);
   }
 
-  constructor(private readonly implementation: T) {
+  constructor(
+    private readonly implementation: IServiceConstructor<
+      T,
+      GetServiceTypeImplementation<TArgs>
+    >,
+    private readonly dependencies: TArgs,
+  ) {
     super();
   }
 
   *resolve(
-    internalGetService: IServiceTypeResolver,
+    getService: IServiceTypeResolver,
     descriptor: IServiceDescriptor<any>,
     requestedBy: IServiceDescriptor<any> | null,
     requestedPath: RequestPath,
     mode: "sync" | "async",
   ): Generator<Promise<unknown>, IResolvedServiceImplementation<T>, unknown> {
     return {
-      dependencies: EMPTY_DEPS,
-      create: () => this.implementation,
+      dependencies: this.dependencies,
+      create: (dependencies) =>
+        new this.implementation(
+          ...(dependencies as GetServiceTypeImplementation<TArgs>),
+        ),
     };
   }
 }

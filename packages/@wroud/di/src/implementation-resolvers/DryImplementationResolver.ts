@@ -40,7 +40,6 @@ export class DryImplementationResolver<
     );
 
     return {
-      implementation: null as T,
       dependencies: resolved.dependencies,
       create: () => null as T,
     };

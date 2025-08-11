@@ -8,8 +8,8 @@ import type {
 } from "../types/index.js";
 import { Debug } from "../debug.js";
 import { BaseServiceImplementationResolver } from "./BaseServiceImplementationResolver.js";
-import { RegistryServiceImplementationResolver } from "./RegistryServiceImplementationResolver.js";
 import { AsyncServiceImplementationError } from "../di/errors/AsyncServiceImplementationError.js";
+import { fallback } from "./fallback.js";
 
 const NOT_LOADED = Symbol("NOT_LOADED");
 
@@ -66,9 +66,7 @@ export class AsyncServiceImplementationResolver<
     if (!this.promise) {
       this.promise = this.loader()
         .then((implementation) => {
-          this.implementation = new RegistryServiceImplementationResolver(
-            implementation,
-          );
+          this.implementation = fallback(implementation);
           return this.implementation;
         })
         .finally(() => {

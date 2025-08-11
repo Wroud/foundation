@@ -1,10 +1,9 @@
 import type { ServiceType } from "./ServiceType.js";
 
 export interface IResolvedServiceImplementationCreator<T> {
-  (dependencies: readonly any[]): T;
+  (dependencies: readonly unknown[]): T;
 }
 export interface IResolvedServiceImplementation<T> {
-  implementation: T;
-  dependencies: readonly ServiceType<any>[];
+  dependencies: readonly ServiceType<unknown>[];
   create: IResolvedServiceImplementationCreator<T>;
 }

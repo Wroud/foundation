@@ -1,35 +1,30 @@
+import { Debug } from "../debug.js";
 import { getNameOfServiceType } from "../helpers/getNameOfServiceType.js";
 import type {
+  GetServiceTypeImplementation,
   IResolvedServiceImplementation,
   IServiceDescriptor,
   IServiceFactory,
-  IServiceImplementationResolver,
-  SingleServiceImplementation,
   IServiceTypeResolver,
   RequestPath,
+  ServiceType,
 } from "../types/index.js";
-import {
-  BaseServiceImplementationResolver,
-  isServiceImplementationResolver,
-} from "./BaseServiceImplementationResolver.js";
-import { Debug } from "../debug.js";
-import { ValueServiceImplementationResolver } from "./ValueServiceImplementationResolver.js";
-import { IServiceProvider } from "../di/IServiceProvider.js";
-
-const FactoryDeps = [IServiceProvider];
+import { BaseServiceImplementationResolver } from "./BaseServiceImplementationResolver.js";
 
 export class FactoryServiceImplementationResolver<
   T,
+  TArgs extends ServiceType<unknown>[],
 > extends BaseServiceImplementationResolver<T> {
   get name(): string {
     return getNameOfServiceType(this.implementation);
   }
 
   constructor(
-    private readonly implementation:
-      | T
-      | SingleServiceImplementation<T>
-      | IServiceImplementationResolver<T | SingleServiceImplementation<T>>,
+    private readonly implementation: IServiceFactory<
+      T,
+      GetServiceTypeImplementation<TArgs>
+    >,
+    private readonly dependencies: TArgs,
   ) {
     super();
   }
@@ -41,50 +36,29 @@ export class FactoryServiceImplementationResolver<
     requestedPath: RequestPath,
     mode: "sync" | "async",
   ): Generator<Promise<unknown>, IResolvedServiceImplementation<T>, unknown> {
-    let implementation = this.implementation;
-
-    if (
-      isServiceImplementationResolver<T | SingleServiceImplementation<T>>(
-        implementation,
-      )
-    ) {
-      implementation = (yield* implementation.resolve(
-        getService,
-        descriptor,
-        requestedBy,
-        requestedPath,
-        mode,
-      )).implementation;
-    }
-
-    if (typeof implementation === "function") {
-      return {
-        implementation: implementation as T,
-        dependencies: FactoryDeps,
-        create: ([serviceProvider]) => {
-          try {
-            return (implementation as IServiceFactory<T>)(serviceProvider);
-          } catch (err) {
-            if (
-              err instanceof TypeError &&
-              err.message.includes("cannot be invoked without 'new'")
-            ) {
-              throw new Error(
-                Debug.errors.classNotDecorated(implementation.name),
-                {
-                  cause: err,
-                },
-              );
-            } else {
-              throw err;
-            }
+    return {
+      dependencies: this.dependencies,
+      create: (dependencies) => {
+        try {
+          return this.implementation(
+            ...(dependencies as GetServiceTypeImplementation<TArgs>),
+          );
+        } catch (err) {
+          if (
+            err instanceof TypeError &&
+            err.message.includes("cannot be invoked without 'new'")
+          ) {
+            throw new Error(
+              Debug.errors.classNotDecorated(this.implementation.name),
+              {
+                cause: err,
+              },
+            );
+          } else {
+            throw err;
           }
-        },
-      };
-    }
-
-    return yield* new ValueServiceImplementationResolver(
-      implementation,
-    ).resolve(getService, descriptor, requestedBy, requestedPath, mode);
+        }
+      },
+    };
   }
 }

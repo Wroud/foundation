@@ -4,7 +4,7 @@ import { ServiceCollection } from "./ServiceCollection.js";
 import { describe, expect, it } from "vitest";
 import { ServiceRegistry } from "./ServiceRegistry.js";
 import { single } from "../service-type-resolvers/single.js";
-import { RegistryServiceImplementationResolver } from "../implementation-resolvers/RegistryServiceImplementationResolver.js";
+import { fallback } from "../implementation-resolvers/fallback.js";
 
 describe("ServiceCollection", () => {
   it("should be defined", () => {
@@ -35,9 +35,7 @@ describe("ServiceCollection", () => {
     const collection = new ServiceCollection();
     const descriptors = collection.getDescriptors(IServiceProvider);
     expect(descriptors).toHaveLength(1);
-    expect(descriptors[0]?.resolver).toEqual(
-      new RegistryServiceImplementationResolver(IServiceProvider),
-    );
+    expect(descriptors[0]?.resolver).toEqual(fallback(IServiceProvider));
   });
   it("should iterate over descriptors", () => {
     const collection = new ServiceCollection();
@@ -53,9 +51,7 @@ describe("ServiceCollection", () => {
     expect(descriptors).toHaveLength(1);
     expect(descriptors[0]?.lifetime).toBe(ServiceLifetime.Transient);
     expect(descriptors[0]?.service).toBe(Number);
-    expect(descriptors[0]?.resolver).toEqual(
-      new RegistryServiceImplementationResolver(Number),
-    );
+    expect(descriptors[0]?.resolver).toEqual(fallback(Number));
   });
   it("should register scoped service", () => {
     const collection = new ServiceCollection();
@@ -64,9 +60,7 @@ describe("ServiceCollection", () => {
     expect(descriptors).toHaveLength(1);
     expect(descriptors[0]?.lifetime).toBe(ServiceLifetime.Scoped);
     expect(descriptors[0]?.service).toBe(Number);
-    expect(descriptors[0]?.resolver).toEqual(
-      new RegistryServiceImplementationResolver(Number),
-    );
+    expect(descriptors[0]?.resolver).toEqual(fallback(Number));
   });
   it("should register singleton service", () => {
     const collection = new ServiceCollection();
@@ -75,90 +69,70 @@ describe("ServiceCollection", () => {
     expect(descriptors).toHaveLength(1);
     expect(descriptors[0]?.lifetime).toBe(ServiceLifetime.Singleton);
     expect(descriptors[0]?.service).toBe(Number);
-    expect(descriptors[0]?.resolver).toEqual(
-      new RegistryServiceImplementationResolver(Number),
-    );
+    expect(descriptors[0]?.resolver).toEqual(fallback(Number));
   });
   it("should register transient service with factory", () => {
     const collection = new ServiceCollection();
     const impl = () => 42;
     collection.addTransient(Number, impl);
     const descriptors = collection.getDescriptors(Number);
-    expect(descriptors[0]?.resolver).toEqual(
-      new RegistryServiceImplementationResolver(impl),
-    );
+    expect(descriptors[0]?.resolver).toEqual(fallback(impl));
   });
   it("should register transient service with constructor", () => {
     class Test {}
     const collection = new ServiceCollection();
     collection.addTransient(Number, Test);
     const descriptors = collection.getDescriptors(Number);
-    expect(descriptors[0]?.resolver).toEqual(
-      new RegistryServiceImplementationResolver(Test),
-    );
+    expect(descriptors[0]?.resolver).toEqual(fallback(Test));
   });
   it("should register transient service with constructor as service and and implementation", () => {
     class Test {}
     const collection = new ServiceCollection();
     collection.addTransient(Test);
     const descriptors = collection.getDescriptors(Test);
-    expect(descriptors[0]?.resolver).toEqual(
-      new RegistryServiceImplementationResolver(Test),
-    );
+    expect(descriptors[0]?.resolver).toEqual(fallback(Test));
   });
   it("should register singleton service with factory", () => {
     const collection = new ServiceCollection();
     const impl = () => 42;
     collection.addSingleton(Number, impl);
     const descriptors = collection.getDescriptors(Number);
-    expect(descriptors[0]?.resolver).toEqual(
-      new RegistryServiceImplementationResolver(impl),
-    );
+    expect(descriptors[0]?.resolver).toEqual(fallback(impl));
   });
   it("should register singleton service with constructor", () => {
     class Test {}
     const collection = new ServiceCollection();
     collection.addSingleton(Number, Test);
     const descriptors = collection.getDescriptors(Number);
-    expect(descriptors[0]?.resolver).toEqual(
-      new RegistryServiceImplementationResolver(Test),
-    );
+    expect(descriptors[0]?.resolver).toEqual(fallback(Test));
   });
   it("should register singleton service with constructor as service and and implementation", () => {
     class Test {}
     const collection = new ServiceCollection();
     collection.addSingleton(Test);
     const descriptors = collection.getDescriptors(Test);
-    expect(descriptors[0]?.resolver).toEqual(
-      new RegistryServiceImplementationResolver(Test),
-    );
+    expect(descriptors[0]?.resolver).toEqual(fallback(Test));
   });
   it("should register scoped service with factory", () => {
     const collection = new ServiceCollection();
     const impl = () => 42;
     collection.addScoped(Number, impl);
     const descriptors = collection.getDescriptors(Number);
-    expect(descriptors[0]?.resolver).toEqual(
-      new RegistryServiceImplementationResolver(impl),
-    );
+    expect(descriptors[0]?.resolver).toEqual(fallback(impl));
   });
   it("should register scoped service with constructor", () => {
     class Test {}
     const collection = new ServiceCollection();
     collection.addScoped(Number, Test);
     const descriptors = collection.getDescriptors(Number);
-    expect(descriptors[0]?.resolver).toEqual(
-      new RegistryServiceImplementationResolver(Test),
-    );
+    expect(descriptors[0]?.resolver).toEqual(fallback(Test));
   });
   it("should register scoped service with constructor as service and and implementation", () => {
     class Test {}
     const collection = new ServiceCollection();
     collection.addScoped(Test);
     const descriptors = collection.getDescriptors(Test);
-    expect(descriptors[0]?.resolver).toEqual(
-      new RegistryServiceImplementationResolver(Test),
-    );
+    expect(descriptors[0]?.resolver).toEqual(fallback(Test));
   });
   it("should register multiple services", () => {
     class Test {}

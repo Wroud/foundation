@@ -38,8 +38,8 @@
   },
   "dependencies": {
     "@needle-di/core": "^1",
-    "@wroud/di-15-2": "npm:@wroud/di@0.15.2",
     "@wroud/di-latest": "npm:@wroud/di@latest",
+    "@wroud/di-main": "npm:@wroud/di@0.16.0",
     "@wroud/tests-runner": "workspace:^",
     "brandi": "^5",
     "inversify": "^6",

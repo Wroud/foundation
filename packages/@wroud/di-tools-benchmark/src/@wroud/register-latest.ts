@@ -3,16 +3,16 @@ import {
   injectable,
   IServiceProvider,
   ServiceContainerBuilder,
-} from "@wroud/di-15-2";
+} from "@wroud/di-latest";
 import { registerLibrary } from "@wroud/di-tools-benchmark/common/tools/registerLibrary";
-import type { SingleServiceType } from "@wroud/di-15-2/types";
+import type { SingleServiceType } from "@wroud/di-latest/types";
 
 registerLibrary<
   ServiceContainerBuilder,
   { provider: IServiceProvider; dispose: () => void },
   SingleServiceType<any>,
   new () => any
->("@wroud/di 0.15.2", {
+>("@wroud/di latest", {
   setup: {
     createContainerBuilder: () => new ServiceContainerBuilder(),
     createService: (dependencies) => {

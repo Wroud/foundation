@@ -28,8 +28,8 @@ const COMMON_OPTS: Parameters<typeof bench>[2] = {
 
 // -------------------- main --------------------
 
-await import("@wroud/di-tools-benchmark/modern/@wroud/register");
-await import("@wroud/di-tools-benchmark/modern/@wroud/registerOld");
+await import("@wroud/di-tools-benchmark/modern/@wroud/register-latest");
+await import("@wroud/di-tools-benchmark/modern/@wroud/register-main");
 await import("@wroud/di-tools-benchmark/modern/needle-di/register");
 await import("@wroud/di-tools-benchmark/legacy/tsyringe/register");
 // this library has memory leaks in registration

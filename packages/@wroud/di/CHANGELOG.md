@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.17.0 -->
+## 0.17.0 (2025-08-11)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/di-v0.16.1...di-v0.17.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- new resolvers: `constructor`, `factory`, `value` ([0be2f7c](https://github.com/Wroud/foundation/commit/0be2f7c))
+
 <!-- version:0.16.1 -->
 ## 0.16.1 (2025-08-11)
 

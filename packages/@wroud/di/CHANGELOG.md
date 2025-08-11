@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.16.1 -->
+## 0.16.1 (2025-08-11)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/di-v0.16.0...di-v0.16.1)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- refactor implementation resolvers ([e96ddfa](https://github.com/Wroud/foundation/commit/e96ddfa))
+
 <!-- version:0.16.0 -->
 ## 0.16.0 (2025-08-10)
 

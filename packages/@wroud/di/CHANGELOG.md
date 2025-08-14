@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.17.1 -->
+## 0.17.1 (2025-08-14)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/di-v0.17.0...di-v0.17.1)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- service registration with token types ([3659b10](https://github.com/Wroud/foundation/commit/3659b10))
+
 <!-- version:0.17.0 -->
 ## 0.17.0 (2025-08-11)
 

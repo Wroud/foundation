@@ -1,10 +1,7 @@
 import { getNameOfServiceType } from "../helpers/getNameOfServiceType.js";
 import type {
   IResolvedServiceImplementation,
-  IServiceDescriptor,
   IResolverServiceType,
-  IServiceTypeResolver,
-  RequestPath,
 } from "../types/index.js";
 import { BaseServiceImplementationResolver } from "./BaseServiceImplementationResolver.js";
 
@@ -15,20 +12,20 @@ export class ProxyServiceImplementationResolver<
     return getNameOfServiceType(this.service);
   }
 
+  private readonly resolved: IResolvedServiceImplementation<T>;
   constructor(private readonly service: IResolverServiceType<any, T>) {
     super();
-  }
-
-  *resolve(
-    internalGetService: IServiceTypeResolver,
-    descriptor: IServiceDescriptor<T>,
-    requestedBy: IServiceDescriptor<any> | null,
-    requestedPath: RequestPath,
-    mode: "sync" | "async",
-  ): Generator<Promise<unknown>, IResolvedServiceImplementation<T>, unknown> {
-    return {
+    this.resolved = {
       dependencies: [this.service],
       create: ([implementation]) => implementation as T,
     };
+  }
+
+  *resolve(): Generator<
+    Promise<unknown>,
+    IResolvedServiceImplementation<T>,
+    unknown
+  > {
+    return this.resolved;
   }
 }

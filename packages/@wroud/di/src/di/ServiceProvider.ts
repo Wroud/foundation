@@ -188,7 +188,7 @@ export class ServiceProvider implements IServiceProvider {
       const instanceInfo = this.instancesStore.getInstanceInfo(descriptor);
 
       if (instanceInfo?.initialized) {
-        return instanceInfo.getInstance() as Generator<any, T, any>;
+        return instanceInfo as unknown as Generator<any, T, any>;
       }
     }
 

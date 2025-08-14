@@ -1,5 +1,5 @@
 export async function resolveGeneratorAsync<TResult>(
-  iterator: Generator<Promise<unknown>, TResult, unknown>,
+  iterator: Iterator<Promise<unknown>, TResult, unknown>,
 ) {
   let result = iterator.next();
 
@@ -7,6 +7,9 @@ export async function resolveGeneratorAsync<TResult>(
     try {
       await result.value;
     } catch (err) {
+      if (!iterator.throw) {
+        throw err;
+      }
       result = iterator.throw(err);
     }
   }

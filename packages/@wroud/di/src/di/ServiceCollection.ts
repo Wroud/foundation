@@ -8,15 +8,16 @@ import type {
   IServiceImplementationResolver,
   SingleServiceImplementation,
   SingleServiceType,
-  IServiceCollectionElement,
 } from "../types/index.js";
 import { IServiceProvider } from "./IServiceProvider.js";
 import { ServiceLifetime } from "./ServiceLifetime.js";
 import { ServiceRegistry } from "./ServiceRegistry.js";
 import { fallback } from "../implementation-resolvers/fallback.js";
 
+const EMPTY_DESCRIPTORS: IServiceDescriptor<unknown>[] = [];
+
 export class ServiceCollection implements IServiceCollection {
-  protected readonly collection: Map<any, IServiceCollectionElement<unknown>>;
+  protected readonly collection: Map<any, IServiceDescriptor<unknown>[]>;
   constructor(collection?: ServiceCollection) {
     this.collection = collection ? collection.copy() : new Map();
     if (!this.collection.has(IServiceProvider)) {
@@ -26,34 +27,33 @@ export class ServiceCollection implements IServiceCollection {
 
   *[Symbol.iterator](): Iterator<IServiceDescriptor<unknown>, any, undefined> {
     for (const descriptors of this.collection.values()) {
-      for (const descriptor of descriptors.all) {
-        yield descriptor;
-      }
+      yield* descriptors;
     }
   }
 
   getDescriptors<T>(
     service: SingleServiceType<T>,
   ): readonly IServiceDescriptor<T>[] {
-    return (this.collection.get(service)?.all ?? []) as IServiceDescriptor<T>[];
+    return (this.collection.get(service) ??
+      EMPTY_DESCRIPTORS) as IServiceDescriptor<T>[];
   }
 
   getDescriptor<T>(service: SingleServiceType<T>): IServiceDescriptor<T> {
     const descriptor = this.collection.get(service);
 
-    if (!descriptor) {
-      let name = getNameOfServiceType(service);
-
-      const metadata = ServiceRegistry.get(service);
-
-      if (metadata?.name) {
-        name = metadata.name;
-      }
-
-      throw new Error(`No service of type "${name}" is registered`);
+    if (descriptor) {
+      return descriptor[descriptor.length - 1] as IServiceDescriptor<T>;
     }
 
-    return descriptor.single as IServiceDescriptor<T>;
+    let name = getNameOfServiceType(service);
+
+    const metadata = ServiceRegistry.get(service);
+
+    if (metadata?.name) {
+      name = metadata.name;
+    }
+
+    throw new Error(`No service of type "${name}" is registered`);
   }
 
   addScoped<T>(service: SingleServiceImplementation<T>): this;
@@ -126,15 +126,14 @@ export class ServiceCollection implements IServiceCollection {
     return this;
   }
 
-  protected copy(): Map<any, IServiceCollectionElement<unknown>> {
-    const newMap = new Map<any, IServiceCollectionElement<unknown>>();
+  protected copy(): Map<any, IServiceDescriptor<unknown>[]> {
+    const newMap = new Map<any, IServiceDescriptor<unknown>[]>();
     for (const [key, descriptors] of this.collection) {
-      const src = descriptors.all;
-      const len = src.length;
+      const len = descriptors.length;
       // Pre-allocate exact size to avoid dynamic growth / copying
       const all: IServiceDescriptor<unknown>[] = new Array(len);
       for (let i = 0; i < len; i++) {
-        const d = src[i]!;
+        const d = descriptors[i]!;
         // Manual property copy is faster than object spread for small fixed objects
         all[i] = {
           lifetime: d.lifetime,
@@ -142,7 +141,7 @@ export class ServiceCollection implements IServiceCollection {
           resolver: d.resolver,
         };
       }
-      newMap.set(key, { single: all[len - 1]!, all });
+      newMap.set(key, all);
     }
     return newMap;
   }
@@ -159,14 +158,10 @@ export class ServiceCollection implements IServiceCollection {
     };
 
     let descriptors = this.collection.get(service);
-    if (!descriptors) {
-      this.collection.set(service, {
-        single: descriptor,
-        all: [descriptor],
-      });
+    if (descriptors) {
+      descriptors.push(descriptor);
     } else {
-      descriptors.all.push(descriptor);
-      descriptors.single = descriptor;
+      this.collection.set(service, [descriptor]);
     }
 
     return this;

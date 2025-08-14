@@ -3,10 +3,7 @@ import { getNameOfServiceType } from "../helpers/getNameOfServiceType.js";
 import type {
   GetServiceTypeImplementation,
   IResolvedServiceImplementation,
-  IServiceDescriptor,
   IServiceFactory,
-  IServiceTypeResolver,
-  RequestPath,
   ServiceType,
 } from "../types/index.js";
 import { BaseServiceImplementationResolver } from "./BaseServiceImplementationResolver.js";
@@ -19,28 +16,20 @@ export class FactoryServiceImplementationResolver<
     return getNameOfServiceType(this.implementation);
   }
 
+  private readonly resolved: IResolvedServiceImplementation<T>;
   constructor(
     private readonly implementation: IServiceFactory<
       T,
       GetServiceTypeImplementation<TArgs>
     >,
-    private readonly dependencies: TArgs,
+    dependencies: TArgs,
   ) {
     super();
-  }
-
-  *resolve(
-    getService: IServiceTypeResolver,
-    descriptor: IServiceDescriptor<any>,
-    requestedBy: IServiceDescriptor<any> | null,
-    requestedPath: RequestPath,
-    mode: "sync" | "async",
-  ): Generator<Promise<unknown>, IResolvedServiceImplementation<T>, unknown> {
-    return {
-      dependencies: this.dependencies,
+    this.resolved = {
+      dependencies,
       create: (dependencies) => {
         try {
-          return this.implementation(
+          return implementation(
             ...(dependencies as GetServiceTypeImplementation<TArgs>),
           );
         } catch (err) {
@@ -49,7 +38,7 @@ export class FactoryServiceImplementationResolver<
             err.message.includes("cannot be invoked without 'new'")
           ) {
             throw new Error(
-              Debug.errors.classNotDecorated(this.implementation.name),
+              Debug.errors.classNotDecorated(implementation.name),
               {
                 cause: err,
               },
@@ -60,5 +49,13 @@ export class FactoryServiceImplementationResolver<
         }
       },
     };
+  }
+
+  *resolve(): Generator<
+    Promise<unknown>,
+    IResolvedServiceImplementation<T>,
+    unknown
+  > {
+    return this.resolved;
   }
 }

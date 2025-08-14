@@ -30,8 +30,15 @@ export class ServiceInstanceInfo<T> implements IServiceInstanceInfo<T> {
     this._instance = NOT_INITIALIZED;
   }
 
-  *getInstance(): Generator<any, T | symbol> {
-    return this._instance;
+  next() {
+    return {
+      done: true as const,
+      value: this._instance,
+    };
+  }
+
+  [Symbol.iterator]() {
+    return this;
   }
 
   initialize(

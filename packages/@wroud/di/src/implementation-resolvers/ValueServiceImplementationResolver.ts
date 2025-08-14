@@ -1,11 +1,6 @@
 import { EMPTY_DEPS } from "../helpers/EMPTY_DEPS.js";
 import { getNameOfServiceType } from "../helpers/getNameOfServiceType.js";
-import type {
-  IResolvedServiceImplementation,
-  IServiceDescriptor,
-  IServiceTypeResolver,
-  RequestPath,
-} from "../types/index.js";
+import type { IResolvedServiceImplementation } from "../types/index.js";
 import { BaseServiceImplementationResolver } from "./BaseServiceImplementationResolver.js";
 
 export class ValueServiceImplementationResolver<
@@ -15,20 +10,20 @@ export class ValueServiceImplementationResolver<
     return getNameOfServiceType(this.implementation);
   }
 
+  private readonly resolved: IResolvedServiceImplementation<T>;
   constructor(private readonly implementation: T) {
     super();
+    this.resolved = {
+      dependencies: EMPTY_DEPS,
+      create: () => implementation,
+    };
   }
 
-  *resolve(
-    internalGetService: IServiceTypeResolver,
-    descriptor: IServiceDescriptor<any>,
-    requestedBy: IServiceDescriptor<any> | null,
-    requestedPath: RequestPath,
-    mode: "sync" | "async",
-  ): Generator<Promise<unknown>, IResolvedServiceImplementation<T>, unknown> {
-    return {
-      dependencies: EMPTY_DEPS,
-      create: () => this.implementation,
-    };
+  *resolve(): Generator<
+    Promise<unknown>,
+    IResolvedServiceImplementation<T>,
+    unknown
+  > {
+    return this.resolved;
   }
 }

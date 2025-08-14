@@ -42,21 +42,48 @@ For detailed usage and API reference, visit the [documentation site](https://wro
 ## Example
 
 ```ts
-import { ServiceContainerBuilder, injectable } from "@wroud/di";
+import {
+  createService,
+  injectable,
+  ServiceContainerBuilder,
+} from "@wroud/di";
 
-@injectable()
-class Logger {
-  log(message: string) {
-    console.log(message);
+interface ILogger {
+  log: (message: string) => void;
+}
+
+interface IAuthService {
+  authenticate(user: string, password: string): void;
+}
+
+const ILogger = createService<ILogger>("ILogger");
+const IAuthService = createService<IAuthService>("IAuthService");
+
+function loggerFactory(): ILogger {
+  return {
+    log: (message: string) => console.log(message),
+  };
+}
+
+@injectable(() => [ILogger])
+class AuthService implements IAuthService {
+  constructor(private readonly logger: ILogger) {}
+
+  authenticate(user: string, password: string): void {
+    this.logger.log(`Authenticating user ${user}`);
+    // Authentication logic here
   }
 }
 
-const builder = new ServiceContainerBuilder();
-builder.addSingleton(Logger);
-const provider = builder.build();
+const provider = new ServiceContainerBuilder()
+  .addSingleton(ILogger, loggerFactory)
+  .addSingleton(IAuthService, AuthService)
+  .build();
 
-const logger = provider.getService(Logger);
-logger.log("Hello world!");
+const authService = provider.getService(IAuthService);
+
+await authService.authenticate("user1", "password");
+
 ```
 
 ## Changelog

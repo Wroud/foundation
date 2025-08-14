@@ -63,7 +63,7 @@ export class ServiceCollection implements IServiceCollection {
   ): this;
   addScoped<T>(
     service: SingleServiceType<T>,
-    constructor: IServiceConstructor<T>,
+    constructor: IServiceConstructor<T, any[]>,
   ): this;
   addScoped<
     T,
@@ -86,7 +86,7 @@ export class ServiceCollection implements IServiceCollection {
   ): this;
   addTransient<T>(
     service: SingleServiceType<T>,
-    constructor: IServiceConstructor<T>,
+    constructor: IServiceConstructor<T, any[]>,
   ): this;
   addTransient<
     T,
@@ -110,7 +110,7 @@ export class ServiceCollection implements IServiceCollection {
   ): this;
   addSingleton<T>(
     service: SingleServiceType<T>,
-    constructor: IServiceConstructor<T>,
+    constructor: IServiceConstructor<T, any[]>,
   ): this;
   addSingleton<
     T,

@@ -5,6 +5,7 @@ import { describe, expect, it } from "vitest";
 import { ServiceRegistry } from "./ServiceRegistry.js";
 import { single } from "../service-type-resolvers/single.js";
 import { fallback } from "../implementation-resolvers/fallback.js";
+import { createService } from "./createService.js";
 
 describe("ServiceCollection", () => {
   it("should be defined", () => {
@@ -85,6 +86,18 @@ describe("ServiceCollection", () => {
     const descriptors = collection.getDescriptors(Number);
     expect(descriptors[0]?.resolver).toEqual(fallback(Test));
   });
+  it("should register transient service with dependencies", () => {
+    interface IService {}
+    const token = createService<IService>("");
+    class Test {
+      //@ts-ignore
+      constructor(private dep: Number) {}
+    }
+    const collection = new ServiceCollection();
+
+    // types test
+    collection.addTransient(token, Test);
+  });
   it("should register transient service with constructor as service and and implementation", () => {
     class Test {}
     const collection = new ServiceCollection();
@@ -106,6 +119,18 @@ describe("ServiceCollection", () => {
     const descriptors = collection.getDescriptors(Number);
     expect(descriptors[0]?.resolver).toEqual(fallback(Test));
   });
+  it("should register singleton service with dependencies", () => {
+    interface IService {}
+    const token = createService<IService>("");
+    class Test {
+      //@ts-ignore
+      constructor(private dep: Number) {}
+    }
+    const collection = new ServiceCollection();
+
+    // types test
+    collection.addSingleton(token, Test);
+  });
   it("should register singleton service with constructor as service and and implementation", () => {
     class Test {}
     const collection = new ServiceCollection();
@@ -126,6 +151,18 @@ describe("ServiceCollection", () => {
     collection.addScoped(Number, Test);
     const descriptors = collection.getDescriptors(Number);
     expect(descriptors[0]?.resolver).toEqual(fallback(Test));
+  });
+  it("should register transient service with dependencies", () => {
+    interface IService {}
+    const token = createService<IService>("");
+    class Test {
+      //@ts-ignore
+      constructor(private dep: Number) {}
+    }
+    const collection = new ServiceCollection();
+
+    // types test
+    collection.addScoped(token, Test);
   });
   it("should register scoped service with constructor as service and and implementation", () => {
     class Test {}

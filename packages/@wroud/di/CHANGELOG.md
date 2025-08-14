@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.18.0 -->
+## 0.18.0 (2025-08-14)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/di-v0.17.1...di-v0.18.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- 30% faster startup and request scenarios, 2x faster service access comparing to v0.15.2 ([fd05f78](https://github.com/Wroud/foundation/commit/fd05f78))
+
 <!-- version:0.17.1 -->
 ## 0.17.1 (2025-08-14)
 

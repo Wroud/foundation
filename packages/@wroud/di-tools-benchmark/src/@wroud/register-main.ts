@@ -3,9 +3,9 @@ import {
   injectable,
   IServiceProvider,
   ServiceContainerBuilder,
-} from "@wroud/di-main";
+} from "@wroud/di";
 import { registerLibrary } from "@wroud/di-tools-benchmark/common/tools/registerLibrary";
-import type { SingleServiceType } from "@wroud/di-main/types";
+import type { SingleServiceType } from "@wroud/di/types";
 
 registerLibrary<
   ServiceContainerBuilder,

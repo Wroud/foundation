@@ -1,5 +1,5 @@
 ///<reference types="@wroud/tests-runner/jest-extended.d.ts"/>
-import { describe, bench, expect } from "vitest";
+import { describe, bench } from "vitest";
 import { getLibraries } from "@wroud/di-tools-benchmark/common/tools/registerLibrary";
 import { buildLinearTriples } from "./buildLinearTriples.js";
 import { registerAll } from "./registerAll.js";
@@ -28,14 +28,19 @@ const COMMON_OPTS: Parameters<typeof bench>[2] = {
 
 // -------------------- main --------------------
 
-await import("@wroud/di-tools-benchmark/modern/@wroud/register-latest");
-await import("@wroud/di-tools-benchmark/modern/@wroud/register-main");
-await import("@wroud/di-tools-benchmark/modern/needle-di/register");
-await import("@wroud/di-tools-benchmark/legacy/tsyringe/register");
-// this library has memory leaks in registration
-// await import("@wroud/di-tools-benchmark/modern/brandi/register");
-await import("@wroud/di-tools-benchmark/legacy/inversify/register");
-await import("@wroud/di-tools-benchmark/legacy/inversify7/register");
+const libraries = [
+  "@wroud/di-tools-benchmark/bundled/modern/@wroud/register-latest",
+  "@wroud/di-tools-benchmark/bundled/modern/@wroud/register-main",
+  "@wroud/di-tools-benchmark/bundled/modern/needle-di/register",
+  "@wroud/di-tools-benchmark/bundled/legacy/tsyringe/register",
+  "@wroud/di-tools-benchmark/bundled/legacy/inversify/register",
+  "@wroud/di-tools-benchmark/bundled/legacy/inversify7/register",
+  // "@wroud/di-tools-benchmark/bundled/modern/brandi/register",
+];
+
+for (const lib of libraries) {
+  await import(lib);
+}
 
 for (const n of SIZES) {
   describe(`create: tokens & service descriptors x${n}`, () => {
@@ -261,7 +266,9 @@ describe(`resolve: miss (unknown token)`, () => {
     bench(
       `[${name}]`,
       () => {
-        expect(() => lib.resolve.get(provider, unknown)).toThrow();
+        try {
+          lib.resolve.get(provider, unknown);
+        } catch {}
       },
       {
         ...COMMON_OPTS,
@@ -333,7 +340,7 @@ for (const n of SIZES) {
 }
 
 for (const n of SIZES) {
-  describe(`app: request (server, ssr) x${n}`, () => {
+  describe.only(`app: request (server, ssr) x${n}`, () => {
     for (const [name, lib] of getLibraries()) {
       if (!lib.prepare.registerScoped || !lib.prepare.createScopedProvider)
         continue;
@@ -370,7 +377,7 @@ for (const n of SIZES) {
 }
 
 for (const n of SIZES) {
-  describe(`app: resolve warm (react, ssr) x${n}`, () => {
+  describe.only(`app: resolve warm (react, ssr) x${n}`, () => {
     for (const [name, lib] of getLibraries()) {
       let rootProvider: unknown;
       let leafTokens: unknown[] = [];

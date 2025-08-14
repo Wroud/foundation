@@ -12,5 +12,10 @@
   },
   "include": [
     "src/benchmark"
+  ],
+  "references": [
+    {
+      "path": "../di"
+    }
   ]
 }

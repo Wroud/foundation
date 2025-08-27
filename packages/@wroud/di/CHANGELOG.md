@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.18.1 -->
+## 0.18.1 (2025-08-27)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/di-v0.18.0...di-v0.18.1)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- allow synchronous configure function ([c3b1906](https://github.com/Wroud/foundation/commit/c3b1906))
+
 <!-- version:0.18.0 -->
 ## 0.18.0 (2025-08-14)
 

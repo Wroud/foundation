@@ -139,17 +139,40 @@ export function addServiceToModule(
         .nodes()[0];
 
       if (block) {
-        block.body.push(
-          j.expressionStatement(
-            j.callExpression(
-              j.memberExpression(
-                j.identifier("serviceCollection"),
-                j.identifier("addSingleton"),
-              ),
+        const exists = moduleRoot.find(j.CallExpression, {
+          callee: {
+            type: "MemberExpression",
+            object: { type: "Identifier", name: "serviceCollection" },
+            property: { type: "Identifier", name: "addSingleton" },
+          },
+        });
+
+        if (exists.length) {
+          exists.replaceWith((path) => {
+            const node = path.node;
+
+            const chained = j.callExpression(
+              j.memberExpression(node, j.identifier("addSingleton")),
               [j.identifier(freeName)],
+            );
+
+            chained.comments = node.comments;
+
+            return chained;
+          });
+        } else {
+          block.body.push(
+            j.expressionStatement(
+              j.callExpression(
+                j.memberExpression(
+                  j.identifier("serviceCollection"),
+                  j.identifier("addSingleton"),
+                ),
+                [j.identifier(freeName)],
+              ),
             ),
-          ),
-        );
+          );
+        }
       }
     }
   }

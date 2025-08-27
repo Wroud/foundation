@@ -18,9 +18,6 @@ const COMMON_OPTS: Parameters<typeof bench>[2] = {
   warmupIterations: 1,
   iterations: 1000,
   // throws: true,
-  setup: () => {
-    global.gc?.();
-  },
   teardown: () => {
     global.gc?.();
   },
@@ -87,7 +84,6 @@ for (const lifetime of ["singleton", "transient", "scoped"] as const) {
             ...COMMON_OPTS,
             setup: () => {
               ({ entries } = buildLinearTriples(lib, n));
-              global.gc?.();
             },
             teardown: () => {
               entries = [];
@@ -115,7 +111,6 @@ for (const n of SIZES) {
           ...COMMON_OPTS,
           setup: () => {
             ({ entries } = buildLinearTriples(lib, n));
-            global.gc?.();
           },
           teardown: () => {
             entries = [];
@@ -144,7 +139,6 @@ for (const n of SIZES) {
           ...COMMON_OPTS,
           setup: () => {
             ({ entries, tokensAll } = buildLinearTriples(lib, n));
-            global.gc?.();
           },
           teardown: () => {
             entries = [];
@@ -178,7 +172,6 @@ for (const n of SIZES) {
             leafTokens = pre.tokensLeaf.slice();
 
             for (const token of leafTokens) lib.resolve.get(provider, token);
-            global.gc?.();
           },
           teardown: () => {
             provider = undefined;
@@ -212,7 +205,6 @@ for (const n of SIZES) {
             registerAll(lib, builder, pre.entries, "transient");
             provider = lib.prepare.createProvider(builder);
             leafTokens = pre.tokensLeaf.slice();
-            global.gc?.();
           },
           teardown: () => {
             provider = undefined;
@@ -246,7 +238,6 @@ for (const n of SIZES) {
             const pre = buildLinearTriples(lib, n);
             registerAll(lib, builder, pre.entries, "scoped");
             rootProvider = lib.prepare.createProvider(builder);
-            global.gc?.();
           },
           teardown: () => {
             rootProvider = undefined;
@@ -278,7 +269,6 @@ describe(`resolve: miss (unknown token)`, () => {
           registerAll(lib, builder, pre.entries, "singleton");
           provider = lib.prepare.createProvider(builder);
           unknown = lib.setup.createToken();
-          global.gc?.();
         },
         teardown: () => {
           provider = undefined;
@@ -306,7 +296,6 @@ describe(`resolve: deep chain (cold) depth=${DEEP_CHAIN}`, () => {
         ...COMMON_OPTS,
         setup: () => {
           ({ entries, lastToken } = buildDeepChain(lib, DEEP_CHAIN));
-          global.gc?.();
         },
       },
     );
@@ -327,12 +316,6 @@ for (const n of SIZES) {
         },
         {
           ...COMMON_OPTS,
-          setup: () => {
-            global.gc?.();
-          },
-          teardown: () => {
-            global.gc?.();
-          },
         },
       );
     }
@@ -363,7 +346,6 @@ for (const n of SIZES) {
             registerAll(lib, builder, pre.entries, "scoped");
             rootProvider = lib.prepare.createProvider(builder);
             leafTokens = pre.tokensLeaf;
-            global.gc?.();
           },
           teardown: () => {
             rootProvider = undefined;
@@ -397,7 +379,6 @@ for (const n of SIZES) {
             for (const token of pre.tokensLeaf)
               lib.resolve.get(rootProvider, token);
             leafTokens = pre.tokensLeaf;
-            global.gc?.();
           },
           teardown: () => {
             rootProvider = undefined;

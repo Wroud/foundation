@@ -16,6 +16,7 @@ import { useService } from "./useService.js";
 import {
   createService,
   injectable,
+  IServiceProvider,
   lazy,
   Service,
   ServiceContainerBuilder,
@@ -236,7 +237,7 @@ describe("useService", () => {
       }
     }
 
-    builder.addSingleton(TestService, TestService);
+    builder.addSingleton(TestService);
     const serviceProvider = builder.build();
 
     const { result, rerender, unmount } = renderHook(
@@ -336,5 +337,35 @@ describe("useService", () => {
 
     unmount();
     expect(dispose).toHaveBeenCalledOnce();
+  });
+  it("should not dispose IServiceProvider", async () => {
+    const builder = new ServiceContainerBuilder();
+
+    const serviceProvider = builder.build();
+    const scopeServiceProvider = serviceProvider.createScope().serviceProvider;
+
+    const dispose = vi.spyOn(scopeServiceProvider, Symbol.dispose);
+
+    const { result, rerender, unmount } = renderHook(
+      () => useService(IServiceProvider),
+      {
+        wrapper: ({ children }) => (
+          <ServiceProvider provider={scopeServiceProvider}>
+            {children}
+          </ServiceProvider>
+        ),
+      },
+    );
+
+    let testService = result.current;
+    expect(testService).toEqual(scopeServiceProvider);
+    expect(dispose).not.toHaveBeenCalled();
+
+    rerender();
+
+    expect(dispose).not.toHaveBeenCalled();
+
+    unmount();
+    expect(dispose).not.toHaveBeenCalled();
   });
 });

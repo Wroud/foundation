@@ -3,6 +3,7 @@ import { useServiceProvider } from "./useServiceProvider.js";
 import { ServiceProvider } from "@wroud/di/di/ServiceProvider.js";
 import type { IResolverServiceType } from "@wroud/di/types";
 import { useEffect, useRef } from "react";
+import { IServiceProvider } from "@wroud/di";
 
 const unset = Symbol("unset");
 
@@ -19,7 +20,10 @@ export function useServiceIterator<T>(type: IResolverServiceType<any, T>): T {
           providerRef.current,
           typeRef.current.service,
         );
-        if (descriptor.lifetime === ServiceLifetime.Transient) {
+        if (
+          descriptor.service !== IServiceProvider &&
+          descriptor.lifetime === ServiceLifetime.Transient
+        ) {
           dispose(ref.current);
         }
       }
@@ -53,7 +57,10 @@ export function useServiceIterator<T>(type: IResolverServiceType<any, T>): T {
       providerRef.current,
       typeRef.current.service,
     );
-    if (descriptor.lifetime === ServiceLifetime.Transient) {
+    if (
+      descriptor.service !== IServiceProvider &&
+      descriptor.lifetime === ServiceLifetime.Transient
+    ) {
       dispose(ref.current);
     }
   }

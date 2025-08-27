@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.5.2 -->
+## 0.5.2 (2025-08-27)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/di-react-v0.5.1...di-react-v0.5.2)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- IServiceProvider was disposed by useService ([accda1e](https://github.com/Wroud/foundation/commit/accda1e))
+
 <!-- version:0.5.1 -->
 ## 0.5.1 (2025-04-22)
 

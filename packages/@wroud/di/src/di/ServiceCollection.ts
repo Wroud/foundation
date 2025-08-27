@@ -39,10 +39,10 @@ export class ServiceCollection implements IServiceCollection {
   }
 
   getDescriptor<T>(service: SingleServiceType<T>): IServiceDescriptor<T> {
-    const descriptor = this.collection.get(service);
+    const descriptors = this.collection.get(service);
 
-    if (descriptor) {
-      return descriptor[descriptor.length - 1] as IServiceDescriptor<T>;
+    if (descriptors) {
+      return descriptors[descriptors.length - 1] as IServiceDescriptor<T>;
     }
 
     let name = getNameOfServiceType(service);

@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.3.4 -->
+## 0.3.4 (2025-08-28)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/di-tools-codemod-v0.3.3...di-tools-codemod-v0.3.4)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- chain services ([a7c3579](https://github.com/Wroud/foundation/commit/a7c3579))
+
 <!-- version:0.3.3 -->
 ## 0.3.3 (2025-02-07)
 

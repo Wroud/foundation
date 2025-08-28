@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.18.2 -->
+## 0.18.2 (2025-08-28)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/di-v0.18.1...di-v0.18.2)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- resolve lazy dependencies loading in `injectable` to break circular imports ([7346fda](https://github.com/Wroud/foundation/commit/7346fda))
+
 <!-- version:0.18.1 -->
 ## 0.18.1 (2025-08-27)
 

@@ -6,7 +6,6 @@ ModuleRegistry.add({
     name: "di-tools-codemod",
 
     configure: serviceCollection => {
-        serviceCollection.addSingleton(NotificationService);
-        serviceCollection.addSingleton(NotificationService1);
+        serviceCollection.addSingleton(NotificationService).addSingleton(NotificationService1);
     }
 });

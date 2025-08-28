@@ -39,10 +39,16 @@ function injectable<TServices extends ServicesCompatible>(
     context?: ClassDecoratorContext<TClass> | undefined,
   ): TClass => {
     let name = context?.name ?? target.name;
+    let cached: any[] | null = null;
 
     ServiceRegistry.register(target, {
       name,
-      dependencies: mapDependenciesCompatible(dependencies(resolvers)),
+      get dependencies() {
+        if (!cached) {
+          cached = mapDependenciesCompatible(dependencies(resolvers));
+        }
+        return cached;
+      },
     });
 
     return target;

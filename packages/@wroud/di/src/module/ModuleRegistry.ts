@@ -8,12 +8,13 @@ export class ModuleRegistry {
   private static modules: Map<string, IModule> = new Map();
   private static listeners: IModuleEventListener[] = [];
 
-  static add(module: IModule): void {
+  static add(module: IModule): IModule {
     if (this.has(module.name)) {
       throw new Error(`Module ${module.name} is already added.`);
     }
     this.modules.set(module.name, module);
     this.listeners.forEach((listener) => listener(module));
+    return module;
   }
 
   static has(name: string): boolean {

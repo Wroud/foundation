@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.18.3 -->
+## 0.18.3 (2025-09-19)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/di-v0.18.2...di-v0.18.3)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- return module from module registry `add` ([4d6434f](https://github.com/Wroud/foundation/commit/4d6434f))
+
 <!-- version:0.18.2 -->
 ## 0.18.2 (2025-08-28)
 

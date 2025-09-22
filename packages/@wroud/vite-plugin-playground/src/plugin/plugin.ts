@@ -72,14 +72,14 @@ export function playground({
             //   "@wroud/vite-plugin-playground > @ariakit/react",
             //   "@wroud/vite-plugin-playground > react-markdown",
             // ];
-            // config.optimizeDeps.exclude = [
-            //   ...(config.optimizeDeps.exclude || []),
-            //   "@wroud/playground-react",
-            //   "@wroud/vite-plugin-ssg/app",
-            //   "@wroud/vite-plugin-ssg/react/components",
-            //   "@wroud/vite-plugin-ssg/react/client",
-            //   "@wroud/vite-plugin-playground/app/index",
-            // ];
+            config.optimizeDeps.exclude = [
+              ...(config.optimizeDeps.exclude || []),
+              "@wroud/playground-react",
+              "@wroud/vite-plugin-ssg/app",
+              "@wroud/vite-plugin-ssg/react/components",
+              "@wroud/vite-plugin-ssg/react/client",
+              "@wroud/vite-plugin-playground/app/index",
+            ];
           }
 
           if (config.environments["ssr"]) {

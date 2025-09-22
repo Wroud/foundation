@@ -23,6 +23,7 @@
     "CHANGELOG.md",
     "public",
     "lib",
+    "src",
     "src/**/*.svg",
     "src/**/*.css",
     "!lib/**/*.d.ts.map",

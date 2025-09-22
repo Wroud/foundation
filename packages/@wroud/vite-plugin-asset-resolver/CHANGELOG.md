@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.3.1 -->
+## 0.3.1 (2025-09-22)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vp-asset-resolver-v0.3.0...vp-asset-resolver-v0.3.1)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- publish sources to npm for source maps ([0631b68](https://github.com/Wroud/foundation/commit/0631b68))
+
 <!-- version:0.3.0 -->
 ## 0.3.0 (2025-05-28)
 

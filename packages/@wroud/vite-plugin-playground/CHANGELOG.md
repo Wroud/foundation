@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.1.12 -->
+## 0.1.12 (2025-09-22)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-playground-v0.1.11...vite-plugin-playground-v0.1.12)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- publish sources to npm for source maps ([0631b68](https://github.com/Wroud/foundation/commit/0631b68))
+
 <!-- version:0.1.11 -->
 ## 0.1.11 (2025-05-28)
 

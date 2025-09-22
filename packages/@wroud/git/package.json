@@ -1,7 +1,7 @@
 {
   "name": "@wroud/git",
   "description": "A lightweight toolset for working with local git, including utilities for retrieving git commits and tags, ideal for CI/CD pipelines and automated release workflows.",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "type": "module",
   "packageManager": "yarn@4.9.1",
   "license": "MIT",

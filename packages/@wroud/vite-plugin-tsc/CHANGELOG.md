@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.12.2 -->
+## 0.12.2 (2025-09-22)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-tsc-v0.12.1...vite-plugin-tsc-v0.12.2)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- publish sources to npm for source maps ([0631b68](https://github.com/Wroud/foundation/commit/0631b68))
+
 <!-- version:0.12.1 -->
 ## 0.12.1 (2025-08-06)
 

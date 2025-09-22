@@ -1,7 +1,7 @@
 {
   "name": "@wroud/react-tree",
   "type": "module",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "sideEffects": [
     "**/*.css"
   ],

@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.5.3 -->
+## 0.5.3 (2025-09-22)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/di-react-v0.5.2...di-react-v0.5.3)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- publish sources to npm for source maps ([0631b68](https://github.com/Wroud/foundation/commit/0631b68))
+
 <!-- version:0.5.2 -->
 ## 0.5.2 (2025-08-27)
 

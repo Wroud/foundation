@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.1.3 -->
+## 0.1.3 (2025-09-22)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/react-tree-v0.1.2...react-tree-v0.1.3)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- publish sources to npm for source maps ([0631b68](https://github.com/Wroud/foundation/commit/0631b68))
+
 <!-- version:0.1.2 -->
 ## 0.1.2 (2025-04-22)
 

@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.1.5 -->
+## 0.1.5 (2025-09-22)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/git-v0.1.4...git-v0.1.5)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- publish sources to npm for source maps ([0631b68](https://github.com/Wroud/foundation/commit/0631b68))
+
 <!-- version:0.1.4 -->
 ## 0.1.4 (2025-02-07)
 

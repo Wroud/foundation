@@ -3,6 +3,20 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.1.1 -->
+## 0.1.1 (2025-09-22)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/ci-v0.1.0...ci-v0.1.1)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- publish sources to npm for source maps ([0631b68](https://github.com/Wroud/foundation/commit/0631b68))
+
+### 📖 Documentation
+
+- update usage guides ([#40](https://github.com/Wroud/foundation/issues/40)) ([b071927](https://github.com/Wroud/foundation/commit/b071927))
+
 <!-- version:0.1.0 -->
 ## 0.1.0 (2025-05-21)
 

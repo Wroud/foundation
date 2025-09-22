@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:1.0.1 -->
+## 1.0.1 (2025-09-22)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/nav-v1.0.0...nav-v1.0.1)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- publish sources to npm for source maps ([0631b68](https://github.com/Wroud/foundation/commit/0631b68))
+
 <!-- version:1.0.0 -->
 ## 1.0.0 (2025-08-03)
 

@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:5.3.1 -->
+## 5.3.1 (2025-09-22)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-ssg-v5.3.0...vite-plugin-ssg-v5.3.1)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- publish sources to npm for source maps ([0631b68](https://github.com/Wroud/foundation/commit/0631b68))
+
 <!-- version:5.3.0 -->
 ## 5.3.0 (2025-05-28)
 

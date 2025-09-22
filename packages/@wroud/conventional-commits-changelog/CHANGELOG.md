@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.2.1 -->
+## 0.2.1 (2025-09-22)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/cc-changelog-v0.2.0...cc-changelog-v0.2.1)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- publish sources to npm for source maps ([0631b68](https://github.com/Wroud/foundation/commit/0631b68))
+
 <!-- version:0.2.0 -->
 ## 0.2.0 (2025-06-05)
 

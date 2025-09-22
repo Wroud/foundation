@@ -63,15 +63,15 @@ export function playground({
           root = config.root;
 
           if (config.command === "serve") {
-            // config.optimizeDeps.include = [
-            //   ...(config.optimizeDeps.include || []),
-            //   "react",
-            //   "react-dom",
-            //   "react-dom/client",
-            //   "react/jsx-runtime",
-            //   "@wroud/vite-plugin-playground > @ariakit/react",
-            //   "@wroud/vite-plugin-playground > react-markdown",
-            // ];
+            config.optimizeDeps.include = [
+              ...(config.optimizeDeps.include || []),
+              "react",
+              "react-dom",
+              "react-dom/client",
+              "react/jsx-runtime",
+              "@wroud/vite-plugin-playground > @ariakit/react",
+              "@wroud/vite-plugin-playground > react-markdown",
+            ];
             config.optimizeDeps.exclude = [
               ...(config.optimizeDeps.exclude || []),
               "@wroud/playground-react",

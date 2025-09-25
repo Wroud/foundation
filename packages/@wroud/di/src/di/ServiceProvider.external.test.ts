@@ -2,8 +2,8 @@
 import { describe, expect, it } from "vitest";
 import { ServiceContainerBuilder } from "./ServiceContainerBuilder.js";
 import { createService } from "./createService.js";
-import { withExternal } from "../extra/service-type-resolvers/withExternal.js";
-import { external } from "../extra/implementation-resolvers/external.js";
+import { withExternal } from "../extras/service-type-resolvers/withExternal.js";
+import { external } from "../extras/implementation-resolvers/external.js";
 import { injectable } from "./injectable.js";
 
 describe("ServiceProvider", () => {

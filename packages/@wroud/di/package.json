@@ -22,6 +22,7 @@
       "default": "./lib/production.js"
     },
     "./types": "./lib/types/index.js",
+    "./extra": "./lib/types/extra.js",
     "./*.js": "./lib/*.js",
     "./package.json": "./package.json"
   },

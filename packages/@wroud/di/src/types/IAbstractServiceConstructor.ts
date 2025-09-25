@@ -1,1 +1,4 @@
-export type IAbstractServiceConstructor<T> = abstract new (...args: any[]) => T;
+export type IAbstractServiceConstructor<
+  T,
+  TArgs extends unknown[] = unknown[],
+> = abstract new (...args: TArgs) => T;

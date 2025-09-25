@@ -30,6 +30,7 @@ export class DryImplementationResolver<
     requestedBy: IServiceDescriptor<any> | null,
     requestedPath: RequestPath,
     mode: "sync" | "async",
+    context: Readonly<Record<string | symbol, unknown>>,
   ): Generator<Promise<unknown>, IResolvedServiceImplementation<T>, unknown> {
     const resolved = yield* this.implementation.resolve(
       internalGetService,
@@ -37,6 +38,7 @@ export class DryImplementationResolver<
       requestedBy,
       requestedPath,
       mode,
+      context,
     );
 
     return {

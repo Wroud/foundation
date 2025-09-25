@@ -37,6 +37,7 @@ export class OptionalServiceTypeResolver<T> extends BaseServiceTypeResolver<
     requestedBy: IServiceDescriptor<any> | null,
     requestedPath: RequestPath,
     mode: "sync" | "async",
+    context: Readonly<Record<string | symbol, unknown>>,
     descriptor?: IServiceDescriptor<T>,
   ): Generator<Promise<unknown>, IOptionalService<T>, unknown> {
     let next = this.next;
@@ -65,6 +66,7 @@ export class OptionalServiceTypeResolver<T> extends BaseServiceTypeResolver<
           requestedBy,
           requestedPath,
           mode,
+          context,
           descriptor,
         );
       });
@@ -77,6 +79,7 @@ export class OptionalServiceTypeResolver<T> extends BaseServiceTypeResolver<
         requestedBy,
         requestedPath,
         mode,
+        context,
       );
     });
   }

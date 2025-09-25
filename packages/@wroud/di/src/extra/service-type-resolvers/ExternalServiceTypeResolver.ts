@@ -4,19 +4,26 @@ import type {
   IServiceDescriptorResolver,
   IServiceCollection,
   IServiceInstancesStore,
+  IResolverServiceType,
   RequestPath,
-} from "../types/index.js";
+  SingleServiceType,
+} from "../../types/index.js";
 import {
   BaseServiceTypeResolver,
   isServiceTypeResolver,
-} from "./BaseServiceTypeResolver.js";
+} from "../../service-type-resolvers/BaseServiceTypeResolver.js";
 
-export class SingleServiceTypeResolver<T> extends BaseServiceTypeResolver<
+type ExternalServices = readonly [SingleServiceType<unknown>, unknown][];
+export const CONTEXT_EXTERNAL_SERVICES_KEY = Symbol("provided");
+
+export class ExternalServiceTypeResolver<T> extends BaseServiceTypeResolver<
   T,
   T
 > {
-  constructor(next: ServiceType<T>) {
+  private readonly externals: Map<SingleServiceType<unknown>, unknown>;
+  constructor(next: ServiceType<T>, externals: ExternalServices) {
     super(next);
+    this.externals = new Map(externals);
   }
 
   override resolve(
@@ -37,7 +44,7 @@ export class SingleServiceTypeResolver<T> extends BaseServiceTypeResolver<
         requestedBy,
         requestedPath,
         mode,
-        context,
+        { ...context, [CONTEXT_EXTERNAL_SERVICES_KEY]: this.externals },
         descriptor,
       );
     }
@@ -47,7 +54,13 @@ export class SingleServiceTypeResolver<T> extends BaseServiceTypeResolver<
       requestedBy,
       requestedPath,
       mode,
-      context,
+      { ...context, [CONTEXT_EXTERNAL_SERVICES_KEY]: this.externals },
     );
   }
+}
+
+export function isExternalServiceTypeResolver<T>(
+  value: IResolverServiceType<T, any>,
+): value is IResolverServiceType<T, T> {
+  return value instanceof ExternalServiceTypeResolver;
 }

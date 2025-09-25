@@ -6,6 +6,7 @@ import { useEffect, useRef } from "react";
 import { IServiceProvider } from "@wroud/di";
 
 const unset = Symbol("unset");
+const EMPTY_CONTEXT = Object.freeze({});
 
 export function useServiceIterator<T>(type: IResolverServiceType<any, T>): T {
   const provider = useServiceProvider();
@@ -46,6 +47,7 @@ export function useServiceIterator<T>(type: IResolverServiceType<any, T>): T {
     null,
     { next: null, value: null },
     "async",
+    EMPTY_CONTEXT,
   );
 
   while (!(result = iterator.next()).done) {

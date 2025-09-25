@@ -15,6 +15,7 @@ describe("ServiceProvider", () => {
         null,
         { value: null, next: null },
         "sync",
+        {},
       ),
     ).toThrowError("provider must be an instance of ServiceProvider");
   });

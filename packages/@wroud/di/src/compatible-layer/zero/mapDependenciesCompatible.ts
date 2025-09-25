@@ -7,7 +7,7 @@ import type {
 
 export type ServicesCompatible = (
   | ServiceType<any>
-  | [SingleServiceType<any>]
+  | [SingleServiceType<any, any>]
 )[];
 
 type RemapOldType<T extends ServicesCompatible[0]> =

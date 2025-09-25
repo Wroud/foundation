@@ -2,7 +2,7 @@ import type { IResolverServiceType } from "./IResolverServiceType.js";
 import type { SingleServiceType } from "./SingleServiceType.js";
 
 export type ServiceType<T> =
-  | SingleServiceType<T>
+  | SingleServiceType<T, any>
   | IResolverServiceType<unknown, T>;
 
 export type GetServiceTypeImplementation<

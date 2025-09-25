@@ -11,6 +11,7 @@ export async function getDeps<T>(descriptor: IServiceDescriptor<T>) {
       null,
       { next: null, value: null },
       "async",
+      {},
     ),
   );
 

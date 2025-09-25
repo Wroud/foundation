@@ -31,6 +31,7 @@ export abstract class BaseServiceTypeResolver<In, Out>
     requestedBy: IServiceDescriptor<any> | null,
     requestedPath: RequestPath,
     mode: "sync" | "async",
+    context: Readonly<Record<string | symbol, unknown>>,
     descriptor?: IServiceDescriptor<In>,
   ): Generator<Promise<unknown>, Out, unknown>;
 }

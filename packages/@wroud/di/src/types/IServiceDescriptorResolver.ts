@@ -7,5 +7,6 @@ export interface IServiceDescriptorResolver {
     requestedBy: IServiceDescriptor<any> | null,
     requestedPath: RequestPath,
     mode: "sync" | "async",
+    context: Readonly<Record<string | symbol, unknown>>,
   ): Generator<Promise<unknown>, T, unknown>;
 }

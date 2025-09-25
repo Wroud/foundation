@@ -11,5 +11,6 @@ export interface IServiceImplementationResolver<T> {
     requestedBy: IServiceDescriptor<any> | null,
     requestedPath: RequestPath,
     mode: "sync" | "async",
+    context: Readonly<Record<string | symbol, unknown>>,
   ): Generator<Promise<unknown>, IResolvedServiceImplementation<T>, unknown>;
 }

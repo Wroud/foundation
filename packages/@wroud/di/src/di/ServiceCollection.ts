@@ -32,13 +32,15 @@ export class ServiceCollection implements IServiceCollection {
   }
 
   getDescriptors<T>(
-    service: SingleServiceType<T>,
+    service: SingleServiceType<T, any[]>,
   ): readonly IServiceDescriptor<T>[] {
     return (this.collection.get(service) ??
       EMPTY_DESCRIPTORS) as IServiceDescriptor<T>[];
   }
 
-  getDescriptor<T>(service: SingleServiceType<T>): IServiceDescriptor<T> {
+  getDescriptor<T>(
+    service: SingleServiceType<T, any[]>,
+  ): IServiceDescriptor<T> {
     const descriptors = this.collection.get(service);
 
     if (descriptors) {
@@ -58,21 +60,21 @@ export class ServiceCollection implements IServiceCollection {
 
   addScoped<T>(service: SingleServiceImplementation<T>): this;
   addScoped<T>(
-    service: SingleServiceType<T>,
+    service: SingleServiceType<T, any[]>,
     factory: IServiceFactory<T>,
   ): this;
   addScoped<T>(
-    service: SingleServiceType<T>,
+    service: SingleServiceType<T, any[]>,
     constructor: IServiceConstructor<T, any[]>,
   ): this;
-  addScoped<
-    T,
-    TResolver extends IServiceImplementationResolver<
+  addScoped<T>(
+    service: SingleServiceType<T, any[]>,
+    resolver: IServiceImplementationResolver<
       T | SingleServiceImplementation<T>
     >,
-  >(service: SingleServiceType<T>, resolver: TResolver): this;
+  ): this;
   addScoped<T>(
-    service: SingleServiceType<T>,
+    service: SingleServiceType<T, any[]>,
     implementation: IServiceImplementation<T> = service as SingleServiceImplementation<T>,
   ): this {
     this.addService(ServiceLifetime.Scoped, service, implementation);
@@ -81,21 +83,21 @@ export class ServiceCollection implements IServiceCollection {
 
   addTransient<T>(service: SingleServiceImplementation<T>): this;
   addTransient<T>(
-    service: SingleServiceType<T>,
+    service: SingleServiceType<T, any[]>,
     factory: IServiceFactory<T>,
   ): this;
   addTransient<T>(
-    service: SingleServiceType<T>,
+    service: SingleServiceType<T, any[]>,
     constructor: IServiceConstructor<T, any[]>,
   ): this;
-  addTransient<
-    T,
-    TResolver extends IServiceImplementationResolver<
+  addTransient<T>(
+    service: SingleServiceType<T, any[]>,
+    resolver: IServiceImplementationResolver<
       T | SingleServiceImplementation<T>
     >,
-  >(service: SingleServiceType<T>, resolver: TResolver): this;
+  ): this;
   addTransient<T>(
-    service: SingleServiceType<T>,
+    service: SingleServiceType<T, any[]>,
     implementation: IServiceImplementation<T> = service as SingleServiceImplementation<T>,
   ): this {
     this.addService(ServiceLifetime.Transient, service, implementation);
@@ -103,23 +105,26 @@ export class ServiceCollection implements IServiceCollection {
   }
 
   addSingleton<T>(service: SingleServiceImplementation<T>): this;
-  addSingleton<T>(service: SingleServiceType<T>, implementation: T): this;
   addSingleton<T>(
-    service: SingleServiceType<T>,
+    service: SingleServiceType<T, any[]>,
+    implementation: T,
+  ): this;
+  addSingleton<T>(
+    service: SingleServiceType<T, any[]>,
     factory: IServiceFactory<T>,
   ): this;
   addSingleton<T>(
-    service: SingleServiceType<T>,
+    service: SingleServiceType<T, any[]>,
     constructor: IServiceConstructor<T, any[]>,
   ): this;
-  addSingleton<
-    T,
-    TResolver extends IServiceImplementationResolver<
+  addSingleton<T>(
+    service: SingleServiceType<T, any[]>,
+    resolver: IServiceImplementationResolver<
       T | SingleServiceImplementation<T>
     >,
-  >(service: SingleServiceType<T>, resolver: TResolver): this;
+  ): this;
   addSingleton<T>(
-    service: SingleServiceType<T>,
+    service: SingleServiceType<T, any[]>,
     implementation: IServiceImplementation<T> = service as SingleServiceImplementation<T>,
   ): this {
     this.addService(ServiceLifetime.Singleton, service, implementation);
@@ -148,7 +153,7 @@ export class ServiceCollection implements IServiceCollection {
 
   protected addService<T>(
     lifetime: ServiceLifetime,
-    service: SingleServiceType<T>,
+    service: SingleServiceType<T, any[]>,
     implementation: IServiceImplementation<T>,
   ): this {
     const descriptor: IServiceDescriptor<T> = {

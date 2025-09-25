@@ -28,6 +28,7 @@ const EMPTY_PATH: IRequestPathNode<IServiceDescriptor<any> | null> = {
   value: null,
   next: null,
 };
+const EMPTY_CONTEXT = Object.freeze({});
 
 export class ServiceProvider implements IServiceProvider {
   static internalGetService<T>(
@@ -36,6 +37,7 @@ export class ServiceProvider implements IServiceProvider {
     requestedBy: IServiceDescriptor<any> | null,
     requestedPath: RequestPath,
     mode: "sync" | "async",
+    context: Readonly<Record<string | symbol, unknown>>,
   ): Generator<Promise<unknown>, T, unknown> {
     if (!(provider instanceof ServiceProvider)) {
       throw new Error("provider must be an instance of ServiceProvider");
@@ -45,12 +47,13 @@ export class ServiceProvider implements IServiceProvider {
       requestedBy,
       requestedPath,
       mode,
+      context,
     );
   }
 
   static getDescriptor<T>(
     provider: IServiceProvider,
-    service: SingleServiceType<T>,
+    service: SingleServiceType<T, any>,
   ): IServiceDescriptor<T> {
     if (!(provider instanceof ServiceProvider)) {
       throw new Error("provider must be an instance of ServiceProvider");
@@ -60,7 +63,7 @@ export class ServiceProvider implements IServiceProvider {
 
   static getDescriptors<T>(
     provider: IServiceProvider,
-    service: SingleServiceType<T>,
+    service: SingleServiceType<T, any>,
   ): readonly IServiceDescriptor<T>[] {
     if (!(provider instanceof ServiceProvider)) {
       throw new Error("provider must be an instance of ServiceProvider");
@@ -98,25 +101,43 @@ export class ServiceProvider implements IServiceProvider {
 
   getServices<T>(service: ServiceType<T>): T[] {
     return resolveGeneratorSync(
-      this.internalGetService(all(service), null, EMPTY_PATH, "sync"),
+      this.internalGetService(
+        all(service),
+        null,
+        EMPTY_PATH,
+        "sync",
+        EMPTY_CONTEXT,
+      ),
     );
   }
 
   getServiceAsync<T>(service: ServiceType<T>): Promise<T> {
     return resolveGeneratorAsync(
-      this.internalGetService(service, null, EMPTY_PATH, "async"),
+      this.internalGetService(
+        service,
+        null,
+        EMPTY_PATH,
+        "async",
+        EMPTY_CONTEXT,
+      ),
     );
   }
 
   getService<T>(service: ServiceType<T>): T {
     return resolveGeneratorSync(
-      this.internalGetService(service, null, EMPTY_PATH, "sync"),
+      this.internalGetService(service, null, EMPTY_PATH, "sync", EMPTY_CONTEXT),
     );
   }
 
   getServicesAsync<T>(service: ServiceType<T>): Promise<T[]> {
     return resolveGeneratorAsync(
-      this.internalGetService(all(service), null, EMPTY_PATH, "async"),
+      this.internalGetService(
+        all(service),
+        null,
+        EMPTY_PATH,
+        "async",
+        EMPTY_CONTEXT,
+      ),
     );
   }
 
@@ -147,6 +168,7 @@ export class ServiceProvider implements IServiceProvider {
     requestedBy: IServiceDescriptor<any> | null,
     requestedPath: RequestPath,
     mode: "sync" | "async",
+    context: Readonly<Record<string | symbol, unknown>>,
   ): Generator<Promise<unknown>, T, unknown> {
     if (!isServiceTypeResolver(service)) {
       return this.resolveServiceImplementation(
@@ -154,6 +176,7 @@ export class ServiceProvider implements IServiceProvider {
         requestedBy,
         requestedPath,
         mode,
+        context,
       );
     }
     return service.resolve(
@@ -163,6 +186,7 @@ export class ServiceProvider implements IServiceProvider {
       requestedBy,
       requestedPath,
       mode,
+      context,
     );
   }
 
@@ -171,6 +195,7 @@ export class ServiceProvider implements IServiceProvider {
     requestedBy: IServiceDescriptor<any> | null,
     requestedPath: RequestPath,
     mode: "sync" | "async",
+    context: Readonly<Record<string | symbol, unknown>>,
   ): Generator<Promise<unknown>, T, unknown> {
     if (
       this.parent !== undefined &&
@@ -181,6 +206,7 @@ export class ServiceProvider implements IServiceProvider {
         requestedBy,
         requestedPath,
         mode,
+        context,
       );
     }
 
@@ -201,6 +227,7 @@ export class ServiceProvider implements IServiceProvider {
       requestedBy,
       requestedPath,
       mode,
+      context,
     );
   }
 
@@ -209,6 +236,7 @@ export class ServiceProvider implements IServiceProvider {
     requestedBy: IServiceDescriptor<any> | null,
     requestedPath: RequestPath,
     mode: "sync" | "async",
+    context: Readonly<Record<string | symbol, unknown>>,
   ): Generator<Promise<unknown>, T, unknown> {
     try {
       if (descriptor.lifetime === ServiceLifetime.Transient) {
@@ -227,6 +255,7 @@ export class ServiceProvider implements IServiceProvider {
             requestedBy,
             requestedPath,
             mode,
+            context,
           );
           this.descriptorResolverStore.set(descriptor, resolved);
         }
@@ -237,6 +266,7 @@ export class ServiceProvider implements IServiceProvider {
                 descriptor,
                 requestedPath,
                 mode,
+                context,
                 resolved.dependencies,
               )
             : EMPTY_DEPS;
@@ -265,6 +295,7 @@ export class ServiceProvider implements IServiceProvider {
           requestedBy,
           requestedPath,
           mode,
+          context,
         );
         this.descriptorResolverStore.set(descriptor, resolved);
       }
@@ -277,6 +308,7 @@ export class ServiceProvider implements IServiceProvider {
               descriptor,
               requestedPath,
               mode,
+              context,
               resolved.dependencies,
             )
           : EMPTY_DEPS;
@@ -294,6 +326,7 @@ export class ServiceProvider implements IServiceProvider {
     descriptor: IServiceDescriptor<T>,
     requestedPath: RequestPath,
     mode: "sync" | "async",
+    context: Readonly<Record<string | symbol, unknown>>,
     dependencies: readonly ServiceType<any>[],
   ): Generator<Promise<unknown>, any[], unknown> {
     if (Debug.extended) {
@@ -307,6 +340,7 @@ export class ServiceProvider implements IServiceProvider {
           descriptor,
           requestedPath,
           mode,
+          context,
         ),
       ];
     }
@@ -317,6 +351,7 @@ export class ServiceProvider implements IServiceProvider {
         descriptor,
         requestedPath,
         mode,
+        context,
       );
     }
     return results;

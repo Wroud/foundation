@@ -26,6 +26,7 @@ export class ListServiceTypeResolver<T> extends BaseServiceTypeResolver<
     requestedBy: IServiceDescriptor<any> | null,
     requestedPath: RequestPath,
     mode: "sync" | "async",
+    context: Readonly<Record<string | symbol, unknown>>,
   ): Generator<Promise<unknown>, T[], unknown> {
     const descriptors = collection.getDescriptors(this.service);
 
@@ -42,6 +43,7 @@ export class ListServiceTypeResolver<T> extends BaseServiceTypeResolver<
             requestedBy,
             requestedPath,
             mode,
+            context,
             descriptor,
           ),
         );
@@ -52,6 +54,7 @@ export class ListServiceTypeResolver<T> extends BaseServiceTypeResolver<
             requestedBy,
             requestedPath,
             mode,
+            context,
           ),
         );
       }

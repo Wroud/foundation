@@ -4,7 +4,7 @@ import type {
 } from "../types/index.js";
 
 export function getNameOfServiceType(
-  service: SingleServiceType<any> | IServiceImplementation<any>,
+  service: SingleServiceType<any, any> | IServiceImplementation<any>,
 ): string {
   if (service === null) return "null";
   if (service === undefined) return "undefined";

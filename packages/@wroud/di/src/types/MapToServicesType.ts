@@ -5,7 +5,7 @@ import type { IResolverServiceType } from "./IResolverServiceType.js";
 
 type UnpackServiceType<T> = T extends
   | IServiceConstructor<any>
-  | IAbstractServiceConstructor<any>
+  | IAbstractServiceConstructor<any, any>
   ? InstanceType<T>
   : T extends IServiceFactory<any>
     ? ReturnType<T>

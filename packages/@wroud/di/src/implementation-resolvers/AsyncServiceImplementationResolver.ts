@@ -41,6 +41,7 @@ export class AsyncServiceImplementationResolver<
     requestedBy: IServiceDescriptor<any> | null,
     requestedPath: RequestPath,
     mode: "sync" | "async",
+    context: Readonly<Record<string | symbol, unknown>>,
   ): Generator<Promise<unknown>, IResolvedServiceImplementation<T>, unknown> {
     if (this.implementation === NOT_LOADED || mode === "sync") {
       yield this.load();
@@ -56,6 +57,7 @@ export class AsyncServiceImplementationResolver<
       requestedBy,
       requestedPath,
       mode,
+      context,
     );
   }
 

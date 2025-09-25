@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.19.1 -->
+## 0.19.1 (2025-09-25)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/di-v0.19.0...di-v0.19.1)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- extras export ([02a8a40](https://github.com/Wroud/foundation/commit/02a8a40))
+
 <!-- version:0.19.0 -->
 ## 0.19.0 (2025-09-25)
 

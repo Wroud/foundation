@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.19.2 -->
+## 0.19.2 (2025-09-27)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/di-v0.19.1...di-v0.19.2)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- change external provided services API, fix container validation ([6e0eaba](https://github.com/Wroud/foundation/commit/6e0eaba))
+
 <!-- version:0.19.1 -->
 ## 0.19.1 (2025-09-25)
 

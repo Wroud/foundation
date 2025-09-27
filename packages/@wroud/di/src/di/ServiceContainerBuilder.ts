@@ -1,4 +1,5 @@
 import { Debug } from "../debug.js";
+import { isExternalServiceImplementationResolver } from "../extras/implementation-resolvers/ExternalServiceImplementationResolver.js";
 import { DryImplementationResolver } from "../implementation-resolvers/DryImplementationResolver.js";
 import { isAsyncServiceImplementationResolver } from "../implementation-resolvers/isAsyncServiceImplementation.js";
 import { ValueServiceImplementationResolver } from "../implementation-resolvers/ValueServiceImplementationResolver.js";
@@ -20,6 +21,10 @@ export class ServiceContainerBuilder extends ServiceCollection {
     const provider = new ServiceProvider(collectionCopy).createAsyncScope();
 
     for (const descriptor of collectionCopy) {
+      if (isExternalServiceImplementationResolver(descriptor.resolver)) {
+        // @ts-expect-error
+        descriptor.resolver = new ValueServiceImplementationResolver(null);
+      }
       // @ts-expect-error
       descriptor.resolver = new DryImplementationResolver(descriptor.resolver);
     }
@@ -37,7 +42,10 @@ export class ServiceContainerBuilder extends ServiceCollection {
       const provider = new ServiceProvider(collectionCopy).createScope();
 
       for (const descriptor of collectionCopy) {
-        if (isAsyncServiceImplementationResolver(descriptor.resolver)) {
+        if (
+          isExternalServiceImplementationResolver(descriptor.resolver) ||
+          isAsyncServiceImplementationResolver(descriptor.resolver)
+        ) {
           // @ts-expect-error
           descriptor.resolver = new ValueServiceImplementationResolver(null);
         }

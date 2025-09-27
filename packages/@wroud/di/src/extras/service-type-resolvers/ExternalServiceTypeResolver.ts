@@ -13,7 +13,6 @@ import {
   isServiceTypeResolver,
 } from "../../service-type-resolvers/BaseServiceTypeResolver.js";
 
-type ExternalServices = readonly [SingleServiceType<unknown>, unknown][];
 export const CONTEXT_EXTERNAL_SERVICES_KEY = Symbol("provided");
 
 export class ExternalServiceTypeResolver<T> extends BaseServiceTypeResolver<
@@ -21,9 +20,17 @@ export class ExternalServiceTypeResolver<T> extends BaseServiceTypeResolver<
   T
 > {
   private readonly externals: Map<SingleServiceType<unknown>, unknown>;
-  constructor(next: ServiceType<T>, externals: ExternalServices) {
+  constructor(next: ServiceType<T>) {
     super(next);
-    this.externals = new Map(externals);
+    this.externals = new Map();
+  }
+
+  set<TService>(
+    service: SingleServiceType<TService, any[]>,
+    implementation: TService,
+  ): this {
+    this.externals.set(service, implementation);
+    return this;
   }
 
   override resolve(

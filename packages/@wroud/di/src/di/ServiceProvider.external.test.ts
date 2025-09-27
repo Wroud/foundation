@@ -5,6 +5,7 @@ import { createService } from "./createService.js";
 import { withExternal } from "../extras/service-type-resolvers/withExternal.js";
 import { external } from "../extras/implementation-resolvers/external.js";
 import { injectable } from "./injectable.js";
+import "../debugDevelopment.js";
 
 describe("ServiceProvider", () => {
   it("should resolve external services", () => {
@@ -28,7 +29,7 @@ describe("ServiceProvider", () => {
     const CService = createService<typeof C>("C");
 
     const serviceProvider = new ServiceContainerBuilder()
-      .addTransient(AService, external())
+      .addSingleton(AService, external())
       .addSingleton(BService, B)
       .addSingleton(CService, C)
       .build();
@@ -37,34 +38,70 @@ describe("ServiceProvider", () => {
     const b = serviceProvider.getService(BService);
 
     const c = serviceProvider.getService(
-      withExternal(CService, [[AService, a]]),
+      withExternal(CService).set(AService, a),
     );
 
     expect(c).toBeInstanceOf(C);
     expect(c.a).toBe(a);
     expect(c.b).toBe(b);
   });
-  it("should throw exception if not transient", () => {
+  it("should resolve deep external services", () => {
     @injectable(() => [])
     class A {
       constructor() {}
     }
     const AService = createService<typeof A>("A");
     @injectable(() => [AService])
-    class C {
+    class B {
       constructor(public a: A) {}
+    }
+    const BService = createService<typeof B>("B");
+    @injectable(() => [BService])
+    class C {
+      constructor(public b: B) {}
     }
     const CService = createService<typeof C>("C");
 
     const serviceProvider = new ServiceContainerBuilder()
       .addSingleton(AService, external())
+      .addSingleton(BService, B)
       .addSingleton(CService, C)
       .build();
 
     const a = new A();
 
-    expect(() =>
-      serviceProvider.getService(withExternal(CService, [[AService, a]])),
-    ).toThrow();
+    const c = serviceProvider.getService(
+      withExternal(CService).set(AService, a),
+    );
+    const b = serviceProvider.getService(BService);
+
+    expect(c).toBeInstanceOf(C);
+    expect(c.b.a).toBe(a);
+    expect(c.b).toBe(b);
+  });
+  it("should validate external services", async () => {
+    @injectable(() => [])
+    class A {
+      constructor() {}
+    }
+    const AService = createService<typeof A>("A");
+    @injectable(() => [AService])
+    class B {
+      constructor(public a: A) {}
+    }
+    const BService = createService<typeof B>("B");
+    @injectable(() => [BService])
+    class C {
+      constructor(public b: B) {}
+    }
+    const CService = createService<typeof C>("C");
+
+    await expect(
+      new ServiceContainerBuilder()
+        .addSingleton(AService, external())
+        .addSingleton(BService, B)
+        .addSingleton(CService, C)
+        .validate(),
+    ).toResolve();
   });
 });

@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.19.3 -->
+## 0.19.3 (2025-09-28)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/di-v0.19.2...di-v0.19.3)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- factory types, add conditional resolver ([7ba40f1](https://github.com/Wroud/foundation/commit/7ba40f1))
+
 <!-- version:0.19.2 -->
 ## 0.19.2 (2025-09-27)
 

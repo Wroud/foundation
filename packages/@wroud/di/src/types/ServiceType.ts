@@ -6,10 +6,10 @@ export type ServiceType<T> =
   | IResolverServiceType<unknown, T>;
 
 export type GetServiceTypeImplementation<
-  T extends ServiceType<any> | ServiceType<any>[],
+  T extends ServiceType<unknown> | ServiceType<unknown>[],
 > =
   T extends ServiceType<infer U>
     ? U
-    : T extends ServiceType<infer U>[]
-      ? U[]
-      : never;
+    : {
+        [K in keyof T]: T[K] extends ServiceType<infer V> ? V : never;
+      };

@@ -24,7 +24,7 @@ export class DryImplementationResolver<
     super();
   }
 
-  *resolve(
+  override *resolve(
     internalGetService: IServiceTypeResolver,
     descriptor: IServiceDescriptor<T>,
     requestedBy: IServiceDescriptor<any> | null,
@@ -41,9 +41,9 @@ export class DryImplementationResolver<
       context,
     );
 
-    return {
+    return (this.resolved = {
       dependencies: resolved.dependencies,
       create: () => null as T,
-    };
+    });
   }
 }

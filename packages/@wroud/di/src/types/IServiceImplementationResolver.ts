@@ -5,6 +5,7 @@ import type { RequestPath } from "./RequestPath.js";
 
 export interface IServiceImplementationResolver<T> {
   get name(): string;
+  get resolved(): IResolvedServiceImplementation<T> | null;
   resolve(
     resolveService: IServiceTypeResolver,
     descriptor: IServiceDescriptor<any>,

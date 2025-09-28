@@ -13,10 +13,10 @@ export class ExternalServiceImplementationResolver<
   T,
 > extends BaseServiceImplementationResolver<T> {
   get name(): string {
-    return "external()";
+    return "external(?)";
   }
 
-  *resolve(
+  override *resolve(
     internalGetService: IServiceTypeResolver,
     descriptor: IServiceDescriptor<any>,
     requestedBy: IServiceDescriptor<any> | null,

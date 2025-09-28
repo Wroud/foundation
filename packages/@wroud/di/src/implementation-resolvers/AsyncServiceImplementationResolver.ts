@@ -35,7 +35,7 @@ export class AsyncServiceImplementationResolver<
     this.promise = null;
   }
 
-  *resolve(
+  override *resolve(
     internalGetService: IServiceTypeResolver,
     descriptor: IServiceDescriptor<T>,
     requestedBy: IServiceDescriptor<any> | null,
@@ -51,14 +51,14 @@ export class AsyncServiceImplementationResolver<
       }
     }
 
-    return yield* this.implementation.resolve(
+    return (this.resolved = yield* this.implementation.resolve(
       internalGetService,
       descriptor,
       requestedBy,
       requestedPath,
       mode,
       context,
-    );
+    ));
   }
 
   private async load(): Promise<IServiceImplementationResolver<T>> {

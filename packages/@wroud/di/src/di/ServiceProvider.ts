@@ -14,7 +14,6 @@ import type {
   ServiceType,
   RequestPath,
   IRequestPathNode,
-  IResolvedServiceImplementation,
 } from "../types/index.js";
 import { resolveGeneratorAsync } from "../helpers/resolveGeneratorAsync.js";
 import { resolveGeneratorSync } from "../helpers/resolveGeneratorSync.js";
@@ -71,10 +70,6 @@ export class ServiceProvider implements IServiceProvider {
     return provider.collection.getDescriptors(service);
   }
 
-  private readonly descriptorResolverStore: Map<
-    IServiceDescriptor<unknown>,
-    IResolvedServiceImplementation<unknown>
-  >;
   private readonly instancesStore: IServiceInstancesStore;
   private readonly root: ServiceProvider;
   constructor(
@@ -84,14 +79,7 @@ export class ServiceProvider implements IServiceProvider {
     this.instancesStore = new ServiceInstancesStore();
     if (parent) {
       this.root = (parent as ServiceProvider).root;
-      this.descriptorResolverStore = (
-        parent as ServiceProvider
-      ).descriptorResolverStore;
     } else {
-      this.descriptorResolverStore = new Map<
-        IServiceDescriptor<unknown>,
-        IResolvedServiceImplementation<unknown>
-      >();
       this.root = this;
     }
     this.internalGetService = this.internalGetService.bind(this);
@@ -244,21 +232,16 @@ export class ServiceProvider implements IServiceProvider {
           return this as unknown as T;
         }
 
-        let resolved = this.descriptorResolverStore.get(
-          descriptor,
-        ) as IResolvedServiceImplementation<T>;
-
-        if (!resolved) {
-          resolved = yield* descriptor.resolver.resolve(
+        const resolved =
+          descriptor.resolver.resolved ||
+          (yield* descriptor.resolver.resolve(
             this.internalGetService,
             descriptor,
             requestedBy,
             requestedPath,
             mode,
             context,
-          );
-          this.descriptorResolverStore.set(descriptor, resolved);
-        }
+          ));
 
         const dependencies =
           resolved.dependencies.length > 0
@@ -284,21 +267,16 @@ export class ServiceProvider implements IServiceProvider {
         }
       }
 
-      let resolved = this.descriptorResolverStore.get(
-        descriptor,
-      ) as IResolvedServiceImplementation<T>;
-
-      if (!resolved) {
-        resolved = yield* descriptor.resolver.resolve(
+      const resolved =
+        descriptor.resolver.resolved ||
+        (yield* descriptor.resolver.resolve(
           this.internalGetService,
           descriptor,
           requestedBy,
           requestedPath,
           mode,
           context,
-        );
-        this.descriptorResolverStore.set(descriptor, resolved);
-      }
+        ));
 
       const instance = this.instancesStore.addInstance(descriptor, requestedBy);
 

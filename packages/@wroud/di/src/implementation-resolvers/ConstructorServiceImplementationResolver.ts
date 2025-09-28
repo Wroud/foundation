@@ -1,6 +1,5 @@
 import { getNameOfServiceType } from "../helpers/getNameOfServiceType.js";
 import type {
-  IResolvedServiceImplementation,
   IServiceConstructor,
   ServiceType,
   GetServiceTypeImplementation,
@@ -15,7 +14,6 @@ export class ConstructorServiceImplementationResolver<
     return getNameOfServiceType(this.implementation);
   }
 
-  private readonly resolved: IResolvedServiceImplementation<T>;
   constructor(
     private readonly implementation: IServiceConstructor<
       T,
@@ -23,22 +21,12 @@ export class ConstructorServiceImplementationResolver<
     >,
     dependencies: TArgs,
   ) {
-    super();
-
-    this.resolved = {
+    super({
       dependencies,
       create: (dependencies) =>
         new implementation(
           ...(dependencies as GetServiceTypeImplementation<TArgs>),
         ),
-    };
-  }
-
-  *resolve(): Generator<
-    Promise<unknown>,
-    IResolvedServiceImplementation<T>,
-    unknown
-  > {
-    return this.resolved;
+    });
   }
 }

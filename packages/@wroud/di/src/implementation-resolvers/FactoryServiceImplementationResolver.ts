@@ -2,7 +2,6 @@ import { Debug } from "../debug.js";
 import { getNameOfServiceType } from "../helpers/getNameOfServiceType.js";
 import type {
   GetServiceTypeImplementation,
-  IResolvedServiceImplementation,
   IServiceFactory,
   ServiceType,
 } from "../types/index.js";
@@ -16,7 +15,6 @@ export class FactoryServiceImplementationResolver<
     return getNameOfServiceType(this.implementation);
   }
 
-  private readonly resolved: IResolvedServiceImplementation<T>;
   constructor(
     private readonly implementation: IServiceFactory<
       T,
@@ -24,8 +22,7 @@ export class FactoryServiceImplementationResolver<
     >,
     dependencies: TArgs,
   ) {
-    super();
-    this.resolved = {
+    super({
       dependencies,
       create: (dependencies) => {
         try {
@@ -48,14 +45,6 @@ export class FactoryServiceImplementationResolver<
           }
         }
       },
-    };
-  }
-
-  *resolve(): Generator<
-    Promise<unknown>,
-    IResolvedServiceImplementation<T>,
-    unknown
-  > {
-    return this.resolved;
+    });
   }
 }

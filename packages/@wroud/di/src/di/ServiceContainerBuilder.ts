@@ -1,4 +1,5 @@
 import { Debug } from "../debug.js";
+import { isConditionalServiceImplementationResolver } from "../extras/implementation-resolvers/ConditionalServiceImplementationResolver.js";
 import { isExternalServiceImplementationResolver } from "../extras/implementation-resolvers/ExternalServiceImplementationResolver.js";
 import { DryImplementationResolver } from "../implementation-resolvers/DryImplementationResolver.js";
 import { isAsyncServiceImplementationResolver } from "../implementation-resolvers/isAsyncServiceImplementation.js";
@@ -21,7 +22,10 @@ export class ServiceContainerBuilder extends ServiceCollection {
     const provider = new ServiceProvider(collectionCopy).createAsyncScope();
 
     for (const descriptor of collectionCopy) {
-      if (isExternalServiceImplementationResolver(descriptor.resolver)) {
+      if (
+        isExternalServiceImplementationResolver(descriptor.resolver) ||
+        isConditionalServiceImplementationResolver(descriptor.resolver)
+      ) {
         // @ts-expect-error
         descriptor.resolver = new ValueServiceImplementationResolver(null);
       }
@@ -44,6 +48,7 @@ export class ServiceContainerBuilder extends ServiceCollection {
       for (const descriptor of collectionCopy) {
         if (
           isExternalServiceImplementationResolver(descriptor.resolver) ||
+          isConditionalServiceImplementationResolver(descriptor.resolver) ||
           isAsyncServiceImplementationResolver(descriptor.resolver)
         ) {
           // @ts-expect-error

@@ -9,7 +9,7 @@ export class ModuleRegistry {
   private static listeners: IModuleEventListener[] = [];
 
   static add(module: IModule): IModule {
-    if (this.has(module.name)) {
+    if (this.has(module.name) && !module.allowOverride) {
       throw new Error(`Module ${module.name} is already added.`);
     }
     this.modules.set(module.name, module);
@@ -23,6 +23,16 @@ export class ModuleRegistry {
 
   static get(name: string): IModule | undefined {
     return this.modules.get(name);
+  }
+
+  static clear(): void {
+    this.modules.clear();
+    this.listeners = [];
+  }
+
+  static delete(name: string): boolean {
+    this.modules.delete(name);
+    return this.modules.delete(name);
   }
 
   static addListener(listener: IModuleEventListener): void {

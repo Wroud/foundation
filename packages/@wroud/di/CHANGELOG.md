@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.20.0 -->
+## 0.20.0 (2026-04-15)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/di-v0.19.3...di-v0.20.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- add override option for modules ([921abea](https://github.com/Wroud/foundation/commit/921abea))
+
 <!-- version:0.19.3 -->
 ## 0.19.3 (2025-09-28)
 

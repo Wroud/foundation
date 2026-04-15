@@ -9,7 +9,7 @@ import stripAnsi from "strip-ansi";
 import { Worker } from "node:worker_threads";
 
 interface IOptions {
-  tscArgs: string[];
+  tscArgs?: string[];
   verbose?: boolean;
   prebuild?: boolean;
   enableOverlay?: boolean;

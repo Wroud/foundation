@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.12.3 -->
+## 0.12.3 (2026-04-15)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-tsc-v0.12.2...vite-plugin-tsc-v0.12.3)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- make `tscArgs` optional ([d95fa9c](https://github.com/Wroud/foundation/commit/d95fa9c))
+
 <!-- version:0.12.2 -->
 ## 0.12.2 (2025-09-22)
 

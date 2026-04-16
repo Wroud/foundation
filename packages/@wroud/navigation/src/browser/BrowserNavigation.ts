@@ -35,13 +35,17 @@ export class BrowserNavigation {
     to: IRouteState | null,
   ) {
     switch (type) {
-      case NavigationType.Navigate:
-        window.history.pushState(
-          to,
-          "",
-          this.navigation.router.matcher?.stateToUrl(to),
-        );
+      case NavigationType.Navigate: {
+        const targetUrl = this.navigation.router.matcher?.stateToUrl(to);
+        const currentUrl =
+          window.location.pathname + window.location.search;
+        if (targetUrl != null && targetUrl === currentUrl) {
+          window.history.replaceState(to, "", targetUrl);
+        } else {
+          window.history.pushState(to, "", targetUrl);
+        }
         break;
+      }
       case NavigationType.Replace:
         window.history.replaceState(
           to,
@@ -70,9 +74,7 @@ export class BrowserNavigation {
     );
 
     if (state) {
-      this.navigation.removeListener(this.handleNavigation);
       await this.navigation.navigate(state);
-      this.navigation.addListener(this.handleNavigation);
     }
   }
 

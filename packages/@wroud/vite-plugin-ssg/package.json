@@ -44,9 +44,9 @@
     "@wroud/tests-runner": "workspace:*",
     "@wroud/tsconfig": "workspace:^",
     "rimraf": "^6",
-    "rollup": "^4.40.0",
+    "rolldown": "^1.0.0-rc.15",
     "typescript": "^5",
-    "vite": "^6.3.0",
+    "vite": "^8",
     "vitest": "^3"
   },
   "dependencies": {
@@ -59,7 +59,7 @@
   "peerDependencies": {
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "vite": "^6.3.0"
+    "vite": "^8"
   },
   "keywords": [
     "vite",

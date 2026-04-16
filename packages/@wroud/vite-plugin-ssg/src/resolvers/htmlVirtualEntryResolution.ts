@@ -1,6 +1,6 @@
 import type { Plugin } from "vite";
 import { isVirtualHtmlEntry } from "../modules/isVirtualHtmlEntry.js";
-import type { OutputAsset } from "rollup";
+import type { OutputAsset } from "rolldown";
 
 // Define the interface for the plugin that extends Vite's Plugin interface
 export interface HtmlVirtualEntryResolutionPlugin extends Plugin {

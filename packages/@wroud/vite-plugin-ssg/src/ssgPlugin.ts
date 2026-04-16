@@ -84,8 +84,8 @@ export const ssgPlugin = (
             build: {
               ...userConfig.environments?.["ssr"]?.build,
               ssr: true,
-              rollupOptions: {
-                ...userConfig.environments?.["ssr"]?.build?.rollupOptions,
+              rolldownOptions: {
+                ...userConfig.environments?.["ssr"]?.build?.rolldownOptions,
                 // external:
                 //   env.command === "build"
                 //     ? [/^@wroud\/vite-plugin-ssg.*/]

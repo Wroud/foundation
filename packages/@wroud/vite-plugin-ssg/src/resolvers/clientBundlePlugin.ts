@@ -3,7 +3,7 @@ import { type PluginOption } from "vite";
 import { readFile, unlink, writeFile } from "node:fs/promises";
 import { changePathExt } from "../utils/changePathExt.js";
 import { loadServerApi } from "../api/loadServerApi.js";
-import type { OutputAsset, OutputChunk } from "rollup";
+import type { OutputAsset, OutputChunk, SourceMap } from "rolldown";
 import { getPageName } from "../utils/getPageName.js";
 import { removeVirtualHtmlEntry } from "../modules/isVirtualHtmlEntry.js";
 import { getPathsToLookup } from "../utils/getPathsToLookup.js";
@@ -207,7 +207,9 @@ export const clientBundlePlugin = (renderTimeout = 10000): PluginOption => {
                   }
                 }
 
+                //@ts-expect-error problem with types
                 if (chunk.viteMetadata?.importedCss) {
+                  //@ts-expect-error problem with types
                   for (const cssFile of chunk.viteMetadata.importedCss) {
                     cssFiles.add(cssFile);
                   }
@@ -236,7 +238,9 @@ export const clientBundlePlugin = (renderTimeout = 10000): PluginOption => {
 
                 chunk.code = s.toString();
                 if (chunk.map) {
-                  chunk.map = s.generateMap();
+                  chunk.map = s.generateMap({
+                    hires: "boundary",
+                  }) as SourceMap;
                 }
               }
               if (

@@ -11,7 +11,11 @@ export function* getPathsToLookup(path: string) {
       yield pathPart + "/index";
       yield pathPart;
     } else {
-      yield pathPart + "/index";
+      if (pathPart) {
+        yield pathPart + "/index";
+      } else {
+        yield "index";
+      }
       break;
     }
   }

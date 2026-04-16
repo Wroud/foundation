@@ -5,13 +5,13 @@ describe("getPathsToLookup", () => {
   it("returns all paths to lookup from deepest to root", () => {
     const result = [...getPathsToLookup("foo/bar/baz")];
     expect(result).toEqual([
-      "foo/bar/baz",
       "foo/bar/baz/index",
-      "foo/bar",
+      "foo/bar/baz",
       "foo/bar/index",
-      "foo",
+      "foo/bar",
       "foo/index",
-      "/index",
+      "foo",
+      "index",
     ]);
   });
 });

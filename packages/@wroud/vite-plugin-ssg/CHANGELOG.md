@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:6.1.0 -->
+## 6.1.0 (2026-04-16)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-ssg-v6.0.1...vite-plugin-ssg-v6.1.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- add support for request headers ([84104bc](https://github.com/Wroud/foundation/commit/84104bc))
+
 <!-- version:6.0.1 -->
 ## 6.0.1 (2026-04-16)
 

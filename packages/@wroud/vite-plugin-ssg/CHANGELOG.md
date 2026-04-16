@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:6.0.0 -->
+## 6.0.0 (2026-04-16)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-ssg-v5.3.2...vite-plugin-ssg-v6.0.0)
+
+<!-- changelog -->
+### ⚠️  Breaking Changes
+
+- update to Vite 8 ([d9c2e07](https://github.com/Wroud/foundation/commit/d9c2e07))
+
 <!-- version:5.3.2 -->
 ## 5.3.2 (2026-04-16)
 

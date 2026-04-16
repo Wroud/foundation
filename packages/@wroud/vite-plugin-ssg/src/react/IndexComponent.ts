@@ -4,6 +4,7 @@ export interface IndexComponentContext {
   href?: string | null;
   cspNonce?: string;
   base?: string;
+  headers?: Record<string, string | string[] | undefined>;
 }
 
 export interface IndexComponentProps {

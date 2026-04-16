@@ -87,6 +87,7 @@ export function pagesMiddleware(
           href: getHrefFromPath(href, server.config),
           cspNonce: server.config.html?.cspNonce,
           base,
+          headers: req.headers as Record<string, string | string[] | undefined>,
         });
 
         const renderedHtml = await serverApi.render(

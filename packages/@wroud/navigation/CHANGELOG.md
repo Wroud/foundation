@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:1.1.0 -->
+## 1.1.0 (2026-04-16)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/nav-v1.0.1...nav-v1.1.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- add support for query parameters ([bc37301](https://github.com/Wroud/foundation/commit/bc37301))
+
 <!-- version:1.0.1 -->
 ## 1.0.1 (2025-09-22)
 

@@ -19,6 +19,7 @@ import { getBaseInHTML } from "../utils/getBaseInHTML.js";
 import { mapHtmlTagsToReactTags } from "../react/mapHtmlTagsToReactTags.js";
 import { htmlVirtualEntryResolution } from "./htmlVirtualEntryResolution.js";
 import { stripBase } from "../utils/stripBase.js";
+import { stripIndexFromPath } from "../utils/stripIndexFromPath.js";
 
 export const clientBundlePlugin = (renderTimeout = 10000): PluginOption => {
   const virtualHtmlEntryPlugin = htmlVirtualEntryResolution();
@@ -158,7 +159,7 @@ export const clientBundlePlugin = (renderTimeout = 10000): PluginOption => {
                 continue;
               }
 
-              const href = mainChunk.name.replace(/\/index$/, "/");
+              const href = stripIndexFromPath(mainChunk.name);
               let serverModulePath = stripBase(
                 mainChunk.chunkName,
                 config.base,

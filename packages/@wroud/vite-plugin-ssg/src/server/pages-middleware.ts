@@ -15,6 +15,7 @@ import type { SsgPluginOptions } from "../SsgPluginOptions.js";
 import { getBaseInHTML } from "../utils/getBaseInHTML.js";
 import { getHrefFromPath } from "../utils/getHrefFromPath.js";
 import { isDevServer } from "../utils/isDevServer.js";
+import { stripIndexFromPath } from "../utils/stripIndexFromPath.js";
 
 export function pagesMiddleware(
   server: ViteDevServer | PreviewServer,
@@ -47,7 +48,7 @@ export function pagesMiddleware(
         const htmlTags = parseHtmlTagsFromHtml(html);
 
         let entry = decodeURIComponent(url);
-        entry = createSsgUrl(changePathExt(entry, "")).replace("/index", "/");
+        entry = stripIndexFromPath(createSsgUrl(changePathExt(entry, "")));
 
         const clientEntryModule = await server.moduleGraph.ensureEntryFromUrl(
           entry,

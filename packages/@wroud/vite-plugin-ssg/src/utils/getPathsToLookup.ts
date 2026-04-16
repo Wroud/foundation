@@ -8,8 +8,8 @@ export function* getPathsToLookup(path: string) {
     }
 
     if (pathPart && pathPart !== ".") {
-      yield pathPart;
       yield pathPart + "/index";
+      yield pathPart;
     } else {
       yield pathPart + "/index";
       break;

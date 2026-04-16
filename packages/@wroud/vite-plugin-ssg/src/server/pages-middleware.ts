@@ -75,7 +75,7 @@ export function pagesMiddleware(
         const { create: createServerApi } =
           await server.environments.ssr.runner.import(entry);
         const href =
-          url.replace(/^\//, "").replace(/\/index\.html$/, "/") +
+          url.replace(/^\//, "").replace(/(\/|^)index\.html$/, "/") +
           (urlSearch ? "?" + urlSearch : "");
 
         let base =

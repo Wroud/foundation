@@ -4,13 +4,18 @@ import {
   isSsgComponentId,
   removeSsgComponentQuery,
 } from "../modules/isSsgComponentId.js";
+import { isSsgId, removeSsgQuery } from "../modules/isSsgId.js";
 
 export function ssgComponentResolution(): PluginOption {
   return {
     name: "@wroud/vite-plugin-ssg:component-resolution",
     resolveId: {
       async handler(source, importer, resolveOptions) {
-        if (!isSsgComponentId(source) || source.includes("\0")) return null;
+        if (
+          (!isSsgComponentId(source) && !isSsgId(source)) ||
+          source.includes("\0")
+        )
+          return null;
 
         const config = this.environment.config;
         const { custom = {} } = resolveOptions;
@@ -27,9 +32,9 @@ export function ssgComponentResolution(): PluginOption {
           importer = undefined;
         }
 
-        let [sourcePath, params] = removeSsgComponentQuery(source).split(
-          "?",
-        ) as [string, string | undefined];
+        let [sourcePath, params] = removeSsgQuery(
+          removeSsgComponentQuery(source),
+        ).split("?") as [string, string | undefined];
         const suffix = params ? `?${params}` : "";
 
         const lookUpPaths = getPathsToLookup(sourcePath);

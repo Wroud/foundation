@@ -24,15 +24,35 @@ type TrimSlashes<S extends string> = S extends `/${infer T}`
     ? TrimSlashes<U>
     : S;
 
-// Filter out non-parameter parts and get parameter segments
-type GetParameterSegments<Pattern extends string> = Pattern extends "/" | ""
-  ? []
-  : Extract<Split<TrimSlashes<Pattern>, "/">[number], `:${string}`>;
+// Split pattern into path and query parts
+type PatternPath<S extends string> = S extends `${infer Path}?${string}`
+  ? Path
+  : S;
+type PatternQuery<S extends string> = S extends `${string}?${infer Query}`
+  ? Query
+  : "";
+
+// Extract query parameter segments from "key=:param<type>&key2=:param2"
+type SplitAmpersand<S extends string> = S extends `${infer First}&${infer Rest}`
+  ? [First, ...SplitAmpersand<Rest>]
+  : S extends ""
+    ? []
+    : [S];
+
+// Extract the param part from "key=:param<type>"
+type QueryParamSegment<S extends string> = S extends `${string}=:${infer Param}`
+  ? `:${Param}`
+  : never;
 
 type StripWildcard<S extends string> = S extends `${infer R}*` ? R : S;
 type StripParam<S extends string> = S extends `:${infer R}` ? R : S;
-type StripType<S extends string> = S extends `${infer N}<${string}>` ? N : S;
-type ExtractName<S extends string> = StripType<StripWildcard<StripParam<S>>>;
+type StripType<S extends string> = S extends `${infer N}<${string}>${string}`
+  ? N
+  : S;
+type StripRequired<S extends string> = S extends `${infer R}!` ? R : S;
+type ExtractName<S extends string> = StripRequired<
+  StripType<StripWildcard<StripParam<S>>>
+>;
 type ExtractType<S extends string> = S extends `${string}<${infer T}>${string}`
   ? T
   : "string";
@@ -42,12 +62,6 @@ type ParamInfo<S extends string> = {
   type: ExtractType<S>;
   wildcard: IsWildcard<S>;
 };
-type ParamInfoUnion<Pattern extends string> =
-  GetParameterSegments<Pattern> extends infer S
-    ? S extends string
-      ? ParamInfo<S>
-      : never
-    : never;
 
 type PrimitiveFromType<T extends string> = T extends "number"
   ? number
@@ -59,25 +73,57 @@ type PrimitiveFromType<T extends string> = T extends "number"
         ? object
         : string;
 
+type ParamToValue<P extends { type: string; wildcard: boolean }> =
+  P["wildcard"] extends true
+    ? PrimitiveFromType<P["type"]>[]
+    : PrimitiveFromType<P["type"]>;
+
+// Helper to simplify intersected types into a single flat object
+type Simplify<T> = { [K in keyof T]: T[K] };
+
+// Distribute ParamInfo over a union of segment strings
+type ToParamInfo<S> = S extends string ? ParamInfo<S> : never;
+
+// Path params (always required)
+type PathParams<Pattern extends string> = ToParamInfo<
+  Extract<Split<TrimSlashes<PatternPath<Pattern>>, "/">[number], `:${string}`>
+>;
+
+// Query param segments split by required (!) vs optional
+type QuerySegments<Pattern extends string> = QueryParamSegment<
+  SplitAmpersand<PatternQuery<Pattern>>[number]
+>;
+type RequiredQueryParams<Pattern extends string> = ToParamInfo<
+  Extract<QuerySegments<Pattern>, `${string}!`>
+>;
+type OptionalQueryParams<Pattern extends string> = ToParamInfo<
+  Exclude<QuerySegments<Pattern>, `${string}!`>
+>;
+
 /**
  * Extract route parameters from a pattern string.
- * Returns a clean object type with parameter names as keys.
+ * Path params and query params with `!` suffix are required.
+ * Query params without `!` are optional.
  *
  * @template Pattern - The URL pattern to extract parameters from
  * @example
  * type Params = ExtractRouteParams<"/user/:id">; // { id: string }
- * type BlogParams = ExtractRouteParams<"/blog/:year/:month/:slug">; // { year: string, month: string, slug: string }
+ * type QueryParams = ExtractRouteParams<"/search?q=:q!&page=:page<number>">; // { q: string; page?: number }
  * type FileParams = ExtractRouteParams<"/files/:path*">; // { path: string[] }
  */
 export type ExtractRouteParams<Pattern extends string> = Pattern extends
   | "/"
   | ""
   ? {}
-  : {
-      [P in ParamInfoUnion<Pattern> as P["name"]]: P["wildcard"] extends true
-        ? PrimitiveFromType<P["type"]>[]
-        : PrimitiveFromType<P["type"]>;
-    };
+  : Simplify<
+      {
+        [P in
+          | PathParams<Pattern>
+          | RequiredQueryParams<Pattern> as P["name"]]: ParamToValue<P>;
+      } & {
+        [P in OptionalQueryParams<Pattern> as P["name"]]?: ParamToValue<P>;
+      }
+    >;
 
 /**
  * Type-safe TriePatternMatching methods

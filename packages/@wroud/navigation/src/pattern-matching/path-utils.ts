@@ -3,6 +3,80 @@
  */
 
 /**
+ * Splits a string (URL or pattern) into its path part and query part.
+ */
+export function splitPathAndQuery(value: string): {
+  path: string;
+  query: string;
+} {
+  const qIndex = value.indexOf("?");
+  if (qIndex === -1) {
+    return { path: value, query: "" };
+  }
+  return { path: value.slice(0, qIndex), query: value.slice(qIndex + 1) };
+}
+
+/**
+ * Parsed query parameter definition from a pattern.
+ */
+export interface QueryParamDef {
+  /** The URL query key (e.g. "tab") */
+  key: string;
+  /** The parameter name (e.g. "tab") */
+  paramName: string;
+  /** The declared type (e.g. "number") */
+  paramType: string;
+  /** Whether this query parameter is required (marked with !) */
+  required: boolean;
+}
+
+/**
+ * Parse query parameter definitions from a pattern's query string.
+ * Format: "key=:param<type>&key2=:param2"
+ */
+export function parseQueryPatternDefs(queryPattern: string): QueryParamDef[] {
+  if (!queryPattern) return [];
+
+  const defs: QueryParamDef[] = [];
+
+  for (const part of queryPattern.split("&")) {
+    const eqIndex = part.indexOf("=");
+    if (eqIndex === -1) continue;
+
+    const key = part.slice(0, eqIndex);
+    let valuePart = part.slice(eqIndex + 1);
+
+    if (!valuePart.startsWith(":")) continue;
+
+    // Check for required flag (trailing !)
+    const required = valuePart.endsWith("!");
+    if (required) {
+      valuePart = valuePart.slice(0, -1);
+    }
+
+    const paramName = extractParamName(valuePart);
+    const paramType = extractParamType(valuePart);
+    defs.push({ key, paramName, paramType, required });
+  }
+
+  return defs;
+}
+
+/**
+ * Parse a URL query string into a key-value map.
+ * Handles repeated keys by keeping the last value.
+ */
+export function parseQueryString(query: string): Record<string, string> {
+  if (!query) return {};
+  const params = new URLSearchParams(query);
+  const result: Record<string, string> = {};
+  for (const [key, value] of params) {
+    result[key] = value;
+  }
+  return result;
+}
+
+/**
  * Splits a URL or pattern string into segments
  */
 export function splitPath(path: string): string[] {

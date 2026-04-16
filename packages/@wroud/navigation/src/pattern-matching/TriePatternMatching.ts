@@ -7,8 +7,16 @@ import {
   isWildcardSegment,
   joinPath,
   splitPath,
+  splitPathAndQuery,
+  parseQueryPatternDefs,
+  type QueryParamDef,
 } from "./path-utils.js";
-import { buildUrlSegments, validateParameters } from "./parameter-utils.js";
+import {
+  buildQueryString,
+  buildUrlSegments,
+  matchQueryParams,
+  validateParameters,
+} from "./parameter-utils.js";
 import type {
   TypedPatternMatcher,
   ExtractRouteParams,
@@ -30,6 +38,8 @@ export class TriePatternMatching implements TypedPatternMatcher, IRouteMatcher {
   private patterns: Set<string>;
   // Direct mapping from patterns to nodes for fast access
   private patternToNode: Map<string, TrieNode>;
+  // Query parameter definitions per pattern
+  private patternQueryDefs: Map<string, QueryParamDef[]>;
   // Cache for frequently decoded URLs
   private decodeCache: Map<string, Map<string, RouteParams | null>>;
   // Cache for frequently encoded patterns
@@ -41,6 +51,7 @@ export class TriePatternMatching implements TypedPatternMatcher, IRouteMatcher {
     this.root = new TrieNode();
     this.patterns = new Set();
     this.patternToNode = new Map();
+    this.patternQueryDefs = new Map();
     this.decodeCache = new Map();
     this.encodeCache = new Map();
     this.options = {
@@ -59,7 +70,16 @@ export class TriePatternMatching implements TypedPatternMatcher, IRouteMatcher {
     if (this.patterns.has(pattern)) return;
 
     this.patterns.add(pattern);
-    const segments = splitPath(pattern);
+
+    // Separate path and query parts of the pattern
+    const { path: pathPattern, query: queryPattern } =
+      splitPathAndQuery(pattern);
+    const queryDefs = parseQueryPatternDefs(queryPattern);
+    if (queryDefs.length > 0) {
+      this.patternQueryDefs.set(pattern, queryDefs);
+    }
+
+    const segments = splitPath(pathPattern);
     let current = this.root;
 
     for (const segment of segments) {
@@ -105,7 +125,8 @@ export class TriePatternMatching implements TypedPatternMatcher, IRouteMatcher {
   match<Pattern extends string>(
     url: string,
   ): IPatternRouteState<Pattern> | null {
-    const segments = splitPath(this.removeBaseFromUrl(url));
+    const { path, query } = splitPathAndQuery(this.removeBaseFromUrl(url));
+    const segments = splitPath(path);
     const { matched, pattern, params } = matchSegments(
       this.root,
       segments,
@@ -114,6 +135,12 @@ export class TriePatternMatching implements TypedPatternMatcher, IRouteMatcher {
     );
 
     if (!matched || !pattern) return null;
+
+    // Extract query parameters if the pattern defines them
+    const queryDefs = this.patternQueryDefs.get(pattern);
+    if (queryDefs && !matchQueryParams(queryDefs, query, params)) {
+      return null;
+    }
 
     return {
       id: pattern as Pattern,
@@ -173,9 +200,18 @@ export class TriePatternMatching implements TypedPatternMatcher, IRouteMatcher {
     // (not null or empty string, which are valid cached results)
     if (cached !== undefined) return cached;
 
-    const segments = splitPath(pattern);
+    const { path: pathPattern } = splitPathAndQuery(pattern);
+    const segments = splitPath(pathPattern);
     const paramTypes = this.extractParameterTypes(pattern, segments);
-    validateParameters(pattern, segments, params as RouteParams, paramTypes);
+    const queryDefs = this.patternQueryDefs.get(pattern);
+
+    validateParameters(
+      pattern,
+      segments,
+      params as RouteParams,
+      paramTypes,
+      queryDefs,
+    );
 
     const resultSegments = buildUrlSegments(
       segments,
@@ -188,6 +224,11 @@ export class TriePatternMatching implements TypedPatternMatcher, IRouteMatcher {
       result = result.replace(/\/$/, "");
     } else if (!result.endsWith("/")) {
       result += "/";
+    }
+
+    // Append query parameters
+    if (queryDefs && queryDefs.length > 0) {
+      result += buildQueryString(queryDefs, params as RouteParams);
     }
 
     // Update cache
@@ -353,6 +394,7 @@ export class TriePatternMatching implements TypedPatternMatcher, IRouteMatcher {
     // Remove from maps and sets
     this.patterns.delete(pattern);
     this.patternToNode.delete(pattern);
+    this.patternQueryDefs.delete(pattern);
     this.clearCaches();
   }
 

@@ -1193,4 +1193,182 @@ describe("TriePatternMatching", () => {
       expect(match?.params).toEqual({ id: "123" });
     });
   });
+
+  describe("Query parameters", () => {
+    test("should match URL with query parameters", () => {
+      patternMatcher.addPattern("/user/:id?tab=:tab");
+      const match = patternMatcher.match("/user/42?tab=settings");
+      expect(match?.id).toBe("/user/:id?tab=:tab");
+      expect(match?.params).toEqual({ id: "42", tab: "settings" });
+    });
+
+    test("should match URL with multiple query parameters", () => {
+      patternMatcher.addPattern("/search?q=:query&page=:page<number>");
+      const match = patternMatcher.match("/search?q=hello&page=3");
+      expect(match?.id).toBe("/search?q=:query&page=:page<number>");
+      expect(match?.params).toEqual({ query: "hello", page: 3 });
+    });
+
+    test("should match URL when query params are missing (optional)", () => {
+      patternMatcher.addPattern("/user/:id?tab=:tab");
+      const match = patternMatcher.match("/user/42");
+      expect(match?.id).toBe("/user/:id?tab=:tab");
+      expect(match?.params).toEqual({ id: "42" });
+    });
+
+    test("should encode URL with query parameters", () => {
+      patternMatcher.addPattern("/user/:id?tab=:tab");
+      const url = patternMatcher.encode("/user/:id?tab=:tab", {
+        id: "42",
+        tab: "settings",
+      } as any);
+      expect(url).toBe("/user/42?tab=settings");
+    });
+
+    test("should encode URL with typed query parameters", () => {
+      patternMatcher.addPattern("/search?q=:query&page=:page<number>");
+      const url = patternMatcher.encode("/search?q=:query&page=:page<number>", {
+        query: "hello",
+        page: 3,
+      } as any);
+      expect(url).toBe("/search?q=hello&page=3");
+    });
+
+    test("should decode URL with query parameters", () => {
+      patternMatcher.addPattern("/user/:id?tab=:tab");
+      const params = patternMatcher.decode(
+        "/user/:id?tab=:tab",
+        "/user/42?tab=settings",
+      );
+      expect(params).toEqual({ id: "42", tab: "settings" });
+    });
+
+    test("should handle query params with date type", () => {
+      patternMatcher.addPattern("/events?from=:from<date>");
+      const match = patternMatcher.match(
+        "/events?from=2024-01-15T00:00:00.000Z",
+      );
+      expect(match?.id).toBe("/events?from=:from<date>");
+      expect((match?.params as any).from).toBeInstanceOf(Date);
+    });
+
+    test("should handle query params with json type", () => {
+      patternMatcher.addPattern("/api?filter=:filter<json>");
+      const match = patternMatcher.match('/api?filter={"status":"active"}');
+      expect(match?.id).toBe("/api?filter=:filter<json>");
+      expect((match?.params as any).filter).toEqual({ status: "active" });
+    });
+
+    test("should work with base URL and query parameters", () => {
+      const withBase = new TriePatternMatching({
+        base: "/app",
+        trailingSlash: false,
+      });
+      withBase.addPattern("/users/:id?tab=:tab");
+
+      const url = withBase.encode("/users/:id?tab=:tab", {
+        id: "1",
+        tab: "profile",
+      } as any);
+      expect(url).toBe("/app/users/1?tab=profile");
+
+      const match = withBase.match("/app/users/1?tab=profile");
+      expect(match?.params).toEqual({ id: "1", tab: "profile" });
+    });
+
+    test("should get ancestors for pattern with query params", () => {
+      patternMatcher.addPattern("/user");
+      patternMatcher.addPattern("/user/:id?tab=:tab");
+      const ancestors =
+        patternMatcher.getPatternAncestors("/user/:id?tab=:tab");
+      expect(ancestors).toContain("/user");
+    });
+
+    test("should convert stateToUrl with query params", () => {
+      patternMatcher.addPattern("/user/:id?tab=:tab");
+      const url = patternMatcher.stateToUrl({
+        id: "/user/:id?tab=:tab",
+        params: { id: "5", tab: "info" },
+      } as any);
+      expect(url).toBe("/user/5?tab=info");
+    });
+
+    test("should convert urlToState with query params", () => {
+      patternMatcher.addPattern("/user/:id?tab=:tab");
+      const state = patternMatcher.urlToState("/user/5?tab=info");
+      expect(state?.id).toBe("/user/:id?tab=:tab");
+      expect(state?.params).toEqual({ id: "5", tab: "info" });
+    });
+
+    test("should not match URL when required query param is missing", () => {
+      patternMatcher.addPattern("/search?q=:query!&page=:page<number>");
+      const match = patternMatcher.match("/search?page=3");
+      expect(match).toBeNull();
+    });
+
+    test("should match URL when required query param is present", () => {
+      patternMatcher.addPattern("/search?q=:query!&page=:page<number>");
+      const match = patternMatcher.match("/search?q=hello");
+      expect(match?.id).toBe("/search?q=:query!&page=:page<number>");
+      expect(match?.params).toEqual({ query: "hello" });
+    });
+
+    test("should match URL when all required and optional query params are present", () => {
+      patternMatcher.addPattern("/search?q=:query!&page=:page<number>");
+      const match = patternMatcher.match("/search?q=hello&page=3");
+      expect(match?.params).toEqual({ query: "hello", page: 3 });
+    });
+
+    test("should match URL when query params are in different order than pattern", () => {
+      patternMatcher.addPattern("/search?q=:query&page=:page<number>");
+      const match = patternMatcher.match("/search?page=3&q=hello");
+      expect(match?.id).toBe("/search?q=:query&page=:page<number>");
+      expect(match?.params).toEqual({ query: "hello", page: 3 });
+    });
+
+    test("should ignore extra query params in URL not defined in pattern", () => {
+      patternMatcher.addPattern("/search?q=:query");
+      const match = patternMatcher.match("/search?q=hello&lang=en&sort=asc");
+      expect(match?.id).toBe("/search?q=:query");
+      expect(match?.params).toEqual({ query: "hello" });
+    });
+
+    test("should decode URL-encoded query values", () => {
+      patternMatcher.addPattern("/search?q=:query");
+      const match = patternMatcher.match("/search?q=hello%20world");
+      expect(match?.params).toEqual({ query: "hello world" });
+    });
+
+    test("should handle trailingSlash: true with query params", () => {
+      const withTrailing = new TriePatternMatching({ trailingSlash: true });
+      withTrailing.addPattern("/user/:id?tab=:tab");
+
+      const url = withTrailing.encode("/user/:id?tab=:tab", {
+        id: "42",
+        tab: "settings",
+      } as any);
+      expect(url).toBe("/user/42/?tab=settings");
+
+      const match = withTrailing.match("/user/42/?tab=settings");
+      expect(match?.params).toEqual({ id: "42", tab: "settings" });
+    });
+
+    test("should handle boolean query param type", () => {
+      patternMatcher.addPattern("/items?active=:active<boolean>");
+      const match = patternMatcher.match("/items?active=true");
+      expect(match?.params).toEqual({ active: true });
+
+      const matchFalse = patternMatcher.match("/items?active=false");
+      expect(matchFalse?.params).toEqual({ active: false });
+    });
+
+    test("should decode URL with missing optional query params", () => {
+      patternMatcher.addPattern("/user/:id?tab=:tab");
+      const params = patternMatcher.decode(
+        "/user/:id?tab=:tab",
+        "/user/42",
+      );
+      expect(params).toEqual({ id: "42" });
+    });
+  });
 });

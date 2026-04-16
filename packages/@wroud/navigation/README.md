@@ -12,9 +12,9 @@
 
 ## Features
 
-- **Pattern-based Routing**: Built-in support for static routes, parameter segments (`/users/:id`), and wildcard patterns (`/files/:path*`).
+- **Pattern-based Routing**: Built-in support for static routes, parameter segments (`/users/:id`), wildcard patterns (`/files/:path*`), and query parameters (`/search?q=:query&page=:page<number>`).
 - **Framework Agnostic**: Works with any JavaScript framework or vanilla JS.
-- **Type Safety**: Written in TypeScript with full type inference for route parameters.
+- **Type Safety**: Written in TypeScript with full type inference for route parameters, including typed parameters (`<number>`, `<boolean>`, `<date>`, `<json>`), optional/required query params (`!` suffix), and wildcard arrays.
 - **Navigation History**: Built-in navigation history management.
 - **Browser Integration**: Optional browser URL synchronization.
 - **Extensible**: Create custom navigation implementations for any environment.
@@ -96,6 +96,30 @@ console.log(url); // "/app/users/456"
 
 // Navigate using the pattern matching
 await navigation.navigate(router.matchUrl("/app/users/789"));
+```
+
+### Query Parameters and Typed Params
+
+```ts
+import { Router, TriePatternMatching } from "@wroud/navigation";
+
+const router = new Router({
+  matcher: new TriePatternMatching({ trailingSlash: false })
+});
+
+// Query params are optional by default, use ! to mark as required
+router.addRoute({ id: "/search?q=:query!&page=:page<number>&sort=:sort" });
+
+// Encode — optional params are omitted when not provided
+const url = router.buildUrl("/search?q=:query!&page=:page<number>&sort=:sort", {
+  query: "hello",
+  page: 2,
+});
+console.log(url); // "/search?q=hello&page=2"
+
+// Decode — typed params are automatically converted
+const params = router.matchUrl("/search?q=hello&page=2");
+console.log(params); // { id: "...", params: { query: "hello", page: 2 } }
 ```
 
 ### Browser Integration

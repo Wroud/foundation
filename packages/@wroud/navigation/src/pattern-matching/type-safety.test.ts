@@ -142,4 +142,136 @@ describe("Template Literal Types", () => {
     const params = patternMatcher.decode("/", "/");
     expect(params).toEqual({});
   });
+
+  test("should correctly infer query parameter types", () => {
+    type Params = ExtractRouteParams<"/user/:id?tab=:tab">;
+
+    // tab should be optional (no ! suffix)
+    const withTab: Params = { id: "42", tab: "settings" };
+    const withoutTab: Params = { id: "42" };
+
+    patternMatcher.addPattern("/user/:id?tab=:tab");
+    const url = patternMatcher.encode("/user/:id?tab=:tab", withTab);
+    expect(url).toBe("/user/42?tab=settings");
+
+    const url2 = patternMatcher.encode("/user/:id?tab=:tab", withoutTab);
+    expect(url2).toBe("/user/42");
+
+    const params = patternMatcher.decode(
+      "/user/:id?tab=:tab",
+      "/user/42?tab=settings",
+    );
+    expect(params).toEqual({ id: "42", tab: "settings" });
+  });
+
+  test("should correctly infer typed query parameters", () => {
+    type Params = ExtractRouteParams<"/search?q=:query&page=:page<number>">;
+
+    // Both optional
+    const searchParams: Params = { query: "hello", page: 3 };
+    const partialParams: Params = { query: "hello" };
+
+    patternMatcher.addPattern("/search?q=:query&page=:page<number>");
+    const url = patternMatcher.encode(
+      "/search?q=:query&page=:page<number>",
+      searchParams,
+    );
+    expect(url).toBe("/search?q=hello&page=3");
+
+    const url2 = patternMatcher.encode(
+      "/search?q=:query&page=:page<number>",
+      partialParams,
+    );
+    expect(url2).toBe("/search?q=hello");
+
+    const params = patternMatcher.decode(
+      "/search?q=:query&page=:page<number>",
+      "/search?q=hello&page=3",
+    );
+    expect(params).toEqual({ query: "hello", page: 3 });
+  });
+
+  test("should correctly infer required query parameters with !", () => {
+    type Params = ExtractRouteParams<"/search?q=:query!&page=:page<number>">;
+
+    // q is required (has !), page is optional
+    const full: Params = { query: "hello", page: 3 };
+    const onlyRequired: Params = { query: "hello" };
+
+    patternMatcher.addPattern("/search?q=:query!&page=:page<number>");
+    const url = patternMatcher.encode(
+      "/search?q=:query!&page=:page<number>",
+      full,
+    );
+    expect(url).toBe("/search?q=hello&page=3");
+
+    const url2 = patternMatcher.encode(
+      "/search?q=:query!&page=:page<number>",
+      onlyRequired,
+    );
+    expect(url2).toBe("/search?q=hello");
+
+    // Required query param missing should throw
+    expect(() =>
+      patternMatcher.encode("/search?q=:query!&page=:page<number>", {} as any),
+    ).toThrow("Missing required query parameter: query");
+  });
+
+  test("should correctly infer mixed path and query parameters with types", () => {
+    type Params =
+      ExtractRouteParams<"/blog/:category/:path*?sort=:sort&limit=:limit<number>">;
+
+    // sort and limit are optional
+    const mixedParams: Params = {
+      category: "tech",
+      path: ["2024", "intro"],
+      sort: "date",
+      limit: 10,
+    };
+    const minimalParams: Params = {
+      category: "tech",
+      path: ["2024", "intro"],
+    };
+
+    patternMatcher.addPattern(
+      "/blog/:category/:path*?sort=:sort&limit=:limit<number>",
+    );
+    const url = patternMatcher.encode(
+      "/blog/:category/:path*?sort=:sort&limit=:limit<number>",
+      mixedParams,
+    );
+    expect(url).toBe("/blog/tech/2024/intro?sort=date&limit=10");
+
+    const url2 = patternMatcher.encode(
+      "/blog/:category/:path*?sort=:sort&limit=:limit<number>",
+      minimalParams,
+    );
+    expect(url2).toBe("/blog/tech/2024/intro");
+
+    const params = patternMatcher.decode(
+      "/blog/:category/:path*?sort=:sort&limit=:limit<number>",
+      "/blog/tech/2024/intro?sort=date&limit=10",
+    );
+    expect(params).toEqual({
+      category: "tech",
+      path: ["2024", "intro"],
+      sort: "date",
+      limit: 10,
+    });
+  });
+
+  test("should infer empty params for static route with query params only", () => {
+    type Params = ExtractRouteParams<"/search?q=:q">;
+
+    // q is optional
+    const params: Params = { q: "test" };
+    const empty: Params = {};
+
+    patternMatcher.addPattern("/search?q=:q");
+    const url = patternMatcher.encode("/search?q=:q", params);
+    expect(url).toBe("/search?q=test");
+
+    const url2 = patternMatcher.encode("/search?q=:q", empty);
+    expect(url2).toBe("/search");
+  });
 });

@@ -3,18 +3,22 @@ import {
   isParameterSegment,
   isWildcardSegment,
   extractParamName,
+  parseQueryString,
+  type QueryParamDef,
 } from "./path-utils.js";
 
 /**
  * Validates that all required parameters are present in the params object.
  * Throws descriptive errors for missing or invalid parameters.
  * Optionally validates parameter types if paramTypes is provided.
+ * Optionally validates query parameters if queryDefs is provided.
  */
 export function validateParameters(
   pattern: string,
   segments: string[],
   params: RouteParams,
   paramTypes?: Record<string, string>, // TODO: make it required and remove extra checks
+  queryDefs?: QueryParamDef[],
 ): void {
   // Filter out empty segments and process only parameter segments
   segments
@@ -58,6 +62,25 @@ export function validateParameters(
         }
       }
     });
+
+  // Validate query parameters
+  if (queryDefs) {
+    for (const def of queryDefs) {
+      const value = params[def.paramName];
+      const isMissing = value === undefined || value === null;
+
+      if (def.required && isMissing) {
+        throw new Error(`Missing required query parameter: ${def.paramName}`);
+      }
+
+      // Type validation for present query params
+      if (!isMissing && !isValidType(value, def.paramType)) {
+        throw new Error(
+          `Query parameter '${def.paramName}' is not of type '${def.paramType}'`,
+        );
+      }
+    }
+  }
 }
 
 function isValidType(value: any, type: string): boolean {
@@ -160,4 +183,45 @@ export function convertParamValue(
     default:
       return value;
   }
+}
+
+/**
+ * Extracts query parameters from a query string based on pattern definitions.
+ * Populates params with converted values.
+ * Returns false if a required query parameter is missing.
+ */
+export function matchQueryParams(
+  queryDefs: QueryParamDef[],
+  query: string,
+  params: RouteParams,
+): boolean {
+  const queryValues = parseQueryString(query);
+  for (const def of queryDefs) {
+    const rawValue = queryValues[def.key];
+    if (rawValue !== undefined) {
+      params[def.paramName] = convertParamValue(rawValue, def.paramType);
+    } else if (def.required) {
+      return false;
+    }
+  }
+  return true;
+}
+
+/**
+ * Builds a query string from pattern definitions and parameters.
+ * Returns the query string including the leading "?" or empty string if no params are set.
+ */
+export function buildQueryString(
+  queryDefs: QueryParamDef[],
+  params: RouteParams,
+): string {
+  const searchParams = new URLSearchParams();
+  for (const def of queryDefs) {
+    const value = params[def.paramName];
+    if (value !== undefined && value !== null) {
+      searchParams.set(def.key, serializeParamValue(value, def.paramType));
+    }
+  }
+  const queryString = searchParams.toString();
+  return queryString ? "?" + queryString : "";
 }

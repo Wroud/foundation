@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:6.3.0 -->
+## 6.3.0 (2026-04-28)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-ssg-v6.2.0...vite-plugin-ssg-v6.3.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- implement streaming support in server API and middleware ([8f9f12b](https://github.com/Wroud/foundation/commit/8f9f12b))
+
 <!-- version:6.2.0 -->
 ## 6.2.0 (2026-04-28)
 

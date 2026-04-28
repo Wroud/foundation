@@ -1,12 +1,22 @@
 import { registerAssetResolver } from "@wroud/vite-plugin-asset-resolver/node-loader-register";
 import { serializeError } from "../utils/error/serializeError.js";
+import type { IAppContext } from "../app.js";
+import type { IServerAPI } from "../react/server.js";
 
 registerAssetResolver();
 
 const [serverModulePath] = process.argv.slice(2);
 
-let instances: Record<number, any> = {};
+let instances: Record<number, IServerAPI<IAppContext>> = {};
 let instanceId = 0;
+
+function requireInstance(id: number) {
+  const instance = instances[id];
+  if (!instance) {
+    throw new Error(`Instance not found: ${id}`);
+  }
+  return instance;
+}
 
 try {
   const { create } = await import(serverModulePath!);
@@ -25,7 +35,7 @@ try {
 
         case "render":
           const { htmlTags, timeout } = message.args;
-          const html = await instances[message.instanceId].render(
+          const html = await requireInstance(message.instanceId).render(
             htmlTags,
             timeout,
           );
@@ -34,14 +44,14 @@ try {
 
         case "getPathsToPrerender":
           const paths =
-            await instances[message.instanceId].getPathsToPrerender();
+            await requireInstance(message.instanceId).getPathsToPrerender();
           process.send?.({ messageId, success: true, data: paths });
           break;
 
         case "dispose":
           if (message.instanceId !== undefined) {
-            await instances[message.instanceId].dispose();
-            instances[message.instanceId] = undefined;
+            await requireInstance(message.instanceId).dispose();
+            delete instances[message.instanceId];
           } else {
             for (const id in instances) {
               await instances[id]?.dispose();

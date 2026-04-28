@@ -5,12 +5,18 @@ import { fileURLToPath } from "url";
 import type { IAppContext } from "../app.js";
 import { deserializeError } from "../utils/error/deserializeError.js";
 
-export async function loadServerApi(module: string) {
+export async function loadServerApi(
+  module: string,
+  env?: Record<string, string | undefined>,
+) {
   let process = fork(
     fileURLToPath(import.meta.resolve("./run-server-api.js")),
     [module],
     {
       stdio: "inherit", // This automatically forwards stdout/stderr to parent
+      // Merge order: .env files (`env`) override the parent shell env. CI users who
+      // expect shell vars to win over committed .env values should flip this spread.
+      env: { ...globalThis.process.env, ...env },
     },
   );
   let messageId = 0;

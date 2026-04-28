@@ -1,5 +1,5 @@
 import nodePath from "node:path";
-import { type PluginOption } from "vite";
+import { type PluginOption, loadEnv } from "vite";
 import { readFile, unlink, writeFile } from "node:fs/promises";
 import { changePathExt } from "../utils/changePathExt.js";
 import { loadServerApi } from "../api/loadServerApi.js";
@@ -42,11 +42,17 @@ export const clientBundlePlugin = (renderTimeout = 10000): PluginOption => {
             Awaited<ReturnType<typeof loadServerApi>>
           >();
 
+          // Empty prefix loads ALL keys from .env files, not just VITE_*. This is
+          // intentional: the SSR fork is a server-only process and routinely needs
+          // non-public values (DB creds, API keys). These keys never reach the client
+          // bundle — they're injected into the forked child's process.env only.
+          const env = loadEnv(config.mode, config.envDir, "");
+
           const getCachedServerApi = async (modulePath: string) => {
             if (!serverApiProviderCache.has(modulePath)) {
               serverApiProviderCache.set(
                 modulePath,
-                await loadServerApi(modulePath),
+                await loadServerApi(modulePath, env),
               );
             }
             return serverApiProviderCache.get(modulePath)!;

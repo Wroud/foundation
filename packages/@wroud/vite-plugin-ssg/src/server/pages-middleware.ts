@@ -1,7 +1,6 @@
 import {
   type Connect,
   isRunnableDevEnvironment,
-  send,
   type PreviewServer,
   type ViteDevServer,
 } from "vite";
@@ -42,8 +41,11 @@ export function pagesMiddleware(
       const headers = server.config.server.headers;
 
       try {
-        let html = await server.transformIndexHtml(url, "", req.originalUrl);
-        html = await server.transformIndexHtml(url, "", req.originalUrl);
+        const html = await server.transformIndexHtml(
+          url,
+          "",
+          req.originalUrl,
+        );
 
         const htmlTags = parseHtmlTagsFromHtml(html);
 
@@ -73,6 +75,24 @@ export function pagesMiddleware(
           throw new Error("SSG is not supported in this environment");
         }
 
+        if (res.writableEnded) {
+          return;
+        }
+
+        res.setHeader("Cache-Control", "no-cache");
+        if (headers) {
+          for (const name in headers) {
+            res.setHeader(name, headers[name]!);
+          }
+        }
+
+        if (req.method === "HEAD") {
+          res.statusCode = 200;
+          res.setHeader("Content-Type", "text/html");
+          res.end();
+          return;
+        }
+
         const { create: createServerApi } =
           await server.environments.ssr.runner.import(entry);
         const href =
@@ -90,19 +110,23 @@ export function pagesMiddleware(
           headers: req.headers as Record<string, string | string[] | undefined>,
         });
 
-        const renderedHtml = await serverApi.render(
-          htmlTags,
-          pluginOptions.renderTimeout,
-        );
-
-        await serverApi.dispose();
-
-        return send(req, res, renderedHtml, "html", {
-          headers,
-          cacheControl: "no-cache",
-        });
+        try {
+          await serverApi.stream(res, htmlTags, pluginOptions.renderTimeout);
+        } finally {
+          await serverApi.dispose();
+        }
+        return;
       } catch (e) {
         console.error(e);
+        if (res.headersSent) {
+          // Caveat: once `serverApi.stream` calls `pipe(response)` from
+          // onShellReady, status + headers are flushed. A later rejection
+          // (e.g. Suspense boundary error during async rendering) lands
+          // here, but Connect's error path can no longer write an error
+          // page. Best we can do is end the stream cleanly.
+          res.end();
+          return;
+        }
         if (e instanceof Error) {
           const error = new Error(`SSG HTML processing failed: ${e.message}`, {
             cause: e,

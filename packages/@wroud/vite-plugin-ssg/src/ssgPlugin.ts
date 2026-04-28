@@ -1,5 +1,5 @@
 import nodePath from "node:path";
-import { type PluginOption, createRunnableDevEnvironment } from "vite";
+import { type PluginOption, createRunnableDevEnvironment, loadEnv } from "vite";
 import { cleanUrl } from "./utils/cleanUrl.js";
 import { createSsgId, isSsgId, removeSsgQuery } from "./modules/isSsgId.js";
 import {
@@ -46,6 +46,7 @@ import { mapBaseToUrl } from "./utils/mapBaseToUrl.js";
 import { ssrBundlePlugin } from "./resolvers/ssrBundlePlugin.js";
 import { clientBundlePlugin } from "./resolvers/clientBundlePlugin.js";
 import { stripBase } from "./utils/stripBase.js";
+import { createNodeImportMeta } from "vite/module-runner";
 
 export * from "./react/IndexComponent.js";
 
@@ -74,7 +75,10 @@ export const ssgPlugin = (
               ...userConfig.environments?.["ssr"]?.dev,
               createEnvironment(name, config) {
                 return createRunnableDevEnvironment(name, config, {
-                  runnerOptions: { hmr: { logger: false } },
+                  runnerOptions: {
+                    hmr: { logger: false },
+                    createImportMeta: createNodeImportMeta,
+                  },
                 });
               },
             },
@@ -285,6 +289,10 @@ export const ssgPlugin = (
                     ssrConfig.build.outDir,
                     serverModulePath + `.js`,
                   ),
+                  // Empty prefix loads ALL keys from .env files, not just VITE_*.
+                  // SSR fork needs server-only values (DB creds, API keys); they
+                  // never leak to the client bundle.
+                  loadEnv(config.mode, config.envDir, ""),
                 );
 
                 const serverApi = await serverApiProvider.create({

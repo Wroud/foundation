@@ -15,6 +15,12 @@ import { getBaseInHTML } from "../utils/getBaseInHTML.js";
 import { getHrefFromPath } from "../utils/getHrefFromPath.js";
 import { isDevServer } from "../utils/isDevServer.js";
 import { stripIndexFromPath } from "../utils/stripIndexFromPath.js";
+import type {
+  IncomingMessage,
+  OutgoingHttpHeaders,
+  ServerResponse,
+} from "http";
+import { Writable } from "stream";
 
 export function pagesMiddleware(
   server: ViteDevServer | PreviewServer,
@@ -22,7 +28,6 @@ export function pagesMiddleware(
 ): Connect.NextHandleFunction {
   const isDev = isDevServer(server);
 
-  // Keep the named function. The name is visible in debug logs via `DEBUG=connect:dispatcher ...`
   return async function viteIndexHtmlMiddleware(req, res, next) {
     const urlSearch = req.url?.split("?")[1] || "";
     let url = cleanUrl(req.url);
@@ -38,14 +43,8 @@ export function pagesMiddleware(
       (url?.endsWith("/") || url?.endsWith(".html")) &&
       req.headers["sec-fetch-dest"] !== "script"
     ) {
-      const headers = server.config.server.headers;
-
       try {
-        const html = await server.transformIndexHtml(
-          url,
-          "",
-          req.originalUrl,
-        );
+        const html = await server.transformIndexHtml(url, "", req.originalUrl);
 
         const htmlTags = parseHtmlTagsFromHtml(html);
 
@@ -79,20 +78,6 @@ export function pagesMiddleware(
           return;
         }
 
-        res.setHeader("Cache-Control", "no-cache");
-        if (headers) {
-          for (const name in headers) {
-            res.setHeader(name, headers[name]!);
-          }
-        }
-
-        if (req.method === "HEAD") {
-          res.statusCode = 200;
-          res.setHeader("Content-Type", "text/html");
-          res.end();
-          return;
-        }
-
         const { create: createServerApi } =
           await server.environments.ssr.runner.import(entry);
         const href =
@@ -111,22 +96,17 @@ export function pagesMiddleware(
         });
 
         try {
-          await serverApi.stream(res, htmlTags, pluginOptions.renderTimeout);
+          const stream = await serverApi.render(
+            htmlTags,
+            pluginOptions.renderTimeout,
+          );
+
+          return await pipe(req, res, stream, server.config.server.headers);
         } finally {
           await serverApi.dispose();
         }
-        return;
       } catch (e) {
         console.error(e);
-        if (res.headersSent) {
-          // Caveat: once `serverApi.stream` calls `pipe(response)` from
-          // onShellReady, status + headers are flushed. A later rejection
-          // (e.g. Suspense boundary error during async rendering) lands
-          // here, but Connect's error path can no longer write an error
-          // page. Best we can do is end the stream cleanly.
-          res.end();
-          return;
-        }
         if (e instanceof Error) {
           const error = new Error(`SSG HTML processing failed: ${e.message}`, {
             cause: e,
@@ -138,4 +118,32 @@ export function pagesMiddleware(
     }
     next();
   };
+}
+
+async function pipe(
+  req: IncomingMessage,
+  res: ServerResponse,
+  stream: ReadableStream,
+  headers: OutgoingHttpHeaders,
+) {
+  if (res.writableEnded) {
+    return;
+  }
+
+  res.setHeader("Content-Type", "text/html");
+  res.setHeader("Cache-Control", "no-cache");
+
+  if (headers) {
+    for (const name in headers) {
+      res.setHeader(name, headers[name]!);
+    }
+  }
+  res.statusCode = 200;
+
+  if (req.method === "HEAD") {
+    res.end();
+    return;
+  }
+
+  await stream.pipeTo(Writable.toWeb(res));
 }

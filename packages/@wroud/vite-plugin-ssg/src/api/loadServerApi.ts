@@ -5,6 +5,11 @@ import { fileURLToPath } from "url";
 import type { IAppContext } from "../app.js";
 import { deserializeError } from "../utils/error/deserializeError.js";
 
+interface ServerApiInstance<T extends IAppContext>
+  extends Pick<IServerAPI<T>, "getPathsToPrerender" | "dispose"> {
+  render: (htmlTags: HtmlTagDescriptor[], timeout?: number) => Promise<string>;
+}
+
 export async function loadServerApi(
   module: string,
   env?: Record<string, string | undefined>,
@@ -59,9 +64,7 @@ export async function loadServerApi(
   return {
     create: async <T extends IAppContext>(
       ...args: Parameters<BoundServerApiFunction<T>>
-    ): Promise<
-      Pick<IServerAPI<T>, "render" | "getPathsToPrerender" | "dispose">
-    > => {
+    ): Promise<ServerApiInstance<T>> => {
       const instanceId = await sendMessageAndWaitForResponse(
         "init",
         undefined,

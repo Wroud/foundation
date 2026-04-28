@@ -35,16 +35,18 @@ try {
 
         case "render":
           const { htmlTags, timeout } = message.args;
-          const html = await requireInstance(message.instanceId).render(
+          const stream = await requireInstance(message.instanceId).render(
             htmlTags,
             timeout,
           );
-          process.send?.({ messageId, success: true, data: html });
+          const source = await new Response(stream).text();
+          process.send?.({ messageId, success: true, data: source });
           break;
 
         case "getPathsToPrerender":
-          const paths =
-            await requireInstance(message.instanceId).getPathsToPrerender();
+          const paths = await requireInstance(
+            message.instanceId,
+          ).getPathsToPrerender();
           process.send?.({ messageId, success: true, data: paths });
           break;
 

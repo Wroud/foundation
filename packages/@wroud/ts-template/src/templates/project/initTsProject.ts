@@ -29,7 +29,7 @@ export async function initTsProject({
       "yarn add -D",
       tsconfig.packageName,
       getTsWithVersion(),
-      "rimraf@^6",
+      "rimraf",
     );
     console.log('make dir "src"');
   } else {
@@ -39,7 +39,7 @@ export async function initTsProject({
       "-D",
       tsconfig.packageName,
       getTsWithVersion(),
-      "rimraf@^6",
+      "rimraf",
     ]);
     await mkdir("src");
 

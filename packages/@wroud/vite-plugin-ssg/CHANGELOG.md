@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:6.3.2 -->
+## 6.3.2 (2026-04-29)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-ssg-v6.3.1...vite-plugin-ssg-v6.3.2)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- add nonce attribute for style and link tags in RenderViteTag ([b66cec2](https://github.com/Wroud/foundation/commit/b66cec2))
+
 <!-- version:6.3.1 -->
 ## 6.3.1 (2026-04-29)
 

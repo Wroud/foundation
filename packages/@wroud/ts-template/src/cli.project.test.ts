@@ -61,7 +61,7 @@ describe("cli project", () => {
       "-D",
       "@my-scope/tsconfig",
       getTsWithVersion(),
-      "rimraf@^6",
+      "rimraf",
     ]);
 
     expect(vol.toJSON()).toMatchSnapshot();
@@ -79,7 +79,7 @@ describe("cli project", () => {
       "-D",
       "@my-scope/tsconfig",
       getTsWithVersion(),
-      "rimraf@^6",
+      "rimraf",
     ]);
 
     expect(vol.toJSON()).toMatchSnapshot();
@@ -94,7 +94,7 @@ describe("cli project", () => {
       "-D",
       "tsconfig",
       getTsWithVersion(),
-      "rimraf@^6",
+      "rimraf",
     ]);
 
     expect(vol.toJSON()).toMatchSnapshot();
@@ -109,7 +109,7 @@ describe("cli project", () => {
       "-D",
       "@my-scope/tsconfig",
       getTsWithVersion(),
-      "rimraf@^6",
+      "rimraf",
     ]);
 
     expect(vol.toJSON()).toMatchSnapshot();
@@ -125,7 +125,7 @@ describe("cli project", () => {
       "-D",
       tsConfigName,
       getTsWithVersion(),
-      "rimraf@^6",
+      "rimraf",
     ]);
 
     expect(vol.toJSON()).toMatchSnapshot();
@@ -141,7 +141,7 @@ describe("cli project", () => {
       "-D",
       tsConfigName,
       getTsWithVersion(),
-      "rimraf@^6",
+      "rimraf",
     ]);
 
     expect(vol.toJSON()).toMatchSnapshot();
@@ -157,7 +157,7 @@ describe("cli project", () => {
       "-D",
       tsConfigName,
       getTsWithVersion(),
-      "rimraf@^6",
+      "rimraf",
     ]);
 
     expect(vol.toJSON()).toMatchSnapshot();
@@ -174,7 +174,7 @@ describe("cli project", () => {
       "yarn add -D",
       tsConfigName,
       getTsWithVersion(),
-      "rimraf@^6",
+      "rimraf",
     );
 
     expect(execa).not.toHaveBeenCalledWith("yarn", ["init", "-n", projectName]);
@@ -183,7 +183,7 @@ describe("cli project", () => {
       "-D",
       tsConfigName,
       getTsWithVersion(),
-      "rimraf@^6",
+      "rimraf",
     ]);
 
     expect(vol.toJSON()).toMatchSnapshot();

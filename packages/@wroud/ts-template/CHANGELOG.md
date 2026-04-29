@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.5.4 -->
+## 0.5.4 (2026-04-29)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/ts-template-v0.5.3...ts-template-v0.5.4)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- update getTsWithVersion to return specific TypeScript version and remove version from rimraf dependency ([a66c652](https://github.com/Wroud/foundation/commit/a66c652))
+
 <!-- version:0.5.3 -->
 ## 0.5.3 (2025-05-17)
 

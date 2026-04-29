@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:6.3.1 -->
+## 6.3.1 (2026-04-29)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-ssg-v6.3.0...vite-plugin-ssg-v6.3.1)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- add forceNonce prop to Script component in Body ([46cae47](https://github.com/Wroud/foundation/commit/46cae47))
+
 <!-- version:6.3.0 -->
 ## 6.3.0 (2026-04-28)
 

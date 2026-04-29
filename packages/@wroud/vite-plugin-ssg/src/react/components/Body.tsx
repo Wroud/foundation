@@ -21,7 +21,7 @@ export const Body: React.FC<BodyProps> = function Body({
       {renderTags("body-prepend")}
       {children}
       {renderTags("body")}
-      {mainScriptUrl && <Script type="module" src={mainScriptUrl} />}
+      {mainScriptUrl && <Script type="module" src={mainScriptUrl} forceNonce />}
       {after}
     </body>
   );

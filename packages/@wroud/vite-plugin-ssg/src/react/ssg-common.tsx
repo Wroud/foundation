@@ -80,6 +80,22 @@ export function RenderViteTag({ tag, context }: IRenderViteTagProps) {
     if (tag.tag === "script" && !attrs["nonce"]) {
       attrs["nonce"] = context.cspNonce;
     }
+
+    if (tag.tag === "style" && !attrs["nonce"]) {
+      attrs["nonce"] = context.cspNonce;
+    }
+
+    if (tag.tag === "link" && !attrs["nonce"]) {
+      const rel = String(attrs["rel"] ?? "");
+      const as = String(attrs["as"] ?? "");
+      if (
+        rel === "modulepreload" ||
+        rel === "stylesheet" ||
+        (rel === "preload" && (as === "script" || as === "style"))
+      ) {
+        attrs["nonce"] = context.cspNonce;
+      }
+    }
   }
 
   if (Array.isArray(tag.children)) {

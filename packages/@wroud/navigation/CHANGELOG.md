@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:1.2.0 -->
+## 1.2.0 (2026-05-18)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/nav-v1.1.1...nav-v1.2.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- add IPatternNavigation interface and corresponding tests for TriePatternMatching ([61feb4e](https://github.com/Wroud/foundation/commit/61feb4e))
+
 <!-- version:1.1.1 -->
 ## 1.1.1 (2026-04-16)
 

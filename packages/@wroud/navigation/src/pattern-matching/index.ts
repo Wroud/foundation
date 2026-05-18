@@ -1,5 +1,6 @@
 export * from "./types.js";
 export * from "./TriePatternMatching.js";
+export * from "./IPatternNavigation.js";
 export * from "../IRouteMatcher.js";
 export * from "./TrieNode.js";
 export * from "./matcher.js";

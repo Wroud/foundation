@@ -46,4 +46,9 @@ features:
     details: Bring `tsc` to Vite for type checking or transpiling TypeScript files via `@wroud/vite-plugin-tsc`.
     link: /packages/vite-plugin-tsc/overview
     linkText: See documentation
+  - icon: 🎮
+    title: Pixly — Managed Minecraft Hosting
+    details: Spin up reliable, fully managed Minecraft servers in seconds with Pixly.
+    link: https://pixly.gg
+    linkText: Visit pixly.gg
 ---

@@ -65,7 +65,8 @@ export default defineConfig({
       text: "Edit this page on GitHub",
     },
     footer: {
-      copyright: "Copyright © 2024-present Aleksei Potsetsuev",
+      copyright:
+        'Copyright © 2024-present Wroud Foundation LLC · <a href="/legal">Legal</a>',
       message: "Released under the MIT License.",
     },
     nav,

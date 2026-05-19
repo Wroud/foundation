@@ -68,6 +68,25 @@ export const ssgPlugin = (
       config(userConfig, env) {
         userConfig.environments = {
           ...userConfig.environments,
+          client: {
+            ...userConfig.environments?.["client"],
+            optimizeDeps: {
+              ...userConfig.environments?.["client"]?.optimizeDeps,
+              include: [
+                ...(userConfig.environments?.["client"]?.optimizeDeps
+                  ?.include ?? []),
+                "react",
+                "react-dom",
+                "react-dom/client",
+                "react/jsx-runtime",
+                "@wroud/vite-plugin-ssg > react",
+                "@wroud/vite-plugin-ssg > react-dom",
+                "@wroud/vite-plugin-ssg/react/client",
+                "@wroud/vite-plugin-ssg/react/components",
+                "@wroud/vite-plugin-ssg/app",
+              ],
+            },
+          },
           ssr: {
             ...userConfig.environments?.["ssr"],
 

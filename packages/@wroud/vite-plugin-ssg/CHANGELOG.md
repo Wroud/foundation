@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:6.4.0 -->
+## 6.4.0 (2026-05-19)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-ssg-v6.3.2...vite-plugin-ssg-v6.4.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- enhance client environment configuration with additional dependencies for optimization ([3473ad7](https://github.com/Wroud/foundation/commit/3473ad7))
+
 <!-- version:6.3.2 -->
 ## 6.3.2 (2026-04-29)
 

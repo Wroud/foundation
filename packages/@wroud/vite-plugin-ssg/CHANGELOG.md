@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:6.5.0 -->
+## 6.5.0 (2026-06-03)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-ssg-v6.4.0...vite-plugin-ssg-v6.5.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- add hotUpdate handler for client environment in ssgPlugin ([7daf3ab](https://github.com/Wroud/foundation/commit/7daf3ab))
+
 <!-- version:6.4.0 -->
 ## 6.4.0 (2026-05-19)
 

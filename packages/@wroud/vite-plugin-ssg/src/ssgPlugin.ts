@@ -364,6 +364,26 @@ export const ssgPlugin = (
         },
       },
 
+      hotUpdate(options) {
+        if (this.environment.name !== "client") {
+          return;
+        }
+
+        const filtered = options.modules.filter(
+          (mod) =>
+            !mod.id ||
+            (!isSsgClientEntryId(mod.id) &&
+              !isMainId(mod.id) &&
+              !isSsgHtmlTagsId(mod.id)),
+        );
+
+        if (filtered.length !== options.modules.length) {
+          return filtered;
+        }
+
+        return;
+      },
+
       load: {
         order: "pre",
         async handler(id) {

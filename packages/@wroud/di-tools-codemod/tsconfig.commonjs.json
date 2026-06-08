@@ -1,6 +1,9 @@
 {
   "compilerOptions": {
     "target": "ESNext",
+    "types": [
+      "node"
+    ],
     "useDefineForClassFields": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,

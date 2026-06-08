@@ -68,7 +68,7 @@
     "concurrently": "^9",
     "rimraf": "^6",
     "tslib": "^2",
-    "typescript": "^5",
+    "typescript": "^6",
     "vitest": "^3"
   }
 }

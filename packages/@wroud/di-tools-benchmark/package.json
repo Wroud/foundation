@@ -37,7 +37,7 @@
     "@wroud/tsconfig": "workspace:^",
     "esbuild": "^0",
     "rimraf": "^6",
-    "typescript": "^5",
+    "typescript": "^6",
     "vitest": "^3"
   },
   "dependencies": {

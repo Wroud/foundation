@@ -58,7 +58,7 @@
     "concurrently": "^9",
     "memfs": "^4",
     "rimraf": "^6",
-    "typescript": "^5",
+    "typescript": "^6",
     "vitest": "^3"
   }
 }

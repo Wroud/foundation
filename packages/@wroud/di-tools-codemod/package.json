@@ -53,7 +53,7 @@
     "@wroud/ci": "workspace:^0",
     "@wroud/tests-runner": "workspace:*",
     "@wroud/tsconfig": "workspace:*",
-    "typescript": "^5",
+    "typescript": "^6",
     "vitest": "^3"
   },
   "dependencies": {

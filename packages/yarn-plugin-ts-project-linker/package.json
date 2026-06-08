@@ -17,7 +17,7 @@
     "@types/node": "^22",
     "@yarnpkg/builder": "^4",
     "rimraf": "^6",
-    "typescript": "^5"
+    "typescript": "^6"
   },
   "scripts": {
     "build": "builder build plugin",

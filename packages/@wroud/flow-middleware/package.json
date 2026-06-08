@@ -35,7 +35,7 @@
     "@wroud/ci": "workspace:^0",
     "@wroud/tsconfig": "workspace:^",
     "rimraf": "^6",
-    "typescript": "^5"
+    "typescript": "^6"
   },
   "keywords": [
     "middleware",

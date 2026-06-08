@@ -57,6 +57,6 @@
     "react": "^19",
     "react-dom": "^19",
     "rimraf": "^6",
-    "typescript": "^5"
+    "typescript": "^6"
   }
 }

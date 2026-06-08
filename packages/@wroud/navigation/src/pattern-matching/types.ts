@@ -145,6 +145,7 @@ export interface TypedPatternMatcher {
   encode<Pattern extends string>(
     pattern: Pattern,
     params: ExtractRouteParams<Pattern>,
+    hash?: string,
   ): string;
 
   /**

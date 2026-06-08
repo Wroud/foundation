@@ -4,4 +4,5 @@
 export interface IRouteState {
   id: string;
   params: Record<string, string | string[]>;
+  hash?: string;
 }

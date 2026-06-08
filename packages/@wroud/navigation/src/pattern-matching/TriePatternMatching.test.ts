@@ -752,7 +752,7 @@ describe("TriePatternMatching", () => {
 
       // Create a param cache with undefined value
       const paramMap = new Map([
-        ["{}", ""], // Empty string to test ?? ""
+        ["[{},null]", ""], // Empty string to test ?? ""
       ]);
       instance.encodeCache.set("/encode-test", paramMap);
 
@@ -1069,6 +1069,55 @@ describe("TriePatternMatching", () => {
         "/search/test with spaces & special chars",
       );
       expect(parsedState).toEqual(state);
+    });
+
+    test("should round-trip the URL fragment", () => {
+      expect(patternMatcher.urlToState("/user/123#bio")).toEqual({
+        id: "/user/:id",
+        params: { id: "123" },
+        hash: "#bio",
+      });
+
+      expect(
+        patternMatcher.stateToUrl({
+          id: "/user/:id",
+          params: { id: "123" },
+          hash: "#bio",
+        }),
+      ).toBe("/user/123#bio");
+    });
+
+    test("should attach the fragment to the root path", () => {
+      expect(patternMatcher.urlToState("/#top")).toEqual({
+        id: "/",
+        params: {},
+        hash: "#top",
+      });
+      expect(
+        patternMatcher.stateToUrl({ id: "/", params: {}, hash: "#top" }),
+      ).toBe("/#top");
+    });
+
+    test("should omit the fragment when the URL has none", () => {
+      const state = patternMatcher.urlToState("/user/123");
+      expect(state).toEqual({ id: "/user/:id", params: { id: "123" } });
+      expect(state).not.toHaveProperty("hash");
+    });
+
+    test("should keep the fragment after the query string", () => {
+      patternMatcher.addPattern("/search?q=:q");
+      expect(patternMatcher.urlToState("/search?q=hello#results")).toEqual({
+        id: "/search?q=:q",
+        params: { q: "hello" },
+        hash: "#results",
+      });
+      expect(
+        patternMatcher.stateToUrl({
+          id: "/search?q=:q",
+          params: { q: "hello" },
+          hash: "#results",
+        }),
+      ).toBe("/search?q=hello#results");
     });
   });
 

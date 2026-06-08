@@ -11,6 +11,23 @@ function createNavigation() {
   return new Navigation(router);
 }
 
+function parseUrl(url: string) {
+  let path = url;
+  let hash = "";
+  let search = "";
+  const h = path.indexOf("#");
+  if (h >= 0) {
+    hash = path.slice(h);
+    path = path.slice(0, h);
+  }
+  const q = path.indexOf("?");
+  if (q >= 0) {
+    search = path.slice(q);
+    path = path.slice(0, q);
+  }
+  return { path, search, hash };
+}
+
 function setupBrowserMocks(initialPath = "/") {
   const listeners: Record<string, Function[]> = {};
 
@@ -19,17 +36,44 @@ function setupBrowserMocks(initialPath = "/") {
   ];
   let historyIndex = 0;
 
+  const fire = (event: string) => {
+    for (const handler of listeners[event] || []) {
+      handler();
+    }
+  };
+
   const mockLocation = {
     get pathname() {
-      const url = historyStack[historyIndex]!.url;
-      const qIndex = url.indexOf("?");
-      return qIndex >= 0 ? url.slice(0, qIndex) : url;
+      return parseUrl(historyStack[historyIndex]!.url).path;
     },
     get search() {
-      const url = historyStack[historyIndex]!.url;
-      const qIndex = url.indexOf("?");
-      return qIndex >= 0 ? url.slice(qIndex) : "";
+      return parseUrl(historyStack[historyIndex]!.url).search;
     },
+    get hash() {
+      return parseUrl(historyStack[historyIndex]!.url).hash;
+    },
+    set hash(value: string) {
+      const { path, search } = parseUrl(historyStack[historyIndex]!.url);
+      const normalized = value.startsWith("#") ? value : "#" + value;
+      const newUrl = path + search + normalized;
+      if (newUrl === historyStack[historyIndex]!.url) {
+        return;
+      }
+      historyStack.splice(historyIndex + 1);
+      historyStack.push({ state: null, url: newUrl });
+      historyIndex++;
+      fire("hashchange");
+    },
+  };
+
+  const traverse = (from: number, to: number) => {
+    const prev = parseUrl(historyStack[from]!.url);
+    historyIndex = to;
+    const next = parseUrl(historyStack[to]!.url);
+    fire("popstate");
+    if (prev.hash !== next.hash) {
+      fire("hashchange");
+    }
   };
 
   const mockHistory = {
@@ -48,18 +92,47 @@ function setupBrowserMocks(initialPath = "/") {
     ),
     back: vi.fn(() => {
       if (historyIndex > 0) {
-        historyIndex--;
-        const handler = listeners["popstate"]?.[0];
-        if (handler) handler();
+        traverse(historyIndex, historyIndex - 1);
       }
     }),
     forward: vi.fn(() => {
       if (historyIndex < historyStack.length - 1) {
-        historyIndex++;
-        const handler = listeners["popstate"]?.[0];
-        if (handler) handler();
+        traverse(historyIndex, historyIndex + 1);
       }
     }),
+  };
+
+  const elementsById: Record<string, FakeElement> = {};
+  const elementsByName: Record<string, FakeElement[]> = {};
+  let activeElement: FakeElement | null = null;
+
+  interface FakeElement {
+    scrollIntoView: ReturnType<typeof vi.fn>;
+    focus: ReturnType<typeof vi.fn>;
+    setAttribute: ReturnType<typeof vi.fn>;
+    attrs: Record<string, string>;
+  }
+
+  const makeElement = (): FakeElement => {
+    const el: FakeElement = {
+      scrollIntoView: vi.fn(),
+      focus: vi.fn(() => {
+        activeElement = el;
+      }),
+      setAttribute: vi.fn((k: string, v: string) => {
+        el.attrs[k] = v;
+      }),
+      attrs: {},
+    };
+    return el;
+  };
+
+  const mockDocument = {
+    getElementById: vi.fn((id: string) => elementsById[id] ?? null),
+    getElementsByName: vi.fn((name: string) => elementsByName[name] ?? []),
+    get activeElement() {
+      return activeElement;
+    },
   };
 
   const mockWindow = {
@@ -74,8 +147,10 @@ function setupBrowserMocks(initialPath = "/") {
         if (idx >= 0) arr.splice(idx, 1);
       }
     }),
+    scrollTo: vi.fn(),
     location: mockLocation,
     history: mockHistory,
+    document: mockDocument,
   };
 
   vi.stubGlobal("window", mockWindow);
@@ -83,10 +158,21 @@ function setupBrowserMocks(initialPath = "/") {
   return {
     history: mockHistory,
     location: mockLocation,
-    firePopState: () => {
-      for (const handler of listeners["popstate"] || []) {
-        handler();
-      }
+    scrollTo: mockWindow.scrollTo,
+    installNavigationApi: () => {
+      const navigate = vi.fn(() => ({
+        committed: Promise.resolve(),
+        finished: Promise.resolve(),
+      }));
+      (mockWindow as { navigation?: unknown }).navigation = { navigate };
+      return navigate;
+    },
+    firePopState: () => fire("popstate"),
+    fireHashChange: () => fire("hashchange"),
+    addElement: (id: string) => {
+      const el = makeElement();
+      elementsById[id] = el;
+      return el;
     },
     getHistoryStack: () => [...historyStack],
     getHistoryIndex: () => historyIndex,
@@ -248,6 +334,174 @@ describe("BrowserNavigation", () => {
       // which should use replaceState (URL is already /dashboard)
       expect(mocks.history.replaceState).toHaveBeenCalled();
       expect(mocks.history.pushState).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("hash handling", () => {
+    const tick = () => new Promise((r) => setTimeout(r, 0));
+
+    it("preserves the hash on initial restore", async () => {
+      const mocks = setupBrowserMocks("/docs#section");
+      const navigation = createNavigation();
+      navigation.router.addRoute({ id: "/" });
+      navigation.router.addRoute({ id: "/docs" });
+
+      const browser = new BrowserNavigation(navigation);
+      await browser.registerRoutes();
+
+      expect(navigation.state).toEqual({
+        id: "/docs",
+        params: {},
+        hash: "#section",
+      });
+      expect(mocks.history.replaceState).toHaveBeenCalledWith(
+        { id: "/docs", params: {}, hash: "#section" },
+        "",
+        "/docs#section",
+      );
+      expect(mocks.history.pushState).not.toHaveBeenCalled();
+    });
+
+    it("clears the hash and leaves scroll to the app on a hashless navigation", async () => {
+      const mocks = setupBrowserMocks("/docs#section");
+      const navigation = createNavigation();
+      navigation.router.addRoute({ id: "/" });
+      navigation.router.addRoute({ id: "/docs" });
+      navigation.router.addRoute({ id: "/about" });
+
+      const browser = new BrowserNavigation(navigation);
+      await browser.registerRoutes();
+
+      mocks.history.pushState.mockClear();
+      mocks.history.replaceState.mockClear();
+      mocks.scrollTo.mockClear();
+
+      await navigation.navigate({ id: "/about", params: {} });
+
+      expect(mocks.history.pushState).toHaveBeenCalledWith(
+        { id: "/about", params: {} },
+        "",
+        "/about",
+      );
+      expect(mocks.scrollTo).not.toHaveBeenCalled();
+      expect(navigation.state).toEqual({ id: "/about", params: {} });
+      expect(mocks.location.hash).toBe("");
+    });
+
+    it("uses the Navigation API for a cross-route hash navigation when available", async () => {
+      const mocks = setupBrowserMocks("/");
+      const navigation = createNavigation();
+      navigation.router.addRoute({ id: "/" });
+      navigation.router.addRoute({ id: "/docs" });
+
+      const navigate = mocks.installNavigationApi();
+      const browser = new BrowserNavigation(navigation);
+      await browser.registerRoutes();
+
+      mocks.history.pushState.mockClear();
+
+      await navigation.navigate({ id: "/docs", params: {}, hash: "#section" });
+
+      expect(navigate).toHaveBeenCalledWith("/docs#section", {
+        history: "push",
+        state: { id: "/docs", params: {}, hash: "#section" },
+      });
+      expect(mocks.history.pushState).not.toHaveBeenCalled();
+    });
+
+    it("uses location.hash (not pushState) for a hash-only forward change", async () => {
+      const mocks = setupBrowserMocks("/docs");
+      const navigation = createNavigation();
+      navigation.router.addRoute({ id: "/" });
+      navigation.router.addRoute({ id: "/docs" });
+
+      const browser = new BrowserNavigation(navigation);
+      await browser.registerRoutes();
+
+      mocks.history.pushState.mockClear();
+      mocks.history.replaceState.mockClear();
+
+      await navigation.navigate({ id: "/docs", params: {}, hash: "#section" });
+
+      expect(mocks.history.pushState).not.toHaveBeenCalled();
+      expect(mocks.location.hash).toBe("#section");
+      expect(navigation.state).toEqual({
+        id: "/docs",
+        params: {},
+        hash: "#section",
+      });
+      expect(mocks.getHistoryStack().at(-1)?.url).toBe("/docs#section");
+    });
+
+    it("scrolls to and focuses the target element on a cross-route hash navigation", async () => {
+      const mocks = setupBrowserMocks("/");
+      const navigation = createNavigation();
+      navigation.router.addRoute({ id: "/" });
+      navigation.router.addRoute({ id: "/docs" });
+
+      const browser = new BrowserNavigation(navigation);
+      await browser.registerRoutes();
+
+      const target = mocks.addElement("section");
+
+      await navigation.navigate({ id: "/docs", params: {}, hash: "#section" });
+
+      expect(mocks.history.pushState).toHaveBeenCalledWith(
+        { id: "/docs", params: {}, hash: "#section" },
+        "",
+        "/docs#section",
+      );
+      expect(target.scrollIntoView).toHaveBeenCalled();
+      expect(target.focus).toHaveBeenCalledWith({ preventScroll: true });
+    });
+
+    it("syncs navigation state when the user changes the hash (anchor click)", async () => {
+      const mocks = setupBrowserMocks("/docs");
+      const navigation = createNavigation();
+      navigation.router.addRoute({ id: "/" });
+      navigation.router.addRoute({ id: "/docs" });
+
+      const browser = new BrowserNavigation(navigation);
+      await browser.registerRoutes();
+
+      mocks.history.pushState.mockClear();
+      mocks.history.replaceState.mockClear();
+
+      // Simulate a native in-page anchor click
+      window.location.hash = "#section";
+      await tick();
+
+      expect(navigation.state).toEqual({
+        id: "/docs",
+        params: {},
+        hash: "#section",
+      });
+      expect(mocks.history.pushState).not.toHaveBeenCalled();
+      expect(mocks.history.replaceState).toHaveBeenCalled();
+    });
+
+    it("handles a hash-only back/forward without double navigation", async () => {
+      const mocks = setupBrowserMocks("/docs");
+      const navigation = createNavigation();
+      navigation.router.addRoute({ id: "/" });
+      navigation.router.addRoute({ id: "/docs" });
+
+      const browser = new BrowserNavigation(navigation);
+      await browser.registerRoutes();
+
+      window.location.hash = "#section";
+      await tick();
+
+      mocks.history.pushState.mockClear();
+      mocks.history.replaceState.mockClear();
+
+      // Back to /docs fires both popstate and hashchange
+      window.history.back();
+      await tick();
+
+      expect(navigation.state).toEqual({ id: "/docs", params: {} });
+      expect(mocks.history.pushState).not.toHaveBeenCalled();
+      expect(mocks.history.replaceState).toHaveBeenCalledTimes(1);
     });
   });
 

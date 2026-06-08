@@ -125,7 +125,7 @@ export class TriePatternMatching implements TypedPatternMatcher, IRouteMatcher {
   match<Pattern extends string>(
     url: string,
   ): IPatternRouteState<Pattern> | null {
-    const { path, query } = splitPathAndQuery(this.removeBaseFromUrl(url));
+    const { path, query, hash } = splitPathAndQuery(this.removeBaseFromUrl(url));
     const segments = splitPath(path);
     const { matched, pattern, params } = matchSegments(
       this.root,
@@ -145,6 +145,7 @@ export class TriePatternMatching implements TypedPatternMatcher, IRouteMatcher {
     return {
       id: pattern as Pattern,
       params: params as ExtractRouteParams<Pattern>,
+      ...(hash ? { hash } : {}),
     };
   }
 
@@ -184,13 +185,14 @@ export class TriePatternMatching implements TypedPatternMatcher, IRouteMatcher {
   encode<Pattern extends string>(
     pattern: Pattern,
     params: ExtractRouteParams<Pattern>,
+    hash?: string,
   ): string {
     // Special case for root path
     if (pattern === "/") {
-      return "/";
+      return hash ? "/" + hash : "/";
     }
 
-    const paramsKey = JSON.stringify(params);
+    const paramsKey = JSON.stringify([params, hash ?? null]);
 
     // Check cache
     const patternCache = this.encodeCache.get(pattern);
@@ -229,6 +231,10 @@ export class TriePatternMatching implements TypedPatternMatcher, IRouteMatcher {
     // Append query parameters
     if (queryDefs && queryDefs.length > 0) {
       result += buildQueryString(queryDefs, params as RouteParams);
+    }
+
+    if (hash) {
+      result += hash;
     }
 
     // Update cache
@@ -415,7 +421,7 @@ export class TriePatternMatching implements TypedPatternMatcher, IRouteMatcher {
   ): string | null {
     if (!this.patterns.has(state.id)) return null;
     // Simplified - encode() already handles validation and will return proper results
-    return this.encode(state.id, state.params);
+    return this.encode(state.id, state.params, state.hash);
   }
 
   /**

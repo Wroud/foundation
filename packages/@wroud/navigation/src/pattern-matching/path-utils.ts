@@ -8,12 +8,19 @@
 export function splitPathAndQuery(value: string): {
   path: string;
   query: string;
+  hash: string;
 } {
+  let hash = "";
+  const hIndex = value.indexOf("#");
+  if (hIndex !== -1) {
+    hash = value.slice(hIndex);
+    value = value.slice(0, hIndex);
+  }
   const qIndex = value.indexOf("?");
   if (qIndex === -1) {
-    return { path: value, query: "" };
+    return { path: value, query: "", hash };
   }
-  return { path: value.slice(0, qIndex), query: value.slice(qIndex + 1) };
+  return { path: value.slice(0, qIndex), query: value.slice(qIndex + 1), hash };
 }
 
 /**

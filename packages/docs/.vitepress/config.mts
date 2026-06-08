@@ -27,6 +27,7 @@ export default defineConfig({
           compilerOptions: {
             module: 199,
             moduleResolution: 99,
+            ignoreDeprecations: "6.0",
           },
         },
       }),

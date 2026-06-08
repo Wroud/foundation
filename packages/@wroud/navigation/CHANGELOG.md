@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:1.3.0 -->
+## 1.3.0 (2026-06-08)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/nav-v1.2.0...nav-v1.3.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- enhance navigation state management with hash support and update path utilities ([f9b4849](https://github.com/Wroud/foundation/commit/f9b4849))
+
 <!-- version:1.2.0 -->
 ## 1.2.0 (2026-05-18)
 

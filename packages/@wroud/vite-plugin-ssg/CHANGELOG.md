@@ -3,6 +3,38 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:7.0.0 -->
+## 7.0.0 (2026-06-14)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-ssg-v6.5.0...vite-plugin-ssg-v7.0.0)
+
+<!-- changelog -->
+### ⚠️  Breaking Changes
+
+- rebuild SSG on @vitejs/plugin-rsc ([a2a6857](https://github.com/Wroud/foundation/commit/a2a6857))
+  - Replace the bespoke SSG pipeline (virtual HTML entries, query-based
+    <br>module resolution, manual tag injection) with a renderer built on
+    <br>@vitejs/plugin-rsc. The app entry is now plain client React, SSR'd and
+    <br>hydrated, with React Server Components as an opt-in second entry.
+    <br>
+    <br>- Entry discovery is convention-based: `*.entry.tsx` (client) and
+    <br>  optional `*.entry.rsc.tsx` (react-server), auto-discovered under `root`
+    <br>  or set via the new `entry` / `rscEntry` options. No `rollupOptions.input`.
+    <br>- Add `createRscConfig` / `RscInstance` / `toRscInstance`, `toAppInstance`,
+    <br>  and the `onAppStart` / `onRoutesPrerender` / `onAppStop` lifecycle for
+    <br>  both app and rsc entries; routes drive prerender output.
+    <br>- New options: `entry`, `rscEntry`, `react` (inject @vitejs/plugin-react),
+    <br>  `prerender` (false for pure-SSR runtime); `renderTimeout` now bounds only
+    <br>  the build render.
+    <br>- Opt-in streaming client navigation via `navigate()` and per-route `.rsc`
+    <br>  flight payloads; `"use server"` actions dispatched at request time.
+    <br>- CSP nonce propagation across bootstrap/flight scripts, meta, and
+    <br>  `Link` / `Script` components.
+    <br>- Swap deps: drop @wroud/vite-plugin-asset-resolver, change-case,
+    <br>  magic-string, style-to-object; add @vitejs/plugin-rsc,
+    <br>  @vitejs/plugin-react, rsc-html-stream.
+  - The entry contract and module API are replaced.
+
 <!-- version:6.5.0 -->
 ## 6.5.0 (2026-06-03)
 

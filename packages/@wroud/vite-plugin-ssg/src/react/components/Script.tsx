@@ -1,6 +1,8 @@
-import { use, type ScriptHTMLAttributes } from "react";
+"use client";
+
+import { type ScriptHTMLAttributes } from "react";
 import { pathUrlWithBase } from "../pathUrlWithBase.js";
-import { SSGContext } from "./SSGContext.js";
+import { useRenderContext } from "./RenderContext.js";
 
 export interface ScriptProps extends ScriptHTMLAttributes<HTMLScriptElement> {
   forceNonce?: boolean;
@@ -8,15 +10,16 @@ export interface ScriptProps extends ScriptHTMLAttributes<HTMLScriptElement> {
 
 export const Script: React.FC<ScriptProps> = function Script({
   src,
+  nonce,
   forceNonce,
   ...rest
 }) {
-  const { context } = use(SSGContext)!;
-
+  const context = useRenderContext();
+  const inline = rest.children != null || rest.dangerouslySetInnerHTML != null;
   return (
     <script
       src={pathUrlWithBase(context.base, src)}
-      nonce={rest.children || forceNonce ? context.cspNonce : undefined}
+      nonce={nonce ?? (forceNonce || inline ? context.cspNonce : undefined)}
       {...rest}
     />
   );

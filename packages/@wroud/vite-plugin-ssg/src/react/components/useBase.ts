@@ -1,9 +1,9 @@
-import { use } from "react";
+"use client";
+
 import { pathUrlWithBase } from "../pathUrlWithBase.js";
-import { SSGContext } from "./SSGContext.js";
+import { useRenderContext } from "./RenderContext.js";
 
 export function useBase() {
-  const { context } = use(SSGContext)!;
-
-  return (url: string) => pathUrlWithBase(context.base, url);
+  const renderContext = useRenderContext();
+  return (url: string) => pathUrlWithBase(renderContext.base, url);
 }

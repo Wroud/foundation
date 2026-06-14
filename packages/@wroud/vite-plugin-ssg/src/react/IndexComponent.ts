@@ -5,14 +5,21 @@ export interface IndexComponentContext {
   cspNonce?: string;
   base?: string;
   headers?: Record<string, string | string[] | undefined>;
+  navigate?: (href: string) => Promise<void>;
 }
 
 export interface IndexComponentProps {
-  renderTags: (
-    injectTo?: "head" | "body" | "head-prepend" | "body-prepend",
-  ) => React.ReactElement;
   context: IndexComponentContext;
-  mainScriptUrl?: string;
 }
 
 export type IndexComponent = React.FC<IndexComponentProps>;
+
+export interface RscEntryProps<TApp = unknown> {
+  context: IndexComponentContext;
+  app: TApp;
+  children?: React.ReactNode;
+}
+
+export type RscEntryComponent<TApp = any> = (
+  props: RscEntryProps<TApp>,
+) => React.ReactNode | Promise<React.ReactNode>;

@@ -1,19 +1,19 @@
 export function pathUrlWithBase<T extends string | undefined>(
-  base: string | undefined,
+  base: string,
   url: T,
 ): T {
   if (url === undefined) {
     return url;
   }
   if (url.startsWith("/")) {
-    if (base?.startsWith("http")) {
-      return new URL(url ?? "/", base).href as T;
+    if (base.startsWith("http")) {
+      return new URL(url, base).href as T;
     }
     return url;
   }
 
-  if (url?.startsWith("http")) {
-    if (base?.startsWith("http")) {
+  if (url.startsWith("http")) {
+    if (base.startsWith("http")) {
       return url;
     }
 
@@ -24,9 +24,5 @@ export function pathUrlWithBase<T extends string | undefined>(
     url = new URL(url).pathname.slice(1) as T;
   }
 
-  if (base !== undefined) {
-    return (base + url) as T;
-  }
-
-  return url;
+  return (base + url) as T;
 }

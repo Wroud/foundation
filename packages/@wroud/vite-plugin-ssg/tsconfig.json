@@ -16,7 +16,10 @@
   ],
   "references": [
     {
-      "path": "../vite-plugin-asset-resolver"
+      "path": "../di"
+    },
+    {
+      "path": "../di-react"
     }
   ]
 }

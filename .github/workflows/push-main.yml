@@ -15,6 +15,11 @@ jobs:
 
   release:
     needs: build
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+      id-token: write
     uses: ./.github/workflows/release.yml
     secrets: inherit
     with:

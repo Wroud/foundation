@@ -1,475 +1,378 @@
-import nodePath from "node:path";
-import { type PluginOption, createRunnableDevEnvironment, loadEnv } from "vite";
-import { cleanUrl } from "./utils/cleanUrl.js";
-import { createSsgId, isSsgId, removeSsgQuery } from "./modules/isSsgId.js";
-import {
-  createSsgServerEntryId,
-  isSsgServerEntryId,
-} from "./modules/isSsgServerEntryId.js";
-import {
-  createSsgClientEntryId,
-  isSsgClientEntryId,
-} from "./modules/isSsgClientEntryId.js";
-import {
-  addMainQuery,
-  isMainId,
-  removeMainQuery,
-} from "./modules/mainQuery.js";
-import { addQueryParam, parseQueryParams } from "./utils/queryParam.js";
-import { cleanSsgAssetId } from "./modules/isSsgAssetId.js";
-import { isSsgHtmlTagsId } from "./utils/ssgHtmlTags.js";
-import {
-  createSsgPageUrlId,
-  isSsgPageUrlId,
-  removeSsgPageUrlId,
-} from "./modules/isSsgPageUrlId.js";
-import { createSsgUrl, isSsgUrl, removeSsgUrl } from "./modules/isSsgUrl.js";
-import { getPathsToLookup } from "./utils/getPathsToLookup.js";
 import { existsSync } from "node:fs";
-import { loadServerApi } from "./api/loadServerApi.js";
-import {
-  createSsgEntryQuery,
-  isSsgEntryQuery,
-  removeSsgEntryQuery,
-} from "./modules/ssgEntryQuery.js";
-import { createVirtualHtmlEntry } from "./modules/isVirtualHtmlEntry.js";
-import { createSsgComponentId } from "./modules/isSsgComponentId.js";
-import { getPageName } from "./utils/getPageName.js";
-import { ssgComponentResolution } from "./resolvers/ssgComponentResolution.js";
-import { ssgAssetsResolutionPlugin } from "./resolvers/ssgAssetsResolution.js";
-import { viteFsFallbackResolutionPlugin } from "./resolvers/viteFsFallbackResolution.js";
-import { changePathExt } from "./utils/changePathExt.js";
+import nodePath from "node:path";
+import react from "@vitejs/plugin-react";
+import rsc from "@vitejs/plugin-rsc";
+import { globSync } from "tinyglobby";
+import type { EnvironmentOptions, PluginOption, Rollup } from "vite";
 import type { SsgPluginOptions } from "./SsgPluginOptions.js";
-import { pagesMiddleware } from "./server/pages-middleware.js";
-import { getHrefFromPath } from "./utils/getHrefFromPath.js";
-import { mapBaseToUrl } from "./utils/mapBaseToUrl.js";
-import { ssrBundlePlugin } from "./resolvers/ssrBundlePlugin.js";
-import { clientBundlePlugin } from "./resolvers/clientBundlePlugin.js";
-import { stripBase } from "./utils/stripBase.js";
-import { createNodeImportMeta } from "vite/module-runner";
+import { ssgBuildApp } from "./resolvers/ssgBuildApp.js";
 
 export * from "./react/IndexComponent.js";
 
+const ENTRY_RSC = "@wroud/vite-plugin-ssg/entry-rsc";
+const ENTRY_SSR = "@wroud/vite-plugin-ssg/entry-ssr";
+const ENTRY_BROWSER = "@wroud/vite-plugin-ssg/entry-browser";
+const CLIENT_INDEX = "@wroud/vite-plugin-ssg/client-index";
+const ENTRY_GLOB = "**/*.entry.{tsx,ts,jsx,js}";
+const RSC_ENTRY_GLOB = "**/*.entry.rsc.{tsx,ts,jsx,js}";
+
 export const ssgPlugin = (
-  pluginOptions: SsgPluginOptions = {
-    renderTimeout: 10000,
-  },
+  pluginOptions: SsgPluginOptions = {},
 ): PluginOption => {
-  const emittedPages = new Set<string>();
+  let entryPath: string | undefined;
+  let rscEntryPath: string | undefined;
+  let pendingInputWarning: string | undefined;
+
   return [
-    viteFsFallbackResolutionPlugin(),
-    ssgAssetsResolutionPlugin(),
-    ssrBundlePlugin(),
-    clientBundlePlugin(pluginOptions.renderTimeout),
     {
       name: "@wroud/vite-plugin-ssg",
-      enforce: "post",
+      enforce: "pre",
 
       config(userConfig, env) {
+        const reactPluginNames = new Set([
+          "vite:react-babel",
+          "vite:react-swc",
+          "vite:react-oxc",
+        ]);
+        let reactInstances = 0;
+        const stack: PluginOption[] = [...(userConfig.plugins ?? [])];
+        while (stack.length) {
+          const p = stack.pop();
+          if (Array.isArray(p)) {
+            stack.push(...p);
+          } else if (
+            p &&
+            typeof p === "object" &&
+            "name" in p &&
+            reactPluginNames.has(p.name)
+          ) {
+            reactInstances++;
+          }
+        }
+        if (reactInstances > 1) {
+          throw new Error(
+            "[vite-plugin-ssg] multiple @vitejs/plugin-react instances detected. " +
+              "ssgPlugin already includes @vitejs/plugin-react; remove react() " +
+              "from your plugins, or pass `react: false` to ssgPlugin to keep your own.",
+          );
+        }
+
+        const root = nodePath.resolve(userConfig.root ?? process.cwd());
+        const outDir = userConfig.build?.outDir ?? "dist";
+
+        if (!env.isPreview) {
+          const ignoreDirs: string[] = [];
+          const publicDir = userConfig.publicDir ?? "public";
+          if (publicDir) {
+            ignoreDirs.push(publicDir);
+          }
+          for (const environment of Object.values(
+            userConfig.environments ?? {},
+          )) {
+            if (environment?.build?.outDir) {
+              ignoreDirs.push(environment.build.outDir);
+            }
+          }
+          entryPath = resolveEntry(
+            root,
+            outDir,
+            ignoreDirs,
+            pluginOptions.entry,
+          );
+          rscEntryPath = resolveRscEntry(
+            root,
+            outDir,
+            ignoreDirs,
+            pluginOptions.rscEntry,
+          );
+          if (!entryPath && !rscEntryPath) {
+            throw new Error(
+              `[vite-plugin-ssg] no entry found under ${root}. Create an app entry ` +
+                `("*.entry.{tsx,ts,jsx,js}", client code), a react-server entry ` +
+                `("*.entry.rsc.{tsx,ts,jsx,js}"), or set the \`entry\`/\`rscEntry\` options.`,
+            );
+          }
+        }
+
+        const discardedInputs: string[] = [];
+
+        if (userConfig.build?.rollupOptions) {
+          discardedInputs.push(
+            ...rollupInputNames(userConfig.build.rollupOptions.input),
+          );
+          userConfig.build.rollupOptions.input = undefined;
+        }
+
         userConfig.environments = {
           ...userConfig.environments,
-          client: {
-            ...userConfig.environments?.["client"],
-            optimizeDeps: {
-              ...userConfig.environments?.["client"]?.optimizeDeps,
-              include: [
-                ...(userConfig.environments?.["client"]?.optimizeDeps
-                  ?.include ?? []),
-                "react",
-                "react-dom",
-                "react-dom/client",
-                "react/jsx-runtime",
-                "@wroud/vite-plugin-ssg > react",
-                "@wroud/vite-plugin-ssg > react-dom",
-                "@wroud/vite-plugin-ssg/react/client",
-                "@wroud/vite-plugin-ssg/react/components",
-                "@wroud/vite-plugin-ssg/app",
-              ],
-            },
-          },
-          ssr: {
-            ...userConfig.environments?.["ssr"],
+          client: mergeEnv(
+            userConfig.environments?.["client"],
+            ENTRY_BROWSER,
+            outDir,
+            discardedInputs,
+          ),
+          ssr: mergeEnv(
+            userConfig.environments?.["ssr"],
+            ENTRY_SSR,
+            `${outDir}-ssr`,
+            discardedInputs,
+          ),
+          rsc: mergeEnv(
+            userConfig.environments?.["rsc"],
+            ENTRY_RSC,
+            `${outDir}-rsc`,
+            discardedInputs,
+          ),
+        };
 
-            dev: {
-              ...userConfig.environments?.["ssr"]?.dev,
-              createEnvironment(name, config) {
-                return createRunnableDevEnvironment(name, config, {
-                  runnerOptions: {
-                    hmr: { logger: false },
-                    createImportMeta: createNodeImportMeta,
-                  },
-                });
-              },
-            },
-            // resolve: {
-            //   dedupe: ["@wroud/vite-plugin-ssg"],
-            // },
-            build: {
-              ...userConfig.environments?.["ssr"]?.build,
-              ssr: true,
-              rolldownOptions: {
-                ...userConfig.environments?.["ssr"]?.build?.rolldownOptions,
-                // external:
-                //   env.command === "build"
-                //     ? [/^@wroud\/vite-plugin-ssg.*/]
-                //     : undefined,
-              },
-              outDir:
-                (userConfig.environments?.["ssr"]?.build?.outDir ||
-                  userConfig.build?.outDir ||
-                  "dist") + "-server",
-            },
-          },
+        if (discardedInputs.length) {
+          pendingInputWarning =
+            `[vite-plugin-ssg] ignoring rollupOptions.input entries: ` +
+            `${Array.from(new Set(discardedInputs)).join(", ")}. ` +
+            `Entries are defined via *.entry files or the \`entry\`/\`rscEntry\` options.`;
+        }
+
+        userConfig.rsc = {
+          ...userConfig.rsc,
+          serverHandler: env.isPreview ? false : userConfig.rsc?.serverHandler,
         };
-        // userConfig.resolve = {
-        //   ...userConfig.resolve,
-        //   dedupe: [
-        //     ...(userConfig.resolve?.dedupe || []),
-        //     "@wroud/vite-plugin-ssg",
-        //   ],
-        // };
-        userConfig.builder = {
-          async buildApp(builder) {
-            await builder.build(builder.environments["ssr"]!);
-            await builder.build(builder.environments["client"]!);
-          },
-        };
+
+        if (env.isPreview) {
+          userConfig.appType = "mpa";
+        }
       },
-      buildStart: {
-        handler() {
-          emittedPages.clear();
-        },
+
+      configResolved(config) {
+        if (pendingInputWarning) {
+          config.logger.warn(pendingInputWarning);
+          pendingInputWarning = undefined;
+        }
       },
-      configureServer: {
-        order: "pre",
-        async handler(server) {
-          return () => {
-            server.middlewares.use(pagesMiddleware(server, pluginOptions));
-          };
-        },
+
+      configEnvironment(_name, config) {
+        config.optimizeDeps ??= {};
+        if (!config.optimizeDeps.exclude?.includes("@wroud/vite-plugin-ssg")) {
+          config.optimizeDeps.exclude = [
+            ...(config.optimizeDeps.exclude ?? []),
+            "@wroud/vite-plugin-ssg",
+          ];
+        }
+        if (config.optimizeDeps.include) {
+          config.optimizeDeps.include = config.optimizeDeps.include.map(
+            (entry) =>
+              entry.startsWith("@vitejs/plugin-rsc")
+                ? `@wroud/vite-plugin-ssg > ${entry}`
+                : entry,
+          );
+        }
       },
+
       resolveId: {
         order: "pre",
-        async handler(source, importer, options) {
-          const config = this.environment.config;
-
+        handler(source) {
+          const bare = source.startsWith("\0") ? source.slice(1) : source;
           if (
-            isSsgClientEntryId(source) ||
-            isSsgServerEntryId(source) ||
-            isSsgHtmlTagsId(source) ||
-            (importer &&
-              isMainId(source) &&
-              (isSsgClientEntryId(importer) || isSsgServerEntryId(importer)))
+            bare === ENTRY_RSC ||
+            bare === ENTRY_SSR ||
+            bare === ENTRY_BROWSER ||
+            bare === CLIENT_INDEX
           ) {
-            const params = parseQueryParams(source);
-            const componentResolved = await this.resolve(
-              createSsgComponentId(cleanUrl(source)),
-              source,
-              options,
-            );
-
-            if (!componentResolved) {
-              return null;
-            }
-
-            return addQueryParam(
-              cleanUrl(componentResolved.id),
-              Object.keys(params)[0]!,
-            );
+            return "\0" + bare;
           }
-
-          if (isSsgId(source)) {
-            if (this.environment.name === "ssr") {
-              source = createSsgServerEntryId(removeSsgQuery(source));
-            } else {
-              source = createSsgClientEntryId(removeSsgQuery(source));
-            }
-            return await this.resolve(source, importer, {
-              ...options,
-              skipSelf: false,
-            });
-          }
-
-          if (isSsgPageUrlId(source)) {
-            const alreadyResolved =
-              options.custom?.["@wroud/vite-plugin-ssg:page-url-id"]?.resolved;
-            if (alreadyResolved) {
-              return alreadyResolved;
-            }
-
-            const resolved = await this.resolve(
-              removeSsgPageUrlId(source),
-              importer,
-              options,
-            );
-
-            if (!resolved) {
-              this.error(`Failed to resolve SSG page URL: ${source}`);
-              //@ts-ignore
-              return null;
-            }
-
-            if (config.command === "build") {
-              const name = nodePath.posix.relative(
-                config.root,
-                changePathExt(resolved.id, ""),
-              );
-
-              this.emitFile({
-                id: createSsgEntryQuery(changePathExt(resolved.id, "")),
-                name,
-                fileName:
-                  this.environment.name === "ssr"
-                    ? changePathExt(name, ".js")
-                    : undefined,
-                type: "chunk",
-                importer: source,
-                preserveSignature: "strict",
-              });
-            }
-
-            return this.resolve(
-              changePathExt(createSsgPageUrlId(resolved.id), ""),
-              importer,
-              {
-                ...options,
-                custom: {
-                  ...options.custom,
-                  "@wroud/vite-plugin-ssg:page-url-id": {
-                    resolved: changePathExt(
-                      createSsgPageUrlId(resolved.id),
-                      "",
-                    ),
-                  },
-                },
-              },
-            );
-          }
-
-          if (isSsgEntryQuery(source)) {
-            source = nodePath.posix.resolve(config.root, source);
-            let resolvedId = await this.resolve(
-              createSsgId(removeSsgEntryQuery(source)),
-              importer,
-              {
-                ...options,
-                skipSelf: false,
-              },
-            );
-
-            if (!resolvedId) {
-              this.error(`Failed to resolve SSG entry query: ${source}`);
-            }
-
-            if (
-              config.command === "build" &&
-              this.environment.name === "client"
-            ) {
-              let name = nodePath.posix.relative(
-                config.root,
-                changePathExt(removeSsgEntryQuery(source), ""),
-              );
-              this.emitFile({
-                id: createVirtualHtmlEntry(
-                  nodePath.posix.join(config.root, name),
-                ),
-                name,
-                type: "chunk",
-              });
-
-              try {
-                const ssrConfig = config.environments["ssr"]!;
-
-                const lookUpPaths = getPathsToLookup(name);
-                let serverModulePath: string | undefined;
-
-                for (const possiblePath of lookUpPaths) {
-                  const exists = existsSync(
-                    nodePath.join(
-                      config.root,
-                      ssrConfig.build.outDir,
-                      possiblePath + ".js",
-                    ),
-                  );
-
-                  if (exists) {
-                    serverModulePath = possiblePath;
-                    break;
-                  }
-                }
-
-                if (!serverModulePath) {
-                  this.error(`No SSG chunk found for: ${name}`);
-                }
-
-                const serverApiProvider = await loadServerApi(
-                  nodePath.join(
-                    config.root,
-                    ssrConfig.build.outDir,
-                    serverModulePath + `.js`,
-                  ),
-                  // Empty prefix loads ALL keys from .env files, not just VITE_*.
-                  // SSR fork needs server-only values (DB creds, API keys); they
-                  // never leak to the client bundle.
-                  loadEnv(config.mode, config.envDir, ""),
-                );
-
-                const serverApi = await serverApiProvider.create({
-                  base: mapBaseToUrl("/", config),
-                  href: getHrefFromPath(name, config),
-                });
-
-                const routes = await serverApi.getPathsToPrerender();
-
-                await serverApi.dispose();
-                await serverApiProvider.dispose();
-
-                for (let route of routes) {
-                  route = stripBase(route, config.base);
-                  const id = createSsgUrl(route);
-
-                  if (emittedPages.has(id)) {
-                    continue;
-                  }
-                  emittedPages.add(id);
-
-                  const name = getPageName(route);
-
-                  this.emitFile({
-                    id,
-                    name,
-                    type: "chunk",
-                  });
-                }
-              } catch (error) {
-                this.error(`Failed to import routes prerender: ${error}`);
-              }
-            }
-
-            return resolvedId;
-          }
-
-          if (isSsgUrl(source)) {
-            return this.resolve(
-              createSsgEntryQuery(removeSsgUrl(source)),
-              importer,
-              {
-                ...options,
-                skipSelf: false,
-              },
-            );
-          }
-
           return undefined;
         },
       },
 
-      hotUpdate(options) {
-        if (this.environment.name !== "client") {
-          return;
+      load(id) {
+        if (id === "\0" + CLIENT_INDEX && entryPath) {
+          return `
+"use client";
+
+import entry from ${JSON.stringify(entryPath)};
+import { unwrapIndex } from "@wroud/vite-plugin-ssg/react/rsc/client-index";
+
+export default unwrapIndex(entry);
+`;
         }
 
-        const filtered = options.modules.filter(
-          (mod) =>
-            !mod.id ||
-            (!isSsgClientEntryId(mod.id) &&
-              !isMainId(mod.id) &&
-              !isSsgHtmlTagsId(mod.id)),
-        );
-
-        if (filtered.length !== options.modules.length) {
-          return filtered;
-        }
-
-        return;
-      },
-
-      load: {
-        order: "pre",
-        async handler(id) {
+        if (id === "\0" + ENTRY_SSR) {
           const config = this.environment.config;
+          return `
+import { createSsrRuntime } from "@wroud/vite-plugin-ssg/react/rsc/server-ssr";
+${entryPath ? `import * as entry from ${JSON.stringify(entryPath)};` : "const entry = undefined;"}
 
-          if (isMainId(id)) {
-            if (config.command === "serve") {
-              if (id.startsWith(config.root)) {
-                id = nodePath.posix.relative(config.root, id);
-                this.debug(`Transformed to server URL: ${id}`);
-              } else {
-                id = mapBaseToUrl("/@fs" + id, config);
-                this.debug(`Transformed to fs path: ${id}`);
-              }
-              id = JSON.stringify(createSsgClientEntryId(removeMainQuery(id)));
-            } else {
-              id = `import.meta.ROLLUP_FILE_URL_${this.emitFile({
-                type: "chunk",
-                id: createSsgClientEntryId(removeMainQuery(id)),
-              })}`;
-            }
+const ssr = createSsrRuntime(entry, { base: ${JSON.stringify(config.base)} });
 
-            return {
-              code: `
-                export default ${id};
-              `,
-              moduleType: "js",
-            };
-          }
+export const renderHtml = ssr.renderHtml;
+export const getStaticPaths = ssr.getStaticPaths;
+`;
+        }
 
-          if (isSsgServerEntryId(id)) {
-            return {
-              code: `
-                import { create as createServer } from "@wroud/vite-plugin-ssg/react/server";
-                import Index from "${addQueryParam(cleanUrl(id), "server")}";
-                import mainScriptUrl from "${addMainQuery(cleanUrl(id))}";
+        if (id === "\0" + ENTRY_BROWSER) {
+          return `
+import { hydrate } from "@wroud/vite-plugin-ssg/react/rsc/browser";
+${entryPath ? `import * as entry from ${JSON.stringify(entryPath)};` : "const entry = undefined;"}
 
-                export async function create(context) {
-                  return await createServer(Index, context, mainScriptUrl);
-                }
-              `,
-              moduleType: "js",
-            };
-          }
+hydrate(entry);
+`;
+        }
 
-          if (isSsgClientEntryId(id)) {
-            return {
-              code: `
-                import { create } from "@wroud/vite-plugin-ssg/react/client";
-                import htmlTags from "${addQueryParam(cleanUrl(id), "ssg-html-tags")}";
-                import Index from "${addQueryParam(cleanUrl(id), "client")}";
-                import mainScriptUrl from "${addMainQuery(cleanUrl(id))}";
-                const context = {}
+        if (id === "\0" + ENTRY_RSC) {
+          const config = this.environment.config;
+          const runtimeOptions = {
+            base: config.base,
+            cspNonce: config.html?.cspNonce,
+          };
+          return `
+import { createSsgRuntime } from "@wroud/vite-plugin-ssg/react/rsc/server-rsc";
+${entryPath ? `import Index from ${JSON.stringify(CLIENT_INDEX)};` : "const Index = undefined;"}
+${rscEntryPath ? `import rsc from ${JSON.stringify(rscEntryPath)};` : "const rsc = undefined;"}
 
-                const api = await create(Index, context, mainScriptUrl);
-                await api.hydrate(htmlTags);
-              `,
-              moduleSideEffects: true,
-              moduleType: "js",
-            };
-          }
+export const runtime = createSsgRuntime({ Index, rsc }, {
+  ...${JSON.stringify(runtimeOptions)},${
+    rscEntryPath
+      ? `\n  css: import.meta.viteRsc.loadCss(${JSON.stringify(rscEntryPath)}),`
+      : ""
+  }
+});
 
-          if (isSsgHtmlTagsId(id)) {
-            return {
-              code: `export default __VITE_SSG_HTML_TAGS__;`,
-              moduleType: "js",
-            };
-          }
+export default runtime.handler;
+`;
+        }
 
-          if (isSsgPageUrlId(id)) {
-            id = removeSsgPageUrlId(cleanSsgAssetId(id));
-            id = changePathExt(
-              nodePath.posix.relative(config.root, id),
-              ".html",
-            );
-
-            return {
-              code: `export default ${JSON.stringify(id)};`,
-              moduleType: "js",
-            };
-          }
-
-          return undefined;
-        },
+        return undefined;
       },
     },
-    ssgComponentResolution(),
+    pluginOptions.react === false ? null : react(),
+    ...rsc(),
+    ssgBuildApp({
+      renderTimeout: pluginOptions.renderTimeout,
+      prerender: pluginOptions.prerender,
+    }),
   ];
 };
+
+function rollupInputNames(input: Rollup.InputOption | undefined): string[] {
+  if (!input) {
+    return [];
+  }
+  if (typeof input === "string") {
+    return [input];
+  }
+  if (Array.isArray(input)) {
+    return input;
+  }
+  return Object.keys(input);
+}
+
+function mergeEnv(
+  existing: EnvironmentOptions | undefined,
+  input: string,
+  outDir: string,
+  discardedInputs: string[],
+): EnvironmentOptions {
+  discardedInputs.push(
+    ...rollupInputNames(existing?.build?.rollupOptions?.input),
+  );
+  return {
+    ...existing,
+    build: {
+      ...existing?.build,
+      outDir: existing?.build?.outDir ?? outDir,
+      rollupOptions: {
+        ...existing?.build?.rollupOptions,
+        input: { index: input },
+      },
+    },
+  };
+}
+
+function resolveExplicit(
+  root: string,
+  explicit: string,
+  optionName: string,
+): string {
+  const resolved = nodePath.isAbsolute(explicit)
+    ? explicit
+    : nodePath.resolve(root, explicit);
+  if (!existsSync(resolved)) {
+    throw new Error(
+      `[vite-plugin-ssg] entry file not found: ${resolved} (from \`${optionName}\` option "${explicit}")`,
+    );
+  }
+  return resolved;
+}
+
+function toIgnoreRel(root: string, dir: string): string | undefined {
+  const rel = nodePath
+    .relative(root, nodePath.resolve(root, dir))
+    .split(nodePath.sep)
+    .join("/");
+  return rel && !rel.startsWith("..") ? rel : undefined;
+}
+
+function globEntries(
+  root: string,
+  outDir: string,
+  ignoreDirs: string[],
+  glob: string,
+): string[] {
+  const ignore = ["**/node_modules/**"];
+  const outDirRel = toIgnoreRel(root, outDir);
+  if (outDirRel) {
+    ignore.push(
+      `${outDirRel}/**`,
+      `${outDirRel}-ssr/**`,
+      `${outDirRel}-rsc/**`,
+    );
+  }
+  for (const dir of ignoreDirs) {
+    const rel = toIgnoreRel(root, dir);
+    if (rel) {
+      ignore.push(`${rel}/**`);
+    }
+  }
+  return globSync(glob, { cwd: root, absolute: true, ignore });
+}
+
+function resolveEntry(
+  root: string,
+  outDir: string,
+  ignoreDirs: string[],
+  explicit?: string,
+): string | undefined {
+  if (explicit) {
+    return resolveExplicit(root, explicit, "entry");
+  }
+
+  const matches = globEntries(root, outDir, ignoreDirs, ENTRY_GLOB);
+
+  if (matches.length > 1) {
+    throw new Error(
+      `[vite-plugin-ssg] multiple entry files found, expected one:\n${matches.join("\n")}`,
+    );
+  }
+
+  return matches[0];
+}
+
+function resolveRscEntry(
+  root: string,
+  outDir: string,
+  ignoreDirs: string[],
+  explicit?: string,
+): string | undefined {
+  if (explicit) {
+    return resolveExplicit(root, explicit, "rscEntry");
+  }
+
+  const matches = globEntries(root, outDir, ignoreDirs, RSC_ENTRY_GLOB);
+
+  if (matches.length > 1) {
+    throw new Error(
+      `[vite-plugin-ssg] multiple rsc entry files found, expected one:\n${matches.join("\n")}`,
+    );
+  }
+
+  return matches[0];
+}

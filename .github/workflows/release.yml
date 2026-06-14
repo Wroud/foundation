@@ -117,12 +117,7 @@ jobs:
           cache: "yarn"
 
       - name: Setup .yarnrc.yml
-        env:
-          NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: |
-          yarn config set npmAlwaysAuth true
-          yarn config set npmPublishRegistry "https://registry.npmjs.org"
-          yarn config set npmAuthToken $NPM_AUTH_TOKEN
+        run: yarn config set npmPublishRegistry "https://registry.npmjs.org"
 
       - run: yarn install --immutable
 

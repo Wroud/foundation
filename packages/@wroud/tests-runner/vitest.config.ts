@@ -51,6 +51,7 @@ export default defineConfig({
         ...coverageConfigDefaults.exclude,
         "**/lib/tests/**",
         "**/src/tests/**",
+        "**/test-fixtures/**",
       ],
       reporter: ["json", "json-summary", "text", "text-summary"],
     },

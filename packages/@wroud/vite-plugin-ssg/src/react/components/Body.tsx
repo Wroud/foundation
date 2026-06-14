@@ -1,6 +1,4 @@
-import { use, type HTMLAttributes } from "react";
-import { Script } from "./Script.js";
-import { SSGContext } from "./SSGContext.js";
+import { type HTMLAttributes } from "react";
 
 export interface BodyProps extends HTMLAttributes<HTMLBodyElement> {
   before?: React.ReactNode;
@@ -14,14 +12,10 @@ export const Body: React.FC<BodyProps> = function Body({
   children,
   ...rest
 }) {
-  const { renderTags, mainScriptUrl } = use(SSGContext)!;
   return (
     <body {...rest}>
       {before}
-      {renderTags("body-prepend")}
       {children}
-      {renderTags("body")}
-      {mainScriptUrl && <Script type="module" src={mainScriptUrl} forceNonce />}
       {after}
     </body>
   );

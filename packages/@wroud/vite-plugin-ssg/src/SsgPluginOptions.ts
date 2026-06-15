@@ -41,17 +41,19 @@ export interface SsgPluginOptions {
    */
   renderTimeout?: number;
   /**
-   * Path to the app entry file, relative to the Vite `root` (or absolute).
-   * When omitted, a single `*.entry.{tsx,ts,jsx,js}` file is auto-discovered
-   * under `root`. The entry is client code: it runs during SSR and in the
-   * browser, never in the react-server environment. Optional when an rsc
-   * entry exists.
+   * The app entry: a path relative to the Vite `root`, an absolute path, or a
+   * bare package specifier resolved through node_modules (e.g.
+   * `"@scope/client"` or `"react-app"`). When omitted, a single
+   * `*.entry.{tsx,ts,jsx,js}` file is auto-discovered under `root`. The entry
+   * is client code: it runs during SSR and in the browser, never in the
+   * react-server environment. Optional when an rsc entry exists.
    */
   entry?: string;
   /**
-   * Path to the react-server entry, relative to the Vite `root` (or
-   * absolute). When omitted, a single `*.entry.rsc.{tsx,ts,jsx,js}` file is
-   * auto-discovered under `root`. Exports a server component (optionally via
+   * The react-server entry: a path relative to the Vite `root`, an absolute
+   * path, or a bare package specifier resolved through node_modules. When
+   * omitted, a single `*.entry.rsc.{tsx,ts,jsx,js}` file is auto-discovered
+   * under `root`. Exports a server component (optionally via
    * `createRscConfig`) receiving `{ context, app, children }`, where
    * `children` is the rendered client entry. Optional when an app entry
    * exists.

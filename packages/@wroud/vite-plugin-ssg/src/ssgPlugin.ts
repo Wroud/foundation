@@ -28,6 +28,7 @@ export const ssgPlugin = (
   let entryPath: string | undefined;
   let rscEntryPath: string | undefined;
   let pendingInputWarning: string | undefined;
+  const entryPackages = new Set<string>();
 
   return [
     {
@@ -106,6 +107,11 @@ export const ssgPlugin = (
                 `("*.entry.rsc.{tsx,ts,jsx,js}"), or set the \`entry\`/\`rscEntry\` options.`,
             );
           }
+          for (const entry of [entryPath, rscEntryPath]) {
+            if (entry && !nodePath.isAbsolute(entry)) {
+              entryPackages.add(packageNameFromSpecifier(entry));
+            }
+          }
         }
 
         const discardedInputs: string[] = [];
@@ -163,7 +169,7 @@ export const ssgPlugin = (
         }
       },
 
-      configEnvironment(_name, config) {
+      configEnvironment(name, config) {
         config.optimizeDeps ??= {};
         if (!config.optimizeDeps.exclude?.includes("@wroud/vite-plugin-ssg")) {
           config.optimizeDeps.exclude = [
@@ -178,6 +184,27 @@ export const ssgPlugin = (
                 ? `@wroud/vite-plugin-ssg > ${entry}`
                 : entry,
           );
+        }
+
+        if (entryPackages.size) {
+          config.optimizeDeps.exclude = [
+            ...(config.optimizeDeps.exclude ?? []),
+            ...entryPackages,
+          ];
+          if (name === "ssr" || name === "rsc") {
+            config.resolve ??= {};
+            if (config.resolve.noExternal !== true) {
+              const existing = config.resolve.noExternal;
+              config.resolve.noExternal = [
+                ...(Array.isArray(existing)
+                  ? existing
+                  : existing
+                    ? [existing]
+                    : []),
+                ...entryPackages,
+              ];
+            }
+          }
         }
       },
 
@@ -302,11 +329,26 @@ function mergeEnv(
   };
 }
 
+function packageNameFromSpecifier(specifier: string): string {
+  const segments = specifier.split("/");
+  return specifier.startsWith("@")
+    ? segments.slice(0, 2).join("/")
+    : segments[0]!;
+}
+
 function resolveExplicit(
   root: string,
   explicit: string,
   optionName: string,
 ): string {
+  if (!nodePath.isAbsolute(explicit) && !explicit.startsWith(".")) {
+    const asFile = nodePath.resolve(root, explicit);
+    if (existsSync(asFile)) {
+      return asFile;
+    }
+    return explicit;
+  }
+
   const resolved = nodePath.isAbsolute(explicit)
     ? explicit
     : nodePath.resolve(root, explicit);

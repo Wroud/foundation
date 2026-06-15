@@ -809,3 +809,63 @@ describe("rsc ssg dev (server functions)", () => {
     expect(flight).toContain(`"data":${before + 6}`);
   });
 });
+
+describe("rsc ssg build (entry resolved from a node_modules package)", () => {
+  const pkgDir = path.join(fixturesDir, "pkg-entry/node_modules/test-app-entry");
+  let read: (file: string) => Promise<string>;
+
+  beforeAll(async () => {
+    await fs.mkdir(pkgDir, { recursive: true });
+    await fs.writeFile(
+      path.join(pkgDir, "package.json"),
+      JSON.stringify({
+        name: "test-app-entry",
+        private: true,
+        type: "module",
+        exports: { ".": "./index.tsx" },
+      }),
+    );
+    await fs.writeFile(
+      path.join(pkgDir, "index.tsx"),
+      `import type { IndexComponentProps } from "@wroud/vite-plugin-ssg";
+import { Html, Head, Body } from "@wroud/vite-plugin-ssg/react/components";
+
+export default function Root({ context }: IndexComponentProps) {
+  return (
+    <Html lang="en">
+      <Head>
+        <meta charSet="utf-8" />
+        <title>Pkg Entry</title>
+      </Head>
+      <Body>
+        <h1 data-testid="pkg-entry">From package entry</h1>
+        <p data-testid="path">{context.href ?? "/"}</p>
+      </Body>
+    </Html>
+  );
+}
+`,
+    );
+    await buildFixture("pkg-entry");
+    ({ read } = makeReaders(path.join(fixturesDir, "pkg-entry/dist")));
+  }, 120_000);
+
+  it("pre-renders a bare package specifier given as `entry`", async () => {
+    expect(await read("index.html")).toContain(
+      'data-testid="pkg-entry">From package entry',
+    );
+  });
+
+  it("bundles the entry package into the ssr build instead of externalizing it", async () => {
+    const ssrDir = path.join(fixturesDir, "pkg-entry/dist-ssr");
+    const files = await fs.readdir(ssrDir, { recursive: true });
+    const code = await Promise.all(
+      files
+        .filter((file) => file.endsWith(".js"))
+        .map((file) => fs.readFile(path.join(ssrDir, file), "utf8")),
+    );
+    expect(code.some((chunk) => chunk.includes("From package entry"))).toBe(
+      true,
+    );
+  });
+});

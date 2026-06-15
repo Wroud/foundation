@@ -39,3 +39,37 @@ describe("ssgPlugin csp option", () => {
     );
   });
 });
+
+describe("ssgPlugin entry as a node_modules package", () => {
+  function mainPlugin(options: Parameters<typeof ssgPlugin>[0]) {
+    const plugins = ssgPlugin(options) as Array<{
+      name?: string;
+      config?: (userConfig: unknown, env: unknown) => unknown;
+      configEnvironment?: (name: string, config: any) => unknown;
+    }>;
+    return plugins.find((p) => p?.name === "@wroud/vite-plugin-ssg")!;
+  }
+
+  it("bundles bare package entries in ssr/rsc and excludes them from dep optimization", () => {
+    const plugin = mainPlugin({ entry: "@scope/client", rscEntry: "react-app" });
+    plugin.config!({}, { command: "build" });
+
+    for (const name of ["ssr", "rsc"]) {
+      const env: any = {};
+      plugin.configEnvironment!(name, env);
+      expect(env.resolve?.noExternal).toEqual(
+        expect.arrayContaining(["@scope/client", "react-app"]),
+      );
+      expect(env.optimizeDeps?.exclude).toEqual(
+        expect.arrayContaining(["@scope/client", "react-app"]),
+      );
+    }
+
+    const client: any = {};
+    plugin.configEnvironment!("client", client);
+    expect(client.optimizeDeps?.exclude).toEqual(
+      expect.arrayContaining(["@scope/client", "react-app"]),
+    );
+    expect(client.resolve?.noExternal).toBeUndefined();
+  });
+});

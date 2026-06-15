@@ -29,6 +29,14 @@ export const ssgPlugin = (
       enforce: "pre",
 
       config(userConfig, env) {
+        if (pluginOptions.csp && userConfig.html?.cspNonce) {
+          throw new Error(
+            "[vite-plugin-ssg] `csp` (hash-based CSP) and Vite's " +
+              "`html.cspNonce` are mutually exclusive: a static hash policy " +
+              "cannot also carry a per-request nonce. Remove one.",
+          );
+        }
+
         const reactPluginNames = new Set([
           "vite:react-babel",
           "vite:react-swc",
@@ -248,6 +256,7 @@ export default runtime.handler;
     ssgBuildApp({
       renderTimeout: pluginOptions.renderTimeout,
       prerender: pluginOptions.prerender,
+      csp: pluginOptions.csp,
     }),
   ];
 };

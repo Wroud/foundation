@@ -287,7 +287,49 @@ Choosing a CSP strategy for the static output:
 
 - **Dynamic SSR server** (`prerender: false`, rendering every request through the rsc entry's default-export handler): generate a fresh nonce per request and pass it as the handler's second argument — `handler(request, { cspNonce })`. It overrides the build-time `html.cspNonce` for that render and flows everywhere the baked value would (bootstrap and flight `<script>`s, the `csp-nonce` meta, and `context.cspNonce` for `Link`/`Script`). Emit the matching `script-src 'self' 'nonce-<value>'` header on the same response and never cache it.
 - **Edge compute in front of static files** (Cloudflare Workers, edge middleware, …): set `html.cspNonce` to a placeholder and substitute a fresh value per request in **both** the `.html` file and the matching `*.rsc` file — the nonce is embedded in the flight JSON too. Never cache substituted responses.
-- **Static headers or no header control**: a per-request nonce is impossible (it would be identical for every visitor, which defeats it). Use a hash-based CSP instead — `script-src 'self' 'sha256-…'` without `'strict-dynamic'` (it would block plugin-rsc's un-hashed modulepreloads). A build-time emitter for the per-page script hashes is planned as an opt-in feature; it is not shipped yet.
+- **Static headers or no header control**: a per-request nonce is impossible (it would be identical for every visitor, which defeats it). Use a hash-based CSP instead — set the plugin's `csp` option (see below).
+
+### Hash-based CSP for the static build
+
+For a purely static deployment (GitHub Pages, S3, any host without per-request compute) where a nonce makes no sense, enable hash mode:
+
+```ts
+ssgPlugin({ csp: true });
+```
+
+For each pre-rendered page the plugin computes a hash of every inline `<script>` it emits — the hydration bootstrap, the RSC flight payload chunks, and your inline `Script` components — and assembles a policy that allows exactly those scripts:
+
+```
+script-src 'self' 'sha256-…' 'sha256-…' …
+```
+
+The hashes are page-specific (each page lists its own scripts) and deterministic across builds. `csp` and Vite's `html.cspNonce` are mutually exclusive — setting both throws.
+
+Hash mode is a **build-time only** technique, and deliberately so: a hash must be known before the policy is sent, but the inline RSC flight payload is emitted at the *end* of the document with per-request content, so its hash isn't known until the whole page has rendered. Pre-rendering buffers the full page anyway (it writes a file), so hashing is free there — but a streaming request-time render cannot list a hash for a script it hasn't produced yet. This is the same split every framework makes: hashes for static/prerendered output (Astro's CSP, Next.js SRI), a **nonce** for dynamic streaming SSR (Next.js App Router). So `csp` is inert in dev and for `prerender: false`; for a dynamic SSR server use a per-request nonce instead (next bullet — the nonce already rides the bootstrap and flight `<script>`s).
+
+By default the policy ships inside each page as a `<meta http-equiv="Content-Security-Policy">` injected at the start of `<head>`, so no server header is needed. Options:
+
+```ts
+ssgPlugin({
+  csp: {
+    algorithm: "sha256", // or "sha384" | "sha512"
+    meta: true, // inject the <meta> tag (default)
+    manifest: true, // also write csp-manifest.json mapping each route → policy + hashes
+    directives: {
+      // base directives the per-page policy is built from; the computed
+      // hashes are appended to script-src (created as 'self' when absent)
+      "default-src": ["'self'"],
+      "img-src": ["'self'", "data:"],
+    },
+  },
+});
+```
+
+- Deliver the policy via a header instead of (or alongside) the meta tag by setting `manifest: true` and reading `csp-manifest.json` (`{ version, algorithm, pages: [{ route, file, policy, hashes }] }`) in your host config; set `meta: false` to drop the in-page tag.
+- The injected `<meta>` is enforced **in addition to** any `Content-Security-Policy` response header — a resource must satisfy *every* active policy. If your host already sends a CSP header that lacks these per-page hashes, it will block the very inline scripts the meta allows. In that case use `meta: false` and fold the manifest's hashes into that header instead of shipping two policies.
+- Do **not** add `'strict-dynamic'`: it voids `'self'`, which is what covers `@vitejs/plugin-rsc`'s `modulepreload`/stylesheet `<link>`s — those cannot be hashed (react-dom strips their nonce/hash and dedupes by URL).
+- The generated policy only constrains `script-src` unless you add more `directives`, so enabling it will not unexpectedly block images, styles, or fetches.
+- A `<meta>`-delivered policy cannot carry `frame-ancestors`, `report-uri`, `report-to`, or `sandbox` — browsers ignore those directives when they arrive via meta. If you add them to `directives` while `meta` is on, the plugin warns at build time; deliver them through a response header instead (`meta: false` + the manifest policy).
 
 ## Notes
 

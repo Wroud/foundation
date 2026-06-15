@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import type { Plugin, ResolvedConfig } from "vite";
+import type { SsgCspOptions } from "../SsgPluginOptions.js";
 import {
   htmlFilePath,
   joinBase,
@@ -10,6 +11,11 @@ import {
   sanitizeRoute,
   stripBase,
 } from "../utils/routes.js";
+import {
+  applyCsp,
+  metaIncompatibleDirectives,
+  resolveCspOptions,
+} from "../utils/csp.js";
 
 interface SsgRscEntry {
   runtime: {
@@ -25,6 +31,14 @@ interface SsgRscEntry {
 interface SsgBuildAppOptions {
   renderTimeout?: number;
   prerender?: boolean;
+  csp?: boolean | SsgCspOptions;
+}
+
+interface CspManifestEntry {
+  route: string;
+  file: string;
+  policy: string;
+  hashes: string[];
 }
 
 export function ssgBuildApp(options: SsgBuildAppOptions = {}): Plugin {
@@ -59,6 +73,19 @@ async function renderStatic(
   const entry: SsgRscEntry = await import(entryUrl);
 
   const { runtime } = entry;
+  const csp = resolveCspOptions(options.csp);
+  const manifest: CspManifestEntry[] = [];
+  if (csp?.meta) {
+    const ignored = metaIncompatibleDirectives(csp.directives);
+    if (ignored.length) {
+      config.logger.warn(
+        `[vite-plugin-ssg] CSP directives ignored under <meta> delivery: ` +
+          `${ignored.join(", ")}. Browsers drop these from a <meta http-equiv> ` +
+          `policy; set csp.meta: false and deliver the manifest policy via a ` +
+          `response header for them to take effect.`,
+      );
+    }
+  }
   try {
     const routes = (await runtime.getStaticPaths()).map((route) =>
       normalizeRoute(stripBase(sanitizeRoute(route), config.base)),
@@ -72,19 +99,51 @@ async function renderStatic(
       });
       const { html, rsc } = await runtime.handleSsg(request);
 
-      await writeFileStream(path.join(clientOutDir, htmlFilePath(route)), html);
-      await writeFileStream(path.join(clientOutDir, rscFilePath(route)), rsc);
+      const htmlPath = path.join(clientOutDir, htmlFilePath(route));
+      if (csp) {
+        const applied = await applyCsp(
+          (await streamToBuffer(html)).toString("utf8"),
+          csp,
+        );
+        await writeFile(htmlPath, Buffer.from(applied.html, "utf8"));
+        if (csp.manifest) {
+          manifest.push({
+            route,
+            file: htmlFilePath(route).replace(/^\//, ""),
+            policy: applied.policy,
+            hashes: applied.hashes,
+          });
+        }
+      } else {
+        await writeFile(htmlPath, await streamToBuffer(html));
+      }
+      await writeFile(
+        path.join(clientOutDir, rscFilePath(route)),
+        await streamToBuffer(rsc),
+      );
+    }
+
+    if (csp?.manifest) {
+      await writeFile(
+        path.join(clientOutDir, csp.manifest),
+        Buffer.from(
+          JSON.stringify(
+            { version: 1, algorithm: csp.algorithm, pages: manifest },
+            null,
+            2,
+          ) + "\n",
+          "utf8",
+        ),
+      );
     }
   } finally {
     await runtime.dispose();
   }
 }
 
-async function writeFileStream(
-  filePath: string,
+async function streamToBuffer(
   stream: ReadableStream<Uint8Array>,
-): Promise<void> {
-  await fs.promises.mkdir(path.dirname(filePath), { recursive: true });
+): Promise<Buffer> {
   const reader = stream.getReader();
   const chunks: Buffer[] = [];
   for (;;) {
@@ -94,5 +153,10 @@ async function writeFileStream(
     }
     chunks.push(Buffer.from(value));
   }
-  await fs.promises.writeFile(filePath, Buffer.concat(chunks));
+  return Buffer.concat(chunks);
+}
+
+async function writeFile(filePath: string, data: Buffer): Promise<void> {
+  await fs.promises.mkdir(path.dirname(filePath), { recursive: true });
+  await fs.promises.writeFile(filePath, data);
 }

@@ -6,6 +6,7 @@ import {
   decodeFormState,
   createTemporaryReferenceSet,
 } from "@vitejs/plugin-rsc/rsc";
+import type { Transformer } from "node:stream/web";
 import type { ReactFormState } from "react-dom/client";
 import { toRscInstance, type RscInstance } from "../../app/RscConfig.js";
 import { RenderContextProvider } from "../components/RenderContext.js";
@@ -143,38 +144,63 @@ export function createSsgRuntime<T extends IAppContext>(
     action?: ActionOutcome,
   ): Promise<ReadableStream<Uint8Array>> {
     const app = await rscApp.start(context);
-    const RscRoot = rscApp.root;
-    const clientContext = toClientContext({
-      ...context,
-      base: app.base ?? context.base,
-    });
-    const root = (
-      <RenderContextProvider
-        value={{
-          base: clientContext.base ?? "/",
-          cspNonce: clientContext.cspNonce,
-        }}
-      >
-        {options.css}
-        {clientContext.cspNonce && (
-          <meta {...{ property: "csp-nonce" }} nonce={clientContext.cspNonce} />
-        )}
-        <RscRoot context={context} app={app}>
-          {Index && <Index context={clientContext} />}
-        </RscRoot>
-      </RenderContextProvider>
-    );
-    const payload: RscPayload = { root, context: clientContext };
-    if (action?.returnValue) {
-      payload.returnValue = action.returnValue;
+
+    let stopped = false;
+    async function stopApp() {
+      if (stopped) {
+        return;
+      }
+      stopped = true;
+      await rscApp.stop(app);
     }
-    if (action?.formState) {
-      payload.formState = action.formState;
+
+    try {
+      const RscRoot = rscApp.root;
+      const clientContext = toClientContext({
+        ...context,
+        base: app.base ?? context.base,
+      });
+      const root = (
+        <RenderContextProvider
+          value={{
+            base: clientContext.base ?? "/",
+            cspNonce: clientContext.cspNonce,
+          }}
+        >
+          {options.css}
+          {clientContext.cspNonce && (
+            <meta
+              {...{ property: "csp-nonce" }}
+              nonce={clientContext.cspNonce}
+            />
+          )}
+          <RscRoot context={context} app={app}>
+            {Index && <Index context={clientContext} />}
+          </RscRoot>
+        </RenderContextProvider>
+      );
+      const payload: RscPayload = { root, context: clientContext };
+      if (action?.returnValue) {
+        payload.returnValue = action.returnValue;
+      }
+      if (action?.formState) {
+        payload.formState = action.formState;
+      }
+      const stream = renderToReadableStream<RscPayload>(payload, {
+        signal,
+        temporaryReferences: action?.temporaryReferences,
+      });
+      const stopTransformer: Transformer<Uint8Array, Uint8Array> = {
+        flush: stopApp,
+        cancel: stopApp,
+      };
+      return stream.pipeThrough(
+        new TransformStream<Uint8Array, Uint8Array>(stopTransformer),
+      );
+    } catch (error) {
+      await stopApp();
+      throw error;
     }
-    return renderToReadableStream<RscPayload>(payload, {
-      signal,
-      temporaryReferences: action?.temporaryReferences,
-    });
   }
 
   async function loadSsr() {
@@ -261,18 +287,20 @@ export function createSsgRuntime<T extends IAppContext>(
       const href = new URL(base, "http://ssg.local/");
       const context = createContext(href, new Request(href));
       const app = await rscApp.start(context);
-      const declared = await rscApp.getRoutesPrerender(app);
-      const routes = [...new Set(declared.map(normalizeRoute))];
-      return routes.length ? routes : ["/"];
+      try {
+        const declared = await rscApp.getRoutesPrerender(app);
+        const routes = [...new Set(declared.map(normalizeRoute))];
+        return routes.length ? routes : ["/"];
+      } finally {
+        await rscApp.stop(app);
+      }
     }
 
     const ssr = await loadSsr();
     return ssr.getStaticPaths();
   }
 
-  async function dispose(): Promise<void> {
-    await rscApp.stop();
-  }
+  async function dispose(): Promise<void> {}
 
   return { handler, getStaticPaths, handleSsg, dispose };
 }

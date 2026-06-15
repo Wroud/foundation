@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import { createBuilder, createServer, type ViteDevServer } from "vite";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { createHash } from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
 
@@ -208,6 +209,167 @@ describe("rsc ssg build (minimal: explicit entry, no onRoutesPrerender)", () => 
     expect(rsc).toMatch(/^0:\{"root":.*,"context":/m);
     expect(rsc).toContain('"cspNonce":"test-nonce"');
     expect(rsc).toContain('"base":"/"');
+  });
+});
+
+describe("rsc ssg build (hash-based csp)", () => {
+  let read: (file: string) => Promise<string>;
+  let exists: (file: string) => Promise<boolean>;
+
+  function sha256(content: string): string {
+    return `'sha256-${createHash("sha256").update(content, "utf8").digest("base64")}'`;
+  }
+
+  function inlineScripts(html: string): string[] {
+    const out: string[] = [];
+    for (const match of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)) {
+      if (!/\ssrc=/.test(match[1]!)) {
+        out.push(match[2]!);
+      }
+    }
+    return out;
+  }
+
+  function cspPolicy(html: string): string {
+    return html.match(
+      /<meta http-equiv="Content-Security-Policy" content="([^"]*)">/,
+    )?.[1]!;
+  }
+
+  function policyScriptHashes(policy: string): string[] {
+    return policy.match(/'sha256-[^']+'/g) ?? [];
+  }
+
+  beforeAll(async () => {
+    const distDir = await buildFixture("csp-hash");
+    ({ read, exists } = makeReaders(distDir));
+  }, 120_000);
+
+  it("injects a Content-Security-Policy meta as the first child of <head>", async () => {
+    const index = await read("index.html");
+    expect(index).toMatch(
+      /<head><meta http-equiv="Content-Security-Policy" content="/,
+    );
+  });
+
+  it("locks script-src to 'self' plus per-script hashes, no nonce", async () => {
+    const index = await read("index.html");
+    const policy = cspPolicy(index);
+    expect(policy).toMatch(/script-src 'self'( 'sha256-[^']+')+/);
+    expect(index).not.toMatch(/ nonce=/);
+    expect(index).not.toContain("csp-nonce");
+    expect(index).toContain('data-testid="nonce">no-nonce<');
+  });
+
+  it("hashes exactly the page's inline scripts, and only inline scripts", async () => {
+    const index = await read("index.html");
+    const policy = cspPolicy(index);
+    const scripts = inlineScripts(index);
+    expect(scripts.length).toBeGreaterThanOrEqual(2);
+    const expected = [...new Set(scripts.map(sha256))].sort();
+    const actual = [...new Set(policyScriptHashes(policy))].sort();
+    expect(actual).toEqual(expected);
+    const plainScript = index.match(
+      /<script[^>]*data-testid="plain-script"[^>]*>/,
+    )?.[0];
+    expect(plainScript).toBeTruthy();
+  });
+
+  it("hashes the hydration bootstrap and the flight payload scripts", async () => {
+    const index = await read("index.html");
+    const policy = cspPolicy(index);
+    const bootstrap = index.match(
+      /<script>(import\("\/assets\/[^"]+\.js"\))<\/script>/,
+    )?.[1];
+    expect(bootstrap).toBeTruthy();
+    expect(policy).toContain(sha256(bootstrap!));
+    const flight = index.match(
+      /<script>(\(self\.__FLIGHT_DATA\|\|=\[\]\)\.push\([\s\S]*?)<\/script>/,
+    )?.[1];
+    expect(flight).toBeTruthy();
+    expect(policy).toContain(sha256(flight!));
+  });
+
+  it("merges custom directives with the generated script-src", async () => {
+    const policy = cspPolicy(await read("index.html"));
+    expect(policy).toContain("default-src 'self'");
+    expect(policy).toContain("img-src 'self' data:");
+  });
+
+  it("emits one html + meta per declared route, including nested paths", async () => {
+    expect(await exists("index.html")).toBe(true);
+    expect(await exists("blog/post.html")).toBe(true);
+    const post = await read("blog/post.html");
+    expect(cspPolicy(post)).toMatch(/script-src 'self'( 'sha256-[^']+')+/);
+    expect(post).toContain('data-testid="path">/blog/post<');
+  });
+
+  it("gives each route its own page-specific policy", async () => {
+    const indexPolicy = cspPolicy(await read("index.html"));
+    const postPolicy = cspPolicy(await read("blog/post.html"));
+    expect(indexPolicy).not.toBe(postPolicy);
+    expect(indexPolicy).toContain(sha256("window.__SSG_INLINE = 1;"));
+    expect(indexPolicy).not.toContain(sha256("window.__SSG_POST = 2;"));
+    expect(postPolicy).toContain(sha256("window.__SSG_POST = 2;"));
+    expect(postPolicy).not.toContain(sha256("window.__SSG_INLINE = 1;"));
+  });
+
+  it("writes a manifest mapping every route to its policy and hashes", async () => {
+    expect(await exists("csp-manifest.json")).toBe(true);
+    const manifest = JSON.parse(await read("csp-manifest.json"));
+    expect(manifest.version).toBe(1);
+    expect(manifest.algorithm).toBe("sha256");
+    expect(manifest.pages).toHaveLength(2);
+
+    const root = manifest.pages.find(
+      (entry: { route: string }) => entry.route === "/",
+    );
+    expect(root.file).toBe("index.html");
+    expect(root.policy).toBe(cspPolicy(await read("index.html")));
+    expect(root.hashes).toContain(
+      sha256("window.__SSG_INLINE = 1;").slice(1, -1),
+    );
+
+    const post = manifest.pages.find(
+      (entry: { route: string }) => entry.route === "/blog/post",
+    );
+    expect(post.file).toBe("blog/post.html");
+    expect(post.policy).toBe(cspPolicy(await read("blog/post.html")));
+    expect(
+      post.hashes.every((hash: string) => !hash.startsWith("'")),
+    ).toBe(true);
+  });
+});
+
+describe("rsc ssg build (hash-based csp, header delivery)", () => {
+  let read: (file: string) => Promise<string>;
+  let exists: (file: string) => Promise<boolean>;
+
+  beforeAll(async () => {
+    const distDir = await buildFixture("csp-hash-header");
+    ({ read, exists } = makeReaders(distDir));
+  }, 120_000);
+
+  it("omits the in-page CSP meta when meta:false", async () => {
+    const index = await read("index.html");
+    expect(index).not.toContain("Content-Security-Policy");
+    expect(index).not.toContain("http-equiv");
+    expect(index).toContain('data-testid="csp-header"');
+  });
+
+  it("writes the manifest at the custom filename with the chosen algorithm", async () => {
+    expect(await exists("headers.json")).toBe(true);
+    expect(await exists("csp-manifest.json")).toBe(false);
+    const manifest = JSON.parse(await read("headers.json"));
+    expect(manifest.algorithm).toBe("sha384");
+    const page = manifest.pages.find(
+      (entry: { route: string }) => entry.route === "/",
+    );
+    expect(page.file).toBe("index.html");
+    expect(page.policy).toMatch(/script-src 'self'( 'sha384-[^']+')+/);
+    expect(page.hashes.every((hash: string) => hash.startsWith("sha384-"))).toBe(
+      true,
+    );
   });
 });
 

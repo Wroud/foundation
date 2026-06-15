@@ -27,7 +27,6 @@ export class RscInstance<T extends IAppContext> {
   private onAppStart?: IRscInitializer<T>;
   private onRoutesPrerender?: IRscRoutesPrerender<T>;
   private onAppStop?: IRscFinalizer<T>;
-  private startPromise?: Promise<T>;
 
   constructor(root: RscEntryComponent<T>, config?: IRscConfigOptions<T>) {
     this.root = root;
@@ -36,19 +35,11 @@ export class RscInstance<T extends IAppContext> {
     this.onAppStop = config?.onAppStop;
   }
 
-  start(context: IndexComponentContext): Promise<T> {
-    if (!this.startPromise) {
-      const startPromise = Promise.resolve(
-        this.onAppStart?.(context) ?? ({ base: context.base ?? "/" } as T),
-      );
-      this.startPromise = startPromise;
-      startPromise.catch(() => {
-        if (this.startPromise === startPromise) {
-          this.startPromise = undefined;
-        }
-      });
+  async start(context: IndexComponentContext): Promise<T> {
+    if (this.onAppStart) {
+      return await this.onAppStart(context);
     }
-    return this.startPromise;
+    return { base: context.base ?? "/" } as T;
   }
 
   get hasRoutesPrerender(): boolean {
@@ -59,21 +50,7 @@ export class RscInstance<T extends IAppContext> {
     return (await this.onRoutesPrerender?.(app)) ?? [];
   }
 
-  async stop(): Promise<void> {
-    const startPromise = this.startPromise;
-    this.startPromise = undefined;
-
-    if (!startPromise) {
-      return;
-    }
-
-    let app: T;
-    try {
-      app = await startPromise;
-    } catch {
-      return;
-    }
-
+  async stop(app: T): Promise<void> {
     await this.onAppStop?.(app);
   }
 }

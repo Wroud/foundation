@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:7.3.0 -->
+## 7.3.0 (2026-06-15)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-ssg-v7.2.0...vite-plugin-ssg-v7.3.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- add support for resolving entry from node_modules and update related tests ([9caf11b](https://github.com/Wroud/foundation/commit/9caf11b))
+
 <!-- version:7.2.0 -->
 ## 7.2.0 (2026-06-15)
 

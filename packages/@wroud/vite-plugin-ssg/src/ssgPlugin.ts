@@ -16,6 +16,12 @@ const CLIENT_INDEX = "@wroud/vite-plugin-ssg/client-index";
 const ENTRY_GLOB = "**/*.entry.{tsx,ts,jsx,js}";
 const RSC_ENTRY_GLOB = "**/*.entry.rsc.{tsx,ts,jsx,js}";
 
+const HMR_ACCEPT = `
+if (import.meta.hot) {
+  import.meta.hot.accept();
+}
+`;
+
 export const ssgPlugin = (
   pluginOptions: SsgPluginOptions = {},
 ): PluginOption => {
@@ -213,7 +219,7 @@ const ssr = createSsrRuntime(entry, { base: ${JSON.stringify(config.base)} });
 
 export const renderHtml = ssr.renderHtml;
 export const getStaticPaths = ssr.getStaticPaths;
-`;
+${HMR_ACCEPT}`;
         }
 
         if (id === "\0" + ENTRY_BROWSER) {
@@ -245,7 +251,7 @@ export const runtime = createSsgRuntime({ Index, rsc }, {
 });
 
 export default runtime.handler;
-`;
+${HMR_ACCEPT}`;
         }
 
         return undefined;

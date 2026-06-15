@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll, afterAll } from "vitest";
+import { describe, it, expect, beforeAll, afterAll, vi } from "vitest";
 import { createBuilder, createServer, type ViteDevServer } from "vite";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { createHash } from "node:crypto";
@@ -701,6 +701,65 @@ describe("rsc ssg dev", () => {
     const html = await (await fetch(base + "/")).text();
     expect(html).toContain('data-testid="ssr-fetch"');
     expect(html).toMatch(/data-testid="ssr-fetch"[^>]*>pong</);
+  });
+
+  it("hot-updates server components without a server full reload", async () => {
+    const file = path.join(fixturesDir, "basic/src/index.entry.rsc.tsx");
+    const original = await fs.readFile(file, "utf8");
+
+    const events: { env: string; type: string }[] = [];
+    const restores: (() => void)[] = [];
+    for (const name of ["rsc", "ssr", "client"] as const) {
+      const hot = server.environments[name]!.hot;
+      const send = hot.send.bind(hot);
+      hot.send = ((...args: unknown[]) => {
+        const m = args[0] as { type?: string; event?: string };
+        if (m && typeof m === "object") {
+          const type = m.type === "custom" ? `custom:${m.event}` : m.type!;
+          if (type !== "custom:vite:invoke") events.push({ env: name, type });
+        }
+        return (send as (...a: unknown[]) => unknown)(...args);
+      }) as typeof hot.send;
+      restores.push(() => {
+        hot.send = send;
+      });
+    }
+
+    try {
+      await (await fetch(base + "/index.rsc")).text();
+
+      await fs.writeFile(
+        file,
+        original.replace('"from-server"', '"from-server-hmr"'),
+      );
+
+      await vi.waitFor(
+        async () => {
+          const flight = await (await fetch(base + "/index.rsc")).text();
+          expect(flight).toContain("from-server-hmr");
+        },
+        { timeout: 10_000, interval: 100 },
+      );
+
+      const rscEvents = events.filter((e) => e.env === "rsc");
+      expect(rscEvents.length).toBeGreaterThan(0);
+      expect(rscEvents.map((e) => e.type)).not.toContain("full-reload");
+      expect(events).toContainEqual({
+        env: "client",
+        type: "custom:rsc:update",
+      });
+    } finally {
+      for (const restore of restores) restore();
+      await fs.writeFile(file, original);
+      await vi.waitFor(
+        async () => {
+          const flight = await (await fetch(base + "/index.rsc")).text();
+          expect(flight).toContain("from-server");
+          expect(flight).not.toContain("from-server-hmr");
+        },
+        { timeout: 10_000, interval: 100 },
+      );
+    }
   });
 });
 

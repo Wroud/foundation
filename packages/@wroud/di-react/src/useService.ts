@@ -1,7 +1,6 @@
 import type { ServiceType } from "@wroud/di/types";
 import { useServiceIterator } from "./useServiceIterator.js";
-import { single } from "@wroud/di";
-import { isServiceTypeResolver } from "@wroud/di/service-type-resolvers/BaseServiceTypeResolver.js";
+import { single, isServiceTypeResolver } from "@wroud/di";
 
 export function useService<T>(type: ServiceType<T>): T {
   if (!isServiceTypeResolver(type)) {

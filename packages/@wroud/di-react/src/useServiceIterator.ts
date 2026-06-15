@@ -1,9 +1,8 @@
 import { ServiceLifetime } from "@wroud/di/di/ServiceLifetime.js";
 import { useServiceProvider } from "./useServiceProvider.js";
-import { ServiceProvider } from "@wroud/di/di/ServiceProvider.js";
 import type { IResolverServiceType } from "@wroud/di/types";
 import { useEffect, useRef } from "react";
-import { IServiceProvider } from "@wroud/di";
+import { IServiceProvider, ServiceProvider } from "@wroud/di";
 
 const unset = Symbol("unset");
 const EMPTY_CONTEXT = Object.freeze({});

@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.6.1 -->
+## 0.6.1 (2026-06-15)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/di-react-v0.6.0...di-react-v0.6.1)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- module duplication ([4db230b](https://github.com/Wroud/foundation/commit/4db230b))
+
 <!-- version:0.6.0 -->
 ## 0.6.0 (2025-09-25)
 

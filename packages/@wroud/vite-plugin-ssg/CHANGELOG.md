@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:7.1.0 -->
+## 7.1.0 (2026-06-15)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-ssg-v7.0.0...vite-plugin-ssg-v7.1.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- add hash-based Content Security Policy (CSP) support ([aa22d47](https://github.com/Wroud/foundation/commit/aa22d47))
+
 <!-- version:7.0.0 -->
 ## 7.0.0 (2026-06-14)
 

@@ -208,9 +208,9 @@ Lifecycle summary:
 
 By default, links are plain full-page loads — the plugin installs **no** global click or history handlers, so it never conflicts with your own router. To opt into streaming flight transitions, use the `navigate` function the plugin hands your app.
 
-`navigate(href)` only fetches that route's RSC payload and swaps the rendered tree in place — it does **not** touch the URL or history. You (or your router) own history; call `navigate()` to update the content.
+`navigate(href)` only fetches that route's RSC payload and swaps the rendered tree in place — it does **not** touch the URL or history. You (or your router) own history; call `navigate()` to update the content. Its returned promise **rejects** if the flight fetch fails (including when it consumes a prefetch that failed), so catch it and fall back to a full-page load — as the example below does.
 
-`navigate` is delivered through `context.navigate` — the same `context` your `onAppStart` receives. It exists only in the browser (it is `undefined` during SSR, where there is nothing to navigate), so capture it in your app data and let any component reach it via `useAppContext()`:
+`navigate` and `prefetch` are delivered through `context.navigate` / `context.prefetch` — the same `context` your `onAppStart` receives. They exist only in the browser (they are `undefined` during SSR, where there is nothing to navigate), so capture them in your app data and let any component reach them via `useAppContext()`:
 
 ```tsx
 import { createAppConfig } from "@wroud/vite-plugin-ssg/app";
@@ -220,21 +220,27 @@ export default createAppConfig(Index, {
   onAppStart: (context) => ({
     base: context.base ?? "/",
     navigate: context.navigate,
+    prefetch: context.prefetch,
   }),
   onRoutesPrerender: () => ["/", "/about"],
 });
 
 function Link({ href, children }: { href: string; children: React.ReactNode }) {
-  const { navigate } = useAppContext<{
+  const { navigate, prefetch } = useAppContext<{
     navigate?: (href: string) => Promise<void>;
+    prefetch?: (href: string) => Promise<void>;
   }>();
   return (
     <a
       href={href}
+      onPointerEnter={() => prefetch?.(href)}
+      onFocus={() => prefetch?.(href)}
       onClick={(e) => {
         e.preventDefault();
         history.pushState(null, "", href);
-        navigate?.(href);
+        navigate?.(href)?.catch(() => {
+          location.href = href;
+        });
       }}
     >
       {children}
@@ -244,6 +250,12 @@ function Link({ href, children }: { href: string; children: React.ReactNode }) {
 ```
 
 For browser back/forward, wire `popstate` yourself with the same `navigate`: `window.addEventListener("popstate", () => navigate(location.href))`.
+
+#### Intent-based prefetch
+
+`prefetch(href)` warms a route's flight **before** the user commits to navigating — call it on link hover, focus, or when a link scrolls into view, then `navigate(href)` on click reuses the warm payload instead of issuing a fresh request, so the transition has nothing to wait for.
+
+It fetches the same flight `navigate` would and stores the **parsed** payload in a small in-memory cache keyed by URL (hash-stripped), so it helps even for private/`no-store` routes that an HTTP cache can't reuse. It never swaps the rendered tree — only `navigate` does that. Concurrent `prefetch` calls for the same href (and a `navigate` that lands while a prefetch is still in flight) share a single request; a `navigate` that consumes a cached payload evicts it. The cache is bounded and entries expire after a short TTL, so warmed flights never go stale. Prefetch is best-effort: a failed prefetch is swallowed and evicts its entry, so the next `navigate` or `prefetch` retries cleanly. Server actions are never served from or written to this cache.
 
 ### Server actions (optional)
 

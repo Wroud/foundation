@@ -6,6 +6,7 @@ export interface IndexComponentContext {
   base?: string;
   headers?: Record<string, string | string[] | undefined>;
   navigate?: (href: string) => Promise<void>;
+  prefetch?: (href: string) => Promise<void>;
 }
 
 export interface IndexComponentProps {

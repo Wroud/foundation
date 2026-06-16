@@ -14,6 +14,7 @@ import {
 } from "@vitejs/plugin-rsc/browser";
 import type { SsrEntryModule } from "./server-ssr.js";
 import { createRscRenderRequest, type RscPayload } from "./shared.js";
+import { createFlightNavigation } from "./flight-navigation.js";
 import type { IAppContext } from "../../app.js";
 import type { IndexComponentContext } from "../IndexComponent.js";
 
@@ -24,11 +25,14 @@ export async function hydrate<T extends IAppContext>(
 
   setServerCallback(callServer);
 
+  const { navigate, prefetch } = createFlightNavigation({ fetchFlight, update });
+
   const context: IndexComponentContext = {
     href: window.location.href,
     base: initialPayload.context?.base ?? import.meta.env.BASE_URL,
     cspNonce: initialPayload.context?.cspNonce,
     navigate,
+    prefetch,
   };
   const appStartData = module
     ? await toAppInstance(module.default).start(context)
@@ -67,11 +71,8 @@ export async function hydrate<T extends IAppContext>(
     return returnValue?.data;
   }
 
-  let requestIndex = 0;
-  async function navigate(href = location.href) {
-    const url = new URL(href, location.href);
-    const request = ++requestIndex;
-    const next = await createFromFetch<RscPayload>(
+  function fetchFlight(url: URL): Promise<RscPayload> {
+    return createFromFetch<RscPayload>(
       fetch(createRscRenderRequest(url.href)).then((response) => {
         if (!response.ok) {
           throw new Error(
@@ -81,10 +82,6 @@ export async function hydrate<T extends IAppContext>(
         return response;
       }),
     );
-    if (requestIndex !== request) {
-      return;
-    }
-    update(next);
   }
 
   if (import.meta.hot) {

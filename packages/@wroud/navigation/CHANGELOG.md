@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:1.4.0 -->
+## 1.4.0 (2026-06-16)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/nav-v1.3.0...nav-v1.4.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- make notifyListeners asynchronous to handle promises in navigation events ([d09bf42](https://github.com/Wroud/foundation/commit/d09bf42))
+
 <!-- version:1.3.0 -->
 ## 1.3.0 (2026-06-08)
 

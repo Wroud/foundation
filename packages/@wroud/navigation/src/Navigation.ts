@@ -85,7 +85,7 @@ export class Navigation<TMatcher extends IRouteMatcher = IRouteMatcher>
       this.innerState.history.setHead(null);
     }
 
-    this.notifyListeners(NavigationType.Replace, previousState, state);
+    await this.notifyListeners(NavigationType.Replace, previousState, state);
   }
 
   /**
@@ -141,7 +141,7 @@ export class Navigation<TMatcher extends IRouteMatcher = IRouteMatcher>
 
     const previousState = this.state;
     this.innerState.position--;
-    this.notifyListeners(NavigationType.Back, previousState, state);
+    await this.notifyListeners(NavigationType.Back, previousState, state);
   }
 
   /**
@@ -165,13 +165,13 @@ export class Navigation<TMatcher extends IRouteMatcher = IRouteMatcher>
   /**
    * Notify all listeners of a navigation event
    */
-  private notifyListeners(
+  private async notifyListeners(
     type: NavigationType,
     from: IRouteState | null,
     to: IRouteState | null,
   ) {
     for (const listener of this.listeners) {
-      listener(type, from, to);
+      await listener(type, from, to);
     }
   }
 

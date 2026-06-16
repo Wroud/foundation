@@ -10,5 +10,5 @@ export enum NavigationType {
 export type NavigationListener = (
   type: NavigationType,
   from: IRouteState | null,
-  to: IRouteState | null
-) => void;
+  to: IRouteState | null,
+) => void | Promise<void>;

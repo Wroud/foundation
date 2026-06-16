@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:7.4.0 -->
+## 7.4.0 (2026-06-16)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-ssg-v7.3.0...vite-plugin-ssg-v7.4.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- implement flight navigation with prefetching capabilities and associated tests ([01ede41](https://github.com/Wroud/foundation/commit/01ede41))
+
 <!-- version:7.3.0 -->
 ## 7.3.0 (2026-06-15)
 

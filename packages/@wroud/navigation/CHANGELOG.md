@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:1.5.0 -->
+## 1.5.0 (2026-06-23)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/nav-v1.4.0...nav-v1.5.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- support for Navigation API for scroll handling and more native behavior ([c476b66](https://github.com/Wroud/foundation/commit/c476b66))
+
 <!-- version:1.4.0 -->
 ## 1.4.0 (2026-06-16)
 

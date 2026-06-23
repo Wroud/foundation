@@ -9,13 +9,18 @@ export class BrowserNavigation {
   private ignoreNextPopState: boolean;
   private ignoreNextHashChange: boolean;
   private skipNextHashChange: boolean;
+  private applyingFromBrowser: boolean;
+  private navApi: Navigation | null;
   constructor(private readonly navigation: INavigation) {
     this.ignoreNextPopState = false;
     this.ignoreNextHashChange = false;
     this.skipNextHashChange = false;
+    this.applyingFromBrowser = false;
+    this.navApi = null;
     this.popStateHandler = this.popStateHandler.bind(this);
     this.hashChangeHandler = this.hashChangeHandler.bind(this);
     this.handleNavigation = this.handleNavigation.bind(this);
+    this.handleNavigateEvent = this.handleNavigateEvent.bind(this);
   }
 
   async registerRoutes(): Promise<void> {
@@ -24,13 +29,72 @@ export class BrowserNavigation {
   }
 
   private addBrowserNavigation() {
-    window.addEventListener("popstate", this.popStateHandler);
-    window.addEventListener("hashchange", this.hashChangeHandler);
+    this.navApi = this.getNavigationApi();
+    if (this.navApi) {
+      this.navApi.addEventListener("navigate", this.handleNavigateEvent);
+    } else {
+      window.addEventListener("popstate", this.popStateHandler);
+      window.addEventListener("hashchange", this.hashChangeHandler);
+    }
     this.navigation.addListener(this.handleNavigation);
+  }
+
+  private getNavigationApi(): Navigation | null {
+    const nav = window.navigation;
+    if (nav && typeof nav.addEventListener === "function") {
+      return nav;
+    }
+    return null;
   }
 
   private async restoreNavigation() {
     await this.popStateHandler();
+  }
+
+  private handleNavigateEvent(event: NavigateEvent) {
+    if (this.applyingFromBrowser) {
+      return;
+    }
+    if (!event.canIntercept || event.downloadRequest !== null || event.formData) {
+      return;
+    }
+    if (event.navigationType !== "traverse" && !event.hashChange) {
+      return;
+    }
+
+    const matcher = this.navigation.router.matcher;
+    if (!matcher) {
+      return;
+    }
+
+    const url = this.destinationToUrl(event.destination.url);
+    const state = matcher.urlToState(url);
+    if (!state) {
+      return;
+    }
+
+    const current = this.navigation.getState();
+    if (current && matcher.stateToUrl(current) === matcher.stateToUrl(state)) {
+      return;
+    }
+
+    event.intercept({ handler: () => this.applyFromDestination(state) });
+  }
+
+  private async applyFromDestination(state: IRouteState): Promise<void> {
+    this.applyingFromBrowser = true;
+    try {
+      await this.navigation.navigate(state);
+    } finally {
+      this.applyingFromBrowser = false;
+    }
+  }
+
+  private destinationToUrl(url: string): string {
+    const parsed = new URL(url);
+    return (
+      decodeURIComponent(parsed.pathname) + parsed.search + parsed.hash
+    );
   }
 
   private handleNavigation(
@@ -38,6 +102,9 @@ export class BrowserNavigation {
     from: IRouteState | null,
     to: IRouteState | null,
   ) {
+    if (this.applyingFromBrowser) {
+      return;
+    }
     const matcher = this.navigation.router.matcher;
     const url = to ? (matcher?.stateToUrl(to) ?? undefined) : undefined;
     switch (type) {
@@ -212,8 +279,12 @@ export class BrowserNavigation {
   }
 
   dispose(): void | Promise<void> {
-    window.removeEventListener("popstate", this.popStateHandler);
-    window.removeEventListener("hashchange", this.hashChangeHandler);
+    if (this.navApi) {
+      this.navApi.removeEventListener("navigate", this.handleNavigateEvent);
+    } else {
+      window.removeEventListener("popstate", this.popStateHandler);
+      window.removeEventListener("hashchange", this.hashChangeHandler);
+    }
     this.navigation.removeListener(this.handleNavigation);
   }
 }

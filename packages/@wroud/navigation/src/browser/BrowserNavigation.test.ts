@@ -28,7 +28,16 @@ function parseUrl(url: string) {
   return { path, search, hash };
 }
 
-function setupBrowserMocks(initialPath = "/") {
+interface NavigateInit {
+  navigationType: "push" | "replace" | "reload" | "traverse";
+  url: string;
+  hashChange?: boolean;
+  canIntercept?: boolean;
+  downloadRequest?: string | null;
+  formData?: FormData | null;
+}
+
+function setupBrowserMocks(initialPath = "/", options: { navigationApi?: boolean } = {}) {
   const listeners: Record<string, Function[]> = {};
 
   const historyStack: Array<{ state: unknown; url: string }> = [
@@ -153,12 +162,111 @@ function setupBrowserMocks(initialPath = "/") {
     document: mockDocument,
   };
 
+  const navListeners: Function[] = [];
+  const order: string[] = [];
+  const interceptCalls: boolean[] = [];
+
+  function commit(navigationType: "push" | "replace", url: string) {
+    if (navigationType === "replace") {
+      historyStack[historyIndex] = { state: null, url };
+    } else {
+      historyStack.splice(historyIndex + 1);
+      historyStack.push({ state: null, url });
+      historyIndex++;
+    }
+  }
+
+  async function dispatchNavigate(init: NavigateInit): Promise<{
+    intercepted: boolean;
+  }> {
+    const {
+      navigationType,
+      url,
+      hashChange = false,
+      canIntercept = true,
+      downloadRequest = null,
+      formData = null,
+    } = init;
+    let intercepted = false;
+    let handler: (() => Promise<void> | void) | null = null;
+    const event = {
+      navigationType,
+      hashChange,
+      canIntercept,
+      downloadRequest,
+      formData,
+      destination: { url: new URL(url, "https://example.test").href },
+      scroll: vi.fn(),
+      intercept(opts?: { handler?: () => Promise<void> | void }) {
+        intercepted = true;
+        handler = opts?.handler ?? null;
+      },
+    };
+    for (const listener of [...navListeners]) {
+      listener(event);
+    }
+    interceptCalls.push(intercepted);
+    if (intercepted) {
+      if (handler) {
+        await (handler as () => Promise<void> | void)();
+      }
+      order.push("scroll-restore");
+    } else if (navigationType === "push" || navigationType === "replace") {
+      commit(navigationType, url);
+    }
+    return { intercepted };
+  }
+
+  const navigationMock = {
+    addEventListener: vi.fn((type: string, handler: Function) => {
+      if (type === "navigate") navListeners.push(handler);
+    }),
+    removeEventListener: vi.fn((type: string, handler: Function) => {
+      if (type === "navigate") {
+        const idx = navListeners.indexOf(handler);
+        if (idx >= 0) navListeners.splice(idx, 1);
+      }
+    }),
+    navigate: vi.fn(
+      (url: string, opts: { history?: "push" | "replace" } = {}) => {
+        const history = opts.history === "replace" ? "replace" : "push";
+        const prevHash = parseUrl(historyStack[historyIndex]!.url).hash;
+        const nextHash = parseUrl(url).hash;
+        void dispatchNavigate({
+          navigationType: history,
+          url,
+          hashChange: prevHash !== nextHash,
+        });
+        return { committed: Promise.resolve(), finished: Promise.resolve() };
+      },
+    ),
+  };
+
+  if (options.navigationApi) {
+    (mockWindow as { navigation?: unknown }).navigation = navigationMock;
+  }
+
   vi.stubGlobal("window", mockWindow);
 
   return {
     history: mockHistory,
     location: mockLocation,
     scrollTo: mockWindow.scrollTo,
+    navigate: navigationMock.navigate,
+    order,
+    interceptCalls,
+    dispatchNavigate,
+    simulateTraverse: (url: string, opts: { hashChange?: boolean } = {}) => {
+      historyStack[historyIndex] = {
+        state: historyStack[historyIndex]!.state,
+        url,
+      };
+      return dispatchNavigate({
+        navigationType: "traverse",
+        url,
+        hashChange: opts.hashChange ?? false,
+      });
+    },
     installNavigationApi: () => {
       const navigate = vi.fn(() => ({
         committed: Promise.resolve(),
@@ -505,6 +613,141 @@ describe("BrowserNavigation", () => {
     });
   });
 
+  describe("Navigation API interception", () => {
+    const tick = () => new Promise((r) => setTimeout(r, 0));
+
+    it("delays scroll restoration until the navigation render completes on back/forward", async () => {
+      const mocks = setupBrowserMocks("/dashboard", { navigationApi: true });
+      const navigation = createNavigation();
+      navigation.router.addRoute({ id: "/" });
+      navigation.router.addRoute({ id: "/dashboard" });
+
+      const browser = new BrowserNavigation(navigation);
+      await browser.registerRoutes();
+
+      navigation.addListener(async () => {
+        await tick();
+        mocks.order.push("render");
+      });
+
+      mocks.order.length = 0;
+
+      const { intercepted } = await mocks.simulateTraverse("/");
+
+      expect(intercepted).toBe(true);
+      expect(navigation.state).toEqual({ id: "/", params: {} });
+      expect(mocks.order).toEqual(["render", "scroll-restore"]);
+    });
+
+    it("uses the navigate event instead of popstate when the API is available", async () => {
+      const mocks = setupBrowserMocks("/", { navigationApi: true });
+      const navigation = createNavigation();
+      navigation.router.addRoute({ id: "/" });
+
+      const browser = new BrowserNavigation(navigation);
+      await browser.registerRoutes();
+
+      expect(window.navigation!.addEventListener).toHaveBeenCalledWith(
+        "navigate",
+        expect.any(Function),
+      );
+      expect(window.addEventListener).not.toHaveBeenCalledWith(
+        "popstate",
+        expect.any(Function),
+      );
+      void mocks;
+    });
+
+    it("does not intercept the navigate event echoed by a programmatic push", async () => {
+      const mocks = setupBrowserMocks("/", { navigationApi: true });
+      const navigation = createNavigation();
+      navigation.router.addRoute({ id: "/" });
+      navigation.router.addRoute({ id: "/dashboard" });
+
+      const browser = new BrowserNavigation(navigation);
+      await browser.registerRoutes();
+
+      await navigation.navigate({ id: "/dashboard", params: {} });
+      expect(mocks.history.pushState).toHaveBeenCalled();
+
+      const { intercepted } = await mocks.dispatchNavigate({
+        navigationType: "push",
+        url: "/dashboard",
+      });
+
+      expect(intercepted).toBe(false);
+      expect(navigation.state).toEqual({ id: "/dashboard", params: {} });
+    });
+
+    it("does not intercept the navigate event from a programmatic hash navigation", async () => {
+      const mocks = setupBrowserMocks("/", { navigationApi: true });
+      const navigation = createNavigation();
+      navigation.router.addRoute({ id: "/" });
+      navigation.router.addRoute({ id: "/docs" });
+
+      const browser = new BrowserNavigation(navigation);
+      await browser.registerRoutes();
+
+      mocks.interceptCalls.length = 0;
+      await navigation.navigate({ id: "/docs", params: {}, hash: "#section" });
+      await tick();
+
+      expect(mocks.navigate).toHaveBeenCalledWith(
+        "/docs#section",
+        expect.objectContaining({ history: "push" }),
+      );
+      expect(mocks.interceptCalls.every((c) => c === false)).toBe(true);
+      expect(navigation.state).toEqual({
+        id: "/docs",
+        params: {},
+        hash: "#section",
+      });
+    });
+
+    it("intercepts a hash-only traversal and lets the browser handle scroll", async () => {
+      const mocks = setupBrowserMocks("/docs#a", { navigationApi: true });
+      const navigation = createNavigation();
+      navigation.router.addRoute({ id: "/" });
+      navigation.router.addRoute({ id: "/docs" });
+
+      const browser = new BrowserNavigation(navigation);
+      await browser.registerRoutes();
+
+      const target = mocks.addElement("b");
+
+      const { intercepted } = await mocks.simulateTraverse("/docs#b", {
+        hashChange: true,
+      });
+
+      expect(intercepted).toBe(true);
+      expect(navigation.state).toEqual({
+        id: "/docs",
+        params: {},
+        hash: "#b",
+      });
+      expect(target.scrollIntoView).not.toHaveBeenCalled();
+    });
+
+    it("ignores cross-document navigations that cannot be intercepted", async () => {
+      const mocks = setupBrowserMocks("/", { navigationApi: true });
+      const navigation = createNavigation();
+      navigation.router.addRoute({ id: "/" });
+      navigation.router.addRoute({ id: "/dashboard" });
+
+      const browser = new BrowserNavigation(navigation);
+      await browser.registerRoutes();
+
+      const { intercepted } = await mocks.dispatchNavigate({
+        navigationType: "traverse",
+        url: "/dashboard",
+        canIntercept: false,
+      });
+
+      expect(intercepted).toBe(false);
+      expect(navigation.state).toEqual({ id: "/", params: {} });
+    });
+  });
+
   describe("dispose", () => {
     it("should remove event listeners and navigation listener", async () => {
       setupBrowserMocks("/");
@@ -522,6 +765,22 @@ describe("BrowserNavigation", () => {
       );
       expect(window.removeEventListener).toHaveBeenCalledWith(
         "hashchange",
+        expect.any(Function),
+      );
+    });
+
+    it("removes the navigate listener in Navigation API mode", async () => {
+      setupBrowserMocks("/", { navigationApi: true });
+      const navigation = createNavigation();
+      navigation.router.addRoute({ id: "/" });
+
+      const browser = new BrowserNavigation(navigation);
+      await browser.registerRoutes();
+
+      browser.dispose();
+
+      expect(window.navigation!.removeEventListener).toHaveBeenCalledWith(
+        "navigate",
         expect.any(Function),
       );
     });

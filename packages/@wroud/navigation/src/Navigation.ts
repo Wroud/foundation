@@ -119,7 +119,7 @@ export class Navigation<TMatcher extends IRouteMatcher = IRouteMatcher>
     }
 
     this.innerState.position++;
-    this.notifyListeners(NavigationType.Navigate, previousState, state);
+    await this.notifyListeners(NavigationType.Navigate, previousState, state);
   }
 
   /**
@@ -171,7 +171,11 @@ export class Navigation<TMatcher extends IRouteMatcher = IRouteMatcher>
     to: IRouteState | null,
   ) {
     for (const listener of this.listeners) {
-      await listener(type, from, to);
+      try {
+        await listener(type, from, to);
+      } catch (error) {
+        console.error("Navigation listener failed", error);
+      }
     }
   }
 

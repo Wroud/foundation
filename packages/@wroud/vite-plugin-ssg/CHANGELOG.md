@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:7.4.1 -->
+## 7.4.1 (2026-07-04)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-ssg-v7.4.0...vite-plugin-ssg-v7.4.1)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- render Script and Link as universal components to stop RSC double-emission ([135b910](https://github.com/Wroud/foundation/commit/135b910))
+
 <!-- version:7.4.0 -->
 ## 7.4.0 (2026-06-16)
 

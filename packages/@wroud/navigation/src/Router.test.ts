@@ -116,6 +116,21 @@ describe("Router", () => {
         expect(router.buildUrl("/non-existent", {})).toBeNull();
       });
 
+      it("should apply the matcher base to the root route", () => {
+        const withBase = new Router({
+          matcher: new TriePatternMatching({
+            trailingSlash: false,
+            base: "/app",
+          }),
+        });
+        withBase.addRoute({ id: "/" });
+
+        expect(withBase.buildUrl("/", {})).toBe("/app");
+        expect(withBase.buildUrl("/", {})).toBe(
+          withBase.stateToUrl({ id: "/", params: {} }),
+        );
+      });
+
       it("should handle different parameter values correctly", () => {
         expect(router.buildUrl("/app/users/:id", { id: "123" })).toBe(
           "/app/users/123",

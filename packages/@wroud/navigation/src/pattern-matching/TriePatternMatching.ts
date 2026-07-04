@@ -14,6 +14,7 @@ import {
 import {
   buildQueryString,
   buildUrlSegments,
+  extractUnknownQuery,
   matchQueryParams,
   validateParameters,
 } from "./parameter-utils.js";
@@ -142,9 +143,12 @@ export class TriePatternMatching implements TypedPatternMatcher, IRouteMatcher {
       return null;
     }
 
+    const unknownQuery = extractUnknownQuery(query, queryDefs);
+
     return {
       id: pattern as Pattern,
       params: params as ExtractRouteParams<Pattern>,
+      ...(unknownQuery ? { unknownQuery } : {}),
       ...(hash ? { hash } : {}),
     };
   }
@@ -187,11 +191,6 @@ export class TriePatternMatching implements TypedPatternMatcher, IRouteMatcher {
     params: ExtractRouteParams<Pattern>,
     hash?: string,
   ): string {
-    // Special case for root path
-    if (pattern === "/") {
-      return hash ? "/" + hash : "/";
-    }
-
     const paramsKey = JSON.stringify([params, hash ?? null]);
 
     // Check cache
@@ -223,7 +222,9 @@ export class TriePatternMatching implements TypedPatternMatcher, IRouteMatcher {
     let result = this.addBaseToUrl(joinPath(resultSegments));
 
     if (!this.options.trailingSlash) {
-      result = result.replace(/\/$/, "");
+      if (result.length > 1) {
+        result = result.replace(/\/$/, "");
+      }
     } else if (!result.endsWith("/")) {
       result += "/";
     }
@@ -421,15 +422,39 @@ export class TriePatternMatching implements TypedPatternMatcher, IRouteMatcher {
   ): string | null {
     if (!this.patterns.has(state.id)) return null;
     // Simplified - encode() already handles validation and will return proper results
-    return this.encode(state.id, state.params, state.hash);
+    let url = this.encode(state.id, state.params);
+    if (state.unknownQuery) {
+      const unknownQuery = extractUnknownQuery(
+        state.unknownQuery,
+        this.patternQueryDefs.get(state.id),
+      );
+      if (unknownQuery) {
+        url += (url.includes("?") ? "&" : "?") + unknownQuery;
+      }
+    }
+    if (state.hash) {
+      url += state.hash;
+    }
+    return url;
   }
 
   /**
    * Remove base path from URL if present
    */
   private removeBaseFromUrl(url: string): string {
-    if (this.options.base && url.startsWith(this.options.base)) {
-      return url.replace(this.options.base, "");
+    const base = this.options.base?.replace(/\/$/, "");
+    if (!base) {
+      return url;
+    }
+    if (url === base) {
+      return "/";
+    }
+    if (
+      url.startsWith(base + "/") ||
+      url.startsWith(base + "?") ||
+      url.startsWith(base + "#")
+    ) {
+      return url.slice(base.length) || "/";
     }
     return url;
   }

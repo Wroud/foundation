@@ -87,15 +87,16 @@ function setupBrowserMocks(initialPath = "/", options: { navigationApi?: boolean
 
   const mockHistory = {
     pushState: vi.fn((state: unknown, _title: string, url?: string | null) => {
+      const currentUrl = historyStack[historyIndex]!.url;
       historyStack.splice(historyIndex + 1);
-      historyStack.push({ state, url: url ?? mockLocation.pathname });
+      historyStack.push({ state, url: url ?? currentUrl });
       historyIndex++;
     }),
     replaceState: vi.fn(
       (state: unknown, _title: string, url?: string | null) => {
         historyStack[historyIndex] = {
           state,
-          url: url ?? mockLocation.pathname,
+          url: url ?? historyStack[historyIndex]!.url,
         };
       },
     ),
@@ -284,6 +285,7 @@ function setupBrowserMocks(initialPath = "/", options: { navigationApi?: boolean
     },
     getHistoryStack: () => [...historyStack],
     getHistoryIndex: () => historyIndex,
+    getCurrentUrl: () => historyStack[historyIndex]!.url,
     setUrl: (url: string) => {
       historyStack[historyIndex] = {
         state: historyStack[historyIndex]!.state,
@@ -425,6 +427,26 @@ describe("BrowserNavigation", () => {
       // Should use replaceState since URL matches
       expect(mocks.history.replaceState).toHaveBeenCalled();
       expect(mocks.history.pushState).not.toHaveBeenCalled();
+      expect(mocks.getCurrentUrl()).toBe("/search?q=test");
+    });
+
+    it("replaces state and keeps the URL on a same-route navigation from a tracking URL", async () => {
+      const mocks = setupBrowserMocks("/dashboard?gclid=x");
+      const navigation = createNavigation();
+      navigation.router.addRoute({ id: "/" });
+      navigation.router.addRoute({ id: "/dashboard" });
+
+      const browser = new BrowserNavigation(navigation);
+      await browser.registerRoutes();
+
+      mocks.history.pushState.mockClear();
+      mocks.history.replaceState.mockClear();
+
+      await navigation.navigate({ id: "/dashboard", params: {} });
+
+      expect(mocks.history.pushState).not.toHaveBeenCalled();
+      expect(mocks.history.replaceState).toHaveBeenCalled();
+      expect(mocks.getCurrentUrl()).toBe("/dashboard?gclid=x");
     });
   });
 
@@ -441,6 +463,74 @@ describe("BrowserNavigation", () => {
       // During registerRoutes, restoreNavigation calls popStateHandler
       // which should use replaceState (URL is already /dashboard)
       expect(mocks.history.replaceState).toHaveBeenCalled();
+      expect(mocks.history.pushState).not.toHaveBeenCalled();
+    });
+
+    it("keeps query params not declared in the route on initial restore", async () => {
+      const mocks = setupBrowserMocks("/?gclid=abc&gad_source=1");
+      const navigation = createNavigation();
+      navigation.router.addRoute({ id: "/" });
+
+      const browser = new BrowserNavigation(navigation);
+      await browser.registerRoutes();
+
+      expect(mocks.getCurrentUrl()).toBe("/?gclid=abc&gad_source=1");
+      expect(mocks.history.pushState).not.toHaveBeenCalled();
+      expect(navigation.state).toEqual({
+        id: "/",
+        params: {},
+        unknownQuery: "gclid=abc&gad_source=1",
+      });
+    });
+
+    it("keeps undeclared query params alongside declared ones on initial restore", async () => {
+      const mocks = setupBrowserMocks("/search?q=test&gclid=x");
+      const navigation = createNavigation();
+      navigation.router.addRoute({ id: "/" });
+      navigation.router.addRoute({ id: "/search?q=:q" });
+
+      const browser = new BrowserNavigation(navigation);
+      await browser.registerRoutes();
+
+      expect(mocks.getCurrentUrl()).toBe("/search?q=test&gclid=x");
+      expect(navigation.state).toEqual({
+        id: "/search?q=:q",
+        params: { q: "test" },
+        unknownQuery: "gclid=x",
+      });
+    });
+
+    it("does not rewrite the URL to append a trailing slash on restore", async () => {
+      const mocks = setupBrowserMocks("/dashboard?gclid=x");
+      const router = new Router({
+        matcher: new TriePatternMatching({ trailingSlash: true }),
+      });
+      const navigation = new Navigation(router);
+      navigation.router.addRoute({ id: "/" });
+      navigation.router.addRoute({ id: "/dashboard" });
+
+      const browser = new BrowserNavigation(navigation);
+      await browser.registerRoutes();
+
+      expect(mocks.getCurrentUrl()).toBe("/dashboard?gclid=x");
+      expect(mocks.history.pushState).not.toHaveBeenCalled();
+    });
+
+    it("does not strip the base path when restoring at the root route", async () => {
+      const mocks = setupBrowserMocks("/app/?gclid=x");
+      const router = new Router({
+        matcher: new TriePatternMatching({
+          trailingSlash: false,
+          base: "/app",
+        }),
+      });
+      const navigation = new Navigation(router);
+      navigation.router.addRoute({ id: "/" });
+
+      const browser = new BrowserNavigation(navigation);
+      await browser.registerRoutes();
+
+      expect(mocks.getCurrentUrl()).toBe("/app/?gclid=x");
       expect(mocks.history.pushState).not.toHaveBeenCalled();
     });
   });
@@ -465,9 +555,9 @@ describe("BrowserNavigation", () => {
       expect(mocks.history.replaceState).toHaveBeenCalledWith(
         { id: "/docs", params: {}, hash: "#section" },
         "",
-        "/docs#section",
       );
       expect(mocks.history.pushState).not.toHaveBeenCalled();
+      expect(mocks.getCurrentUrl()).toBe("/docs#section");
     });
 
     it("clears the hash and leaves scroll to the app on a hashless navigation", async () => {
@@ -515,6 +605,24 @@ describe("BrowserNavigation", () => {
         state: { id: "/docs", params: {}, hash: "#section" },
       });
       expect(mocks.history.pushState).not.toHaveBeenCalled();
+    });
+
+    it("keeps undeclared query params on a hash-only navigation", async () => {
+      const mocks = setupBrowserMocks("/docs?gclid=x");
+      const navigation = createNavigation();
+      navigation.router.addRoute({ id: "/" });
+      navigation.router.addRoute({ id: "/docs" });
+
+      const browser = new BrowserNavigation(navigation);
+      await browser.registerRoutes();
+
+      mocks.history.pushState.mockClear();
+
+      await navigation.navigate({ id: "/docs", params: {}, hash: "#section" });
+
+      expect(mocks.history.pushState).not.toHaveBeenCalled();
+      expect(mocks.location.hash).toBe("#section");
+      expect(mocks.getCurrentUrl()).toBe("/docs?gclid=x#section");
     });
 
     it("uses location.hash (not pushState) for a hash-only forward change", async () => {

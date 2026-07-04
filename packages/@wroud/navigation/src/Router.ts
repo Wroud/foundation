@@ -117,11 +117,6 @@ export class Router<TMatcher extends IRouteMatcher = IRouteMatcher>
       params: params as Record<string, string>,
     };
 
-    // Special case for root path
-    if (routeId === "/") {
-      return "/";
-    }
-
     return this.matcher.stateToUrl(state);
   }
 

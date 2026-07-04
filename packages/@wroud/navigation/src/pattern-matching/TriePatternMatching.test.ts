@@ -1241,6 +1241,49 @@ describe("TriePatternMatching", () => {
       expect(match?.id).toBe("/users/:id");
       expect(match?.params).toEqual({ id: "123" });
     });
+
+    test("should apply the base to the root pattern in encode", () => {
+      const withBase = new TriePatternMatching({
+        trailingSlash: false,
+        base: "/app",
+      });
+      withBase.addPattern("/");
+      expect(withBase.encode("/", {})).toBe("/app");
+      expect(withBase.urlToState("/app")).toEqual({ id: "/", params: {} });
+
+      const withBaseTrailing = new TriePatternMatching({
+        trailingSlash: true,
+        base: "/app",
+      });
+      withBaseTrailing.addPattern("/");
+      expect(withBaseTrailing.encode("/", {})).toBe("/app/");
+      expect(withBaseTrailing.urlToState("/app/")).toEqual({
+        id: "/",
+        params: {},
+      });
+    });
+
+    test("should round-trip the root pattern when base ends with a slash", () => {
+      const matcher = new TriePatternMatching({
+        trailingSlash: false,
+        base: "/app/",
+      });
+      matcher.addPattern("/");
+      const url = matcher.encode("/", {});
+      expect(url).toBe("/app");
+      expect(matcher.urlToState(url)).toEqual({ id: "/", params: {} });
+    });
+
+    test("should not strip the base from URLs that merely share its prefix", () => {
+      const matcher = new TriePatternMatching({
+        trailingSlash: false,
+        base: "/app",
+      });
+      matcher.addPattern("/");
+      matcher.addPattern("/dashboard");
+      expect(matcher.match("/appdashboard")).toBeNull();
+      expect(matcher.match("/app/dashboard")?.id).toBe("/dashboard");
+    });
   });
 
   describe("Query parameters", () => {
@@ -1375,11 +1418,98 @@ describe("TriePatternMatching", () => {
       expect(match?.params).toEqual({ query: "hello", page: 3 });
     });
 
-    test("should ignore extra query params in URL not defined in pattern", () => {
+    test("should keep extra query params not defined in pattern in unknownQuery", () => {
       patternMatcher.addPattern("/search?q=:query");
       const match = patternMatcher.match("/search?q=hello&lang=en&sort=asc");
       expect(match?.id).toBe("/search?q=:query");
       expect(match?.params).toEqual({ query: "hello" });
+      expect(match?.unknownQuery).toBe("lang=en&sort=asc");
+    });
+
+    test("should keep the whole query in unknownQuery when pattern declares no query params", () => {
+      patternMatcher.addPattern("/landing");
+      const match = patternMatcher.match("/landing?gclid=abc&utm_source=x");
+      expect(match).toEqual({
+        id: "/landing",
+        params: {},
+        unknownQuery: "gclid=abc&utm_source=x",
+      });
+    });
+
+    test("should omit unknownQuery when all query params are declared", () => {
+      patternMatcher.addPattern("/search?q=:query");
+      const match = patternMatcher.match("/search?q=hello");
+      expect(match).toEqual({
+        id: "/search?q=:query",
+        params: { query: "hello" },
+      });
+    });
+
+    test("should re-emit unknownQuery in stateToUrl after declared params", () => {
+      patternMatcher.addPattern("/search?q=:query");
+      const state = patternMatcher.urlToState("/search?q=hello&gclid=abc");
+      expect(patternMatcher.stateToUrl(state!)).toBe(
+        "/search?q=hello&gclid=abc",
+      );
+    });
+
+    test("should round-trip unknownQuery for routes without declared query params", () => {
+      patternMatcher.addPattern("/landing");
+      const state = patternMatcher.urlToState(
+        "/landing?gclid=abc&utm_source=x",
+      );
+      expect(patternMatcher.stateToUrl(state!)).toBe(
+        "/landing?gclid=abc&utm_source=x",
+      );
+    });
+
+    test("should round-trip unknownQuery on the root route", () => {
+      patternMatcher.addPattern("/");
+      const state = patternMatcher.urlToState("/?gclid=abc");
+      expect(state).toEqual({
+        id: "/",
+        params: {},
+        unknownQuery: "gclid=abc",
+      });
+      expect(patternMatcher.stateToUrl(state!)).toBe("/?gclid=abc");
+    });
+
+    test("should preserve repeated undeclared query keys verbatim", () => {
+      patternMatcher.addPattern("/list");
+      const state = patternMatcher.urlToState("/list?tag=a&tag=b");
+      expect(state?.unknownQuery).toBe("tag=a&tag=b");
+      expect(patternMatcher.stateToUrl(state!)).toBe("/list?tag=a&tag=b");
+    });
+
+    test("should emit unknownQuery before the hash", () => {
+      patternMatcher.addPattern("/docs");
+      const state = patternMatcher.urlToState("/docs?gclid=abc#section");
+      expect(state).toEqual({
+        id: "/docs",
+        params: {},
+        unknownQuery: "gclid=abc",
+        hash: "#section",
+      });
+      expect(patternMatcher.stateToUrl(state!)).toBe("/docs?gclid=abc#section");
+    });
+
+    test("should keep the leading slash for a root pattern with query params", () => {
+      const matcher = new TriePatternMatching({ trailingSlash: false });
+      matcher.addPattern("/?q=:query");
+      expect(matcher.encode("/?q=:query", { query: "hello" } as any)).toBe(
+        "/?q=hello",
+      );
+    });
+
+    test("should drop carried unknownQuery keys that collide with declared params", () => {
+      patternMatcher.addPattern("/search?q=:query");
+      expect(
+        patternMatcher.stateToUrl({
+          id: "/search?q=:query",
+          params: { query: "hello" },
+          unknownQuery: "q=evil&gclid=x",
+        } as any),
+      ).toBe("/search?q=hello&gclid=x");
     });
 
     test("should decode URL-encoded query values", () => {

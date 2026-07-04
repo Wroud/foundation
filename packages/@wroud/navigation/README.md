@@ -120,6 +120,22 @@ console.log(url); // "/search?q=hello&page=2"
 // Decode — typed params are automatically converted
 const params = router.matchUrl("/search?q=hello&page=2");
 console.log(params); // { id: "...", params: { query: "hello", page: 2 } }
+
+// Query params not declared in the pattern (e.g. gclid, utm_*) are kept
+// verbatim on the state and re-emitted by stateToUrl, so landing URLs
+// survive navigation restoration untouched
+const state = router.matchUrl("/search?q=hello&gclid=abc");
+console.log(state); // { id: "...", params: { query: "hello" }, unknownQuery: "gclid=abc" }
+console.log(router.stateToUrl(state)); // "/search?q=hello&gclid=abc"
+
+// Undeclared params attach only to states created from a URL — hand-built
+// states produce clean URLs, so they don't leak into in-app links. To carry
+// them across a navigation explicitly:
+await navigation.navigate({
+  id: "/search?q=:query!&page=:page<number>&sort=:sort",
+  params: { query: "next" },
+  unknownQuery: navigation.state?.unknownQuery,
+});
 ```
 
 ### Browser Integration

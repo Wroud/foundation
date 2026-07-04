@@ -208,6 +208,37 @@ export function matchQueryParams(
 }
 
 /**
+ * Returns the query pairs not consumed by the pattern's query definitions,
+ * verbatim and in source order, without the leading "?".
+ */
+export function extractUnknownQuery(
+  query: string,
+  queryDefs?: QueryParamDef[],
+): string {
+  if (!query) return "";
+  if (!queryDefs || queryDefs.length === 0) return query;
+
+  const declaredKeys = new Set(queryDefs.map((def) => def.key));
+  return query
+    .split("&")
+    .filter((pair) => {
+      if (!pair) return false;
+      const eqIndex = pair.indexOf("=");
+      const rawKey = eqIndex === -1 ? pair : pair.slice(0, eqIndex);
+      return !declaredKeys.has(decodeQueryKey(rawKey));
+    })
+    .join("&");
+}
+
+function decodeQueryKey(key: string): string {
+  try {
+    return decodeURIComponent(key.replace(/\+/g, " "));
+  } catch {
+    return key;
+  }
+}
+
+/**
  * Builds a query string from pattern definitions and parameters.
  * Returns the query string including the leading "?" or empty string if no params are set.
  */

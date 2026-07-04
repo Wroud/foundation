@@ -283,4 +283,39 @@ describe("Parameter Utilities", () => {
       expect(validateSpy).toHaveBeenCalledTimes(1);
     });
   });
+
+  describe("extractUnknownQuery", () => {
+    const defs = [
+      { key: "q", paramName: "query", paramType: "string", required: false },
+    ];
+
+    test("returns empty string for empty query", () => {
+      expect(parameterUtils.extractUnknownQuery("", defs)).toBe("");
+    });
+
+    test("returns the whole query when no defs are provided", () => {
+      expect(parameterUtils.extractUnknownQuery("a=1&b=2")).toBe("a=1&b=2");
+      expect(parameterUtils.extractUnknownQuery("a=1&b=2", [])).toBe(
+        "a=1&b=2",
+      );
+    });
+
+    test("filters out all occurrences of declared keys", () => {
+      expect(
+        parameterUtils.extractUnknownQuery("q=a&gclid=x&q=b", defs),
+      ).toBe("gclid=x");
+    });
+
+    test("keeps undeclared pairs verbatim including encoding", () => {
+      expect(
+        parameterUtils.extractUnknownQuery("q=a&name=John%20Doe&flag", defs),
+      ).toBe("name=John%20Doe&flag");
+    });
+
+    test("matches declared keys against decoded pair keys", () => {
+      expect(parameterUtils.extractUnknownQuery("%71=a&gclid=x", defs)).toBe(
+        "gclid=x",
+      );
+    });
+  });
 });

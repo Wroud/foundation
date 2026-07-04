@@ -110,14 +110,14 @@ export class BrowserNavigation {
     switch (type) {
       case NavigationType.Navigate: {
         if (this.isBrowserAt(to)) {
-          window.history.replaceState(to, "", url);
+          window.history.replaceState(to, "");
           break;
         }
         if (to?.hash) {
           if (this.isHashOnlyChange(from, to)) {
             this.ignoreNextHashChange = true;
             window.location.hash = to.hash;
-            window.history.replaceState(to, "", url);
+            window.history.replaceState(to, "");
             break;
           }
           if (this.tryNativeNavigate(url, "push", to)) {
@@ -132,7 +132,7 @@ export class BrowserNavigation {
       }
       case NavigationType.Replace: {
         if (this.isBrowserAt(to)) {
-          window.history.replaceState(to, "", url);
+          window.history.replaceState(to, "");
           break;
         }
         if (to?.hash) {
@@ -205,12 +205,15 @@ export class BrowserNavigation {
     if (!matcher || !state) {
       return false;
     }
-    const target = matcher.stateToUrl(state);
+    const target = matcher.stateToUrl({ ...state, unknownQuery: undefined });
     if (target == null) {
       return false;
     }
     const current = matcher.urlToState(this.currentUrl());
-    return current != null && matcher.stateToUrl(current) === target;
+    return (
+      current != null &&
+      matcher.stateToUrl({ ...current, unknownQuery: undefined }) === target
+    );
   }
 
   private isHashOnlyChange(
@@ -222,8 +225,8 @@ export class BrowserNavigation {
       return false;
     }
     return (
-      matcher.stateToUrl({ ...from, hash: undefined }) ===
-      matcher.stateToUrl({ ...to, hash: undefined })
+      matcher.stateToUrl({ ...from, hash: undefined, unknownQuery: undefined }) ===
+      matcher.stateToUrl({ ...to, hash: undefined, unknownQuery: undefined })
     );
   }
 

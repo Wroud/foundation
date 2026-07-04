@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:1.6.0 -->
+## 1.6.0 (2026-07-04)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/nav-v1.5.0...nav-v1.6.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- preserve undeclared query params and stop URL rewrite on navigation restore ([4085745](https://github.com/Wroud/foundation/commit/4085745))
+
 <!-- version:1.5.0 -->
 ## 1.5.0 (2026-06-23)
 

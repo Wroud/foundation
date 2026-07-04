@@ -10,5 +10,8 @@ export default defineConfig({
   build: {
     outDir: "dist",
   },
+  html: {
+    cspNonce: "test-nonce",
+  },
   plugins: [ssgPlugin()],
 });

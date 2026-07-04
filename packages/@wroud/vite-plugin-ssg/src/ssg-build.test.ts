@@ -146,6 +146,39 @@ describe("rsc ssg build (rsc-only: server components, no client entry)", () => {
     );
     expect(await read("about.html")).toContain('data-testid="path">/about');
   });
+
+  it("emits server-rendered Script and Link exactly once", async () => {
+    const index = await read("index.html");
+    const count = (re: RegExp) => (index.match(re) ?? []).length;
+    expect(count(/data-testid="rsc-nonced-link"/g)).toBe(1);
+    expect(count(/data-testid="rsc-inline-script"/g)).toBe(1);
+    expect(count(/data-testid="rsc-plain-script"/g)).toBe(1);
+  });
+
+  it("serializes server Script/Link as host elements, not client references", async () => {
+    const rsc = await read("index.rsc");
+    expect(rsc).not.toMatch(/,"Script",\d\]/);
+    expect(rsc).not.toMatch(/,"Link",\d\]/);
+    expect(rsc).toContain('["$","link"');
+    expect(rsc).toContain('"data-testid":"rsc-plain-script"');
+  });
+
+  it("applies the request cspNonce to server-rendered Script/Link", async () => {
+    const index = await read("index.html");
+    const link = index.match(
+      /<link[^>]*data-testid="rsc-nonced-link"[^>]*>/,
+    )?.[0];
+    const inlineScript = index.match(
+      /<script[^>]*data-testid="rsc-inline-script"[^>]*>/,
+    )?.[0];
+    const plainScript = index.match(
+      /<script[^>]*data-testid="rsc-plain-script"[^>]*>/,
+    )?.[0];
+    expect(link).toContain('nonce="test-nonce"');
+    expect(inlineScript).toContain('nonce="test-nonce"');
+    expect(plainScript).toBeTruthy();
+    expect(plainScript).not.toContain("nonce");
+  });
 });
 
 describe("rsc ssg build (minimal: explicit entry, no onRoutesPrerender)", () => {

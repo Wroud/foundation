@@ -6,6 +6,10 @@
   "sideEffects": [],
   "exports": {
     ".": "./lib/ssgPlugin.js",
+    "./react/components/renderContextAccessor": {
+      "react-server": "./lib/react/components/renderContextAccessor.react-server.js",
+      "default": "./lib/react/components/renderContextAccessor.js"
+    },
     "./*": "./lib/*.js"
   },
   "scripts": {

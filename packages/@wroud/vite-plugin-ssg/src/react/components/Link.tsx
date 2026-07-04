@@ -1,8 +1,6 @@
-"use client";
-
 import { type LinkHTMLAttributes } from "react";
 import { pathUrlWithBase } from "../pathUrlWithBase.js";
-import { useRenderContext } from "./RenderContext.js";
+import { useRenderContext } from "@wroud/vite-plugin-ssg/react/components/renderContextAccessor";
 
 export interface LinkProps extends LinkHTMLAttributes<HTMLLinkElement> {}
 

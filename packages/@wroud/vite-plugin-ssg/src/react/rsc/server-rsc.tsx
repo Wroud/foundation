@@ -10,6 +10,7 @@ import type { Transformer } from "node:stream/web";
 import type { ReactFormState } from "react-dom/client";
 import { toRscInstance, type RscInstance } from "../../app/RscConfig.js";
 import { RenderContextProvider } from "../components/RenderContext.js";
+import { runWithRenderContext } from "../components/renderContextAccessor.react-server.js";
 import type {
   IndexComponent,
   IndexComponentContext,
@@ -160,13 +161,12 @@ export function createSsgRuntime<T extends IAppContext>(
         ...context,
         base: app.base ?? context.base,
       });
+      const renderContext = {
+        base: clientContext.base ?? "/",
+        cspNonce: clientContext.cspNonce,
+      };
       const root = (
-        <RenderContextProvider
-          value={{
-            base: clientContext.base ?? "/",
-            cspNonce: clientContext.cspNonce,
-          }}
-        >
+        <RenderContextProvider value={renderContext}>
           {options.css}
           {clientContext.cspNonce && (
             <meta
@@ -186,10 +186,12 @@ export function createSsgRuntime<T extends IAppContext>(
       if (action?.formState) {
         payload.formState = action.formState;
       }
-      const stream = renderToReadableStream<RscPayload>(payload, {
-        signal,
-        temporaryReferences: action?.temporaryReferences,
-      });
+      const stream = runWithRenderContext(renderContext, () =>
+        renderToReadableStream<RscPayload>(payload, {
+          signal,
+          temporaryReferences: action?.temporaryReferences,
+        }),
+      );
       const stopTransformer: Transformer<Uint8Array, Uint8Array> = {
         flush: stopApp,
         cancel: stopApp,

@@ -1,8 +1,6 @@
-"use client";
-
 import { type ScriptHTMLAttributes } from "react";
 import { pathUrlWithBase } from "../pathUrlWithBase.js";
-import { useRenderContext } from "./RenderContext.js";
+import { useRenderContext } from "@wroud/vite-plugin-ssg/react/components/renderContextAccessor";
 
 export interface ScriptProps extends ScriptHTMLAttributes<HTMLScriptElement> {
   forceNonce?: boolean;

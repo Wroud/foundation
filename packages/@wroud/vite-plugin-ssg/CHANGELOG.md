@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:7.5.0 -->
+## 7.5.0 (2026-08-01)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-ssg-v7.4.1...vite-plugin-ssg-v7.5.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- declare response status and headers from app init ([b4522ef](https://github.com/Wroud/foundation/commit/b4522ef))
+
 <!-- version:7.4.1 -->
 ## 7.4.1 (2026-07-04)
 

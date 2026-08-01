@@ -1,13 +1,19 @@
 import type { IndexComponent, IndexComponentContext } from "../ssgPlugin.js";
 import type { IAppContext } from "./IAppContext.js";
+import type { IResponseMetadata } from "./IResponseMetadata.js";
 
 interface IAppInitializer<T extends IAppContext> {
   (context: IndexComponentContext): T | Promise<T>;
 }
 
+interface IAppResponse<T extends IAppContext> {
+  (app: T): IResponseMetadata | undefined | Promise<IResponseMetadata | undefined>;
+}
+
 export interface IAppConfigOptions<T extends IAppContext> {
   onAppStart?: IAppInitializer<T>;
   onRoutesPrerender?: IRoutesPrerender<NoInfer<T>>;
+  onResponse?: IAppResponse<NoInfer<T>>;
   onAppStop?: IAppFinalizer<NoInfer<T>>;
 }
 
@@ -23,12 +29,14 @@ export class AppInstance<T extends IAppContext> {
   index: IndexComponent;
   private onAppStart?: IAppInitializer<T>;
   private onRoutesPrerender?: IRoutesPrerender<T>;
+  private onResponse?: IAppResponse<T>;
   private onAppStop?: IAppFinalizer<T>;
 
   constructor(index: IndexComponent, config?: IAppConfigOptions<T>) {
     this.index = index;
     this.onAppStart = config?.onAppStart;
     this.onRoutesPrerender = config?.onRoutesPrerender;
+    this.onResponse = config?.onResponse;
     this.onAppStop = config?.onAppStop;
   }
 
@@ -43,6 +51,10 @@ export class AppInstance<T extends IAppContext> {
 
   async getRoutesPrerender(startData: T): Promise<string[]> {
     return (await this.onRoutesPrerender?.(startData)) ?? [];
+  }
+
+  async getResponse(startData: T): Promise<IResponseMetadata | undefined> {
+    return await this.onResponse?.(startData);
   }
 
   async stop(startData: T) {

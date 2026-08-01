@@ -6,6 +6,7 @@ export interface RequestData {
   greeting: string;
   path: string;
   total: number;
+  slot?: React.ReactNode;
 }
 
 const RequestContext = createContext<RequestData>({

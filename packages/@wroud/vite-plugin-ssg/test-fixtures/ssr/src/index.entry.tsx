@@ -13,7 +13,7 @@ import { addAction } from "./actions.js";
 import { AddButton } from "./add-button.js";
 
 function Index({ context }: IndexComponentProps) {
-  const { greeting, path, total } = useRequest();
+  const { greeting, path, total, slot } = useRequest();
   const [count, setCount] = useState(0);
   return (
     <Html lang="en">
@@ -39,9 +39,19 @@ function Index({ context }: IndexComponentProps) {
           count is {count}
         </button>
         <AddButton />
+        {slot}
       </Body>
     </Html>
   );
 }
 
-export default createAppConfig(Index);
+export default createAppConfig(Index, {
+  onAppStart: (context) => ({
+    base: context.base ?? "/",
+    pathname: new URL(context.href ?? "/", "http://localhost/").pathname,
+  }),
+  onResponse: ({ pathname }) =>
+    pathname === "/client-gone"
+      ? { status: 410, headers: { "cache-control": "no-store" } }
+      : undefined,
+});

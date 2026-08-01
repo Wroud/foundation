@@ -74,7 +74,10 @@ export async function hydrate<T extends IAppContext>(
   function fetchFlight(url: URL): Promise<RscPayload> {
     return createFromFetch<RscPayload>(
       fetch(createRscRenderRequest(url.href)).then((response) => {
-        if (!response.ok) {
+        const isFlight = response.headers
+          .get("content-type")
+          ?.startsWith("text/x-component");
+        if (!response.ok && !isFlight) {
           throw new Error(
             `[vite-plugin-ssg] Failed to fetch RSC payload for "${url.pathname}": ${response.status} ${response.statusText}`,
           );

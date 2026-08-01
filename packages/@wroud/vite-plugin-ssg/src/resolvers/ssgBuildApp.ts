@@ -23,6 +23,8 @@ interface SsgRscEntry {
     handleSsg: (request: Request) => Promise<{
       html: ReadableStream<Uint8Array>;
       rsc: ReadableStream<Uint8Array>;
+      status?: number;
+      headers?: Headers;
     }>;
     dispose: () => Promise<void>;
   };
@@ -97,7 +99,12 @@ async function renderStatic(
       const request = new Request(url, {
         signal: AbortSignal.timeout(options.renderTimeout ?? 10000),
       });
-      const { html, rsc } = await runtime.handleSsg(request);
+      const { html, rsc, status } = await runtime.handleSsg(request);
+      if (status && status >= 400) {
+        config.logger.warn(
+          `[vite-plugin-ssg] route ${route} rendered with status ${status}`,
+        );
+      }
 
       const htmlPath = path.join(clientOutDir, htmlFilePath(route));
       if (csp) {

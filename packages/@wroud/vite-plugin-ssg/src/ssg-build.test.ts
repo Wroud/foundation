@@ -124,6 +124,25 @@ describe("rsc ssg build", () => {
     expect(index).not.toMatch(/ nonce=/);
     expect(index).not.toContain("csp-nonce");
   });
+
+  it("renders server and client Script/Link in a mixed-entry app, each once", async () => {
+    const index = await read("index.html");
+    const count = (re: RegExp) => (index.match(re) ?? []).length;
+    expect(count(/data-testid="basic-server-link"/g)).toBe(1);
+    expect(count(/data-testid="basic-server-script"/g)).toBe(1);
+    expect(count(/data-testid="basic-client-link"/g)).toBe(1);
+    expect(count(/data-testid="basic-client-script"/g)).toBe(1);
+  });
+
+  it("serializes server Script/Link as host elements, client ones stay in the client boundary", async () => {
+    const rsc = await read("index.rsc");
+    expect(rsc).not.toMatch(/,"Script",\d\]/);
+    expect(rsc).not.toMatch(/,"Link",\d\]/);
+    expect(rsc).toContain('"data-testid":"basic-server-link"');
+    expect(rsc).toContain('"data-testid":"basic-server-script"');
+    expect(rsc).not.toContain("basic-client-link");
+    expect(rsc).not.toContain("basic-client-script");
+  });
 });
 
 describe("rsc ssg build (rsc-only: server components, no client entry)", () => {
@@ -161,6 +180,24 @@ describe("rsc ssg build (rsc-only: server components, no client entry)", () => {
     expect(rsc).not.toMatch(/,"Link",\d\]/);
     expect(rsc).toContain('["$","link"');
     expect(rsc).toContain('"data-testid":"rsc-plain-script"');
+  });
+
+  it("returns app status and headers from the prerender path", async () => {
+    const entryUrl = pathToFileURL(
+      path.join(fixturesDir, "rsc-only", "dist-rsc", "index.js"),
+    ).href;
+    const { runtime } = await import(entryUrl);
+    const result = await runtime.handleSsg(
+      new Request("http://ssg.local/gone"),
+    );
+    expect(result.status).toBe(410);
+    expect(result.headers.get("cache-control")).toBe("no-store");
+    await new Response(result.html).text();
+    await new Response(result.rsc).text();
+  });
+
+  it("still writes html for a route that reports a 4xx/5xx status", async () => {
+    expect(await exists("gone.html")).toBe(true);
   });
 
   it("applies the request cspNonce to server-rendered Script/Link", async () => {
@@ -410,7 +447,7 @@ describe("rsc ssr (request-time rendering via the built handler)", () => {
   let runtime: {
     handler: (
       request: Request,
-      requestOptions?: { cspNonce?: string },
+      requestOptions?: { cspNonce?: string; settled?: boolean },
     ) => Promise<Response>;
     dispose: () => Promise<void>;
   };
@@ -474,6 +511,115 @@ describe("rsc ssr (request-time rendering via the built handler)", () => {
     expect(response.headers.get("content-type")).toContain("text/x-component");
     expect(response.headers.get("vary")).toContain("rsc");
     expect(await response.text()).toContain("ciao");
+  });
+
+  it("sets the wire status from an app decision during the rsc render", async () => {
+    const response = await runtime.handler(
+      new Request("http://localhost/missing"),
+    );
+    expect(response.status).toBe(404);
+    expect(response.headers.get("x-robots-tag")).toBe("noindex");
+    expect(response.headers.get("content-type")).toContain("text/html");
+    await response.text();
+  });
+
+  it("keeps 200 and emits app headers for routes that declare them", async () => {
+    const cached = await runtime.handler(new Request("http://localhost/cached"));
+    expect(cached.status).toBe(200);
+    expect(cached.headers.get("cache-control")).toBe("public, max-age=300");
+    await cached.text();
+
+    const plain = await runtime.handler(new Request("http://localhost/plain"));
+    expect(plain.status).toBe(200);
+    expect(plain.headers.get("cache-control")).toBeNull();
+    await plain.text();
+  });
+
+  it("carries app status and headers on rsc flight responses", async () => {
+    const response = await runtime.handler(
+      new Request("http://localhost/missing.rsc"),
+    );
+    expect(response.status).toBe(404);
+    expect(response.headers.get("x-robots-tag")).toBe("noindex");
+    expect(response.headers.get("content-type")).toContain("text/x-component");
+    await response.text();
+  });
+
+  it("streams suspense fallbacks progressively by default", async () => {
+    const response = await runtime.handler(new Request("http://localhost/slow"));
+    const html = await response.text();
+    expect(html).toContain('data-testid="slow-fallback">slow-loading');
+    expect(html).toContain('data-testid="slow-content">slow-done');
+  });
+
+  it("delivers settled html without fallbacks", async () => {
+    const response = await runtime.handler(
+      new Request("http://localhost/slow"),
+      { settled: true },
+    );
+    const html = await response.text();
+    expect(html).toContain('data-testid="slow-content">slow-done');
+    expect(html).not.toContain('data-testid="slow-fallback">');
+  });
+
+  it("applies onResponse declared on the client entry config", async () => {
+    const response = await runtime.handler(
+      new Request("http://localhost/client-gone"),
+    );
+    expect(response.status).toBe(410);
+    expect(response.headers.get("cache-control")).toBe("no-store");
+    await response.text();
+  });
+
+  it("does not apply client-entry onResponse to flight responses", async () => {
+    const response = await runtime.handler(
+      new Request("http://localhost/client-gone.rsc"),
+    );
+    expect(response.headers.get("content-type")).toContain("text/x-component");
+    expect(response.status).toBe(200);
+    expect(response.headers.get("cache-control")).toBeNull();
+    await response.text();
+  });
+
+  it("lets rsc-entry cache headers win on the flight response", async () => {
+    const response = await runtime.handler(
+      new Request("http://localhost/cached.rsc"),
+    );
+    expect(response.headers.get("cache-control")).toBe("public, max-age=300");
+    await response.text();
+  });
+
+  it("reports the app status in settled mode", async () => {
+    const response = await runtime.handler(
+      new Request("http://localhost/missing"),
+      { settled: true },
+    );
+    expect(response.status).toBe(404);
+    await response.text();
+  });
+
+  it("drops app cache headers when the ssr shell render fails", async () => {
+    const response = await runtime.handler(new Request("http://localhost/boom"));
+    expect(response.status).toBe(500);
+    expect(response.headers.get("cache-control")).toBeNull();
+    expect(await response.text()).toContain("Internal Server Error");
+  });
+
+  it("re-renders a no-js form post in settled mode", async () => {
+    const { total: before, actionField } = await readTotal();
+    const formData = new FormData();
+    formData.set(actionField, "");
+    formData.set("amount", "7");
+    const response = await runtime.handler(
+      new Request("http://localhost/", { method: "POST", body: formData }),
+      { settled: true },
+    );
+
+    expect(response.status).toBe(200);
+    const html = await response.text();
+    expect(Number(html.match(/data-testid="total">(\d+)</)?.[1])).toBe(
+      before + 7,
+    );
   });
 
   it("emits no nonce attributes without a per-request cspNonce", async () => {
@@ -736,6 +882,21 @@ describe("rsc ssg dev", () => {
     expect(html).toMatch(/data-testid="ssr-fetch"[^>]*>pong</);
   });
 
+  it("renders server Script/Link as host elements, not client references", async () => {
+    const html = await (await fetch(base + "/")).text();
+    const rsc = await (await fetch(base + "/index.rsc")).text();
+    const count = (source: string, id: string) =>
+      (source.match(new RegExp(`data-testid="${id}"`, "g")) ?? []).length;
+    expect(count(html, "basic-server-link")).toBe(1);
+    expect(count(html, "basic-server-script")).toBe(1);
+    expect(count(html, "basic-client-link")).toBe(1);
+    expect(count(html, "basic-client-script")).toBe(1);
+    expect(rsc).not.toMatch(/,"Script",\d\]/);
+    expect(rsc).not.toMatch(/,"Link",\d\]/);
+    expect(rsc).toContain('"data-testid":"basic-server-link"');
+    expect(rsc).toContain('"data-testid":"basic-server-script"');
+  });
+
   it("hot-updates server components without a server full reload", async () => {
     const file = path.join(fixturesDir, "basic/src/index.entry.rsc.tsx");
     const original = await fs.readFile(file, "utf8");
@@ -840,6 +1001,13 @@ describe("rsc ssg dev (server functions)", () => {
     const flight = await response.text();
     expect(flight).toContain('"ok":true');
     expect(flight).toContain(`"data":${before + 6}`);
+  });
+
+  it("propagates app response status and headers through the dev server", async () => {
+    const response = await fetch(base + "/missing");
+    expect(response.status).toBe(404);
+    expect(response.headers.get("x-robots-tag")).toBe("noindex");
+    await response.text();
   });
 });
 

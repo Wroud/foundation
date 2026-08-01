@@ -1,5 +1,11 @@
 import type { IndexComponentProps } from "@wroud/vite-plugin-ssg";
-import { Html, Head, Body } from "@wroud/vite-plugin-ssg/react/components";
+import {
+  Html,
+  Head,
+  Body,
+  Link,
+  Script,
+} from "@wroud/vite-plugin-ssg/react/components";
 import { createAppConfig, type IAppContext } from "@wroud/vite-plugin-ssg/app";
 import { useAppContext } from "@wroud/vite-plugin-ssg/react/components";
 import {
@@ -79,6 +85,10 @@ function Index({ context }: IndexComponentProps) {
       <Head>
         <meta charSet="utf-8" />
         <title>{`Home ${pathname}`}</title>
+        <Link rel="icon" href="/favicon.svg" data-testid="basic-client-link" />
+        <Script data-testid="basic-client-script">
+          {"window.__BASIC_CLIENT = 1;"}
+        </Script>
       </Head>
       <Body>
         <h1>Home</h1>

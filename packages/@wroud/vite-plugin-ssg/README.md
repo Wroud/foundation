@@ -275,6 +275,47 @@ For `outDir: "dist"` and routes `/`, `/about`:
 - `dist/assets/*` — client JS/CSS bundles.
 - `dist-rsc/`, `dist-ssr/` — intermediate RSC and SSR builds (not served).
 
+## Response status and headers
+
+Application code decides things the HTTP host must commit to the wire before the body streams: the status of a not-found route, `Cache-Control` for the CDN in front of you, `X-Robots-Tag`. Declare them with `onResponse`, a hook that maps your started app state to response metadata:
+
+```tsx
+export default createAppConfig(App, {
+  async onAppStart({ href, base }) {
+    const router = await routerService.setup(base ?? "/", href);
+    return { base: base ?? "/", router };
+  },
+  onResponse: ({ router }) => ({
+    status: router.matched ? 200 : 404,
+    headers: {
+      "cache-control": router.matched?.public
+        ? "public, max-age=300"
+        : "no-store",
+    },
+  }),
+});
+```
+
+`onResponse` is available on both `createAppConfig` and `createRscConfig`, takes the value your `onAppStart` returned, and may be async. It runs after initialization and before any rendering begins, so there are no timing rules to learn: the runtime always has your metadata in hand before it constructs the `Response`. Return `undefined` for routes with nothing to declare.
+
+This is deliberately not an in-render API. Your app resolves its route during `onAppStart` — a phase that can `await` anything it needs — and React then renders that decision. Letting a component set a status mid-render would mean racing the point at which the status line is already committed to the wire.
+
+`runtime.handler` merges the result into the `Response` it returns — read `response.status` and `response.headers` before consuming the body, exactly the order a serverless host needs. The runtime keeps ownership of `content-type`; everything else is yours. When the SSR shell render fails, the runtime answers `500` with its fallback page and discards your headers, since the render they described never happened and a `Cache-Control` meant for the real page must not apply to an error page.
+
+If an app declares `onResponse` on both entries, the client entry's result wins per key, since it runs later. A flight request has no SSR pass, so the client entry's `onResponse` never runs for it — flight responses carry only the **rsc** entry's metadata.
+
+That asymmetry is yours to handle, because the runtime never invents a cache policy: it sets no `Cache-Control` of its own on any response. A document and its `.rsc` counterpart are two encodings of the same render, so if your `onResponse` lives on the client entry, do not let a cache treat `.rsc` more permissively than the document for the same route. A `.rsc` cached as `200` against a `404` document lets a client-side navigation render a page the server no longer serves, and a shared-cached `.rsc` also reuses whichever `cspNonce` was minted for the request that filled the cache.
+
+Putting `onResponse` on the **rsc** entry removes the asymmetry entirely: it runs during the flight render, so both paths derive identical metadata from one place at no extra cost.
+
+`handleSsg` (the static build path) returns `{ status, headers }` alongside its streams, and the build logs a warning when a prerendered route reports a status of 400 or higher.
+
+For crawlers and other clients that must not see Suspense fallbacks, pass `settled: true` and the handler waits for fully settled HTML before responding. In this mode a render error rejects instead of returning the progressive 500 fallback page:
+
+```ts
+const response = await runtime.handler(request, { settled: true });
+```
+
 ## CSP
 
 Set Vite's [`html.cspNonce`](https://vite.dev/config/shared-options.html#html-cspnonce) and the plugin applies it everywhere a nonce is needed, in dev and in build output:

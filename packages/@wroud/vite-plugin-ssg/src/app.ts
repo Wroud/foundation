@@ -1,4 +1,5 @@
 export * from "./app/IAppContext.js";
+export * from "./app/IResponseMetadata.js";
 export {
   AppInstance,
   createAppConfig,

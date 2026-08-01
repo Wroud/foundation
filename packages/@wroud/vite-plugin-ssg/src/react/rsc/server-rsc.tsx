@@ -11,6 +11,7 @@ import type { ReactFormState } from "react-dom/client";
 import { toRscInstance, type RscInstance } from "../../app/RscConfig.js";
 import { RenderContextProvider } from "../components/RenderContext.js";
 import { runWithRenderContext } from "../components/renderContextAccessor.react-server.js";
+import type { IResponseMetadata } from "../../app/IResponseMetadata.js";
 import type {
   IndexComponent,
   IndexComponentContext,
@@ -42,6 +43,7 @@ export interface SsgRuntimeOptions {
 
 export interface SsgRequestOptions {
   cspNonce?: string;
+  settled?: boolean;
 }
 
 export interface SsgRuntime {
@@ -53,6 +55,8 @@ export interface SsgRuntime {
   handleSsg: (request: Request) => Promise<{
     html: ReadableStream<Uint8Array>;
     rsc: ReadableStream<Uint8Array>;
+    status?: number;
+    headers: Headers;
   }>;
   dispose: () => Promise<void>;
 }
@@ -108,6 +112,21 @@ async function handleServerAction(
   }
 }
 
+function toHeaders(
+  ...sources: (IResponseMetadata | undefined)[]
+): Headers {
+  const headers = new Headers();
+  for (const source of sources) {
+    for (const [name, value] of Object.entries(source?.headers ?? {})) {
+      headers.delete(name);
+      for (const item of Array.isArray(value) ? value : [value]) {
+        headers.append(name, item);
+      }
+    }
+  }
+  return headers;
+}
+
 export function createSsgRuntime<T extends IAppContext>(
   modules: SsgRuntimeModules<T>,
   options: SsgRuntimeOptions,
@@ -143,7 +162,10 @@ export function createSsgRuntime<T extends IAppContext>(
     context: IndexComponentContext,
     signal: AbortSignal,
     action?: ActionOutcome,
-  ): Promise<ReadableStream<Uint8Array>> {
+  ): Promise<{
+    stream: ReadableStream<Uint8Array>;
+    response: IResponseMetadata | undefined;
+  }> {
     const app = await rscApp.start(context);
 
     let stopped = false;
@@ -156,6 +178,7 @@ export function createSsgRuntime<T extends IAppContext>(
     }
 
     try {
+      const response = await rscApp.getResponse(app);
       const RscRoot = rscApp.root;
       const clientContext = toClientContext({
         ...context,
@@ -196,9 +219,12 @@ export function createSsgRuntime<T extends IAppContext>(
         flush: stopApp,
         cancel: stopApp,
       };
-      return stream.pipeThrough(
-        new TransformStream<Uint8Array, Uint8Array>(stopTransformer),
-      );
+      return {
+        stream: stream.pipeThrough(
+          new TransformStream<Uint8Array, Uint8Array>(stopTransformer),
+        ),
+        response,
+      };
     } catch (error) {
       await stopApp();
       throw error;
@@ -244,26 +270,40 @@ export function createSsgRuntime<T extends IAppContext>(
         }
       }
 
-      const rscStream = await renderFlight(context, request.signal, action);
+      const { stream: rscStream, response: rscResponse } = await renderFlight(
+        context,
+        request.signal,
+        action,
+      );
 
       if (isRsc) {
+        const headers = toHeaders(rscResponse);
+        headers.set("content-type", RSC_CONTENT_TYPE);
+        headers.append(HEADER_VARY, HEADER_RSC);
         return new Response(rscStream, {
-          status: action?.status,
-          headers: {
-            "content-type": RSC_CONTENT_TYPE,
-            [HEADER_VARY]: HEADER_RSC,
-          },
+          status: action?.status ?? rscResponse?.status,
+          headers,
         });
       }
 
       const ssr = await loadSsr();
       const result = await ssr.renderHtml(
         rscStream,
-        renderHtmlOptions(context, request.signal, false, action?.formState),
+        renderHtmlOptions(
+          context,
+          request.signal,
+          requestOptions?.settled,
+          action?.formState,
+        ),
       );
+      const headers = result.failed
+        ? new Headers()
+        : toHeaders(rscResponse, result.response);
+      headers.set("content-type", "text/html;charset=utf-8");
       return new Response(result.stream, {
-        status: result.status,
-        headers: { "content-type": "text/html;charset=utf-8" },
+        status:
+          result.status ?? result.response?.status ?? rscResponse?.status,
+        headers,
       });
     });
   }
@@ -272,15 +312,23 @@ export function createSsgRuntime<T extends IAppContext>(
     const url = new URL(request.url);
     const context = createContext(url, request);
     return runWithDevFetch(context, async () => {
-      const rscStream = await renderFlight(context, request.signal);
-      const [rscStream1, rscStream2] = rscStream.tee();
+      const { stream, response: rscResponse } = await renderFlight(
+        context,
+        request.signal,
+      );
+      const [rscStream1, rscStream2] = stream.tee();
 
       const ssr = await loadSsr();
       const result = await ssr.renderHtml(
         rscStream1,
         renderHtmlOptions(context, request.signal, true),
       );
-      return { html: result.stream, rsc: rscStream2 };
+      return {
+        html: result.stream,
+        rsc: rscStream2,
+        status: result.response?.status ?? rscResponse?.status,
+        headers: toHeaders(rscResponse, result.response),
+      };
     });
   }
 

@@ -14,6 +14,7 @@ import { normalizeRoute } from "../../utils/routes.js";
 import { runWithDevFetch } from "./dev-fetch.js";
 import type { RscPayload } from "./shared.js";
 import type { IAppContext } from "../../app.js";
+import type { IResponseMetadata } from "../../app/IResponseMetadata.js";
 
 export interface SsrEntryModule<T extends IAppContext = IAppContext> {
   default: IndexComponent | AppInstance<T>;
@@ -34,6 +35,8 @@ export interface RenderHtmlOptions {
 export interface RenderHtmlResult {
   stream: ReadableStream<Uint8Array>;
   status?: number;
+  failed?: boolean;
+  response?: IResponseMetadata;
 }
 
 export function createSsrRuntime<T extends IAppContext>(
@@ -78,6 +81,8 @@ export function createSsrRuntime<T extends IAppContext>(
           base: context.base ?? "/",
         } as T);
 
+      const response = await app?.getResponse(appStartData);
+
       let stopped = false;
       async function stopApp() {
         if (stopped) {
@@ -105,12 +110,14 @@ export function createSsrRuntime<T extends IAppContext>(
 
       let htmlStream: ReadableStream<Uint8Array>;
       let status: number | undefined;
+      let failed = false;
 
       if (renderOptions?.ssg) {
         try {
           const ssgStream = await renderToReadableStream(root, {
             bootstrapScriptContent,
             nonce: renderOptions?.nonce,
+            formState: renderOptions?.formState,
             progressiveChunkSize: Infinity,
             signal,
           });
@@ -129,6 +136,7 @@ export function createSsrRuntime<T extends IAppContext>(
           });
         } catch {
           status = 500;
+          failed = true;
           htmlStream = await renderToReadableStream(
             <html>
               <body>
@@ -158,7 +166,7 @@ export function createSsrRuntime<T extends IAppContext>(
         );
       }
 
-      return { stream, status };
+      return { stream, status, failed, response };
     });
   }
 

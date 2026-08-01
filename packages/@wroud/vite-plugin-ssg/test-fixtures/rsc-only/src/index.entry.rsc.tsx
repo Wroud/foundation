@@ -33,5 +33,13 @@ function Root({ context }: RscEntryProps) {
 }
 
 export default createRscConfig(Root, {
-  onRoutesPrerender: () => ["/", "/about"],
+  onAppStart: (context) => ({
+    base: context.base ?? "/",
+    pathname: new URL(context.href ?? "/", "http://localhost/").pathname,
+  }),
+  onRoutesPrerender: () => ["/", "/about", "/gone"],
+  onResponse: (app) =>
+    app.pathname === "/gone"
+      ? { status: 410, headers: { "cache-control": "no-store" } }
+      : undefined,
 });

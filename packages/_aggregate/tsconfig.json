@@ -54,6 +54,9 @@
       "path": "../@wroud/navigation"
     },
     {
+      "path": "../@wroud/navigation-react"
+    },
+    {
       "path": "../@wroud/playground"
     },
     {

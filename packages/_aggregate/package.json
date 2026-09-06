@@ -36,6 +36,7 @@
     "@wroud/git": "workspace:^",
     "@wroud/github": "workspace:^",
     "@wroud/navigation": "workspace:^",
+    "@wroud/navigation-react": "workspace:^",
     "@wroud/playground": "workspace:^",
     "@wroud/playground-react": "workspace:^",
     "@wroud/preconditions": "workspace:^",

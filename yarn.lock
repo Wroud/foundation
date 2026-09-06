@@ -4393,6 +4393,7 @@ __metadata:
     "@wroud/git": "workspace:^"
     "@wroud/github": "workspace:^"
     "@wroud/navigation": "workspace:^"
+    "@wroud/navigation-react": "workspace:^"
     "@wroud/playground": "workspace:^"
     "@wroud/playground-react": "workspace:^"
     "@wroud/preconditions": "workspace:^"
@@ -4711,7 +4712,32 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wroud/navigation@workspace:^, @wroud/navigation@workspace:packages/@wroud/navigation":
+"@wroud/navigation-react@workspace:^, @wroud/navigation-react@workspace:packages/@wroud/navigation-react":
+  version: 0.0.0-use.local
+  resolution: "@wroud/navigation-react@workspace:packages/@wroud/navigation-react"
+  dependencies:
+    "@types/node": "npm:^22"
+    "@types/react": "npm:^19"
+    "@types/react-dom": "npm:^19"
+    "@vitest/coverage-v8": "npm:^3"
+    "@wroud/ci": "workspace:^0"
+    "@wroud/navigation": "workspace:*"
+    "@wroud/tests-runner": "workspace:*"
+    "@wroud/tsconfig": "workspace:*"
+    happy-dom: "npm:^17"
+    react: "npm:^19"
+    react-dom: "npm:^19"
+    rimraf: "npm:^6"
+    tslib: "npm:^2"
+    typescript: "npm:^6"
+    vitest: "npm:^3"
+  peerDependencies:
+    "@wroud/navigation": "workspace:^"
+    react: ^19.0.0
+  languageName: unknown
+  linkType: soft
+
+"@wroud/navigation@workspace:*, @wroud/navigation@workspace:^, @wroud/navigation@workspace:packages/@wroud/navigation":
   version: 0.0.0-use.local
   resolution: "@wroud/navigation@workspace:packages/@wroud/navigation"
   dependencies:

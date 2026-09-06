@@ -3,6 +3,7 @@ import {
   createFromReadableStream,
   setServerCallback,
 } from "@vitejs/plugin-rsc/browser";
+import { startTransition } from "react";
 import { createRoot, hydrateRoot, type Root } from "react-dom/client";
 import { rscStream } from "rsc-html-stream/client";
 import { toAppInstance } from "../../app/AppInstance.js";
@@ -53,7 +54,9 @@ export async function hydrate<T extends IAppContext>(
   }
 
   function update(payload: RscPayload) {
-    root.render(render(payload));
+    startTransition(() => {
+      root.render(render(payload));
+    });
   }
 
   async function callServer(id: string, args: unknown[]): Promise<unknown> {

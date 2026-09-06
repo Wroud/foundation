@@ -1,21 +1,38 @@
 {
   "name": "@wroud/navigation-react",
+  "description": "React 19 bindings for @wroud/navigation that run every navigation as a React transition, with transition-aware links, pending state, and scroll restoration deferred until the routed content commits",
   "type": "module",
   "version": "0.2.0",
-  "sideEffects": false,
+  "license": "MIT",
+  "author": "Wroud",
+  "homepage": "https://wroud.dev/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Wroud/foundation",
+    "directory": "packages/@wroud/navigation-react"
+  },
+  "keywords": [
+    "navigation",
+    "react",
+    "react router",
+    "router",
+    "routing",
+    "pattern-matching",
+    "url-matching",
+    "browser-navigation",
+    "path-matching",
+    "typescript",
+    "route-parameters",
+    "spa",
+    "single-page-application",
+    "history-management",
+    "url-management",
+    "esm"
+  ],
+  "sideEffects": [],
   "exports": {
     ".": "./lib/index.js",
     "./*": "./lib/*.js"
-  },
-  "scripts": {
-    "ci:release": "ci release --prefix navigation-react-v",
-    "ci:git-tag": "ci git-tag --prefix navigation-react-v",
-    "ci:release-github": "ci release-github --prefix navigation-react-v",
-    "test": "tests-runner",
-    "test:ci": "CI=true yarn run test",
-    "build": "tsc -b",
-    "watch:tsc": "tsc -b -w",
-    "clear": "rimraf ./lib"
   },
   "files": [
     "package.json",
@@ -32,6 +49,16 @@
     "!lib/tests",
     "!.tsbuildinfo"
   ],
+  "scripts": {
+    "ci:release": "ci release --prefix navigation-react-v",
+    "ci:git-tag": "ci git-tag --prefix navigation-react-v",
+    "ci:release-github": "ci release-github --prefix navigation-react-v",
+    "test": "tests-runner",
+    "test:ci": "CI=true yarn run test",
+    "build": "tsc -b",
+    "watch:tsc": "tsc -b -w",
+    "clear": "rimraf ./lib"
+  },
   "packageManager": "yarn@4.9.1",
   "devDependencies": {
     "@types/node": "^22",

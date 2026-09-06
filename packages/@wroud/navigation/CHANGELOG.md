@@ -3,6 +3,31 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:2.0.0 -->
+## 2.0.0 (2026-09-06)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/nav-v1.6.0...nav-v2.0.0)
+
+<!-- changelog -->
+### ⚠️  Breaking Changes
+
+- resolve navigation calls at apply, add pluggable browser platform for native scroll/history sync ([74090d1](https://github.com/Wroud/foundation/commit/74090d1))
+  - navigate()/replace()/goBack()/goForward()/go()/traverseTo() now resolve as soon as the entry is applied and listeners have been invoked, instead of waiting for every listener's side effects to finish. This removes the lag between a click and the UI updating when a listener does async work (e.g. data fetching), since callers no longer block on it.
+    <br>
+    <br>Each transition now carries its own settlement signal (all listeners settled, never rejects) that the browser integration uses internally to know when it's safe to scroll or restore focus. This fixes anchor-link navigation (`/#pricing`-style) almost never scrolling to the target, which happened because scrolling used to run as soon as a render was scheduled rather than after it actually committed.
+    <br>
+    <br>Browser history/scroll syncing is now driven by a pluggable INavigationPlatform, with two implementations: one using the History API (any browser) and one using the native Navigation API where available.
+    <br>Behavior improvements from this rework:
+    <br>  - replace() now preserves scroll position instead of jumping to top
+    <br>  - a push to the same URL still scrolls to a new hash target
+    <br>  - the entry the page was hydrated with no longer re-applies its fragment and re-scrolls on mount
+    <br>  - back/forward navigation intercepted via the Navigation API now waits for the new content to settle before the browser restores scroll
+    <br>
+    <br>Navigation now exposes a full entry/history model aligned with the
+    <br>Navigation API: `entries`, `currentEntry`, `canGoBack`, `canGoForward`, and `setPlatform()` for wiring in a platform.
+  - navigate(), replace(), goBack(), goForward(), go(), and traverseTo() now return `Promise<boolean>` (whether the navigation was  applied) instead of `Promise<void>`. Existing `await`s keep working, but code that needs to know when listener side effects have finished must move that logic into a listener rather than awaiting the navigate() call - the promise now settles earlier.
+  - `INavigationState` has been removed; use the new `INavigationEntry` (exported from the package root) for entry-shaped data. `state`, `history`, and `position` on `INavigation` are now readonly.
+
 <!-- version:1.6.0 -->
 ## 1.6.0 (2026-07-04)
 

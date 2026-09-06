@@ -1,3 +1,5 @@
+// @vitest-environment happy-dom
+
 import { describe, it, expect, vi } from "vitest";
 import { Suspense, act, use } from "react";
 import { NavigationType } from "@wroud/navigation";

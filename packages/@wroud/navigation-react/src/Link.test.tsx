@@ -1,3 +1,5 @@
+// @vitest-environment happy-dom
+
 import { describe, it, expect, vi } from "vitest";
 import { act } from "react";
 import type { IRouteState } from "@wroud/navigation";

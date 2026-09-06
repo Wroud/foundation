@@ -1062,13 +1062,50 @@ describe("TriePatternMatching", () => {
 
       const url = patternMatcher.stateToUrl(state);
       // The URL should be usable for navigation
-      expect(url).toBe("/search/test with spaces & special chars");
+      expect(url).toBe("/search/test%20with%20spaces%20%26%20special%20chars");
 
       // And we should be able to convert it back
-      const parsedState = patternMatcher.urlToState(
-        "/search/test with spaces & special chars",
-      );
-      expect(parsedState).toEqual(state);
+      expect(patternMatcher.urlToState(url!)).toEqual(state);
+      expect(
+        patternMatcher.urlToState("/search/test with spaces & special chars"),
+      ).toEqual(state);
+    });
+
+    test("should round-trip parameter values through percent-encoding", () => {
+      patternMatcher.addPattern("/files/:name");
+      patternMatcher.addPattern("/tree/:path*");
+
+      const values = [
+        "a/b",
+        "a?b",
+        "a#b",
+        "a&b",
+        "100%",
+        "with spaces",
+        "привет",
+        "%E0%A4%A",
+      ];
+
+      for (const name of values) {
+        const state = { id: "/files/:name", params: { name } };
+        const url = patternMatcher.stateToUrl(state)!;
+        const segment = url.slice("/files/".length);
+        expect(segment).not.toMatch(/[ ?#\/]/);
+        expect(patternMatcher.urlToState(url)).toEqual(state);
+      }
+
+      const wildcard = { id: "/tree/:path*", params: { path: ["x y", "p/q"] } };
+      const wildcardUrl = patternMatcher.stateToUrl(wildcard)!;
+      expect(wildcardUrl).toBe("/tree/x%20y/p%2Fq");
+      expect(patternMatcher.urlToState(wildcardUrl)).toEqual(wildcard);
+    });
+
+    test("keeps a malformed percent sequence as a literal segment", () => {
+      patternMatcher.addPattern("/files/:name");
+      expect(patternMatcher.urlToState("/files/%E0%A4%A")).toEqual({
+        id: "/files/:name",
+        params: { name: "%E0%A4%A" },
+      });
     });
 
     test("should round-trip the URL fragment", () => {

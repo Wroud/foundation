@@ -142,7 +142,7 @@ describe("Router", () => {
 
         expect(
           router.buildUrl("/app/users/:id", { id: "user@example.com" }),
-        ).toBe("/app/users/user@example.com");
+        ).toBe("/app/users/user%40example.com");
       });
     });
 

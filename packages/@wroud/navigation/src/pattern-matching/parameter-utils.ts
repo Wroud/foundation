@@ -128,14 +128,14 @@ export function buildUrlSegments(
           ...value
             // TODO: remove undefined filter because it is handled in validateParameters
             .filter((item) => item !== undefined)
-            .map((item) => serializeParamValue(item, type)),
+            .map((item) => encodeURIComponent(serializeParamValue(item, type))),
         ];
       }
 
       // TODO: remove undefined filter because it is handled in validateParameters
       // Simplify handling of single value parameters
       if (value !== undefined) {
-        result.push(serializeParamValue(value, type));
+        result.push(encodeURIComponent(serializeParamValue(value, type)));
       }
     } else {
       // Static segment

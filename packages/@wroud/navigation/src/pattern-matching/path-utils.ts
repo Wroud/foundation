@@ -95,6 +95,14 @@ export function splitPath(path: string): string[] {
   return path.replace(/^\/|\/$/g, "").split("/");
 }
 
+export function decodePathSegment(segment: string): string {
+  try {
+    return decodeURIComponent(segment);
+  } catch {
+    return segment;
+  }
+}
+
 /**
  * Checks if a segment is a parameter (starts with ":")
  */

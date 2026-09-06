@@ -1,6 +1,7 @@
 import { TrieNode } from "./TrieNode.js";
 import { matchSegments } from "./matcher.js";
 import {
+  decodePathSegment,
   extractParamName,
   extractParamType,
   isParameterSegment,
@@ -127,7 +128,7 @@ export class TriePatternMatching implements TypedPatternMatcher, IRouteMatcher {
     url: string,
   ): IPatternRouteState<Pattern> | null {
     const { path, query, hash } = splitPathAndQuery(this.removeBaseFromUrl(url));
-    const segments = splitPath(path);
+    const segments = splitPath(path).map(decodePathSegment);
     const { matched, pattern, params } = matchSegments(
       this.root,
       segments,

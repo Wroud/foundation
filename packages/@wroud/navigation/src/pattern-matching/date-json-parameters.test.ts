@@ -18,7 +18,7 @@ describe("Date and JSON Parameter Support", () => {
 
       // Test encoding Date to URL
       const url = patternMatcher.encode(pattern, { date: testDate });
-      expect(url).toBe("/events/2024-01-15T10:30:00.000Z");
+      expect(url).toBe(`/events/${encodeURIComponent("2024-01-15T10:30:00.000Z")}`);
 
       // Test decoding URL back to Date
       const decoded = patternMatcher.decode(pattern, url);
@@ -40,7 +40,7 @@ describe("Date and JSON Parameter Support", () => {
       // Test encoding Date array to URL
       const url = patternMatcher.encode(pattern, { dates: testDates });
       expect(url).toBe(
-        "/schedule/2024-01-15T10:30:00.000Z/2024-02-20T14:45:00.000Z/2024-03-10T09:15:00.000Z",
+        `/schedule/${testDates.map((d) => encodeURIComponent(d.toISOString())).join("/")}`,
       );
 
       // Test decoding URL back to Date array
@@ -91,7 +91,7 @@ describe("Date and JSON Parameter Support", () => {
 
       // Test encoding JSON object to URL
       const url = patternMatcher.encode(pattern, { config: testConfig });
-      expect(url).toBe(`/api/${JSON.stringify(testConfig)}`);
+      expect(url).toBe(`/api/${encodeURIComponent(JSON.stringify(testConfig))}`);
 
       // Test decoding URL back to JSON object
       const decodedUrl = `/api/${JSON.stringify(testConfig)}`;
@@ -113,7 +113,7 @@ describe("Date and JSON Parameter Support", () => {
       // Test encoding JSON array to URL
       const url = patternMatcher.encode(pattern, { settings: testSettings });
       const expectedSegments = testSettings
-        .map((s) => JSON.stringify(s))
+        .map((s) => encodeURIComponent(JSON.stringify(s)))
         .join("/");
       expect(url).toBe(`/configs/${expectedSegments}`);
 
@@ -170,7 +170,7 @@ describe("Date and JSON Parameter Support", () => {
         settings: testSettings,
       });
       expect(url).toBe(
-        `/events/${testDate.toISOString()}/config/${JSON.stringify(testSettings)}`,
+        `/events/${encodeURIComponent(testDate.toISOString())}/config/${encodeURIComponent(JSON.stringify(testSettings))}`,
       );
 
       // Test decoding

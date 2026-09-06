@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "additionalDirectories": [
+      "/tmp",
+      "/Users/wroud/Documents/personal/mc-server/aws/mc-servers/@mc-client/app"
+    ]
+  }
+}

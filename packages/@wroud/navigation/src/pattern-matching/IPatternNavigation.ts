@@ -8,8 +8,8 @@ export interface IPatternNavigation<
 > extends INavigation<TMatcher> {
   replace<Pattern extends string = string>(
     state: IPatternRouteState<Pattern> | null,
-  ): Promise<void>;
+  ): Promise<boolean>;
   navigate<Pattern extends string = string>(
     state: IPatternRouteState<Pattern> | null,
-  ): Promise<void>;
+  ): Promise<boolean>;
 }

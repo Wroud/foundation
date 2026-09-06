@@ -2,292 +2,187 @@
 /// <reference lib="dom.iterable" />
 
 import type { INavigation } from "../INavigation.js";
+import type {
+  INavigationPlatform,
+  NavigationTransition,
+} from "../INavigationPlatform.js";
 import type { IRouteState } from "../IRouteState.js";
 import { NavigationType } from "../NavigationListener.js";
+import { HistoryPlatform } from "./HistoryPlatform.js";
+import { NavigationApiPlatform } from "./NavigationApiPlatform.js";
+import type { Inbound, Platform, Transition } from "./Platform.js";
+import {
+  currentUrl,
+  isBrowserAt,
+  navigationApi,
+  stateToUrl,
+  urlToState,
+} from "./url.js";
 
-export class BrowserNavigation {
-  private ignoreNextPopState: boolean;
-  private ignoreNextHashChange: boolean;
-  private skipNextHashChange: boolean;
-  private applyingFromBrowser: boolean;
-  private navApi: Navigation | null;
-  constructor(private readonly navigation: INavigation) {
-    this.ignoreNextPopState = false;
-    this.ignoreNextHashChange = false;
-    this.skipNextHashChange = false;
-    this.applyingFromBrowser = false;
-    this.navApi = null;
-    this.popStateHandler = this.popStateHandler.bind(this);
-    this.hashChangeHandler = this.hashChangeHandler.bind(this);
-    this.handleNavigation = this.handleNavigation.bind(this);
-    this.handleNavigateEvent = this.handleNavigateEvent.bind(this);
+export interface BrowserNavigationOptions {
+  interceptLinks?: boolean;
+}
+
+interface Call {
+  readonly key: string | null;
+  readonly state: IRouteState | null;
+  transition: Transition | null;
+}
+
+export class BrowserNavigation
+  implements INavigationPlatform<IRouteState>, Inbound
+{
+  private readonly interceptLinks: boolean;
+  private platform: Platform | null;
+  private registered: boolean;
+  private readonly calls: Set<Call>;
+
+  constructor(
+    private readonly navigation: INavigation,
+    options: BrowserNavigationOptions = {},
+  ) {
+    this.interceptLinks = options.interceptLinks ?? true;
+    this.platform = null;
+    this.registered = false;
+    this.calls = new Set();
   }
 
   async registerRoutes(): Promise<void> {
-    this.addBrowserNavigation();
-    await this.restoreNavigation();
-  }
-
-  private addBrowserNavigation() {
-    this.navApi = this.getNavigationApi();
-    if (this.navApi) {
-      this.navApi.addEventListener("navigate", this.handleNavigateEvent);
-    } else {
-      window.addEventListener("popstate", this.popStateHandler);
-      window.addEventListener("hashchange", this.hashChangeHandler);
-    }
-    this.navigation.addListener(this.handleNavigation);
-  }
-
-  private getNavigationApi(): Navigation | null {
-    const nav = window.navigation;
-    if (nav && typeof nav.addEventListener === "function") {
-      return nav;
-    }
-    return null;
-  }
-
-  private async restoreNavigation() {
-    await this.popStateHandler();
-  }
-
-  private handleNavigateEvent(event: NavigateEvent) {
-    if (this.applyingFromBrowser) {
-      return;
-    }
-    if (!event.canIntercept || event.downloadRequest !== null || event.formData) {
-      return;
-    }
-    if (event.navigationType !== "traverse" && !event.hashChange) {
-      return;
-    }
-
-    const matcher = this.navigation.router.matcher;
-    if (!matcher) {
-      return;
-    }
-
-    const url = this.destinationToUrl(event.destination.url);
-    const state = matcher.urlToState(url);
-    if (!state) {
-      return;
-    }
-
-    const current = this.navigation.getState();
-    if (current && matcher.stateToUrl(current) === matcher.stateToUrl(state)) {
-      return;
-    }
-
-    event.intercept({ handler: () => this.applyFromDestination(state) });
-  }
-
-  private async applyFromDestination(state: IRouteState): Promise<void> {
-    this.applyingFromBrowser = true;
-    try {
-      await this.navigation.navigate(state);
-    } finally {
-      this.applyingFromBrowser = false;
+    if (this.registered) return;
+    this.registered = true;
+    const navApi = navigationApi();
+    const platform = navApi
+      ? new NavigationApiPlatform(navApi, this.navigation, this.interceptLinks)
+      : new HistoryPlatform(this.navigation);
+    this.platform = platform;
+    platform.attach(this);
+    this.navigation.setPlatform(this);
+    const current = this.navigation.currentEntry;
+    if (current === null || platform.key !== current.key) {
+      const hydrate =
+        current !== null &&
+        platform.key === null &&
+        isBrowserAt(this.navigation.router.matcher, current.state);
+      await this.adopt(currentUrl(), hydrate);
     }
   }
 
-  private destinationToUrl(url: string): string {
-    const parsed = new URL(url);
-    return (
-      decodeURIComponent(parsed.pathname) + parsed.search + parsed.hash
+  dispose(): void {
+    this.platform?.detach();
+    this.platform = null;
+    this.navigation.setPlatform(null);
+    this.registered = false;
+  }
+
+  async commit(t: NavigationTransition<IRouteState>): Promise<boolean> {
+    const committed = await this.place(t);
+    if (committed) this.record(t);
+    return committed;
+  }
+
+  traverse(key: string): Promise<Transition | null> {
+    return this.inbound({ key, state: null, transition: null }, () =>
+      this.navigation.traverseTo(key),
     );
   }
 
-  private handleNavigation(
-    type: NavigationType,
-    from: IRouteState | null,
-    to: IRouteState | null,
-  ) {
-    if (this.applyingFromBrowser) {
-      return;
-    }
-    const matcher = this.navigation.router.matcher;
-    const url = to ? (matcher?.stateToUrl(to) ?? undefined) : undefined;
-    switch (type) {
-      case NavigationType.Navigate: {
-        if (this.isBrowserAt(to)) {
-          window.history.replaceState(to, "");
-          break;
-        }
-        if (to?.hash) {
-          if (this.isHashOnlyChange(from, to)) {
-            this.ignoreNextHashChange = true;
-            window.location.hash = to.hash;
-            window.history.replaceState(to, "");
-            break;
-          }
-          if (this.tryNativeNavigate(url, "push", to)) {
-            break;
-          }
-          window.history.pushState(to, "", url);
-          this.applyFragment(to);
-          break;
-        }
-        window.history.pushState(to, "", url);
-        break;
-      }
-      case NavigationType.Replace: {
-        if (this.isBrowserAt(to)) {
-          window.history.replaceState(to, "");
-          break;
-        }
-        if (to?.hash) {
-          if (
-            !this.isHashOnlyChange(from, to) &&
-            this.tryNativeNavigate(url, "replace", to)
-          ) {
-            break;
-          }
-          window.history.replaceState(to, "", url);
-          this.applyFragment(to);
-          break;
-        }
-        window.history.replaceState(to, "", url);
-        break;
-      }
-      case NavigationType.Back:
-        this.ignoreNextPopState = true;
-        window.history.back();
-        break;
-      case NavigationType.Forward:
-        this.ignoreNextPopState = true;
-        window.history.forward();
-        break;
-    }
+  adopt(url: string, replace: boolean): Promise<Transition | null> {
+    const state = this.urlToState(url);
+    return this.inbound({ key: null, state, transition: null }, () =>
+      this.issue(state, replace),
+    );
   }
 
-  private async popStateHandler() {
-    if (this.ignoreNextPopState) {
-      this.ignoreNextPopState = false;
-      return;
-    }
-    this.skipNextHashChange = true;
-    queueMicrotask(() => {
-      this.skipNextHashChange = false;
+  request(url: string, replace: boolean): boolean {
+    const state = this.urlToState(url);
+    if (!state) return false;
+    this.issue(state, replace).catch((error: unknown) => {
+      console.error("Navigation failed", error);
     });
-    await this.syncFromLocation();
-  }
-
-  private hashChangeHandler() {
-    if (this.ignoreNextHashChange) {
-      this.ignoreNextHashChange = false;
-      return;
-    }
-    if (this.skipNextHashChange) {
-      this.skipNextHashChange = false;
-      return;
-    }
-    void this.syncFromLocation();
-  }
-
-  private async syncFromLocation() {
-    const state = this.navigation.router.matcher?.urlToState(this.currentUrl());
-
-    if (state) {
-      await this.navigation.navigate(state);
-    }
-  }
-
-  private currentUrl(): string {
-    return (
-      decodeURIComponent(window.location.pathname) +
-      window.location.search +
-      window.location.hash
-    );
-  }
-
-  private isBrowserAt(state: IRouteState | null): boolean {
-    const matcher = this.navigation.router.matcher;
-    if (!matcher || !state) {
-      return false;
-    }
-    const target = matcher.stateToUrl({ ...state, unknownQuery: undefined });
-    if (target == null) {
-      return false;
-    }
-    const current = matcher.urlToState(this.currentUrl());
-    return (
-      current != null &&
-      matcher.stateToUrl({ ...current, unknownQuery: undefined }) === target
-    );
-  }
-
-  private isHashOnlyChange(
-    from: IRouteState | null,
-    to: IRouteState | null,
-  ): boolean {
-    const matcher = this.navigation.router.matcher;
-    if (!matcher || !from || !to) {
-      return false;
-    }
-    return (
-      matcher.stateToUrl({ ...from, hash: undefined, unknownQuery: undefined }) ===
-      matcher.stateToUrl({ ...to, hash: undefined, unknownQuery: undefined })
-    );
-  }
-
-  private tryNativeNavigate(
-    url: string | undefined,
-    history: "push" | "replace",
-    state: IRouteState | null,
-  ): boolean {
-    if (url == null) {
-      return false;
-    }
-    const nav = window.navigation;
-    if (!nav || typeof nav.navigate !== "function") {
-      return false;
-    }
-    let result: NavigationResult;
-    try {
-      result = nav.navigate(url, { history, state });
-    } catch {
-      return false;
-    }
-    result.committed?.catch(() => {});
-    result.finished?.catch(() => {});
     return true;
   }
 
-  private applyFragment(state: IRouteState | null) {
-    const hash = state?.hash;
-    if (!hash) {
-      return;
-    }
-    if (hash === "#" || hash.toLowerCase() === "#top") {
-      window.scrollTo(0, 0);
-      return;
-    }
+  private issue(state: IRouteState | null, replace: boolean): Promise<boolean> {
+    return replace
+      ? this.navigation.replace(state)
+      : this.navigation.navigate(state);
+  }
 
-    const id = decodeURIComponent(hash.slice(1));
-    const element =
-      window.document.getElementById(id) ??
-      window.document.getElementsByName(id)[0] ??
-      null;
-
-    if (!element) {
-      return;
+  private async place(t: Transition): Promise<boolean> {
+    const platform = this.platform!;
+    if (t.type === NavigationType.Navigate) {
+      const url = this.urlFor(t.to.state);
+      return t.from !== null && platform.key === t.from.key
+        ? platform.push(t, url)
+        : platform.stay(t, url);
     }
+    if (platform.key !== t.to.key) {
+      if (this.traversing(t.to.key)) return false;
+      if (platform.knows(t.to.key)) {
+        if (!(await platform.traverse(t))) return false;
+      } else if (t.type !== NavigationType.Replace) {
+        return false;
+      }
+    }
+    return platform.stay(t, this.urlFor(t.to.state));
+  }
 
-    element.scrollIntoView();
-    element.focus({ preventScroll: true });
-    if (window.document.activeElement !== element) {
-      element.setAttribute("tabindex", "-1");
-      element.focus({ preventScroll: true });
+  private record(t: Transition): void {
+    for (const call of this.calls) {
+      if (
+        call.key === null ? call.state === t.to.state : call.key === t.to.key
+      ) {
+        call.transition = t;
+      }
     }
   }
 
-  dispose(): void | Promise<void> {
-    if (this.navApi) {
-      this.navApi.removeEventListener("navigate", this.handleNavigateEvent);
-    } else {
-      window.removeEventListener("popstate", this.popStateHandler);
-      window.removeEventListener("hashchange", this.hashChangeHandler);
+  private traversing(key: string): boolean {
+    for (const call of this.calls) {
+      if (call.key === key) return true;
     }
-    this.navigation.removeListener(this.handleNavigation);
+    return false;
+  }
+
+  private async inbound(
+    call: Call,
+    run: () => Promise<boolean>,
+  ): Promise<Transition | null> {
+    this.calls.add(call);
+    try {
+      return (await run()) ? call.transition : null;
+    } catch (error) {
+      console.error("Navigation failed", error);
+      return null;
+    } finally {
+      this.calls.delete(call);
+      if (call.key === null || this.platform?.key === call.key) {
+        this.reconcile();
+      }
+    }
+  }
+
+  private reconcile(): void {
+    const current = this.navigation.currentEntry;
+    const platform = this.platform;
+    if (
+      current &&
+      platform &&
+      platform.key !== current.key &&
+      platform.knows(current.key)
+    ) {
+      platform.revert(current.key);
+    }
+  }
+
+  private urlFor(state: IRouteState | null): string | null {
+    const matcher = this.navigation.router.matcher;
+    return state && !isBrowserAt(matcher, state)
+      ? stateToUrl(matcher, state)
+      : null;
+  }
+
+  private urlToState(url: string): IRouteState | null {
+    return urlToState(this.navigation.router.matcher, url);
   }
 }

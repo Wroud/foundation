@@ -222,8 +222,8 @@ describe("Parameter Utilities", () => {
       );
       expect(result).toEqual([
         "event",
-        date.toISOString(),
-        JSON.stringify(meta),
+        encodeURIComponent(date.toISOString()),
+        encodeURIComponent(JSON.stringify(meta)),
       ]);
 
       // Wildcard array of dates
@@ -237,8 +237,8 @@ describe("Parameter Utilities", () => {
       );
       expect(result2).toEqual([
         "multi",
-        date.toISOString(),
-        new Date("2024-01-02T12:00:00Z").toISOString(),
+        encodeURIComponent(date.toISOString()),
+        encodeURIComponent(new Date("2024-01-02T12:00:00Z").toISOString()),
       ]);
 
       // Wildcard array of json
@@ -252,8 +252,8 @@ describe("Parameter Utilities", () => {
       );
       expect(result3).toEqual([
         "multi",
-        JSON.stringify(meta),
-        JSON.stringify({ bar: "baz" }),
+        encodeURIComponent(JSON.stringify(meta)),
+        encodeURIComponent(JSON.stringify({ bar: "baz" })),
       ]);
     });
   });

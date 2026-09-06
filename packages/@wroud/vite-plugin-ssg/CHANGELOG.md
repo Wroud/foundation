@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:7.5.1 -->
+## 7.5.1 (2026-09-06)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-ssg-v7.5.0...vite-plugin-ssg-v7.5.1)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- use transition for hydration ([c4c8d72](https://github.com/Wroud/foundation/commit/c4c8d72))
+
 <!-- version:7.5.0 -->
 ## 7.5.0 (2026-08-01)
 

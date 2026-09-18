@@ -1,0 +1,94 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`existing files > stops without --force when not attached to a terminal 1`] = `
+"/repo/packages/@my-scope/my-pkg already contains package.json (name "@my-scope/my-pkg").
+ts-template scaffolds the current directory; continuing will update package.json (name "@my-scope/my-pkg", type, exports, files, scripts.clear, devDependencies).
+Nothing was changed. If /repo/packages/@my-scope/my-pkg is the package you meant to scaffold, re-run with --force."
+`;
+
+exports[`existing files > updates the existing package.json in place with --force 1`] = `
+{
+  "/repo/packages/@my-scope/my-pkg/package.json": "{
+  "name": "@my-scope/my-pkg",
+  "description": "keep me",
+  "type": "module",
+  "sideEffects": [],
+  "exports": {
+    ".": "./lib/index.js",
+    "./*": "./lib/*.js"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "clear": "rimraf lib"
+  },
+  "files": [
+    "package.json",
+    "LICENSE",
+    "README.md",
+    "CHANGELOG.md",
+    "lib",
+    "!lib/**/*.d.ts.map",
+    "!lib/**/*.test.js",
+    "!lib/**/*.test.d.ts",
+    "!lib/**/*.test.d.ts.map",
+    "!lib/**/*.test.js.map",
+    "!lib/tests",
+    "!.tsbuildinfo"
+  ],
+  "dependencies": {
+    "tslib": "^2"
+  }
+}",
+  "/repo/packages/@my-scope/my-pkg/src/index.ts": "export {};
+",
+  "/repo/packages/@my-scope/my-pkg/tsconfig.json": "{
+  "extends": "@my-scope/tsconfig/tsconfig.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "./lib/.tsbuildinfo",
+    "rootDir": "src",
+    "rootDirs": [
+      "src"
+    ],
+    "outDir": "lib",
+    "incremental": true,
+    "composite": true
+  },
+  "include": [
+    "src"
+  ]
+}
+",
+}
+`;
+
+exports[`workspace membership > refuses a folder that none of the workspace globs match 1`] = `
+"Refusing to scaffold /repo/tools/new-pkg: it is inside the workspace project /repo but matches none of its "workspaces" globs (packages/*, packages/@my-scope/*).
+ts-template always scaffolds the current directory; the [name] argument only sets the package name.
+Create the package folder and run the command from inside it:
+  mkdir -p /repo/packages/@my-scope/new-pkg && cd /repo/packages/@my-scope/new-pkg && yarn run -T ts-template project @my-scope/new-pkg
+-T runs the root workspace's ts-template, so it also works from a folder that already has its own package.json."
+`;
+
+exports[`workspace membership > refuses a scope folder 1`] = `
+"Refusing to scaffold /repo/packages/@my-scope: "@my-scope" is a scope folder, not a package folder.
+ts-template always scaffolds the current directory; the [name] argument only sets the package name.
+Create the package folder and run the command from inside it:
+  mkdir -p /repo/packages/@my-scope/new-pkg && cd /repo/packages/@my-scope/new-pkg && yarn run -T ts-template project @my-scope/new-pkg --ts tsconfig
+-T runs the root workspace's ts-template, so it also works from a folder that already has its own package.json."
+`;
+
+exports[`workspace root > refuses to create a base tsconfig in a workspace root 1`] = `
+"Refusing to scaffold /repo: it is a workspace root (its package.json declares "workspaces").
+ts-template always scaffolds the current directory; the [name] argument only sets the package name.
+Create the package folder and run the command from inside it:
+  mkdir -p /repo/packages/tsconfig && cd /repo/packages/tsconfig && yarn run -T ts-template tsconfig tsconfig
+-T runs the root workspace's ts-template, so it also works from a folder that already has its own package.json."
+`;
+
+exports[`workspace root > refuses to scaffold a workspace root even with --force 1`] = `
+"Refusing to scaffold /repo: it is a workspace root (its package.json declares "workspaces").
+ts-template always scaffolds the current directory; the [name] argument only sets the package name.
+Create the package folder and run the command from inside it:
+  mkdir -p /repo/packages/@my-scope/new-pkg && cd /repo/packages/@my-scope/new-pkg && yarn run -T ts-template project @my-scope/new-pkg --ts @my-scope/tsconfig
+-T runs the root workspace's ts-template, so it also works from a folder that already has its own package.json."
+`;

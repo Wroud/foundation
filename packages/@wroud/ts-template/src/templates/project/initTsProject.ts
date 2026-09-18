@@ -1,15 +1,17 @@
-import { execa } from "execa";
 import { join } from "path";
 import { writeFile, mkdir, readFile } from "fs/promises";
 import { getTsConfigTemplate } from "./getTsConfigTemplate.js";
 import picocolors from "picocolors";
 import type { IParsedPackageName } from "../../parsePackageName.js";
 import { getTsWithVersion } from "../../getTsWithVersion.js";
+import type { PackageManifest } from "../../prepareTarget.js";
+import { runYarn } from "../../runYarn.js";
 
 export interface IInitTsProjectOptions {
   path: string;
   packageName: IParsedPackageName;
   tsconfig: IParsedPackageName;
+  manifest: PackageManifest | null;
   target?: string;
   immutable: boolean;
   verbose: boolean;
@@ -18,12 +20,22 @@ export async function initTsProject({
   path,
   packageName,
   tsconfig,
+  manifest,
   target,
   immutable,
   verbose,
 }: IInitTsProjectOptions): Promise<void> {
   if (immutable) {
-    console.log("run:", "yarn init -n", packageName.packageName);
+    if (manifest) {
+      console.log(
+        "update:",
+        join(path, "package.json"),
+        "name:",
+        packageName.packageName,
+      );
+    } else {
+      console.log("run:", "yarn init -n", packageName.packageName);
+    }
     console.log(
       "run:",
       "yarn add -D",
@@ -33,15 +45,17 @@ export async function initTsProject({
     );
     console.log('make dir "src"');
   } else {
-    await execa("yarn", ["init", "-n", packageName.packageName]);
-    await execa("yarn", [
+    if (!manifest) {
+      await runYarn(["init", "-n", packageName.packageName]);
+    }
+    await runYarn([
       "add",
       "-D",
       tsconfig.packageName,
       getTsWithVersion(),
       "rimraf",
     ]);
-    await mkdir("src");
+    await mkdir(join(path, "src"), { recursive: true });
 
     let {
       name,
@@ -59,7 +73,7 @@ export async function initTsProject({
     } = await readFile(join(path, "package.json"), "utf-8").then(JSON.parse);
 
     const packageJson = {
-      name,
+      name: packageName.packageName,
       description,
       version,
       license,
@@ -102,6 +116,8 @@ export async function initTsProject({
     console.log(
       "project initialized:",
       picocolors.green(packageName.packageName),
+      "in",
+      path,
     );
   }
 

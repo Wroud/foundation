@@ -13,6 +13,7 @@
 - **ECMAScript Targeting**: Choose from multiple ECMAScript targets (e.g., `esnext`, `es2022`).
 - **Immutable Mode**: Preview changes without modifying files.
 - **Verbose Mode**: Get detailed output for better debugging.
+- **Safe by Default**: Never scaffolds a workspace root or a scope folder, and asks before touching an existing `package.json` or `tsconfig.json`.
 
 ## Installation
 
@@ -60,6 +61,31 @@ This command will:
 ts-template <command> [options]
 ```
 
+`ts-template` always scaffolds the **current directory**. The optional `[name]` argument only sets the package name written to `package.json`; it does not choose where the package is created. Create the package folder first and run the command from inside it.
+
+### Yarn workspaces
+
+When `@wroud/ts-template` is a devDependency of the workspace root, run it with `yarn run -T` (top-level) so the root's binary is found:
+
+```bash
+mkdir -p packages/@my-scope/my-package
+cd packages/@my-scope/my-package
+yarn run -T ts-template project --ts @my-scope/tsconfig
+```
+
+Plain `yarn ts-template` only works while the folder has no `package.json` of its own. Once it has one, Yarn reports `Couldn't find a script named "ts-template"`. That does not mean you should run the command from the root; use `yarn run -T` instead.
+
+### Safety checks
+
+Before changing anything, `ts-template` checks the current directory:
+
+- **Workspace root** (its `package.json` declares `workspaces`): refused, even with `--force`. The error message prints the command to run from the right folder.
+- **Scope folder** (a directory named like `@my-scope`): refused.
+- **Not a workspace**: inside a workspace project, a directory that matches none of the root's `workspaces` globs is refused, because Yarn would not treat it as a package.
+- **Existing `package.json` or `tsconfig.json`**: in a terminal, `ts-template` lists what it will change and asks for confirmation. When not attached to a terminal (CI, scripts, AI agents), it stops without changing anything and tells you to re-run with `--force`. An existing `package.json` is updated in place and never replaced, so fields such as `scripts`, `dependencies` and `workspaces` are preserved.
+
+`--immutable` runs the same checks and reports what would happen.
+
 ### Commands
 
 - **`tsconfig [name]`**: Create a new project with a base `tsconfig` file.
@@ -70,10 +96,11 @@ ts-template <command> [options]
 
   - **Positional Arguments:**
 
-    - `[name]`: Name of the project (defaults to an npm-friendly name based on the current folder).
+    - `[name]`: Package name to write to `package.json` (defaults to an npm-friendly name based on the current folder). It does not select the target directory.
 
   - **Options:**
     - `--immutable, -i`: Do not modify files, just print the changes that would be made.
+    - `--force, -f`: Modify an existing `package.json`/`tsconfig.json` in the current directory without asking.
     - `--verbose, -v`: Print detailed output.
     - `--target, -t`: Specify the ECMAScript target (choices: `esnext`, `es2022`, etc.).
 
@@ -91,11 +118,12 @@ ts-template <command> [options]
 
   - **Positional Arguments:**
 
-    - `[name]`: Name of the project (defaults to an npm-friendly name based on the current folder).
+    - `[name]`: Package name to write to `package.json` (defaults to an npm-friendly name based on the current folder). It does not select the target directory.
 
   - **Options:**
     - `--tsconfig, --ts`: The name of the `tsconfig` package to link (default: `tsconfig`).
     - `--immutable, -i`: Do not modify files, just print the changes that would be made.
+    - `--force, -f`: Modify an existing `package.json`/`tsconfig.json` in the current directory without asking.
     - `--verbose, -v`: Print detailed output.
     - `--target, -t`: Specify the ECMAScript target (choices: `esnext`, `es2022`, etc.).
 

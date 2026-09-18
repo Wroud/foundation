@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.5.5 -->
+## 0.5.5 (2026-09-18)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/ts-template-v0.5.4...ts-template-v0.5.5)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- stop ts-template from wiping existing package.json files ([aa6feaa](https://github.com/Wroud/foundation/commit/aa6feaa))
+
 <!-- version:0.5.4 -->
 ## 0.5.4 (2026-04-29)
 

@@ -1,6 +1,6 @@
 {
   "name": "@wroud/vite-plugin-tsc",
-  "description": "A Vite plugin that uses TypeScript's tsc to transpile TypeScript sources for seamless bundling.",
+  "description": "A Vite plugin that uses TypeScript's tsc (or the native tsgo compiler) to transpile and type check TypeScript sources for seamless bundling.",
   "version": "0.12.3",
   "type": "module",
   "packageManager": "yarn@4.9.1",
@@ -26,6 +26,7 @@
     "CHANGELOG.md",
     "lib",
     "src",
+    "!src/**/*.test.ts",
     "!lib/**/*.d.ts.map",
     "!lib/**/*.test.js",
     "!lib/**/*.test.d.ts",
@@ -63,14 +64,21 @@
     "vite-plugin",
     "typescript",
     "tsc",
+    "tsgo",
     "transpiler",
     "bundler",
     "esmodules",
     "development"
   ],
   "peerDependencies": {
+    "@typescript/native-preview": "*",
     "typescript": "*",
     "vite": "*"
+  },
+  "peerDependenciesMeta": {
+    "@typescript/native-preview": {
+      "optional": true
+    }
   },
   "dependencies": {
     "picocolors": "^1",

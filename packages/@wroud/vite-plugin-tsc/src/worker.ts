@@ -1,15 +1,16 @@
 import ts from "typescript";
+import path from "node:path";
 import { parentPort, workerData } from "node:worker_threads";
+import type { TscMessage } from "./parseTscOutput.js";
 
 interface WorkerData {
   tscArgs: string[];
   watch: boolean;
-  prebuild?: boolean;
 }
 
-const { tscArgs, watch, prebuild } = workerData as WorkerData;
+const { tscArgs, watch } = workerData as WorkerData;
 
-function send(message: any) {
+function send(message: TscMessage) {
   parentPort?.postMessage(message);
 }
 
@@ -19,7 +20,7 @@ const reportDiagnostic = (diagnostic: ts.Diagnostic) => {
     ts.sys.newLine,
   );
   const category = ts.DiagnosticCategory[diagnostic.category].toLowerCase();
-  const data: any = {
+  const data: TscMessage = {
     type: "diagnostic",
     category,
     message,
@@ -30,9 +31,11 @@ const reportDiagnostic = (diagnostic: ts.Diagnostic) => {
       diagnostic.file,
       diagnostic.start,
     );
-    data.file = diagnostic.file.fileName;
-    data.line = line + 1;
-    data.column = character + 1;
+    data.loc = {
+      file: diagnostic.file.fileName,
+      line: line + 1,
+      column: character + 1,
+    };
   }
   send(data);
 };
@@ -47,44 +50,120 @@ const reportStatus = (diagnostic: ts.Diagnostic) => {
   });
 };
 
-const parsed = ts.parseBuildCommand(tscArgs);
-if (parsed.errors.length) {
+function build(): ts.ExitStatus {
+  const parsed = ts.parseBuildCommand(tscArgs);
   parsed.errors.forEach(reportDiagnostic);
-}
 
-const host = ts.createSolutionBuilderWithWatchHost(
-  ts.sys,
-  ts.createEmitAndSemanticDiagnosticsBuilderProgram,
-  reportDiagnostic,
-  reportStatus,
-  reportStatus,
-);
-
-host.afterProgramEmitAndDiagnostics = (program) => {
-  const diagnostics = ts.getPreEmitDiagnostics(program.getProgram());
-  const hasError = diagnostics.some(
-    (d) => d.category === ts.DiagnosticCategory.Error,
+  const host = ts.createSolutionBuilderWithWatchHost(
+    ts.sys,
+    ts.createEmitAndSemanticDiagnosticsBuilderProgram,
+    reportDiagnostic,
+    reportStatus,
+    reportStatus,
   );
-  send({ type: "built", success: !hasError });
-};
 
-let exitStatus: ts.ExitStatus = ts.ExitStatus.Success;
+  if (watch) {
+    return ts
+      .createSolutionBuilderWithWatch(
+        host,
+        parsed.projects,
+        parsed.buildOptions,
+        parsed.watchOptions,
+      )
+      .build();
+  }
 
-if (prebuild || !watch) {
-  exitStatus = ts
+  return ts
     .createSolutionBuilder(host, parsed.projects, parsed.buildOptions)
     .build();
 }
 
-if (watch) {
-  exitStatus = ts
-    .createSolutionBuilderWithWatch(
-      host,
-      parsed.projects,
-      parsed.buildOptions,
-      parsed.watchOptions,
-    )
-    .build();
+function findConfigFile({ options, fileNames }: ts.ParsedCommandLine) {
+  if (options.project) {
+    const project = path.resolve(options.project);
+    return ts.sys.directoryExists(project)
+      ? path.join(project, "tsconfig.json")
+      : project;
+  }
+  if (fileNames.length) {
+    return undefined;
+  }
+  return ts.findConfigFile(ts.sys.getCurrentDirectory(), ts.sys.fileExists);
 }
-send({ type: "done", success: exitStatus === ts.ExitStatus.Success });
+
+function compile(): ts.ExitStatus {
+  const parsed = ts.parseCommandLine(tscArgs);
+  parsed.errors.forEach(reportDiagnostic);
+  if (parsed.errors.length) {
+    return ts.ExitStatus.DiagnosticsPresent_OutputsSkipped;
+  }
+
+  const configFile = findConfigFile(parsed);
+  if (!configFile && !parsed.fileNames.length) {
+    send({
+      type: "diagnostic",
+      category: "error",
+      code: 5081,
+      message: `Cannot find a tsconfig.json file at the current directory: ${ts.sys.getCurrentDirectory()}.`,
+    });
+    return ts.ExitStatus.DiagnosticsPresent_OutputsSkipped;
+  }
+
+  let errorCount = 0;
+  const report = (diagnostic: ts.Diagnostic) => {
+    if (diagnostic.category === ts.DiagnosticCategory.Error) {
+      errorCount++;
+    }
+    reportDiagnostic(diagnostic);
+  };
+  const status = watch ? reportStatus : () => {};
+  const unwatched = () => ({ close() {} });
+  const hostOverrides = watch
+    ? {}
+    : { watchFile: unwatched, watchDirectory: unwatched };
+
+  const program = configFile
+    ? ts.createWatchProgram(
+        Object.assign(
+          ts.createWatchCompilerHost(
+            configFile,
+            parsed.options,
+            ts.sys,
+            ts.createEmitAndSemanticDiagnosticsBuilderProgram,
+            report,
+            status,
+            parsed.watchOptions,
+          ),
+          hostOverrides,
+        ),
+      )
+    : ts.createWatchProgram(
+        Object.assign(
+          ts.createWatchCompilerHost(
+            parsed.fileNames,
+            parsed.options,
+            ts.sys,
+            ts.createEmitAndSemanticDiagnosticsBuilderProgram,
+            report,
+            status,
+            parsed.projectReferences,
+            parsed.watchOptions,
+          ),
+          hostOverrides,
+        ),
+      );
+
+  if (!watch) {
+    program.close();
+  }
+
+  return errorCount
+    ? ts.ExitStatus.DiagnosticsPresent_OutputsGenerated
+    : ts.ExitStatus.Success;
+}
+
+const exitStatus = /^--?(?:b|build)$/i.test(tscArgs[0] ?? "")
+  ? build()
+  : compile();
+
 process.exitCode = exitStatus;

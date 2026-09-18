@@ -4,7 +4,7 @@ outline: deep
 
 # Vite Plugin TSC
 
-`@wroud/vite-plugin-tsc` brings the TypeScript compiler (`tsc`) to Vite. Because Vite relies on esbuild for speed, TypeScript errors are not checked by default. This plugin can run `tsc` to surface type errors during development or builds and can also transpile TypeScript files, allowing Vite to be configured to consume those files without losing any of its features. It also supports TypeScript project references.
+`@wroud/vite-plugin-tsc` brings the TypeScript compiler (`tsc`) to Vite. Because Vite relies on esbuild for speed, TypeScript errors are not checked by default. This plugin can run `tsc` to surface type errors during development or builds and can also transpile TypeScript files, allowing Vite to be configured to consume those files without losing any of its features. It also supports TypeScript project references and the native TypeScript compiler (TypeScript 7 / `tsgo`).
 
 ## Use Cases
 
@@ -19,6 +19,7 @@ outline: deep
 - **Prebuild support**: Optionally builds dependencies before Vite starts.
 - **Watch mode**: Automatically recompiles when files change.
 - **IDE overlay**: Shows type errors in the browser overlay when `enableOverlay` is enabled.
+- **Native compiler**: Uses the native compiler automatically with TypeScript 7, or `@typescript/native-preview` (`tsgo`) when `tsgo: true` is set.
 
 ## Examples
 
@@ -29,13 +30,7 @@ import { defineConfig } from "vite";
 import { tscPlugin } from "@wroud/vite-plugin-tsc";
 
 export default defineConfig({
-  root: "dist", // folder defined as tsc outDir
-  plugins: [
-    tscPlugin({
-      tscArgs: ["-b"],
-      prebuild: true, // recommended for TypeScript project references
-    }),
-  ],
+  plugins: [tscPlugin()],
 });
 ```
 
@@ -48,7 +43,7 @@ import { tscPlugin } from "@wroud/vite-plugin-tsc";
 export default defineConfig({
   plugins: [
     tscPlugin({
-      tscArgs: ["--project", "tsconfig.json"],
+      tscArgs: ["--project", "tsconfig.json", "--noEmit"],
       prebuild: false,
       enableOverlay: true,
     }),

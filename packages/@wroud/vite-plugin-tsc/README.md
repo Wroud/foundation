@@ -8,20 +8,15 @@
 [npm]: https://img.shields.io/npm/v/@wroud/vite-plugin-tsc.svg
 [npm-url]: https://npmjs.com/package/@wroud/vite-plugin-tsc
 
-`@wroud/vite-plugin-tsc` brings the TypeScript compiler (`tsc`) to Vite. Vite's default esbuild pipeline skips type checking, so this plugin can run `tsc` to surface type errors during development or builds. It can also transpile TypeScript files that Vite then bundles, keeping all Vite features intact. The plugin supports TypeScript project references.
-
-## Use Cases
-
-- **Type checking**: Run `tsc` in the background to catch type errors that esbuild ignores.
-- **Transpilation**: Transpile TypeScript files with `tsc` and let Vite bundle the output.
+`@wroud/vite-plugin-tsc` brings the TypeScript compiler (`tsc`) to Vite. It transpiles your TypeScript with `tsc` and lets Vite bundle the output, keeping all Vite features intact, and surfaces the type errors that Vite's esbuild pipeline skips. The plugin supports TypeScript project references and the native TypeScript compiler (TypeScript 7 / `tsgo`).
 
 ## Features
 
-- **Transpilation**: Automatically transpiles TypeScript code using `tsc`.
-- **Project References**: Supports TypeScript project references.
-- **Background Type Checking**: Performs type checking in the background without blocking Vite, allowing for a smoother development experience.
-- **Watch Mode**: Supports watch mode for continuous development.
-- **Easy Integration**: Simple to add to your Vite project.
+- **Transpilation**: Transpiles TypeScript with `tsc` so Vite bundles the compiler's output.
+- **Project References**: Builds TypeScript project references before Vite starts bundling.
+- **Type Checking**: Reports type errors in the terminal and, optionally, in the Vite error overlay.
+- **Watch Mode**: Keeps `tsc` running in watch mode alongside the dev server.
+- **Native Compiler**: Uses the native compiler automatically with TypeScript 7, or `@typescript/native-preview` (`tsgo`) when `tsgo: true` is set.
 
 ## Installation
 
@@ -37,44 +32,100 @@ Install via yarn:
 yarn add @wroud/vite-plugin-tsc
 ```
 
+## Usage
+
+```ts
+import { defineConfig } from "vite";
+import { tscPlugin } from "@wroud/vite-plugin-tsc";
+
+export default defineConfig({
+  plugins: [tscPlugin()],
+});
+```
+
+With no options the plugin runs `tsc -b`. Before Vite starts it builds the project and its references, so the emitted JavaScript is ready to bundle. In the dev server it then keeps `tsc -b --watch` running, and `vite build` compiles once before bundling and fails on type errors. Point Vite at the emitted files (your `outDir`) so it bundles the output of `tsc`.
+
+## Use Cases
+
+### Type Checking Only
+
+```ts
+tscPlugin({
+  tscArgs: ["--project", "tsconfig.json", "--noEmit"],
+  prebuild: false,
+  enableOverlay: true,
+});
+```
+
+Runs `tsc --noEmit` in watch mode without delaying the dev server start, and shows type errors in the Vite overlay. If type checking is all you need, also consider [`vite-plugin-checker`](https://github.com/fi3ework/vite-plugin-checker), which is dedicated to it and supports ESLint, Stylelint, `vue-tsc` and more.
+
+### Type Check in Dev, Transpile in Build
+
+```ts
+export default defineConfig(({ command }) => ({
+  plugins: [
+    tscPlugin({
+      tscArgs:
+        command === "build"
+          ? ["-b"]
+          : ["--project", "tsconfig.json", "--noEmit"],
+      prebuild: false,
+      enableOverlay: true,
+    }),
+  ],
+}));
+```
+
+Only type checks while developing, and transpiles with `tsc -b` when building (for example in CI).
+
+### Build a Specific Project
+
+```ts
+tscPlugin({ tscArgs: ["-b", "tsconfig.app.json"] });
+```
+
+Any `tsc` arguments can be passed, exactly as on the command line.
+
+### Native Compiler (TypeScript 7 / `tsgo`)
+
+TypeScript 7 ships the native compiler and no longer exposes the JavaScript compiler API, so the plugin detects it and runs its `tsc` binary with no configuration. To try the native compiler while staying on TypeScript 6, install `@typescript/native-preview` and enable `tsgo`:
+
+```ts
+tscPlugin({ tsgo: true });
+```
+
+`tscArgs` work the same with both compilers, and TypeScript 7 specific flags such as `--checkers` or `--builders` can be passed through them.
+
+## Full Configuration
+
+```ts
+import { defineConfig } from "vite";
+import { tscPlugin } from "@wroud/vite-plugin-tsc";
+
+export default defineConfig({
+  plugins: [
+    tscPlugin({
+      tscArgs: ["-b", "tsconfig.json"],
+      prebuild: true,
+      enableOverlay: true,
+      verbose: false,
+      tsgo: false,
+    }),
+  ],
+});
+```
+
+| Option          | Default  | Description                                                                                                                                                                                                                                                             |
+| --------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `tscArgs`       | `["-b"]` | Arguments passed to `tsc`, exactly as on the command line. Build mode is used only when the first argument is `-b` / `--build`; otherwise it runs like `tsc --project`.                                                                                                 |
+| `prebuild`      | `true`   | In watch mode (dev server or `vite build --watch`), run a full compile before Vite starts, so emitted files and project references exist before bundling. A regular `vite build` always compiles first. Set to `false` for type checking only to start without waiting. |
+| `enableOverlay` | `false`  | Show type errors in the Vite error overlay.                                                                                                                                                                                                                             |
+| `verbose`       | `false`  | Log every `tsc` status message and which compiler is used.                                                                                                                                                                                                              |
+| `tsgo`          | `false`  | Use the native compiler from `@typescript/native-preview`. Not needed with `typescript@>=7`, which is always native.                                                                                                                                                    |
+
 ## Documentation
 
 For detailed usage and API reference, visit the [documentation site](https://wroud.dev).
-
-## Example - Transpilation
-
-```ts
-import { defineConfig } from "vite";
-import { tscPlugin } from "@wroud/vite-plugin-tsc";
-
-export default defineConfig({
-  plugins: [
-    tscPlugin({
-      tscArgs: ["-b"],
-      // Enable prebuild to ensure dependencies are built before Vite starts bundling
-      prebuild: true, // Recommended for projects with TypeScript project references
-    }),
-  ],
-});
-```
-
-## Example - Type Checking Only
-
-```ts
-import { defineConfig } from "vite";
-import { tscPlugin } from "@wroud/vite-plugin-tsc";
-
-export default defineConfig({
-  plugins: [
-    tscPlugin({
-      tscArgs: ["--project", "tsconfig.json"],
-      // Prebuild is not needed for type checking only
-      prebuild: false, // Skip prebuilding for faster startup
-      enableOverlay: true, // Show errors in Vite overlay
-    }),
-  ],
-});
-```
 
 ## Changelog
 

@@ -5062,8 +5062,12 @@ __metadata:
     vite: "npm:^6"
     vitest: "npm:^3"
   peerDependencies:
+    "@typescript/native-preview": "*"
     typescript: "*"
     vite: "*"
+  peerDependenciesMeta:
+    "@typescript/native-preview":
+      optional: true
   languageName: unknown
   linkType: soft
 

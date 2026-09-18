@@ -1,42 +1,50 @@
-import {
-  createLogger,
-  type ErrorPayload,
-  type PluginOption,
-  type ViteDevServer,
-} from "vite";
+import { createLogger, type PluginOption, type ViteDevServer } from "vite";
 import colors from "picocolors";
 import stripAnsi from "strip-ansi";
 import { Worker } from "node:worker_threads";
+import {
+  resolveNativeCompiler,
+  startNative,
+  type NativeCompiler,
+} from "./native.js";
+import type { TscMessage } from "./parseTscOutput.js";
 
 interface IOptions {
   tscArgs?: string[];
   verbose?: boolean;
   prebuild?: boolean;
   enableOverlay?: boolean;
+  tsgo?: boolean;
+}
+
+interface Runner {
+  exited: Promise<number>;
+  stop(): Promise<void>;
 }
 
 const pluginName = "vite-plugin-tsc";
 
-export function tscPlugin(
-  { tscArgs, verbose, prebuild, enableOverlay }: IOptions = {
-    tscArgs: [],
-  },
-): PluginOption {
+export function tscPlugin({
+  tscArgs = ["-b"],
+  verbose,
+  prebuild = true,
+  enableOverlay,
+  tsgo,
+}: IOptions = {}): PluginOption {
   let server: ViteDevServer | null = null;
   const logger = createLogger("info", { prefix: "[tsc]" });
-  let tsWorker: Worker | null = null;
+  let nativeCompiler: Promise<NativeCompiler | null> | null = null;
+  let tsRunner: Runner | null = null;
   let isPrebuilt = false;
   let isWatchMode = false;
-  let skipTerminateError = false;
 
-  function handleWorkerMessage(message: any) {
+  function handleMessage(message: TscMessage) {
     try {
       if (message.type === "diagnostic") {
-        let { message: msg, category, file, line, column, code } = message;
-        let loc: ErrorPayload["err"]["loc"] | undefined;
-        if (file) {
-          loc = { file, line, column };
-          msg = colors.dim(`${file}(${line},${column})`) + "\n" + msg;
+        let { message: msg, category, loc, code } = message;
+        if (loc) {
+          msg =
+            colors.dim(`${loc.file}(${loc.line},${loc.column})`) + "\n" + msg;
         }
         msg = colors.dim(`TS${code}:`) + ` ${msg}`;
         if (category === "error" && enableOverlay) {
@@ -72,49 +80,66 @@ export function tscPlugin(
     }
   }
 
-  function startWorker(
-    watch: boolean,
-    runPrebuild: boolean,
-    onBuilt?: (success: boolean) => void,
-  ) {
-    const { resolve, reject, promise } = Promise.withResolvers<void>();
+  function startWorker(watch: boolean): Runner {
     const worker = new Worker(new URL("./worker.js", import.meta.url), {
-      workerData: { tscArgs, watch, prebuild: runPrebuild },
+      workerData: { tscArgs, watch },
       type: "module",
     } as any);
-    if (watch) {
-      tsWorker = worker;
-    }
-    worker.on("message", (m) => {
-      handleWorkerMessage(m);
-      if (m.type === "built" && onBuilt) {
-        onBuilt(m.success);
-      }
-    });
+    worker.on("message", handleMessage);
     worker.on("error", (e) => {
       logger.error("TSC worker error", { timestamp: true, error: e });
     });
-    worker.on("exit", (code) => {
-      if (tsWorker === worker) tsWorker = null;
-      if (!skipTerminateError && code !== 0) {
-        reject(new Error(`TSC worker exited with code ${code}`));
-      } else {
-        resolve();
-      }
-      skipTerminateError = false;
+    const exited = new Promise<number>((resolve) => {
+      worker.on("exit", resolve);
     });
 
-    return promise;
+    return {
+      exited,
+      async stop() {
+        await worker.terminate();
+      },
+    };
+  }
+
+  function resolveCompiler() {
+    return (nativeCompiler ??= resolveNativeCompiler(tsgo).then((compiler) => {
+      if (verbose && compiler) {
+        logger.info(
+          `using ${compiler.name}@${compiler.version} native compiler`,
+          { timestamp: true },
+        );
+      }
+      return compiler;
+    }));
+  }
+
+  async function start(compiler: NativeCompiler | null, watch: boolean) {
+    const runner = compiler
+      ? startNative(compiler, tscArgs, watch, handleMessage, (message) =>
+          logger.error(message.trimEnd(), { timestamp: true }),
+        )
+      : startWorker(watch);
+    if (watch) {
+      tsRunner = runner;
+    }
+
+    const code = await runner.exited;
+    const stopped = watch && tsRunner !== runner;
+    if (tsRunner === runner) tsRunner = null;
+    if (!stopped && code !== 0) {
+      throw new Error(`TSC exited with code ${code}`);
+    }
   }
 
   async function run() {
+    const compiler = await resolveCompiler();
     if ((prebuild || !isWatchMode) && !isPrebuilt) {
       const timestamp = Date.now();
       try {
         logger.info(isWatchMode ? "prebuild..." : "building...", {
           timestamp: true,
         });
-        await startWorker(false, true);
+        await start(compiler, false);
       } catch (e) {
         if (!isWatchMode) {
           throw e;
@@ -133,13 +158,13 @@ export function tscPlugin(
     }
 
     if (isWatchMode) {
-      if (tsWorker) {
+      if (tsRunner) {
         logger.warn("watch process already running. Skipping...", {
           timestamp: true,
         });
         return;
       }
-      startWorker(true, false).catch((e) => {
+      start(compiler, true).catch((e) => {
         logger.error("TSC watch worker crashed", {
           timestamp: true,
           error: e,
@@ -169,11 +194,9 @@ export function tscPlugin(
     },
 
     async closeBundle() {
-      if (tsWorker) {
-        skipTerminateError = true;
-        await tsWorker.terminate();
-        tsWorker = null;
-      }
+      const runner = tsRunner;
+      tsRunner = null;
+      await runner?.stop();
     },
   };
 

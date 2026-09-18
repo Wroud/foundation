@@ -3,6 +3,21 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:1.0.0 -->
+## 1.0.0 (2026-09-18)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-tsc-v0.12.3...vite-plugin-tsc-v1.0.0)
+
+<!-- changelog -->
+### ⚠️  Breaking Changes
+
+- support TypeScript 7 and the tsgo native compiler ([688cdd9](https://github.com/Wroud/foundation/commit/688cdd9))
+  - Detect typescript@>=7 (or `tsgo: true` with @typescript/native-preview) and run the native
+    <br>compiler binary, parsing its output into the same diagnostics and status messages as the
+    <br>TypeScript API worker. Type-check-only mode now works with `tscArgs: ["-p", "...", "--noEmit"]`.
+  - `tscArgs` follow tsc CLI semantics: build mode is used only when the first
+  - `prebuild` now defaults to `true`; set `prebuild: false` to start the dev
+
 <!-- version:0.12.3 -->
 ## 0.12.3 (2026-04-15)
 

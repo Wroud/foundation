@@ -58,7 +58,7 @@
   },
   "dependencies": {
     "@vitejs/plugin-react": "^6",
-    "@vitejs/plugin-rsc": "^0.5",
+    "@vitejs/plugin-rsc": "^0.5.33",
     "rsc-html-stream": "^0",
     "tinyglobby": "^0"
   },

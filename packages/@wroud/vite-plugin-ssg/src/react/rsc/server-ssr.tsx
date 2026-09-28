@@ -1,4 +1,7 @@
-import { createFromReadableStream } from "@vitejs/plugin-rsc/ssr";
+import {
+  createFromReadableStream,
+  getClientEntryUrl,
+} from "@vitejs/plugin-rsc/ssr";
 import type { Transformer } from "node:stream/web";
 import type { ReactFormState } from "react-dom/client";
 import { use } from "react";
@@ -104,8 +107,7 @@ export function createSsrRuntime<T extends IAppContext>(
         </AppContext>
       );
 
-      const bootstrapScriptContent =
-        await import.meta.viteRsc.loadBootstrapScriptContent("index");
+      const bootstrapScriptContent = `import(${JSON.stringify(getClientEntryUrl())})`;
       const signal = renderOptions?.signal;
 
       let htmlStream: ReadableStream<Uint8Array>;

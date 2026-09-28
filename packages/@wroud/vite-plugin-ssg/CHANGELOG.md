@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:7.5.2 -->
+## 7.5.2 (2026-09-28)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-ssg-v7.5.1...vite-plugin-ssg-v7.5.2)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- replace deprecated loadBootstrapScriptContent with getClientEntryUrl ([d9395b3](https://github.com/Wroud/foundation/commit/d9395b3))
+
 <!-- version:7.5.1 -->
 ## 7.5.1 (2026-09-06)
 

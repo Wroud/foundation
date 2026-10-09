@@ -10,4 +10,6 @@ export {
   createRscConfig,
   toRscInstance,
   type IRscConfigOptions,
+  type RequestHandler,
+  type RequestMiddleware,
 } from "./app/RscConfig.js";

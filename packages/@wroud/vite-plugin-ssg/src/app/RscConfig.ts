@@ -10,7 +10,9 @@ interface IRscInitializer<T extends IAppContext> {
 }
 
 interface IRscResponse<T extends IAppContext> {
-  (app: T): IResponseMetadata | undefined | Promise<IResponseMetadata | undefined>;
+  (
+    app: T,
+  ): IResponseMetadata | undefined | Promise<IResponseMetadata | undefined>;
 }
 
 interface IRscRoutesPrerender<T extends IAppContext> {
@@ -21,7 +23,12 @@ interface IRscFinalizer<T extends IAppContext> {
   (app: T): void | Promise<void>;
 }
 
+export type RequestHandler = (request: Request) => Response | Promise<Response>;
+
+export type RequestMiddleware = (next: RequestHandler) => RequestHandler;
+
 export interface IRscConfigOptions<T extends IAppContext> {
+  middleware?: RequestMiddleware[];
   onAppStart?: IRscInitializer<T>;
   onRoutesPrerender?: IRscRoutesPrerender<NoInfer<T>>;
   onResponse?: IRscResponse<NoInfer<T>>;
@@ -30,6 +37,7 @@ export interface IRscConfigOptions<T extends IAppContext> {
 
 export class RscInstance<T extends IAppContext> {
   root: RscEntryComponent<T>;
+  readonly middleware: readonly RequestMiddleware[];
   private onAppStart?: IRscInitializer<T>;
   private onRoutesPrerender?: IRscRoutesPrerender<T>;
   private onResponse?: IRscResponse<T>;
@@ -37,6 +45,7 @@ export class RscInstance<T extends IAppContext> {
 
   constructor(root: RscEntryComponent<T>, config?: IRscConfigOptions<T>) {
     this.root = root;
+    this.middleware = config?.middleware ?? [];
     this.onAppStart = config?.onAppStart;
     this.onRoutesPrerender = config?.onRoutesPrerender;
     this.onResponse = config?.onResponse;

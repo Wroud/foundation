@@ -4,6 +4,8 @@ import type {
   RscEntryComponent,
 } from "../react/IndexComponent.js";
 import { createRscConfig } from "./RscConfig.js";
+import type { RequestHandler, RequestMiddleware } from "../app.js";
+import type { RequestMiddleware as PublicRequestMiddleware } from "../ssgPlugin.js";
 
 const root: RscEntryComponent = ({ children }) => children;
 
@@ -12,6 +14,19 @@ function ctx(href: string): IndexComponentContext {
 }
 
 describe("RscInstance lifecycle", () => {
+  it("stores optional middleware through the public Fetch contract", () => {
+    const handler: RequestHandler = () => new Response("ok");
+    const middleware: RequestMiddleware = (next) => (request) => next(request);
+    const publicMiddleware: PublicRequestMiddleware = middleware;
+    const rsc = createRscConfig(root, { middleware: [publicMiddleware] });
+
+    expect(rsc.middleware).toEqual([middleware]);
+    expect(createRscConfig(root).middleware).toEqual([]);
+    expect(
+      middleware(handler)(new Request("http://localhost/")),
+    ).toBeInstanceOf(Response);
+  });
+
   it("starts a fresh app per request instead of reusing one instance", async () => {
     const seen: string[] = [];
     const rsc = createRscConfig(root, {

@@ -8,6 +8,7 @@ import type { SsgPluginOptions } from "./SsgPluginOptions.js";
 import { ssgBuildApp } from "./resolvers/ssgBuildApp.js";
 
 export * from "./react/IndexComponent.js";
+export type { RequestHandler, RequestMiddleware } from "./app/RscConfig.js";
 
 const ENTRY_RSC = "@wroud/vite-plugin-ssg/entry-rsc";
 const ENTRY_SSR = "@wroud/vite-plugin-ssg/entry-ssr";

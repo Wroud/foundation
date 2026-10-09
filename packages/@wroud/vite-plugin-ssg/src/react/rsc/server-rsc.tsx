@@ -8,7 +8,11 @@ import {
 } from "@vitejs/plugin-rsc/rsc";
 import type { Transformer } from "node:stream/web";
 import type { ReactFormState } from "react-dom/client";
-import { toRscInstance, type RscInstance } from "../../app/RscConfig.js";
+import {
+  toRscInstance,
+  type RscInstance,
+  type RequestHandler,
+} from "../../app/RscConfig.js";
 import { RenderContextProvider } from "../components/RenderContext.js";
 import { runWithRenderContext } from "../components/renderContextAccessor.react-server.js";
 import type { IResponseMetadata } from "../../app/IResponseMetadata.js";
@@ -112,9 +116,7 @@ async function handleServerAction(
   }
 }
 
-function toHeaders(
-  ...sources: (IResponseMetadata | undefined)[]
-): Headers {
+function toHeaders(...sources: (IResponseMetadata | undefined)[]): Headers {
   const headers = new Headers();
   for (const source of sources) {
     for (const [name, value] of Object.entries(source?.headers ?? {})) {
@@ -255,7 +257,7 @@ export function createSsgRuntime<T extends IAppContext>(
     };
   }
 
-  async function handler(
+  async function handleRequest(
     request: Request,
     requestOptions?: SsgRequestOptions,
   ): Promise<Response> {
@@ -301,11 +303,21 @@ export function createSsgRuntime<T extends IAppContext>(
         : toHeaders(rscResponse, result.response);
       headers.set("content-type", "text/html;charset=utf-8");
       return new Response(result.stream, {
-        status:
-          result.status ?? result.response?.status ?? rscResponse?.status,
+        status: result.status ?? result.response?.status ?? rscResponse?.status,
         headers,
       });
     });
+  }
+
+  async function handler(
+    request: Request,
+    requestOptions?: SsgRequestOptions,
+  ): Promise<Response> {
+    const next = rscApp.middleware.reduceRight<RequestHandler>(
+      (next, middleware) => middleware(next),
+      (request) => handleRequest(request, requestOptions),
+    );
+    return next(request);
   }
 
   async function handleSsg(request: Request) {

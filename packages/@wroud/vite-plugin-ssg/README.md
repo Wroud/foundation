@@ -316,6 +316,33 @@ For crawlers and other clients that must not see Suspense fallbacks, pass `settl
 const response = await runtime.handler(request, { settled: true });
 ```
 
+### HTTP middleware
+
+Register optional Fetch middleware through `createRscConfig`. It wraps HTML, RSC, and server-action requests in Vite development and production, including Lambda. The first middleware in the array is outermost.
+
+```tsx
+import { createRscConfig } from "@wroud/vite-plugin-ssg/app";
+import type { RequestMiddleware } from "@wroud/vite-plugin-ssg";
+import { withRequestContext } from "./request-context.js";
+
+const contextMiddleware: RequestMiddleware = (next) => (request) =>
+  withRequestContext(request, (resolvedRequest) => next(resolvedRequest));
+
+export default createRscConfig(RscRoot, {
+  middleware: [contextMiddleware],
+  onAppStart: (context) => ({ base: context.base ?? "/" }),
+});
+```
+
+The adapter delegates to your application's `withRequestContext` helper, which calls `next` with the resolved request.
+
+```ts
+type RequestHandler = (request: Request) => Response | Promise<Response>;
+type RequestMiddleware = (next: RequestHandler) => RequestHandler;
+```
+
+Both types are exported from `@wroud/vite-plugin-ssg` and `@wroud/vite-plugin-ssg/app`. Middleware can replace requests, return responses directly, modify responses, catch downstream errors, and establish asynchronous request context.
+
 ## CSP
 
 Set Vite's [`html.cspNonce`](https://vite.dev/config/shared-options.html#html-cspnonce) and the plugin applies it everywhere a nonce is needed, in dev and in build output:

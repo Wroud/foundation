@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:7.6.0 -->
+## 7.6.0 (2026-10-09)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-ssg-v7.5.2...vite-plugin-ssg-v7.6.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- add application HTTP middleware ([148df55](https://github.com/Wroud/foundation/commit/148df55))
+
 <!-- version:7.5.2 -->
 ## 7.5.2 (2026-09-28)
 

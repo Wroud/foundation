@@ -292,7 +292,9 @@ describe("rsc ssg build (hash-based csp)", () => {
 
   function inlineScripts(html: string): string[] {
     const out: string[] = [];
-    for (const match of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)) {
+    for (const match of html.matchAll(
+      /<script\b([^>]*)>([\s\S]*?)<\/script>/gi,
+    )) {
       if (!/\ssrc=/.test(match[1]!)) {
         out.push(match[2]!);
       }
@@ -405,9 +407,9 @@ describe("rsc ssg build (hash-based csp)", () => {
     );
     expect(post.file).toBe("blog/post.html");
     expect(post.policy).toBe(cspPolicy(await read("blog/post.html")));
-    expect(
-      post.hashes.every((hash: string) => !hash.startsWith("'")),
-    ).toBe(true);
+    expect(post.hashes.every((hash: string) => !hash.startsWith("'"))).toBe(
+      true,
+    );
   });
 });
 
@@ -437,9 +439,9 @@ describe("rsc ssg build (hash-based csp, header delivery)", () => {
     );
     expect(page.file).toBe("index.html");
     expect(page.policy).toMatch(/script-src 'self'( 'sha384-[^']+')+/);
-    expect(page.hashes.every((hash: string) => hash.startsWith("sha384-"))).toBe(
-      true,
-    );
+    expect(
+      page.hashes.every((hash: string) => hash.startsWith("sha384-")),
+    ).toBe(true);
   });
 });
 
@@ -449,6 +451,12 @@ describe("rsc ssr (request-time rendering via the built handler)", () => {
       request: Request,
       requestOptions?: { cspNonce?: string; settled?: boolean },
     ) => Promise<Response>;
+    handleSsg: (request: Request) => Promise<{
+      html: ReadableStream<Uint8Array>;
+      rsc: ReadableStream<Uint8Array>;
+      status?: number;
+      headers: Headers;
+    }>;
     dispose: () => Promise<void>;
   };
   let exists: (file: string) => Promise<boolean>;
@@ -524,7 +532,9 @@ describe("rsc ssr (request-time rendering via the built handler)", () => {
   });
 
   it("keeps 200 and emits app headers for routes that declare them", async () => {
-    const cached = await runtime.handler(new Request("http://localhost/cached"));
+    const cached = await runtime.handler(
+      new Request("http://localhost/cached"),
+    );
     expect(cached.status).toBe(200);
     expect(cached.headers.get("cache-control")).toBe("public, max-age=300");
     await cached.text();
@@ -546,7 +556,9 @@ describe("rsc ssr (request-time rendering via the built handler)", () => {
   });
 
   it("streams suspense fallbacks progressively by default", async () => {
-    const response = await runtime.handler(new Request("http://localhost/slow"));
+    const response = await runtime.handler(
+      new Request("http://localhost/slow"),
+    );
     const html = await response.text();
     expect(html).toContain('data-testid="slow-fallback">slow-loading');
     expect(html).toContain('data-testid="slow-content">slow-done');
@@ -598,11 +610,96 @@ describe("rsc ssr (request-time rendering via the built handler)", () => {
     await response.text();
   });
 
-  it("drops app cache headers when the ssr shell render fails", async () => {
-    const response = await runtime.handler(new Request("http://localhost/boom"));
-    expect(response.status).toBe(500);
-    expect(response.headers.get("cache-control")).toBeNull();
-    expect(await response.text()).toContain("Internal Server Error");
+  it.each([
+    {
+      name: "a shell render failure",
+      route: "/boom",
+      status: 500,
+      body: "Internal Server Error",
+    },
+    {
+      name: "a shell render failure in settled mode",
+      route: "/boom",
+      settled: true,
+      status: 500,
+      body: "Internal Server Error",
+    },
+    {
+      name: "a boundary error before the shell is ready",
+      route: "/sync-boom",
+      status: 500,
+      body: 'data-testid="boom-fallback"',
+    },
+    {
+      name: "a server component error in the first flight flush",
+      route: "/sync-boom.rsc",
+      status: 500,
+    },
+    {
+      name: "a late boundary error in settled mode",
+      route: "/slow-boom",
+      settled: true,
+      status: 500,
+      body: 'data-testid="ssr"',
+    },
+    {
+      name: "a late server component error in a settled flight",
+      route: "/slow-boom.rsc",
+      settled: true,
+      status: 500,
+    },
+    {
+      name: "a settled render aborted before it settles",
+      route: "/stall",
+      timeout: true,
+      settled: true,
+      status: 503,
+    },
+    {
+      name: "a shell aborted before it is ready",
+      route: "/stall-shell",
+      timeout: true,
+      status: 503,
+      body: "Internal Server Error",
+    },
+  ])(
+    "answers $name with $status and no-store instead of the app headers",
+    async ({ route, settled, timeout, status, body }) => {
+      const response = await runtime.handler(
+        new Request("http://localhost" + route, {
+          signal: timeout ? AbortSignal.timeout(200) : undefined,
+        }),
+        { settled },
+      );
+      expect(response.status).toBe(status);
+      expect(response.headers.get("cache-control")).toBe("no-store");
+      expect(response.headers.get("content-type")).toContain(
+        route.endsWith(".rsc") ? "text/x-component" : "text/html",
+      );
+      const text = await response.text();
+      if (body) {
+        expect(text).toContain(body);
+      }
+    },
+  );
+
+  it("keeps the status committed with the shell when a boundary errors later in a progressive stream", async () => {
+    const response = await runtime.handler(
+      new Request("http://localhost/slow-boom"),
+    );
+    expect(response.status).toBe(200);
+    const html = await response.text();
+    expect(html).toContain('data-testid="boom-fallback"');
+  });
+
+  it("reports 500 from the prerender path when a boundary errors", async () => {
+    const result = await runtime.handleSsg(
+      new Request("http://localhost/slow-boom"),
+    );
+    expect(result.status).toBe(500);
+    expect(result.headers.get("cache-control")).toBe("no-store");
+    await new Response(result.html).text();
+    await new Response(result.rsc).text();
   });
 
   it("re-renders a no-js form post in settled mode", async () => {
@@ -754,9 +851,10 @@ describe("rsc ssr (request-time rendering via the built handler)", () => {
     actionField: string,
     name: string,
     args: unknown[],
+    route = "/index.rsc",
   ): Promise<Response> {
     return runtime.handler(
-      new Request("http://localhost/index.rsc", {
+      new Request("http://localhost" + route, {
         method: "POST",
         headers: { "rsc-action": toActionId(actionField, name) },
         body: JSON.stringify(args),
@@ -817,6 +915,35 @@ describe("rsc ssr (request-time rendering via the built handler)", () => {
     const flight = await response.text();
     expect(flight).toContain('"ok":false');
   });
+
+  it("lets a failed server function win over the app status on the flight result", async () => {
+    const { actionField } = await readTotal();
+    const response = await callServerFunction(
+      actionField,
+      "failAction",
+      [],
+      "/missing.rsc",
+    );
+    expect(response.status).toBe(500);
+    await response.text();
+  });
+
+  it("fails a static build whose prerendered route renders with a 5xx status", async () => {
+    const fixtureDir = path.join(fixturesDir, "ssr");
+    const nodeEnv = process.env["NODE_ENV"];
+    process.env["NODE_ENV"] = "production";
+    try {
+      const builder = await createBuilder({
+        configFile: path.join(fixtureDir, "vite.config.prerender.ts"),
+        logLevel: "silent",
+      });
+      await expect(builder.buildApp()).rejects.toThrow(
+        /\/sync-boom rendered with status 500/,
+      );
+    } finally {
+      process.env["NODE_ENV"] = nodeEnv;
+    }
+  }, 120_000);
 
   it("compiles client-component server-function imports into server references", async () => {
     const assets = await readClientAssets();
@@ -1012,7 +1139,10 @@ describe("rsc ssg dev (server functions)", () => {
 });
 
 describe("rsc ssg build (entry resolved from a node_modules package)", () => {
-  const pkgDir = path.join(fixturesDir, "pkg-entry/node_modules/test-app-entry");
+  const pkgDir = path.join(
+    fixturesDir,
+    "pkg-entry/node_modules/test-app-entry",
+  );
   let read: (file: string) => Promise<string>;
 
   beforeAll(async () => {

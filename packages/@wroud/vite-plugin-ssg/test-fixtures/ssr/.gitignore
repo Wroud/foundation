@@ -1,3 +1,6 @@
 dist/
 dist-ssr/
 dist-rsc/
+dist-prerender/
+dist-prerender-ssr/
+dist-prerender-rsc/

@@ -100,6 +100,11 @@ async function renderStatic(
         signal: AbortSignal.timeout(options.renderTimeout ?? 10000),
       });
       const { html, rsc, status } = await runtime.handleSsg(request);
+      if (status && status >= 500) {
+        throw new Error(
+          `[vite-plugin-ssg] route ${route} rendered with status ${status}`,
+        );
+      }
       if (status && status >= 400) {
         config.logger.warn(
           `[vite-plugin-ssg] route ${route} rendered with status ${status}`,

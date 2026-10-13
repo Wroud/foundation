@@ -296,25 +296,40 @@ export default createAppConfig(App, {
 });
 ```
 
-`onResponse` is available on both `createAppConfig` and `createRscConfig`, takes the value your `onAppStart` returned, and may be async. It runs after initialization and before any rendering begins, so there are no timing rules to learn: the runtime always has your metadata in hand before it constructs the `Response`. Return `undefined` for routes with nothing to declare.
+`onResponse` is available on both `createAppConfig` and `createRscConfig`, takes the value your `onAppStart` returned, and may be async. It runs after initialization and before any rendering begins, so the runtime always has your metadata in hand. Return `undefined` for routes with nothing to declare.
 
 This is deliberately not an in-render API. Your app resolves its route during `onAppStart` — a phase that can `await` anything it needs — and React then renders that decision. Letting a component set a status mid-render would mean racing the point at which the status line is already committed to the wire.
 
-`runtime.handler` merges the result into the `Response` it returns — read `response.status` and `response.headers` before consuming the body, exactly the order a serverless host needs. The runtime keeps ownership of `content-type`; everything else is yours. When the SSR shell render fails, the runtime answers `500` with its fallback page and discards your headers, since the render they described never happened and a `Cache-Control` meant for the real page must not apply to an error page.
+### When the status is committed
+
+Your metadata describes the page you intended to render. Whether that render actually happened is only known once React has done its work, so the runtime defers the final decision to the last moment at which a status can still change — the shell — and overrides your metadata when the render it described did not happen:
+
+- A render error reported by React before the commit point (a thrown component, a failed data fetch, a flight error from the rsc entry) turns the response into **500**.
+- A render aborted through the request's `AbortSignal` (a deadline such as `AbortSignal.timeout`, or a client that went away) turns it into **503**.
+- In both cases the response carries `Cache-Control: no-store` and none of your `onResponse` headers, so a CDN never stores a broken page and a crawler never indexes it. The runtime keeps ownership of `content-type` and `vary`.
+
+The body still streams. If the shell itself failed, the runtime sends its fallback page and the browser renders the app client-side. If the error sat inside a Suspense boundary, the real document goes out with React's fallback and client-retry markers in place, exactly as React would stream it, only under a status that tells caches and crawlers not to keep it.
+
+For a progressive document the commit point is the moment the shell is ready. Errors in boundaries that resolve later cannot change a status line that has already been sent — that is React's own rule, and the reason the fallback plus client retry exists. A flight (`.rsc`) response commits at its first flush.
+
+For crawlers and other clients that must not see Suspense fallbacks, pass `settled: true` and the handler waits for the whole tree before committing. Every error reported during the render then counts, flight responses are buffered to completion, and a render that never settles before its signal aborts answers `503` instead of hanging:
+
+```ts
+const response = await runtime.handler(
+  new Request(url, { headers, signal: AbortSignal.timeout(10_000) }),
+  { settled: true },
+);
+```
+
+`runtime.handler` returns a `Response` whose `status` and `headers` are final before the body is consumed — the order a serverless host needs, with no buffering of the body and no inspection of React's error markers. Middleware sees that same resolved response and may still rewrite it. A failed server action keeps its `500` on the flight result regardless of the app's declared status.
 
 If an app declares `onResponse` on both entries, the client entry's result wins per key, since it runs later. A flight request has no SSR pass, so the client entry's `onResponse` never runs for it — flight responses carry only the **rsc** entry's metadata.
 
-That asymmetry is yours to handle, because the runtime never invents a cache policy: it sets no `Cache-Control` of its own on any response. A document and its `.rsc` counterpart are two encodings of the same render, so if your `onResponse` lives on the client entry, do not let a cache treat `.rsc` more permissively than the document for the same route. A `.rsc` cached as `200` against a `404` document lets a client-side navigation render a page the server no longer serves, and a shared-cached `.rsc` also reuses whichever `cspNonce` was minted for the request that filled the cache.
+That asymmetry is yours to handle, because the runtime never invents a cache policy for a successful render: it sets no `Cache-Control` of its own on any response that rendered as intended. A document and its `.rsc` counterpart are two encodings of the same render, so if your `onResponse` lives on the client entry, do not let a cache treat `.rsc` more permissively than the document for the same route. A `.rsc` cached as `200` against a `404` document lets a client-side navigation render a page the server no longer serves, and a shared-cached `.rsc` also reuses whichever `cspNonce` was minted for the request that filled the cache.
 
 Putting `onResponse` on the **rsc** entry removes the asymmetry entirely: it runs during the flight render, so both paths derive identical metadata from one place at no extra cost.
 
-`handleSsg` (the static build path) returns `{ status, headers }` alongside its streams, and the build logs a warning when a prerendered route reports a status of 400 or higher.
-
-For crawlers and other clients that must not see Suspense fallbacks, pass `settled: true` and the handler waits for fully settled HTML before responding. In this mode a render error rejects instead of returning the progressive 500 fallback page:
-
-```ts
-const response = await runtime.handler(request, { settled: true });
-```
+`handleSsg` (the static build path) always renders settled and returns `{ status, headers }` alongside its streams, so a prerendered route whose data fetch failed reports `500` and one that hit `renderTimeout` reports `503`. The build fails on any route that reports a 5xx status, since a broken page must never reach the CDN as a static file. A 4xx status declared by your app is a legitimate page: the build logs a warning and still writes its HTML.
 
 ### HTTP middleware
 

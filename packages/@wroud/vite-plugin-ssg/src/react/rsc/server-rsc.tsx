@@ -32,6 +32,11 @@ import {
   HEADER_VARY,
 } from "./shared.js";
 import type { createSsrRuntime } from "./server-ssr.js";
+import {
+  RenderErrorTracker,
+  readShell,
+  resolveResponse,
+} from "./render-outcome.js";
 import type { IAppContext } from "../../app.js";
 
 export interface SsgRuntimeModules<T extends IAppContext = IAppContext> {
@@ -116,19 +121,6 @@ async function handleServerAction(
   }
 }
 
-function toHeaders(...sources: (IResponseMetadata | undefined)[]): Headers {
-  const headers = new Headers();
-  for (const source of sources) {
-    for (const [name, value] of Object.entries(source?.headers ?? {})) {
-      headers.delete(name);
-      for (const item of Array.isArray(value) ? value : [value]) {
-        headers.append(name, item);
-      }
-    }
-  }
-  return headers;
-}
-
 export function createSsgRuntime<T extends IAppContext>(
   modules: SsgRuntimeModules<T>,
   options: SsgRuntimeOptions,
@@ -163,6 +155,7 @@ export function createSsgRuntime<T extends IAppContext>(
   async function renderFlight(
     context: IndexComponentContext,
     signal: AbortSignal,
+    tracker: RenderErrorTracker,
     action?: ActionOutcome,
   ): Promise<{
     stream: ReadableStream<Uint8Array>;
@@ -215,6 +208,7 @@ export function createSsgRuntime<T extends IAppContext>(
         renderToReadableStream<RscPayload>(payload, {
           signal,
           temporaryReferences: action?.temporaryReferences,
+          onError: tracker.onError,
         }),
       );
       const stopTransformer: Transformer<Uint8Array, Uint8Array> = {
@@ -240,6 +234,7 @@ export function createSsgRuntime<T extends IAppContext>(
   function renderHtmlOptions(
     context: IndexComponentContext,
     signal: AbortSignal,
+    tracker: RenderErrorTracker,
     ssg?: boolean,
     formState?: ReactFormState,
   ) {
@@ -248,6 +243,7 @@ export function createSsgRuntime<T extends IAppContext>(
       nonce: context.cspNonce,
       signal,
       formState,
+      onError: tracker.onError,
       context: {
         href: context.href,
         base: context.base,
@@ -272,18 +268,23 @@ export function createSsgRuntime<T extends IAppContext>(
         }
       }
 
+      const tracker = new RenderErrorTracker(request.signal);
       const { stream: rscStream, response: rscResponse } = await renderFlight(
         context,
         request.signal,
+        tracker,
         action,
       );
 
       if (isRsc) {
-        const headers = toHeaders(rscResponse);
+        const body = requestOptions?.settled
+          ? await new Response(rscStream).arrayBuffer()
+          : await readShell(rscStream);
+        const { status, headers } = resolveResponse(tracker, rscResponse);
         headers.set("content-type", RSC_CONTENT_TYPE);
         headers.append(HEADER_VARY, HEADER_RSC);
-        return new Response(rscStream, {
-          status: action?.status ?? rscResponse?.status,
+        return new Response(body, {
+          status: action?.status ?? status,
           headers,
         });
       }
@@ -294,18 +295,18 @@ export function createSsgRuntime<T extends IAppContext>(
         renderHtmlOptions(
           context,
           request.signal,
+          tracker,
           requestOptions?.settled,
           action?.formState,
         ),
       );
-      const headers = result.failed
-        ? new Headers()
-        : toHeaders(rscResponse, result.response);
+      const { status, headers } = resolveResponse(
+        tracker,
+        rscResponse,
+        result.response,
+      );
       headers.set("content-type", "text/html;charset=utf-8");
-      return new Response(result.stream, {
-        status: result.status ?? result.response?.status ?? rscResponse?.status,
-        headers,
-      });
+      return new Response(result.stream, { status, headers });
     });
   }
 
@@ -324,23 +325,25 @@ export function createSsgRuntime<T extends IAppContext>(
     const url = new URL(request.url);
     const context = createContext(url, request);
     return runWithDevFetch(context, async () => {
+      const tracker = new RenderErrorTracker(request.signal);
       const { stream, response: rscResponse } = await renderFlight(
         context,
         request.signal,
+        tracker,
       );
       const [rscStream1, rscStream2] = stream.tee();
 
       const ssr = await loadSsr();
       const result = await ssr.renderHtml(
         rscStream1,
-        renderHtmlOptions(context, request.signal, true),
+        renderHtmlOptions(context, request.signal, tracker, true),
       );
-      return {
-        html: result.stream,
-        rsc: rscStream2,
-        status: result.response?.status ?? rscResponse?.status,
-        headers: toHeaders(rscResponse, result.response),
-      };
+      const { status, headers } = resolveResponse(
+        tracker,
+        rscResponse,
+        result.response,
+      );
+      return { html: result.stream, rsc: rscStream2, status, headers };
     });
   }
 

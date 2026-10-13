@@ -33,12 +33,11 @@ export interface RenderHtmlOptions {
   signal?: AbortSignal;
   formState?: ReactFormState;
   context?: IndexComponentContext;
+  onError?: (error: unknown) => undefined;
 }
 
 export interface RenderHtmlResult {
   stream: ReadableStream<Uint8Array>;
-  status?: number;
-  failed?: boolean;
   response?: IResponseMetadata;
 }
 
@@ -111,46 +110,35 @@ export function createSsrRuntime<T extends IAppContext>(
       const signal = renderOptions?.signal;
 
       let htmlStream: ReadableStream<Uint8Array>;
-      let status: number | undefined;
-      let failed = false;
-
-      if (renderOptions?.ssg) {
-        try {
-          const ssgStream = await renderToReadableStream(root, {
-            bootstrapScriptContent,
-            nonce: renderOptions?.nonce,
-            formState: renderOptions?.formState,
-            progressiveChunkSize: Infinity,
-            signal,
-          });
-          await ssgStream.allReady;
-          htmlStream = ssgStream;
-        } finally {
-          await stopApp();
+      try {
+        const rendered = await renderToReadableStream(root, {
+          bootstrapScriptContent,
+          nonce: renderOptions?.nonce,
+          formState: renderOptions?.formState,
+          progressiveChunkSize: renderOptions?.ssg ? Infinity : undefined,
+          signal,
+          onError: renderOptions?.onError,
+        });
+        if (renderOptions?.ssg) {
+          await rendered.allReady;
         }
-      } else {
-        try {
-          htmlStream = await renderToReadableStream(root, {
-            bootstrapScriptContent,
+        htmlStream = rendered;
+      } catch {
+        htmlStream = await renderToReadableStream(
+          <html>
+            <body>
+              <noscript>Internal Server Error: SSR failed</noscript>
+            </body>
+          </html>,
+          {
+            bootstrapScriptContent:
+              `self.__NO_HYDRATE=1;` + bootstrapScriptContent,
             nonce: renderOptions?.nonce,
-            formState: renderOptions?.formState,
-            signal,
-          });
-        } catch {
-          status = 500;
-          failed = true;
-          htmlStream = await renderToReadableStream(
-            <html>
-              <body>
-                <noscript>Internal Server Error: SSR failed</noscript>
-              </body>
-            </html>,
-            {
-              bootstrapScriptContent:
-                `self.__NO_HYDRATE=1;` + bootstrapScriptContent,
-              nonce: renderOptions?.nonce,
-            },
-          );
+          },
+        );
+      } finally {
+        if (renderOptions?.ssg) {
+          await stopApp();
         }
       }
 
@@ -168,7 +156,7 @@ export function createSsrRuntime<T extends IAppContext>(
         );
       }
 
-      return { stream, status, failed, response };
+      return { stream, response };
     });
   }
 

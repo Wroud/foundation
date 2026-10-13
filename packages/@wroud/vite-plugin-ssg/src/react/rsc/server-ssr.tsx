@@ -13,7 +13,8 @@ import type {
   IndexComponent,
   IndexComponentContext,
 } from "../IndexComponent.js";
-import { normalizeRoute } from "../../utils/routes.js";
+import { createMountTable } from "../../utils/mounts.js";
+import { collectPrerenderRoutes } from "../../app/prerenderRoutes.js";
 import { runWithDevFetch } from "./dev-fetch.js";
 import type { RscPayload } from "./shared.js";
 import type { IAppContext } from "../../app.js";
@@ -23,11 +24,17 @@ export interface SsrEntryModule<T extends IAppContext = IAppContext> {
   default: IndexComponent | AppInstance<T>;
 }
 
+export interface SsrRuntimeMount<T extends IAppContext = IAppContext> {
+  path: string;
+  load?: () => Promise<SsrEntryModule<T>>;
+}
+
 export interface SsrRuntimeOptions {
   base: string;
 }
 
 export interface RenderHtmlOptions {
+  mount?: string;
   ssg?: boolean;
   nonce?: string;
   signal?: AbortSignal;
@@ -42,34 +49,35 @@ export interface RenderHtmlResult {
 }
 
 export function createSsrRuntime<T extends IAppContext>(
-  module: SsrEntryModule<T> | undefined,
+  mounts: readonly SsrRuntimeMount<T>[],
   options: SsrRuntimeOptions,
 ) {
-  const base = options.base || "/";
-  const app = module ? toAppInstance(module.default) : undefined;
+  const table = createMountTable(mounts, options.base || "/", (mount) =>
+    mount.load
+      ? mount.load().then((module) => toAppInstance(module.default))
+      : Promise.resolve(undefined),
+  );
 
-  async function getStaticPaths(): Promise<string[]> {
-    if (!app) {
-      return ["/"];
+  async function findMount(
+    path: string,
+  ): Promise<{ app: AppInstance<T> | undefined; base: string }> {
+    const mount = table.find(path);
+    if (!mount) {
+      throw new Error(`[vite-plugin-ssg] unknown mount "${path}"`);
     }
-    const context: IndexComponentContext = {
-      href: new URL(base, "http://ssg.local/").href,
-      base,
-    };
-    const startData = await app.start(context);
-    try {
-      const declared = await app.getRoutesPrerender(startData);
-      const routes = [...new Set(declared.map(normalizeRoute))];
-      return routes.length ? routes : ["/"];
-    } finally {
-      await app.stop(startData);
-    }
+    return { app: await table.load(mount), base: mount.base };
+  }
+
+  async function getStaticPaths(path = ""): Promise<string[]> {
+    const { app, base } = await findMount(path);
+    return app ? collectPrerenderRoutes(app, base) : ["/"];
   }
 
   async function renderHtml(
     rscStream: ReadableStream<Uint8Array>,
     renderOptions?: RenderHtmlOptions,
   ): Promise<RenderHtmlResult> {
+    const { app, base } = await findMount(renderOptions?.mount ?? "");
     const context: IndexComponentContext = {
       base,
       ...renderOptions?.context,

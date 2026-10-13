@@ -1,8 +1,10 @@
+const OPAQUE_URL = /^(?:\/\/|(?!https?:)[a-z][a-z0-9+.-]*:)/i;
+
 export function pathUrlWithBase<T extends string | undefined>(
   base: string,
   url: T,
 ): T {
-  if (url === undefined) {
+  if (url === undefined || OPAQUE_URL.test(url)) {
     return url;
   }
   if (url.startsWith("/")) {

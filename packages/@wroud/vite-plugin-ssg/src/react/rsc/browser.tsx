@@ -19,14 +19,24 @@ import { createFlightNavigation } from "./flight-navigation.js";
 import type { IAppContext } from "../../app.js";
 import type { IndexComponentContext } from "../IndexComponent.js";
 
+export type BrowserEntryLoader<T extends IAppContext = IAppContext> = () =>
+  | SsrEntryModule<T>
+  | undefined
+  | Promise<SsrEntryModule<T> | undefined>;
+
 export async function hydrate<T extends IAppContext>(
-  module?: SsrEntryModule<T>,
+  entries: Record<string, BrowserEntryLoader<T>>,
 ): Promise<void> {
   const initialPayload = await createFromReadableStream<RscPayload>(rscStream);
+  const mount = initialPayload.mount;
+  const module = await entries[mount]?.();
 
   setServerCallback(callServer);
 
-  const { navigate, prefetch } = createFlightNavigation({ fetchFlight, update });
+  const { navigate, prefetch } = createFlightNavigation({
+    fetchFlight,
+    update,
+  });
 
   const context: IndexComponentContext = {
     href: window.location.href,
@@ -53,7 +63,11 @@ export async function hydrate<T extends IAppContext>(
     });
   }
 
-  function update(payload: RscPayload) {
+  function update(payload: RscPayload, url?: URL) {
+    if (payload.mount !== mount) {
+      window.location.assign(url?.href ?? window.location.href);
+      return;
+    }
     startTransition(() => {
       root.render(render(payload));
     });

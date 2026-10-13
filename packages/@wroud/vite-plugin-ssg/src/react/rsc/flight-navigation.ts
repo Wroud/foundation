@@ -4,7 +4,7 @@ export type FlightPromise = Promise<RscPayload>;
 
 export interface FlightNavigationOptions {
   fetchFlight: (url: URL) => FlightPromise;
-  update: (payload: RscPayload) => void;
+  update: (payload: RscPayload, url: URL) => void;
   resolveBase?: () => string;
   maxEntries?: number;
   ttl?: number;
@@ -88,7 +88,7 @@ export function createFlightNavigation(
     if (requestIndex !== request) {
       return;
     }
-    update(next);
+    update(next, url);
   }
 
   async function prefetch(href?: string): Promise<void> {

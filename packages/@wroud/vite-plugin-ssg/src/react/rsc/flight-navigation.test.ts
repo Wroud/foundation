@@ -8,7 +8,7 @@ import type { RscPayload } from "./shared.js";
 const BASE = "https://app.test/";
 
 function makePayload(id: string): RscPayload {
-  return { root: id, context: {} };
+  return { root: id, context: {}, mount: "" };
 }
 
 interface Deferred<T> {
@@ -31,7 +31,7 @@ function makeNav(
   fetchFlight: (url: URL) => FlightPromise,
   overrides: Partial<Parameters<typeof createFlightNavigation>[0]> = {},
 ) {
-  const update = vi.fn<(payload: RscPayload) => void>();
+  const update = vi.fn<(payload: RscPayload, url: URL) => void>();
   const nav = createFlightNavigation({
     fetchFlight,
     update,
@@ -51,7 +51,7 @@ describe("createFlightNavigation", () => {
 
     expect(fetchFlight).toHaveBeenCalledTimes(1);
     expect(update).toHaveBeenCalledTimes(1);
-    expect(update).toHaveBeenCalledWith(payload);
+    expect(update).toHaveBeenCalledWith(payload, expect.any(URL));
   });
 
   it("navigate reuses a prefetched flight without a second fetch", async () => {
@@ -66,7 +66,7 @@ describe("createFlightNavigation", () => {
 
     expect(fetchFlight).toHaveBeenCalledTimes(1);
     expect(update).toHaveBeenCalledTimes(1);
-    expect(update).toHaveBeenCalledWith(payload);
+    expect(update).toHaveBeenCalledWith(payload, expect.any(URL));
   });
 
   it("dedupes concurrent prefetch calls for the same href", async () => {
@@ -99,7 +99,7 @@ describe("createFlightNavigation", () => {
 
     expect(fetchFlight).toHaveBeenCalledTimes(1);
     expect(update).toHaveBeenCalledTimes(1);
-    expect(update).toHaveBeenCalledWith(payload);
+    expect(update).toHaveBeenCalledWith(payload, expect.any(URL));
   });
 
   it("normalizes hrefs so a differing hash reuses the same flight", async () => {
@@ -128,7 +128,7 @@ describe("createFlightNavigation", () => {
 
     expect(fetchFlight).toHaveBeenCalledTimes(2);
     expect(update).toHaveBeenCalledTimes(1);
-    expect(update).toHaveBeenCalledWith(good);
+    expect(update).toHaveBeenCalledWith(good, expect.any(URL));
   });
 
   it("keeps the last-write-wins race guard: rapid navigations render only the latest", async () => {
@@ -155,7 +155,7 @@ describe("createFlightNavigation", () => {
     await Promise.all([a, b, c]);
 
     expect(update).toHaveBeenCalledTimes(1);
-    expect(update).toHaveBeenCalledWith(pc);
+    expect(update).toHaveBeenCalledWith(pc, expect.any(URL));
   });
 
   it("expires cached flights after the ttl", async () => {
@@ -211,6 +211,6 @@ describe("createFlightNavigation", () => {
 
     expect(fetchFlight).toHaveBeenCalledTimes(2);
     expect(update).toHaveBeenCalledTimes(1);
-    expect(update).toHaveBeenCalledWith(reused);
+    expect(update).toHaveBeenCalledWith(reused, expect.any(URL));
   });
 });

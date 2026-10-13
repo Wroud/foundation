@@ -4,11 +4,23 @@ import react from "@vitejs/plugin-react";
 import rsc from "@vitejs/plugin-rsc";
 import { globSync } from "tinyglobby";
 import type { EnvironmentOptions, PluginOption, Rollup } from "vite";
-import type { SsgPluginOptions } from "./SsgPluginOptions.js";
+import type {
+  SsgMount,
+  SsgPluginApi,
+  SsgPluginOptions,
+} from "./SsgPluginOptions.js";
 import { ssgBuildApp } from "./resolvers/ssgBuildApp.js";
+import { normalizeMountPath } from "./utils/mounts.js";
 
 export * from "./react/IndexComponent.js";
 export type { RequestHandler, RequestMiddleware } from "./app/RscConfig.js";
+export type {
+  CspAlgorithm,
+  SsgCspOptions,
+  SsgMount,
+  SsgPluginApi,
+  SsgPluginOptions,
+} from "./SsgPluginOptions.js";
 
 const ENTRY_RSC = "@wroud/vite-plugin-ssg/entry-rsc";
 const ENTRY_SSR = "@wroud/vite-plugin-ssg/entry-ssr";
@@ -23,11 +35,20 @@ if (import.meta.hot) {
 }
 `;
 
+interface ResolvedMount {
+  path: string;
+  entry?: string;
+  rscEntry?: string;
+}
+
+function clientIndexId(path: string): string {
+  return path ? `${CLIENT_INDEX}/${path}` : CLIENT_INDEX;
+}
+
 export const ssgPlugin = (
   pluginOptions: SsgPluginOptions = {},
 ): PluginOption => {
-  let entryPath: string | undefined;
-  let rscEntryPath: string | undefined;
+  let mounts: ResolvedMount[] = [];
   let pendingInputWarning: string | undefined;
   const entryPackages = new Set<string>();
 
@@ -51,20 +72,19 @@ export const ssgPlugin = (
           "vite:react-oxc",
         ]);
         let reactInstances = 0;
-        const stack: PluginOption[] = [...(userConfig.plugins ?? [])];
-        while (stack.length) {
-          const p = stack.pop();
-          if (Array.isArray(p)) {
-            stack.push(...p);
-          } else if (
-            p &&
-            typeof p === "object" &&
-            "name" in p &&
-            reactPluginNames.has(p.name)
-          ) {
-            reactInstances++;
+        const apiMounts: SsgMount[] = [];
+        const visit = (option: PluginOption): void => {
+          if (Array.isArray(option)) {
+            option.forEach(visit);
+          } else if (option && typeof option === "object" && "name" in option) {
+            if (reactPluginNames.has(option.name)) {
+              reactInstances++;
+            }
+            const api = (option as { api?: { ssg?: SsgPluginApi } }).api?.ssg;
+            apiMounts.push(...(api?.mounts ?? []));
           }
-        }
+        };
+        visit(userConfig.plugins ?? []);
         if (reactInstances > 1) {
           throw new Error(
             "[vite-plugin-ssg] multiple @vitejs/plugin-react instances detected. " +
@@ -89,28 +109,41 @@ export const ssgPlugin = (
               ignoreDirs.push(environment.build.outDir);
             }
           }
-          entryPath = resolveEntry(
+          const entryPath = resolveEntry(
             root,
             outDir,
             ignoreDirs,
+            ENTRY_GLOB,
+            "entry",
             pluginOptions.entry,
           );
-          rscEntryPath = resolveRscEntry(
+          const rscEntryPath = resolveEntry(
             root,
             outDir,
             ignoreDirs,
+            RSC_ENTRY_GLOB,
+            "rscEntry",
             pluginOptions.rscEntry,
           );
-          if (!entryPath && !rscEntryPath) {
+          mounts = [];
+          if (entryPath || rscEntryPath) {
+            mounts.push({ path: "", entry: entryPath, rscEntry: rscEntryPath });
+          }
+          for (const mount of apiMounts) {
+            mounts.push(resolveMount(root, mount, mounts));
+          }
+          if (!mounts.length) {
             throw new Error(
               `[vite-plugin-ssg] no entry found under ${root}. Create an app entry ` +
                 `("*.entry.{tsx,ts,jsx,js}", client code), a react-server entry ` +
                 `("*.entry.rsc.{tsx,ts,jsx,js}"), or set the \`entry\`/\`rscEntry\` options.`,
             );
           }
-          for (const entry of [entryPath, rscEntryPath]) {
-            if (entry && !nodePath.isAbsolute(entry)) {
-              entryPackages.add(packageNameFromSpecifier(entry));
+          for (const mount of mounts) {
+            for (const entry of [mount.entry, mount.rscEntry]) {
+              if (entry && isBarePackage(entry)) {
+                entryPackages.add(packageNameFromSpecifier(entry));
+              }
             }
           }
         }
@@ -217,7 +250,8 @@ export const ssgPlugin = (
             bare === ENTRY_RSC ||
             bare === ENTRY_SSR ||
             bare === ENTRY_BROWSER ||
-            bare === CLIENT_INDEX
+            bare === CLIENT_INDEX ||
+            bare.startsWith(CLIENT_INDEX + "/")
           ) {
             return "\0" + bare;
           }
@@ -226,11 +260,16 @@ export const ssgPlugin = (
       },
 
       load(id) {
-        if (id === "\0" + CLIENT_INDEX && entryPath) {
+        if (id.startsWith("\0" + CLIENT_INDEX)) {
+          const path = id.slice(("\0" + CLIENT_INDEX).length + 1);
+          const mount = mounts.find((candidate) => candidate.path === path);
+          if (!mount?.entry) {
+            return undefined;
+          }
           return `
 "use client";
 
-import entry from ${JSON.stringify(entryPath)};
+import entry from ${JSON.stringify(mount.entry)};
 import { unwrapIndex } from "@wroud/vite-plugin-ssg/react/rsc/client-index";
 
 export default unwrapIndex(entry);
@@ -239,11 +278,15 @@ export default unwrapIndex(entry);
 
         if (id === "\0" + ENTRY_SSR) {
           const config = this.environment.config;
+          const list = mountList(mounts, (mount) =>
+            mount.entry ? `load: ${lazyImport(mount.entry)}` : "",
+          );
           return `
 import { createSsrRuntime } from "@wroud/vite-plugin-ssg/react/rsc/server-ssr";
-${entryPath ? `import * as entry from ${JSON.stringify(entryPath)};` : "const entry = undefined;"}
 
-const ssr = createSsrRuntime(entry, { base: ${JSON.stringify(config.base)} });
+const ssr = createSsrRuntime([
+${list}
+], { base: ${JSON.stringify(config.base)} });
 
 export const renderHtml = ssr.renderHtml;
 export const getStaticPaths = ssr.getStaticPaths;
@@ -251,11 +294,19 @@ ${HMR_ACCEPT}`;
         }
 
         if (id === "\0" + ENTRY_BROWSER) {
+          const loaders = mounts
+            .filter((mount) => mount.entry)
+            .map(
+              (mount) =>
+                `  ${JSON.stringify(mount.path)}: ${lazyImport(mount.entry!)},`,
+            )
+            .join("\n");
           return `
 import { hydrate } from "@wroud/vite-plugin-ssg/react/rsc/browser";
-${entryPath ? `import * as entry from ${JSON.stringify(entryPath)};` : "const entry = undefined;"}
 
-hydrate(entry);
+hydrate({
+${loaders}
+});
 `;
         }
 
@@ -265,18 +316,30 @@ hydrate(entry);
             base: config.base,
             cspNonce: config.html?.cspNonce,
           };
+          const list = mountList(mounts, (mount) => {
+            const imports: string[] = [];
+            const fields: string[] = [];
+            if (mount.entry) {
+              imports.push(JSON.stringify(clientIndexId(mount.path)));
+              fields.push(`Index: m${imports.length - 1}.default`);
+            }
+            if (mount.rscEntry) {
+              imports.push(JSON.stringify(mount.rscEntry));
+              fields.push(
+                `rsc: m${imports.length - 1}.default`,
+                `css: import.meta.viteRsc.loadCss(${JSON.stringify(mount.rscEntry)})`,
+              );
+            }
+            const names = imports.map((_, i) => `m${i}`).join(", ");
+            const loads = imports.map((spec) => `import(${spec})`).join(", ");
+            return `load: async () => { const [${names}] = await Promise.all([${loads}]); return { ${fields.join(", ")} }; }`;
+          });
           return `
 import { createSsgRuntime } from "@wroud/vite-plugin-ssg/react/rsc/server-rsc";
-${entryPath ? `import Index from ${JSON.stringify(CLIENT_INDEX)};` : "const Index = undefined;"}
-${rscEntryPath ? `import rsc from ${JSON.stringify(rscEntryPath)};` : "const rsc = undefined;"}
 
-export const runtime = createSsgRuntime({ Index, rsc }, {
-  ...${JSON.stringify(runtimeOptions)},${
-    rscEntryPath
-      ? `\n  css: import.meta.viteRsc.loadCss(${JSON.stringify(rscEntryPath)}),`
-      : ""
-  }
-});
+export const runtime = createSsgRuntime([
+${list}
+], ${JSON.stringify(runtimeOptions)});
 
 export default runtime.handler;
 ${HMR_ACCEPT}`;
@@ -330,6 +393,37 @@ function mergeEnv(
   };
 }
 
+function lazyImport(specifier: string): string {
+  return `() => import(${JSON.stringify(specifier)})`;
+}
+
+function mountList(
+  mounts: readonly ResolvedMount[],
+  fields: (mount: ResolvedMount) => string,
+): string {
+  return mounts
+    .map((mount) => {
+      const extra = fields(mount);
+      return `  { path: ${JSON.stringify(mount.path)}${extra ? `, ${extra}` : ""} },`;
+    })
+    .join("\n");
+}
+
+function isVirtualSpecifier(specifier: string): boolean {
+  return (
+    specifier.startsWith("\0") ||
+    (!nodePath.isAbsolute(specifier) && /^[a-z][a-z0-9+.-]*:/i.test(specifier))
+  );
+}
+
+function isBarePackage(specifier: string): boolean {
+  return (
+    !nodePath.isAbsolute(specifier) &&
+    !specifier.startsWith(".") &&
+    !isVirtualSpecifier(specifier)
+  );
+}
+
 function packageNameFromSpecifier(specifier: string): string {
   const segments = specifier.split("/");
   return specifier.startsWith("@")
@@ -337,11 +431,43 @@ function packageNameFromSpecifier(specifier: string): string {
     : segments[0]!;
 }
 
+function resolveMount(
+  root: string,
+  mount: SsgMount,
+  existing: readonly ResolvedMount[],
+): ResolvedMount {
+  const path = normalizeMountPath(mount.path);
+  if (!path) {
+    throw new Error(
+      "[vite-plugin-ssg] a plugin mount must declare a non-empty `path`; the root is reserved for the app entry",
+    );
+  }
+  if (existing.some((candidate) => candidate.path === path)) {
+    throw new Error(
+      `[vite-plugin-ssg] mount path "/${path}" is declared more than once`,
+    );
+  }
+  if (!mount.entry && !mount.rscEntry) {
+    throw new Error(
+      `[vite-plugin-ssg] mount "/${path}" declares neither \`entry\` nor \`rscEntry\``,
+    );
+  }
+  return {
+    path,
+    entry: mount.entry && resolveExplicit(root, mount.entry, "entry"),
+    rscEntry:
+      mount.rscEntry && resolveExplicit(root, mount.rscEntry, "rscEntry"),
+  };
+}
+
 function resolveExplicit(
   root: string,
   explicit: string,
   optionName: string,
 ): string {
+  if (isVirtualSpecifier(explicit)) {
+    return explicit;
+  }
   if (!nodePath.isAbsolute(explicit) && !explicit.startsWith(".")) {
     const asFile = nodePath.resolve(root, explicit);
     if (existsSync(asFile)) {
@@ -397,38 +523,19 @@ function resolveEntry(
   root: string,
   outDir: string,
   ignoreDirs: string[],
+  glob: string,
+  optionName: string,
   explicit?: string,
 ): string | undefined {
   if (explicit) {
-    return resolveExplicit(root, explicit, "entry");
+    return resolveExplicit(root, explicit, optionName);
   }
 
-  const matches = globEntries(root, outDir, ignoreDirs, ENTRY_GLOB);
+  const matches = globEntries(root, outDir, ignoreDirs, glob);
 
   if (matches.length > 1) {
     throw new Error(
-      `[vite-plugin-ssg] multiple entry files found, expected one:\n${matches.join("\n")}`,
-    );
-  }
-
-  return matches[0];
-}
-
-function resolveRscEntry(
-  root: string,
-  outDir: string,
-  ignoreDirs: string[],
-  explicit?: string,
-): string | undefined {
-  if (explicit) {
-    return resolveExplicit(root, explicit, "rscEntry");
-  }
-
-  const matches = globEntries(root, outDir, ignoreDirs, RSC_ENTRY_GLOB);
-
-  if (matches.length > 1) {
-    throw new Error(
-      `[vite-plugin-ssg] multiple rsc entry files found, expected one:\n${matches.join("\n")}`,
+      `[vite-plugin-ssg] multiple ${optionName === "rscEntry" ? "rsc " : ""}entry files found, expected one:\n${matches.join("\n")}`,
     );
   }
 

@@ -21,7 +21,12 @@ import type {
   IndexComponentContext,
   RscEntryComponent,
 } from "../IndexComponent.js";
-import { normalizeRoute } from "../../utils/routes.js";
+import {
+  createMountTable,
+  mountRoute,
+  type Mount as MountEntry,
+} from "../../utils/mounts.js";
+import { collectPrerenderRoutes } from "../../app/prerenderRoutes.js";
 import { runWithDevFetch } from "./dev-fetch.js";
 import {
   type ActionReturnValue,
@@ -39,15 +44,20 @@ import {
 } from "./render-outcome.js";
 import type { IAppContext } from "../../app.js";
 
-export interface SsgRuntimeModules<T extends IAppContext = IAppContext> {
+export interface SsgMountModules<T extends IAppContext = IAppContext> {
   Index?: IndexComponent;
   rsc?: RscEntryComponent | RscInstance<T>;
+  css?: React.ReactNode;
+}
+
+export interface SsgRuntimeMount<T extends IAppContext = IAppContext> {
+  path: string;
+  load: () => Promise<SsgMountModules<T>>;
 }
 
 export interface SsgRuntimeOptions {
   base: string;
   cspNonce?: string;
-  css?: React.ReactNode;
 }
 
 export interface SsgRequestOptions {
@@ -121,22 +131,38 @@ async function handleServerAction(
   }
 }
 
+interface LoadedMount<T extends IAppContext> {
+  Index: IndexComponent | undefined;
+  rscApp: RscInstance<T>;
+  css: React.ReactNode;
+}
+
+type Mount<T extends IAppContext> = MountEntry<SsgRuntimeMount<T>>;
+
 export function createSsgRuntime<T extends IAppContext>(
-  modules: SsgRuntimeModules<T>,
+  mounts: readonly SsgRuntimeMount<T>[],
   options: SsgRuntimeOptions,
 ): SsgRuntime {
-  const base = options.base || "/";
-  const { Index } = modules;
-  const rscApp = toRscInstance(modules.rsc ?? passThroughRoot);
+  const table = createMountTable<SsgRuntimeMount<T>, LoadedMount<T>>(
+    mounts,
+    options.base || "/",
+    (mount) =>
+      mount.load().then((modules) => ({
+        Index: modules.Index,
+        rscApp: toRscInstance(modules.rsc ?? passThroughRoot),
+        css: modules.css,
+      })),
+  );
 
   function createContext(
+    mount: Mount<T>,
     url: URL,
     request: Request,
     requestOptions?: SsgRequestOptions,
   ): IndexComponentContext {
     return {
       href: url.href,
-      base,
+      base: mount.base,
       cspNonce: requestOptions?.cspNonce ?? options.cspNonce,
       headers: Object.fromEntries(request.headers),
     };
@@ -153,6 +179,7 @@ export function createSsgRuntime<T extends IAppContext>(
   }
 
   async function renderFlight(
+    mount: Mount<T>,
     context: IndexComponentContext,
     signal: AbortSignal,
     tracker: RenderErrorTracker,
@@ -161,6 +188,7 @@ export function createSsgRuntime<T extends IAppContext>(
     stream: ReadableStream<Uint8Array>;
     response: IResponseMetadata | undefined;
   }> {
+    const { rscApp, Index, css } = await table.load(mount);
     const app = await rscApp.start(context);
 
     let stopped = false;
@@ -185,7 +213,7 @@ export function createSsgRuntime<T extends IAppContext>(
       };
       const root = (
         <RenderContextProvider value={renderContext}>
-          {options.css}
+          {css}
           {clientContext.cspNonce && (
             <meta
               {...{ property: "csp-nonce" }}
@@ -197,7 +225,11 @@ export function createSsgRuntime<T extends IAppContext>(
           </RscRoot>
         </RenderContextProvider>
       );
-      const payload: RscPayload = { root, context: clientContext };
+      const payload: RscPayload = {
+        root,
+        context: clientContext,
+        mount: mount.path,
+      };
       if (action?.returnValue) {
         payload.returnValue = action.returnValue;
       }
@@ -232,6 +264,7 @@ export function createSsgRuntime<T extends IAppContext>(
   }
 
   function renderHtmlOptions(
+    mount: Mount<T>,
     context: IndexComponentContext,
     signal: AbortSignal,
     tracker: RenderErrorTracker,
@@ -239,6 +272,7 @@ export function createSsgRuntime<T extends IAppContext>(
     formState?: ReactFormState,
   ) {
     return {
+      mount: mount.path,
       ssg,
       nonce: context.cspNonce,
       signal,
@@ -254,11 +288,12 @@ export function createSsgRuntime<T extends IAppContext>(
   }
 
   async function handleRequest(
+    mount: Mount<T>,
     request: Request,
     requestOptions?: SsgRequestOptions,
   ): Promise<Response> {
     const { isRsc, isAction, actionId, url } = parseRenderRequest(request);
-    const context = createContext(url, request, requestOptions);
+    const context = createContext(mount, url, request, requestOptions);
     return runWithDevFetch(context, async () => {
       let action: ActionOutcome | undefined;
       if (isAction) {
@@ -270,6 +305,7 @@ export function createSsgRuntime<T extends IAppContext>(
 
       const tracker = new RenderErrorTracker(request.signal);
       const { stream: rscStream, response: rscResponse } = await renderFlight(
+        mount,
         context,
         request.signal,
         tracker,
@@ -293,6 +329,7 @@ export function createSsgRuntime<T extends IAppContext>(
       const result = await ssr.renderHtml(
         rscStream,
         renderHtmlOptions(
+          mount,
           context,
           request.signal,
           tracker,
@@ -314,19 +351,31 @@ export function createSsgRuntime<T extends IAppContext>(
     request: Request,
     requestOptions?: SsgRequestOptions,
   ): Promise<Response> {
+    const mount = table.match(new URL(request.url).pathname);
+    if (!mount) {
+      return new Response("Not Found", { status: 404 });
+    }
+    const { rscApp } = await table.load(mount);
     const next = rscApp.middleware.reduceRight<RequestHandler>(
       (next, middleware) => middleware(next),
-      (request) => handleRequest(request, requestOptions),
+      (request) => handleRequest(mount, request, requestOptions),
     );
     return next(request);
   }
 
   async function handleSsg(request: Request) {
     const url = new URL(request.url);
-    const context = createContext(url, request);
+    const mount = table.match(url.pathname);
+    if (!mount) {
+      throw new Error(
+        `[vite-plugin-ssg] no mount serves ${url.pathname}; add a root entry or declare the route under a mount`,
+      );
+    }
+    const context = createContext(mount, url, request);
     return runWithDevFetch(context, async () => {
       const tracker = new RenderErrorTracker(request.signal);
       const { stream, response: rscResponse } = await renderFlight(
+        mount,
         context,
         request.signal,
         tracker,
@@ -336,7 +385,7 @@ export function createSsgRuntime<T extends IAppContext>(
       const ssr = await loadSsr();
       const result = await ssr.renderHtml(
         rscStream1,
-        renderHtmlOptions(context, request.signal, tracker, true),
+        renderHtmlOptions(mount, context, request.signal, tracker, true),
       );
       const { status, headers } = resolveResponse(
         tracker,
@@ -347,22 +396,24 @@ export function createSsgRuntime<T extends IAppContext>(
     });
   }
 
-  async function getStaticPaths(): Promise<string[]> {
+  async function mountStaticPaths(mount: Mount<T>): Promise<string[]> {
+    const { rscApp } = await table.load(mount);
     if (rscApp.hasRoutesPrerender) {
-      const href = new URL(base, "http://ssg.local/");
-      const context = createContext(href, new Request(href));
-      const app = await rscApp.start(context);
-      try {
-        const declared = await rscApp.getRoutesPrerender(app);
-        const routes = [...new Set(declared.map(normalizeRoute))];
-        return routes.length ? routes : ["/"];
-      } finally {
-        await rscApp.stop(app);
-      }
+      return collectPrerenderRoutes(rscApp, mount.base);
     }
-
     const ssr = await loadSsr();
-    return ssr.getStaticPaths();
+    return ssr.getStaticPaths(mount.path);
+  }
+
+  async function getStaticPaths(): Promise<string[]> {
+    const lists = await Promise.all(table.mounts.map(mountStaticPaths));
+    const routes = new Set<string>();
+    table.mounts.forEach((mount, i) => {
+      for (const route of lists[i]!) {
+        routes.add(mountRoute(mount.path, route));
+      }
+    });
+    return [...routes];
   }
 
   async function dispose(): Promise<void> {}

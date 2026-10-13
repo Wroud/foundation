@@ -140,7 +140,9 @@ import { createContext, useContext } from "react";
 const PostsContext = createContext<Post[]>([]);
 export const usePosts = () => useContext(PostsContext);
 export function PostsProvider({ posts, children }) {
-  return <PostsContext.Provider value={posts}>{children}</PostsContext.Provider>;
+  return (
+    <PostsContext.Provider value={posts}>{children}</PostsContext.Provider>
+  );
 }
 ```
 
@@ -148,11 +150,11 @@ The rsc `onAppStart` runs **once per build/dev process** and `onAppStop` is invo
 
 Three usage modes:
 
-| Mode | Files | What runs where |
-| --- | --- | --- |
-| Client-native | `*.entry.tsx` | your app is plain client React, SSR'd + hydrated; the plugin supplies the rsc plumbing |
-| RSC-native | `*.entry.rsc.tsx` | pure server components, no client entry needed; routes via the rsc `onRoutesPrerender` |
-| Combined | both | server components compose around the client app via `children` |
+| Mode          | Files             | What runs where                                                                        |
+| ------------- | ----------------- | -------------------------------------------------------------------------------------- |
+| Client-native | `*.entry.tsx`     | your app is plain client React, SSR'd + hydrated; the plugin supplies the rsc plumbing |
+| RSC-native    | `*.entry.rsc.tsx` | pure server components, no client entry needed; routes via the rsc `onRoutesPrerender` |
+| Combined      | both              | server components compose around the client app via `children`                         |
 
 Components in the rsc entry's graph are server components (they may be `async`, run only at build time, and cannot use hooks or context); your app entry and everything it imports stay client components.
 
@@ -195,14 +197,48 @@ export default createAppConfig(Index, {
 
 Lifecycle summary:
 
-| Hook | File | Runs in | Purpose |
-| --- | --- | --- | --- |
-| `onAppStart` (`createAppConfig`) | `*.entry.tsx` | ssr (per page) + browser (once) | app state, DI, router for `useAppContext()` |
-| `onRoutesPrerender` (`createAppConfig`) | `*.entry.tsx` | ssr (build) | routes to emit |
-| `onAppStop` (`createAppConfig`) | `*.entry.tsx` | ssr | release resources, paired with each start |
-| `onAppStart` (`createRscConfig`) | `*.entry.rsc.tsx` | rsc (once per process) | server-only data for the rsc root (`app` prop) |
-| `onRoutesPrerender` (`createRscConfig`) | `*.entry.rsc.tsx` | rsc (build) | routes to emit (takes precedence) |
-| `onAppStop` (`createRscConfig`) | `*.entry.rsc.tsx` | rsc (end of build) | release server resources |
+| Hook                                    | File              | Runs in                         | Purpose                                        |
+| --------------------------------------- | ----------------- | ------------------------------- | ---------------------------------------------- |
+| `onAppStart` (`createAppConfig`)        | `*.entry.tsx`     | ssr (per page) + browser (once) | app state, DI, router for `useAppContext()`    |
+| `onRoutesPrerender` (`createAppConfig`) | `*.entry.tsx`     | ssr (build)                     | routes to emit                                 |
+| `onAppStop` (`createAppConfig`)         | `*.entry.tsx`     | ssr                             | release resources, paired with each start      |
+| `onAppStart` (`createRscConfig`)        | `*.entry.rsc.tsx` | rsc (once per process)          | server-only data for the rsc root (`app` prop) |
+| `onRoutesPrerender` (`createRscConfig`) | `*.entry.rsc.tsx` | rsc (build)                     | routes to emit (takes precedence)              |
+| `onAppStop` (`createRscConfig`)         | `*.entry.rsc.tsx` | rsc (end of build)              | release server resources                       |
+
+### Mounts
+
+A plugin can add its own app to the site under a path. It declares the app in its plugin `api`:
+
+```ts
+import type { Plugin } from "vite";
+
+export function adminPlugin(): Plugin {
+  return {
+    name: "my-admin",
+    api: {
+      ssg: {
+        mounts: [{ path: "admin", entry: "my-admin/app" }],
+      },
+    },
+  };
+}
+```
+
+With `plugins: [adminPlugin(), ssgPlugin()]` the admin app is served at `<base>/admin/`.
+
+A mount takes:
+
+- `path`: location of the app under Vite `base`. Required; `/` belongs to your own entry.
+- `entry`, `rscEntry`: same forms and meaning as the plugin options.
+
+Each mount is a separate app:
+
+- It has its own `onAppStart`, `onAppStop`, `onResponse`, middleware and `useAppContext()` data.
+- `context.base` is the mount base, for example `/site/admin/` with `base: "/site/"`. `useBase()`, `<Link>` and `<Script>` use it.
+- Routes returned from `onRoutesPrerender` are relative to the mount: `"/users"` is written to `site/admin/users.html`.
+- `navigate()` and `prefetch()` work inside the mount. A link into another mount is a full page load.
+- Its code is loaded only for requests under its path, on the server and in the browser.
 
 ### Client navigation (optional)
 
@@ -400,7 +436,7 @@ script-src 'self' 'sha256-…' 'sha256-…' …
 
 The hashes are page-specific (each page lists its own scripts) and deterministic across builds. `csp` and Vite's `html.cspNonce` are mutually exclusive — setting both throws.
 
-Hash mode is a **build-time only** technique, and deliberately so: a hash must be known before the policy is sent, but the inline RSC flight payload is emitted at the *end* of the document with per-request content, so its hash isn't known until the whole page has rendered. Pre-rendering buffers the full page anyway (it writes a file), so hashing is free there — but a streaming request-time render cannot list a hash for a script it hasn't produced yet. This is the same split every framework makes: hashes for static/prerendered output (Astro's CSP, Next.js SRI), a **nonce** for dynamic streaming SSR (Next.js App Router). So `csp` is inert in dev and for `prerender: false`; for a dynamic SSR server use a per-request nonce instead (next bullet — the nonce already rides the bootstrap and flight `<script>`s).
+Hash mode is a **build-time only** technique, and deliberately so: a hash must be known before the policy is sent, but the inline RSC flight payload is emitted at the _end_ of the document with per-request content, so its hash isn't known until the whole page has rendered. Pre-rendering buffers the full page anyway (it writes a file), so hashing is free there — but a streaming request-time render cannot list a hash for a script it hasn't produced yet. This is the same split every framework makes: hashes for static/prerendered output (Astro's CSP, Next.js SRI), a **nonce** for dynamic streaming SSR (Next.js App Router). So `csp` is inert in dev and for `prerender: false`; for a dynamic SSR server use a per-request nonce instead (next bullet — the nonce already rides the bootstrap and flight `<script>`s).
 
 By default the policy ships inside each page as a `<meta http-equiv="Content-Security-Policy">` injected at the start of `<head>`, so no server header is needed. Options:
 
@@ -421,7 +457,7 @@ ssgPlugin({
 ```
 
 - Deliver the policy via a header instead of (or alongside) the meta tag by setting `manifest: true` and reading `csp-manifest.json` (`{ version, algorithm, pages: [{ route, file, policy, hashes }] }`) in your host config; set `meta: false` to drop the in-page tag.
-- The injected `<meta>` is enforced **in addition to** any `Content-Security-Policy` response header — a resource must satisfy *every* active policy. If your host already sends a CSP header that lacks these per-page hashes, it will block the very inline scripts the meta allows. In that case use `meta: false` and fold the manifest's hashes into that header instead of shipping two policies.
+- The injected `<meta>` is enforced **in addition to** any `Content-Security-Policy` response header — a resource must satisfy _every_ active policy. If your host already sends a CSP header that lacks these per-page hashes, it will block the very inline scripts the meta allows. In that case use `meta: false` and fold the manifest's hashes into that header instead of shipping two policies.
 - Do **not** add `'strict-dynamic'`: it voids `'self'`, which is what covers `@vitejs/plugin-rsc`'s `modulepreload`/stylesheet `<link>`s — those cannot be hashed (react-dom strips their nonce/hash and dedupes by URL).
 - The generated policy only constrains `script-src` unless you add more `directives`, so enabling it will not unexpectedly block images, styles, or fetches.
 - A `<meta>`-delivered policy cannot carry `frame-ancestors`, `report-uri`, `report-to`, or `sandbox` — browsers ignore those directives when they arrive via meta. If you add them to `directives` while `meta` is on, the plugin warns at build time; deliver them through a response header instead (`meta: false` + the manifest policy).

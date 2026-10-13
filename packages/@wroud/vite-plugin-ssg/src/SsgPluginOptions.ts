@@ -88,3 +88,25 @@ export interface SsgPluginOptions {
    */
   csp?: boolean | SsgCspOptions;
 }
+
+export interface SsgMount {
+  /**
+   * Path of the mounted app under Vite `base`, e.g. `"playground"` serves
+   * the app at `<base>/playground/`. Must not be empty: the root is always
+   * the user's own entry.
+   */
+  path: string;
+  /** Client entry of the mounted app; same forms as the `entry` option. */
+  entry?: string;
+  /** React-server entry of the mounted app; same forms as `rscEntry`. */
+  rscEntry?: string;
+}
+
+/**
+ * Other Vite plugins contribute apps to the site through the plugin `api`
+ * convention: `{ name, api: { ssg: { mounts: [...] } } }`. The plugin
+ * collects every mount during config resolution.
+ */
+export interface SsgPluginApi {
+  mounts?: SsgMount[];
+}

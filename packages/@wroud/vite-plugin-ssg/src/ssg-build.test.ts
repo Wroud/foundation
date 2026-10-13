@@ -1200,3 +1200,115 @@ export default function Root({ context }: IndexComponentProps) {
     );
   });
 });
+
+describe("rsc ssg build (mounts contributed by plugins)", () => {
+  let read: (file: string) => Promise<string>;
+  let exists: (file: string) => Promise<boolean>;
+
+  beforeAll(async () => {
+    const distDir = await buildFixture("mounts");
+    ({ read, exists } = makeReaders(distDir));
+  }, 120_000);
+
+  it("pre-renders the union of root and mounted routes under the site base", async () => {
+    expect(await exists("index.html")).toBe(true);
+    expect(await exists("about.html")).toBe(true);
+    expect(await exists("admin/index.html")).toBe(true);
+    expect(await exists("admin/users.html")).toBe(true);
+    expect(await exists("admin/users.rsc")).toBe(true);
+  });
+
+  it("renders each mount with its own app and base", async () => {
+    const root = await read("index.html");
+    expect(root).toContain('data-testid="site"');
+    expect(root).toContain('data-testid="base">/site/<');
+    const admin = await read("admin/users.html");
+    expect(admin).toContain('data-testid="admin"');
+    expect(admin).not.toContain('data-testid="site"');
+    expect(admin).toContain('data-testid="base">/site/admin/<');
+    expect(admin).toContain('data-testid="path">/site/admin/users<');
+  });
+
+  it("boots every page through the single client index", async () => {
+    const bootstrap =
+      /<script>import\("\/site\/assets\/index-[^"]+\.js"\)<\/script>/;
+    expect(await read("index.html")).toMatch(bootstrap);
+    expect(await read("admin/index.html")).toMatch(bootstrap);
+  });
+
+  it("tags every flight with its mount", async () => {
+    expect(await read("admin/index.rsc")).toContain('"mount":"admin"');
+    expect(await read("index.rsc")).toContain('"mount":""');
+  });
+
+  it("applies the mount's onResponse through the prerender path", async () => {
+    const entryUrl = pathToFileURL(
+      path.join(fixturesDir, "mounts", "dist-rsc", "index.js"),
+    ).href;
+    const { runtime } = await import(entryUrl);
+    const result = await runtime.handleSsg(
+      new Request("http://ssg.local/site/admin/users"),
+    );
+    expect(result.headers.get("x-mount")).toBe("admin");
+    await new Response(result.html).text();
+    await new Response(result.rsc).text();
+    const root = await runtime.handleSsg(new Request("http://ssg.local/site/"));
+    expect(root.headers.get("x-mount")).toBeNull();
+    await new Response(root.html).text();
+    await new Response(root.rsc).text();
+  });
+});
+
+describe("rsc ssg dev (mounts)", () => {
+  let server: ViteDevServer;
+  let base: string;
+
+  beforeAll(async () => {
+    server = await createServer({
+      configFile: path.join(fixturesDir, "mounts/vite.config.ts"),
+      logLevel: "silent",
+      server: { port: 0 },
+    });
+    await server.listen();
+    const address = server.httpServer!.address();
+    base = `http://localhost:${typeof address === "object" ? address!.port : address}`;
+  }, 120_000);
+
+  afterAll(async () => {
+    await server.close();
+  });
+
+  it("loads only the matched mount's modules on the server", async () => {
+    const loaded = (environment: "ssr" | "rsc", file: string) =>
+      [
+        ...(server.environments[environment]!.moduleGraph.getModulesByFile(
+          path.join(fixturesDir, "mounts/src", file),
+        ) ?? []),
+      ].some((mod) => mod.transformResult != null);
+    await (await fetch(base + "/site/admin/")).text();
+    expect(loaded("ssr", "admin/app.tsx")).toBe(true);
+    expect(loaded("ssr", "index.entry.tsx")).toBe(false);
+    expect(loaded("rsc", "index.entry.tsx")).toBe(false);
+
+    await (await fetch(base + "/site/about")).text();
+    expect(loaded("ssr", "index.entry.tsx")).toBe(true);
+  });
+
+  it("dispatches by longest mount prefix and falls back to the root app", async () => {
+    const admin = await fetch(base + "/site/admin/users");
+    expect(admin.status).toBe(200);
+    expect(admin.headers.get("x-mount")).toBe("admin");
+    expect(await admin.text()).toContain('data-testid="base">/site/admin/<');
+
+    const site = await fetch(base + "/site/adminish");
+    expect(site.headers.get("x-mount")).toBeNull();
+    expect(await site.text()).toContain('data-testid="site"');
+  });
+
+  it("serves mounted flight payloads", async () => {
+    const response = await fetch(base + "/site/admin/index.rsc");
+    expect(response.status).toBe(200);
+    expect(response.headers.get("content-type")).toContain("text/x-component");
+    expect(await response.text()).toContain('"mount":"admin"');
+  });
+});

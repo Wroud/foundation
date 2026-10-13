@@ -17,10 +17,10 @@ export function sanitizeRoute(route: string): string {
 }
 
 export function stripBase(route: string, base: string): string {
-  if (route === base) {
+  const baseWithSlash = base.endsWith("/") ? base : base + "/";
+  if (route === base || route + "/" === baseWithSlash) {
     return "/";
   }
-  const baseWithSlash = base.endsWith("/") ? base : base + "/";
   return route.startsWith(baseWithSlash)
     ? route.slice(baseWithSlash.length - 1)
     : route;

@@ -8,6 +8,7 @@ export type ActionReturnValue = { ok: boolean; data: unknown };
 export type RscPayload = {
   root: ReactNode;
   context: IndexComponentContext;
+  mount: string;
   returnValue?: ActionReturnValue;
   formState?: ReactFormState;
 };

@@ -1,6 +1,6 @@
 import { useNavigation } from "@wroud/playground-react/views";
 import { PlaygroundRoutes } from "@wroud/playground";
-import logoUrl from "./logo.svg?url";
+import logoUrl from "@wroud/vite-plugin-playground/assets/logo.svg?url";
 
 export function HomeLink() {
   const navigation = useNavigation();

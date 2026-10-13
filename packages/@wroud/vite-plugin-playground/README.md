@@ -18,48 +18,58 @@
 - **Hot Module Replacement**: Built-in HMR support for a seamless development experience
 - [Pure ESM package][esm-info-url]
 
+## Requirements
+
+- React 19 or higher
+- Vite 8 or higher
+- `@wroud/vite-plugin-ssg` and `@tailwindcss/vite` in the same Vite config
+
 ## Installation
 
 Install via npm:
 
 ```sh
-npm install @wroud/vite-plugin-playground @wroud/playground-react
+npm install @wroud/vite-plugin-playground @wroud/playground-react @wroud/vite-plugin-ssg @tailwindcss/vite
 ```
 
 Install via yarn:
 
 ```sh
-yarn add @wroud/vite-plugin-playground @wroud/playground-react
+yarn add @wroud/vite-plugin-playground @wroud/playground-react @wroud/vite-plugin-ssg @tailwindcss/vite
 ```
 
 ## Usage
 
-Add the plugin to your Vite configuration:
+Add the plugin next to `ssgPlugin()` and `tailwindcss()`:
 
 ```ts
 // vite.config.ts
 import { defineConfig } from "vite";
-import { playground } from "@wroud/vite-plugin-playground/plugin";
+import tailwindcss from "@tailwindcss/vite";
+import { ssgPlugin } from "@wroud/vite-plugin-ssg";
+import { playground } from "@wroud/vite-plugin-playground";
 
 export default defineConfig({
   plugins: [
     playground({
       // Options
       imports: ["@wroud/react-components", "@my/component-library"],
-      bundle: true,
     }),
+    ssgPlugin(),
+    tailwindcss(),
   ],
 });
 ```
 
+The playground is served at `<base>/playground/` next to your own app. `vite` serves it in development; `vite build` writes its pages to `<outDir>/playground/`.
+
 ### Options
 
-- `path` (string): Playground base path (default: "playground")
-- `imports` (string[]): Additional modules to import in the playground
+- `path` (string): Location of the playground under Vite `base` (default: "playground")
+- `imports` (string[]): Packages whose story files are included as well
 - `stories` (string[]): Glob patterns for story files (default: ["**/*.stories.{ts,tsx,js,jsx}"])
 - `docs` (string[]): Glob patterns for documentation files (default: ["**/*.stories.md", "../src/**/*.stories.md"])
 - `exclude` (string[]): Glob patterns for files to exclude
-- `bundle` (boolean): Whether to bundle the playground (default: false)
 
 ### Creating Stories
 
@@ -78,14 +88,14 @@ describe("Button Component", () => {
     },
     { preview: true }
   );
-  
+
   story(
     "Primary",
     function PrimaryButtonStory() {
       return <Button variant="primary">Primary Button</Button>;
     }
   );
-  
+
   story(
     "With Preview and Description",
     function DetailedButtonStory() {
@@ -105,7 +115,7 @@ describe("Button Component", () => {
 
 Create markdown files for documentation:
 
-```md
+````md
 ---
 title: Button Component
 describe: "@my-components/button"
@@ -118,11 +128,11 @@ This component provides a customizable button with different variants.
 ## Usage
 
 ```jsx
-import { Button } from './Button';
+import { Button } from "./Button";
 
-<Button variant="primary">Click Me</Button>
+<Button variant="primary">Click Me</Button>;
 ```
-```
+````
 
 The `describe` field in the front matter specifies where to place the documentation in the navigation tree. For example, `"@my-components/button"` will place this documentation under the "@my-components" -> "button" path.
 

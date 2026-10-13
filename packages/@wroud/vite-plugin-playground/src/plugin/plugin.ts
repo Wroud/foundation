@@ -1,4 +1,5 @@
 import type { PluginOption } from "vite";
+import type { SsgPluginApi } from "@wroud/vite-plugin-ssg";
 import { globSync } from "tinyglobby";
 import picomatch from "picomatch";
 import nodePath from "node:path";
@@ -18,172 +19,98 @@ const DEFAULT_STORIES_INCLUDE = [
 
 const DEFAULT_DOCS_INCLUDE = ["**/*.stories.md", "../src/**/*.stories.md"];
 
-interface IOptions {
+const PACKAGE = "@wroud/vite-plugin-playground";
+const ENTRY_ID = "virtual:@wroud/vite-plugin-playground";
+const RESOLVED_ENTRY_ID = "\0" + ENTRY_ID;
+
+export interface IPlaygroundOptions {
   path?: string;
   imports?: string[];
   stories?: string[];
   docs?: string[];
   exclude?: string[];
-  bundle?: boolean;
 }
 
 export function playground({
   path = "playground",
   imports,
   stories = DEFAULT_STORIES_INCLUDE,
-  docs: docs = DEFAULT_DOCS_INCLUDE,
+  docs = DEFAULT_DOCS_INCLUDE,
   exclude,
-  bundle = false,
-}: IOptions = {}): PluginOption {
+}: IPlaygroundOptions = {}): PluginOption {
   const storiesMatcher = picomatch(stories, { dot: true });
   const docsMatcher = picomatch(docs, { dot: true });
-
-  let root: string | undefined;
-
-  function getPlaygroundSsgModuleId() {
-    return `/@ssg/${getPlaygroundModuleId()}`;
-  }
-
-  function getPlaygroundModuleId(root?: string): string {
-    if (root) {
-      return nodePath.posix.resolve(root, path) + "/index.js";
-    }
-    return path + "/index.js";
-  }
-
-  function getStoriesModuleId(root?: string) {
-    return getPlaygroundModuleId(root) + "?stories";
-  }
+  const api: { ssg: SsgPluginApi } = {
+    ssg: { mounts: [{ path, entry: ENTRY_ID }] },
+  };
 
   return [
     {
-      name: "@wroud/vite-plugin-playground",
-      configResolved: {
-        handler(config) {
-          root = config.root;
-
-          if (config.command === "serve") {
-            config.optimizeDeps.include = [
-              ...(config.optimizeDeps.include || []),
-              "react",
-              "react-dom",
-              "react-dom/client",
-              "react/jsx-runtime",
-              "@wroud/vite-plugin-playground > @ariakit/react",
-              "@wroud/vite-plugin-playground > react-markdown",
-            ];
-            config.optimizeDeps.exclude = [
-              ...(config.optimizeDeps.exclude || []),
-              "@wroud/playground-react",
-              "@wroud/vite-plugin-ssg/app",
-              "@wroud/vite-plugin-ssg/react/components",
-              "@wroud/vite-plugin-ssg/react/client",
-              "@wroud/vite-plugin-playground/app/index",
-            ];
-          }
-
-          if (config.environments["ssr"]) {
-            let noExternal = config.environments["ssr"].resolve.noExternal;
-
-            if (noExternal === true) {
-              return;
-            }
-
-            if (!Array.isArray(noExternal)) {
-              noExternal = [noExternal];
-            }
-
-            config.environments["ssr"].resolve.noExternal = [
-              ...noExternal,
-              "@wroud/vite-plugin-playground",
-            ];
-          }
-        },
-      },
-      buildStart: {
-        handler() {
-          if (this.environment.config.command === "build" && bundle) {
-            this.emitFile({
-              id: getPlaygroundSsgModuleId(),
-              name: path + "/index",
-              fileName:
-                this.environment.name === "ssr"
-                  ? path + "/index.js"
-                  : undefined,
-              type: "chunk",
-              preserveSignature: "strict",
-            });
-          }
-        },
+      name: PACKAGE,
+      api,
+      config(_, { command }) {
+        return {
+          optimizeDeps:
+            command === "serve"
+              ? {
+                  include: [
+                    "react",
+                    "react-dom",
+                    "react-dom/client",
+                    "react/jsx-runtime",
+                    `${PACKAGE} > @ariakit/react`,
+                    `${PACKAGE} > react-markdown`,
+                  ],
+                  exclude: [PACKAGE, "@wroud/playground-react"],
+                }
+              : undefined,
+          environments: {
+            ssr: { resolve: { noExternal: [PACKAGE] } },
+            rsc: { resolve: { noExternal: [PACKAGE] } },
+          },
+        };
       },
       resolveId: {
         order: "pre",
-        async handler(source, importer, options) {
-          // ignore IDs with null character, these belong to other plugins
-          if (source && source.includes("\0")) return null;
-
-          const config = this.environment.config;
-          if (source === getStoriesModuleId(config.root)) {
-            return source;
-          }
-
-          if (root && importer === getStoriesModuleId(config.root)) {
-            return this.resolve(nodePath.posix.join(root, source), root);
-          }
-          return null;
+        handler(source) {
+          return source === ENTRY_ID ? RESOLVED_ENTRY_ID : null;
         },
       },
-      load: {
-        order: "pre",
-        handler(id) {
-          const config = this.environment.config;
-          if (id === getStoriesModuleId(config.root)) {
-            try {
-              const storyFiles = stories
-                .flatMap((pattern) => {
-                  try {
-                    return globSync(pattern, { cwd: root, ignore: exclude });
-                  } catch (err) {
-                    this.warn(
-                      `Failed to process glob pattern "${pattern}": ${err instanceof Error ? err.message : String(err)}`,
-                    );
-                    return [];
-                  }
-                })
-                .concat(
-                  docs.flatMap((pattern) => {
-                    try {
-                      return globSync(pattern, { cwd: root, ignore: exclude });
-                    } catch (err) {
-                      this.warn(
-                        `Failed to process glob pattern "${pattern}": ${err instanceof Error ? err.message : String(err)}`,
-                      );
-                      return [];
-                    }
-                  }),
-                )
-                .map((file) => `./${file}`)
-                .concat(imports?.map(createVirtualStoriesModule) ?? [])
-                .map((file) => {
-                  const path = file.replace(/\.(ts|js)x?$/, ".js");
-                  return `import "${path}";`;
-                })
-                .join("\n");
-
-              return {
-                code: storyFiles,
-                moduleSideEffects: true,
-                moduleType: "js",
-              };
-            } catch (err) {
-              this.error(
-                `Failed to generate stories module: ${err instanceof Error ? err.message : String(err)}`,
-              );
-            }
-          }
-
+      load(id) {
+        if (id !== RESOLVED_ENTRY_ID) {
           return null;
-        },
+        }
+        const root = this.environment.config.root;
+        let files: string[] = [];
+        try {
+          files = globSync([...stories, ...docs], {
+            cwd: root,
+            ignore: exclude,
+            absolute: true,
+          });
+        } catch (err) {
+          this.warn(
+            `Failed to collect stories: ${err instanceof Error ? err.message : String(err)}`,
+          );
+        }
+        const specifiers = [
+          ...files,
+          ...(imports?.map(createVirtualStoriesModule) ?? []),
+        ];
+        const names = specifiers.map((_, i) => `m${i}`);
+        return {
+          code: [
+            ...specifiers.map(
+              (specifier, i) =>
+                `import * as m${i} from ${JSON.stringify(specifier)};`,
+            ),
+            `export const modules = [${names.join(", ")}];`,
+            `export { default } from ${JSON.stringify(`${PACKAGE}/app/index`)};`,
+            "",
+          ].join("\n"),
+          moduleSideEffects: "no-treeshake",
+          moduleType: "js",
+        };
       },
 
       transform: {
@@ -229,9 +156,7 @@ describe(${JSON.stringify(describe)}, () => doc(${JSON.stringify(title)}, Markdo
               };
             }
 
-            return {
-              code,
-            };
+            return { code };
           }
 
           return null;
@@ -239,105 +164,7 @@ describe(${JSON.stringify(describe)}, () => doc(${JSON.stringify(title)}, Markdo
       },
     },
     {
-      name: "@wroud/vite-plugin-playground-resolver",
-      resolveId: {
-        order: "post",
-        async handler(source, importer, resolveOptions) {
-          // ignore IDs with null character, these belong to other plugins
-          if (source && source.includes("\0")) return null;
-
-          const config = this.environment.config;
-          const { custom = {} } = resolveOptions;
-          const {
-            "@wroud/vite-plugin-playground/resolve": playgroundResolve = {},
-          } = custom;
-          const { resolved: alreadyResolved } = playgroundResolve;
-
-          if (alreadyResolved) {
-            return alreadyResolved;
-          }
-
-          if (importer && importer.includes("\0")) {
-            importer = undefined;
-          }
-
-          let absoluteSource = source;
-          if (!absoluteSource.startsWith("/") && importer) {
-            absoluteSource = nodePath.posix.resolve(
-              nodePath.posix.dirname(importer),
-              absoluteSource,
-            );
-          }
-
-          let [sourcePath, params] = absoluteSource.split("?");
-          const suffix = params ? `?${params}` : "";
-
-          if (
-            sourcePath === getPlaygroundModuleId(config.root) ||
-            sourcePath + ".js" === getPlaygroundModuleId(config.root)
-          ) {
-            const resolvedId = getPlaygroundModuleId(config.root);
-            const resolvedIdFull = resolvedId + suffix;
-
-            // This way, plugins may attach additional meta information to the
-            // resolved id or make it external. We do not skip node-resolve here
-            // because another plugin might again use `this.resolve` in its
-            // `resolveId` hook, in which case we want to add the correct
-            // `moduleSideEffects` information.
-            const resolvedResolved = await this.resolve(
-              resolvedIdFull,
-              importer,
-              {
-                ...resolveOptions,
-                skipSelf: false,
-                custom: {
-                  ...custom,
-                  "@wroud/vite-plugin-playground/resolve": {
-                    ...custom["@wroud/vite-plugin-playground/resolve"],
-                    resolved: resolvedId,
-                  },
-                },
-              },
-            );
-
-            if (resolvedResolved) {
-              // Handle plugins that manually make the result external
-              if (resolvedResolved.external) {
-                return false;
-              }
-              // Allow other plugins to take over resolution. Rollup core will not
-              // change the id if it corresponds to an existing file
-              if (resolvedResolved.id !== resolvedIdFull) {
-                return resolvedResolved;
-              }
-              // Pass on meta information added by other plugins
-              return { id: resolvedIdFull, meta: resolvedResolved.meta };
-            }
-          }
-          return null;
-        },
-      },
-    },
-    {
-      name: "@wroud/vite-plugin-playground-index",
-      load: {
-        async handler(id) {
-          const config = this.environment.config;
-          if (id === getPlaygroundModuleId(config.root)) {
-            return {
-              code: `import { configure } from "@wroud/vite-plugin-playground/app/index";
-            import "${getStoriesModuleId(config.root)}";
-            export default configure(${JSON.stringify(path)});`,
-              moduleType: "js",
-            };
-          }
-
-          return null;
-        },
-      },
-    },
-    {
-      name: "@wroud/vite-plugin-playground-stories",
+      name: `${PACKAGE}-stories`,
       load: {
         order: "pre",
         handler(id) {

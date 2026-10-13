@@ -7,8 +7,8 @@ import {
 } from "@wroud/vite-plugin-ssg/react/components";
 import { Theme } from "./Theme.js";
 import { useTheme } from "../useTheme.js";
-import logoUrl from "./logo.svg?url";
-import layoutUrl from "../Layout.css?url";
+import logoUrl from "@wroud/vite-plugin-playground/assets/logo.svg?url";
+import layoutUrl from "@wroud/vite-plugin-playground/assets/Layout.css?url";
 
 interface Props extends IndexComponentProps {
   children?: React.ReactNode;

@@ -2,126 +2,79 @@
 import { createAppConfig } from "@wroud/vite-plugin-ssg/app";
 import { BrowserNavigation } from "@wroud/navigation/browser";
 import type { IPatternRouteState } from "@wroud/navigation";
-import { App } from "./App.js";
 import { Navigation, Router, TriePatternMatching } from "@wroud/navigation";
 import {
   fetchAllDocs,
   fetchAllStories,
 } from "@wroud/playground-react/registry";
 import { PlaygroundRoutes } from "@wroud/playground";
+import { App } from "./App.js";
 
-export function configure(playgroundPath: string) {
-  return createAppConfig(App, {
-    async onAppStart({ href, base }) {
-      base = base ?? "/";
-      let navigatorBase = base;
+type PlaygroundRoute = (typeof PlaygroundRoutes)[keyof typeof PlaygroundRoutes];
+type PlaygroundRouteState = IPatternRouteState<PlaygroundRoute>;
 
-      if (base.startsWith("http")) {
-        navigatorBase = new URL(base).pathname + playgroundPath;
-      } else {
-        navigatorBase = base + playgroundPath;
+export default createAppConfig(App, {
+  async onAppStart({ href, base }) {
+    base = base ?? "/";
+    if (base.startsWith("http")) {
+      base = new URL(base).pathname;
+    } else if (base.startsWith(".") && href) {
+      base = new URL(base, href).pathname;
+    }
+    const matcher = new TriePatternMatching({ base });
+    const router = new Router({ matcher });
+    const navigation = new Navigation(router);
 
-        if (navigatorBase.startsWith(".") && href) {
-          navigatorBase = new URL(navigatorBase, href).pathname;
-        }
+    for (const id of Object.values(PlaygroundRoutes)) {
+      router.addRoute({ id });
+    }
+
+    if ("document" in globalThis) {
+      const browserNavigation = new BrowserNavigation(navigation);
+      await browserNavigation.registerRoutes();
+
+      if (import.meta.hot) {
+        import.meta.hot.dispose(() => {
+          browserNavigation.dispose();
+        });
       }
+    } else if (href) {
+      const path = new URL(href).pathname;
+      await navigation.navigate(matcher.urlToState(decodeURIComponent(path)));
+    }
 
-      const matcher = new TriePatternMatching({
-        base: navigatorBase,
-      });
-      const router = new Router({
-        matcher,
-      });
+    return { navigation, base };
+  },
+  onRoutesPrerender({ navigation, base }) {
+    const states: PlaygroundRouteState[] = [
+      { id: PlaygroundRoutes.components, params: {} },
+    ];
 
-      const navigation = new Navigation(router);
+    const nodes = [
+      ...fetchAllStories().map((story) => ({
+        id: story.id,
+        preview: Boolean(story.options.preview),
+      })),
+      ...fetchAllDocs().map((doc) => ({ id: doc.id, preview: false })),
+    ];
 
-      router.addRoute({ id: PlaygroundRoutes.root });
-      router.addRoute({ id: PlaygroundRoutes.story });
-      router.addRoute({ id: PlaygroundRoutes.isolated });
-      router.addRoute({ id: PlaygroundRoutes.preview });
-      router.addRoute({ id: PlaygroundRoutes.components });
-      router.addRoute({ id: PlaygroundRoutes.assets });
-
-      if ("document" in globalThis) {
-        const browserNavigation = new BrowserNavigation(navigation);
-        await browserNavigation.registerRoutes();
-
-        if (import.meta.hot) {
-          import.meta.hot.dispose(() => {
-            browserNavigation.dispose();
-          });
-        }
-      } else if (href) {
-        const path = new URL(href).pathname;
-        await navigation.navigate(matcher.urlToState(decodeURIComponent(path)));
+    for (const node of nodes) {
+      const story = node.id.slice(1).split("/");
+      states.push(
+        { id: PlaygroundRoutes.story, params: { story } },
+        { id: PlaygroundRoutes.isolated, params: { story } },
+      );
+      if (node.preview) {
+        states.push({ id: PlaygroundRoutes.preview, params: { story } });
       }
+    }
 
-      return { navigation, base };
-    },
-    onRoutesPrerender({ navigation }) {
-      const stories = fetchAllStories();
-      const docs = fetchAllDocs();
+    const prefix = base.replace(/\/$/, "");
+    const routes = states
+      .map((state) => navigation.router.matcher?.stateToUrl(state) ?? null)
+      .filter((url): url is string => url !== null)
+      .map((url) => (url.startsWith(prefix) ? url.slice(prefix.length) : url));
 
-      const routes = [
-        {
-          id: PlaygroundRoutes.components,
-          params: {},
-        },
-        ...stories
-          .map<
-            IPatternRouteState<
-              | typeof PlaygroundRoutes.story
-              | typeof PlaygroundRoutes.isolated
-              | typeof PlaygroundRoutes.preview
-            >[]
-          >((story) => [
-            {
-              id: PlaygroundRoutes.story,
-              params: {
-                story: story.id.slice(1).split("/"),
-              },
-            },
-            {
-              id: PlaygroundRoutes.isolated,
-              params: {
-                story: story.id.slice(1).split("/"),
-              },
-            },
-            ...(story.options.preview
-              ? [
-                  {
-                    id: PlaygroundRoutes.preview,
-                    params: {
-                      story: story.id.slice(1).split("/"),
-                    },
-                  },
-                ]
-              : []),
-          ])
-          .flat(),
-        ...docs
-          .map<
-            IPatternRouteState<
-              typeof PlaygroundRoutes.story | typeof PlaygroundRoutes.isolated
-            >[]
-          >((doc) => [
-            {
-              id: PlaygroundRoutes.story,
-              params: { story: doc.id.slice(1).split("/") },
-            },
-            {
-              id: PlaygroundRoutes.isolated,
-              params: {
-                story: doc.id.slice(1).split("/"),
-              },
-            },
-          ])
-          .flat(),
-      ];
-
-      return routes
-        .map((route) => navigation.router.matcher?.stateToUrl(route))
-        .filter(Boolean) as string[];
-    },
-  });
-}
+    return ["/", ...routes];
+  },
+});

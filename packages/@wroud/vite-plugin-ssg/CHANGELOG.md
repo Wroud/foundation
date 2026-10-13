@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:7.7.0 -->
+## 7.7.0 (2026-10-13)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-ssg-v7.6.0...vite-plugin-ssg-v7.7.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- commit response status after the render shell ([eb430d4](https://github.com/Wroud/foundation/commit/eb430d4))
+
 <!-- version:7.6.0 -->
 ## 7.6.0 (2026-10-09)
 

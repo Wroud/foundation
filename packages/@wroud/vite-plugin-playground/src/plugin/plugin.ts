@@ -20,6 +20,15 @@ const DEFAULT_STORIES_INCLUDE = [
 const DEFAULT_DOCS_INCLUDE = ["**/*.stories.md", "../src/**/*.stories.md"];
 
 const PACKAGE = "@wroud/vite-plugin-playground";
+const SERVER_BUNDLED = [
+  PACKAGE,
+  "@wroud/playground-react",
+  "@wroud/react-reactive-value",
+  "@wroud/react-split-view",
+  "@wroud/react-tree",
+  "@ariakit/react",
+  "react-markdown",
+];
 const ENTRY_ID = "virtual:@wroud/vite-plugin-playground";
 const RESOLVED_ENTRY_ID = "\0" + ENTRY_ID;
 
@@ -65,8 +74,8 @@ export function playground({
                 }
               : undefined,
           environments: {
-            ssr: { resolve: { noExternal: [PACKAGE] } },
-            rsc: { resolve: { noExternal: [PACKAGE] } },
+            ssr: { resolve: { noExternal: SERVER_BUNDLED } },
+            rsc: { resolve: { noExternal: SERVER_BUNDLED } },
           },
         };
       },

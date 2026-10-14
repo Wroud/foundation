@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:7.8.0 -->
+## 7.8.0 (2026-10-14)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-ssg-v7.7.0...vite-plugin-ssg-v7.8.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- add plugin-contributed mounts ([bf779ce](https://github.com/Wroud/foundation/commit/bf779ce))
+
 <!-- version:7.7.0 -->
 ## 7.7.0 (2026-10-13)
 

@@ -3,6 +3,32 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:1.0.0 -->
+## 1.0.0 (2026-10-14)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-playground-v0.1.15...vite-plugin-playground-v1.0.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- add plugin-contributed mounts ([bf779ce](https://github.com/Wroud/foundation/commit/bf779ce))
+
+### 🩹 Fixes
+
+- bundle react-dependent dependencies on the server ([f539c8b](https://github.com/Wroud/foundation/commit/f539c8b))
+
+### ⚠️  Breaking Changes
+
+- mount the playground into the host app ([d976824](https://github.com/Wroud/foundation/commit/d976824))
+  - The plugin now contributes a mount to `@wroud/vite-plugin-ssg` instead of
+    <br>emitting its own ssg entry, so the playground is served at
+    <br>`<base>/playground/` next to the user's app. `ssgPlugin()` and
+    <br>`@tailwindcss/vite` are registered by the user; the `bundle` option is
+    <br>gone and Vite 8 is required. Stories are collected through an internal
+    <br>virtual entry, assets ship through the `./assets/*` export, and the
+    <br>package tests run through the shared tests-runner.
+  - `playground()` requires `ssgPlugin()` and
+
 <!-- version:0.1.15 -->
 ## 0.1.15 (2025-09-22)
 

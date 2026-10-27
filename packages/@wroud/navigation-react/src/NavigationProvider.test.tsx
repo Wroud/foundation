@@ -2,15 +2,17 @@
 
 import { describe, it, expect, vi } from "vitest";
 import { Suspense, act, use } from "react";
+import { renderToString } from "react-dom/server";
 import { NavigationType } from "@wroud/navigation";
 import { Link } from "./Link.js";
 import { NavigationProvider } from "./NavigationProvider.js";
 import { RouteCommitted } from "./RouteCommitted.js";
 import { useNavigation } from "./useNavigation.js";
+import { useNavigationPending } from "./useNavigationPending.js";
 import { useNavigationState } from "./useNavigationState.js";
 import type { LoadRoute } from "./LoadRoute.js";
 import { createHarness, deferred, route, settle } from "./tests/navigation.js";
-import { mount } from "./tests/react.js";
+import { mount, served } from "./tests/react.js";
 
 function Page({ block }: { block: Map<string, Promise<void>> }) {
   const state = useNavigationState();
@@ -24,12 +26,67 @@ function Page({ block }: { block: Map<string, Promise<void>> }) {
   );
 }
 
+function Outlet({ block }: { block: Map<string, Promise<void>> }) {
+  useNavigationState();
+  return (
+    <Suspense fallback={<output>loading</output>}>
+      <Page block={block} />
+    </Suspense>
+  );
+}
+
 function Plain() {
   const state = useNavigationState();
   return <output>{state?.id ?? "none"}</output>;
 }
 
 describe("NavigationProvider", () => {
+  it("keeps the server DOM of a route that suspends while hydrating", async () => {
+    const { navigation } = createHarness();
+    await navigation.navigate(route("/"));
+    const html = renderToString(
+      <NavigationProvider navigation={navigation}>
+        <Outlet block={new Map()} />
+      </NavigationProvider>,
+    );
+    const page = deferred();
+    const block = new Map([["/", page.promise]]);
+    const load = vi.fn<LoadRoute>(async () => {});
+    let pendingSeen = false;
+    function Pending() {
+      if (useNavigationPending()) pendingSeen = true;
+      return null;
+    }
+
+    const view = served(html);
+    const node = view.query("output");
+    expect(node.textContent).toBe("/");
+    await act(async () => {
+      view.hydrate(
+        <NavigationProvider navigation={navigation} load={load}>
+          <Pending />
+          <Outlet block={block} />
+        </NavigationProvider>,
+      );
+      await settle();
+    });
+    expect(view.errors).toEqual([]);
+    expect(view.text()).toBe("/");
+    expect(view.query("output")).toBe(node);
+    expect(pendingSeen).toBe(false);
+    expect(load).toHaveBeenCalledTimes(1);
+
+    page.resolve();
+    await act(async () => {
+      await settle();
+    });
+    expect(view.query("output")).toBe(node);
+    expect(view.text()).toBe("/");
+    expect(view.errors).toEqual([]);
+
+    await view.unmount();
+  });
+
   it("keeps the link pending and finished unsettled until the suspended route commits", async () => {
     const { navigation, transitions, finished } = createHarness();
     await navigation.navigate(route("/"));

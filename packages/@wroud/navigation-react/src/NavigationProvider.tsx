@@ -1,5 +1,6 @@
 "use client";
 import {
+  startTransition,
   useCallback,
   useLayoutEffect,
   useMemo,
@@ -39,7 +40,7 @@ export function NavigationProvider({
 }: NavigationProviderProps): ReactElement {
   const [entry, setEntry] = useState(() => navigation.currentEntry);
   const [gate] = useState(() => new CommitGate(navigation));
-  const [pending, startTransition] = useTransition();
+  const [pending, startPendingTransition] = useTransition();
   const loadRef = useRef(load);
   const prefetchRef = useRef(prefetch);
 
@@ -54,9 +55,10 @@ export function NavigationProvider({
       type: NavigationType,
       from: IRouteState | null,
       to: IRouteState | null,
+      begin = startPendingTransition,
     ) {
       const current = ++sequence;
-      startTransition(async () => {
+      begin(async () => {
         markTransition(type);
         try {
           if (to && !gate.isMounted(gate.tokenOf(to))) {
@@ -65,7 +67,7 @@ export function NavigationProvider({
         } catch {
           if (current === sequence) gate.release();
         }
-        startTransition(() => {
+        begin(() => {
           setEntry(navigation.currentEntry);
         });
       });
@@ -75,7 +77,12 @@ export function NavigationProvider({
       run(type, from, to);
       return held;
     });
-    run(NavigationType.Navigate, null, navigation.currentEntry?.state ?? null);
+    run(
+      NavigationType.Navigate,
+      null,
+      navigation.currentEntry?.state ?? null,
+      startTransition,
+    );
     return unsubscribe;
   }, [navigation, gate]);
 

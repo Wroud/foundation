@@ -2,7 +2,7 @@
   "name": "@wroud/navigation-react",
   "description": "React 19 bindings for @wroud/navigation that run every navigation as a React transition, with transition-aware links, pending state, and scroll restoration deferred until the routed content commits",
   "type": "module",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "license": "MIT",
   "author": "Wroud",
   "homepage": "https://wroud.dev/",

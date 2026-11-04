@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:7.8.1 -->
+## 7.8.1 (2026-11-04)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-ssg-v7.8.0...vite-plugin-ssg-v7.8.1)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- keep the server document when a client module fails to load ([55d7ee3](https://github.com/Wroud/foundation/commit/55d7ee3))
+
 <!-- version:7.8.0 -->
 ## 7.8.0 (2026-10-14)
 

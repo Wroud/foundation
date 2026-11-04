@@ -4,27 +4,12 @@ import {
   type FlightPromise,
 } from "./flight-navigation.js";
 import type { RscPayload } from "./shared.js";
+import { deferred } from "../../tests/deferred.js";
 
 const BASE = "https://app.test/";
 
 function makePayload(id: string): RscPayload {
   return { root: id, context: {}, mount: "" };
-}
-
-interface Deferred<T> {
-  promise: Promise<T>;
-  resolve: (value: T) => void;
-  reject: (error: unknown) => void;
-}
-
-function deferred<T>(): Deferred<T> {
-  let resolve!: (value: T) => void;
-  let reject!: (error: unknown) => void;
-  const promise = new Promise<T>((res, rej) => {
-    resolve = res;
-    reject = rej;
-  });
-  return { promise, resolve, reject };
 }
 
 function makeNav(

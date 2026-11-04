@@ -206,6 +206,19 @@ Lifecycle summary:
 | `onRoutesPrerender` (`createRscConfig`) | `*.entry.rsc.tsx` | rsc (build)                     | routes to emit (takes precedence)              |
 | `onAppStop` (`createRscConfig`)         | `*.entry.rsc.tsx` | rsc (end of build)              | release server resources                       |
 
+### Hydration
+
+The browser entry calls `hydrateRoot` only after the Flight payload, the app entry and every client module whose load the payload has started have finished loading. If one of them fails to load, the server-rendered document is left as it is, and the entry dispatches a cancelable `vite:preloadError` event on `window` with the error as `payload`, the same event Vite dispatches for a failed dynamic import. Without `preventDefault()`, the entry then throws the error. On a page left this way, `navigate()` falls back to a full navigation.
+
+```ts
+window.addEventListener("vite:preloadError", (event) => {
+  event.preventDefault();
+  report(event.payload);
+});
+```
+
+Client modules referenced by later payloads (`navigate()`, server actions) or by payload rows still streaming when hydration starts load during render, so a failure there reaches the nearest error boundary.
+
 ### Mounts
 
 A plugin can add its own app to the site under a path. It declares the app in its plugin `api`:

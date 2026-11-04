@@ -16,6 +16,7 @@ import {
 import type { SsrEntryModule } from "./server-ssr.js";
 import { createRscRenderRequest, type RscPayload } from "./shared.js";
 import { createFlightNavigation } from "./flight-navigation.js";
+import { trackClientModuleLoads } from "./client-module-loads.js";
 import type { IAppContext } from "../../app.js";
 import type { IndexComponentContext } from "../IndexComponent.js";
 
@@ -24,36 +25,69 @@ export type BrowserEntryLoader<T extends IAppContext = IAppContext> = () =>
   | undefined
   | Promise<SsrEntryModule<T> | undefined>;
 
+function abandonHydration(failures: unknown[]): boolean {
+  let unhandled: { failure: unknown } | undefined;
+  for (const failure of failures) {
+    const event = new Event("vite:preloadError", { cancelable: true });
+    Object.assign(event, { payload: failure });
+    if (window.dispatchEvent(event)) {
+      unhandled ??= { failure };
+    }
+  }
+  if (unhandled) {
+    throw unhandled.failure;
+  }
+  return failures.length > 0;
+}
+
 export async function hydrate<T extends IAppContext>(
   entries: Record<string, BrowserEntryLoader<T>>,
 ): Promise<void> {
-  const initialPayload = await createFromReadableStream<RscPayload>(rscStream);
-  const mount = initialPayload.mount;
-  const module = await entries[mount]?.();
-
+  const moduleLoads = trackClientModuleLoads();
   setServerCallback(callServer);
-
   const { navigate, prefetch } = createFlightNavigation({
     fetchFlight,
     update,
   });
 
-  const context: IndexComponentContext = {
-    href: window.location.href,
-    base: initialPayload.context?.base ?? import.meta.env.BASE_URL,
-    cspNonce: initialPayload.context?.cspNonce,
-    navigate,
-    prefetch,
-  };
-  const appStartData = module
-    ? await toAppInstance(module.default).start(context)
-    : { base: context.base! };
+  let root: Root | undefined;
+  const failures: unknown[] = [];
+  let initialPayload: RscPayload;
+  let mount: string;
+  let appStartData: T | { base: string };
+  try {
+    initialPayload = await createFromReadableStream<RscPayload>(rscStream);
+    mount = initialPayload.mount;
+    let module: SsrEntryModule<T> | undefined;
+    try {
+      module = await entries[mount]?.();
+    } catch (failure) {
+      failures.push(failure);
+    }
+
+    const context: IndexComponentContext = {
+      href: window.location.href,
+      base: initialPayload.context?.base ?? import.meta.env.BASE_URL,
+      cspNonce: initialPayload.context?.cspNonce,
+      navigate,
+      prefetch,
+    };
+    appStartData = module
+      ? await toAppInstance(module.default).start(context)
+      : { base: context.base! };
+
+    failures.push(...(await moduleLoads.settle()));
+  } finally {
+    moduleLoads.dispose();
+  }
+  if (abandonHydration(failures)) {
+    return;
+  }
 
   function render(payload: RscPayload) {
     return <RscApp appStartData={appStartData}>{payload.root}</RscApp>;
   }
 
-  let root: Root;
   if ("__NO_HYDRATE" in globalThis) {
     root = createRoot(document);
     root.render(render(initialPayload));
@@ -64,12 +98,13 @@ export async function hydrate<T extends IAppContext>(
   }
 
   function update(payload: RscPayload, url?: URL) {
-    if (payload.mount !== mount) {
+    const target = root;
+    if (!target || payload.mount !== mount) {
       window.location.assign(url?.href ?? window.location.href);
       return;
     }
     startTransition(() => {
-      root.render(render(payload));
+      target.render(render(payload));
     });
   }
 

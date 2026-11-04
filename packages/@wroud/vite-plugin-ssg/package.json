@@ -48,6 +48,7 @@
     "@wroud/di-react": "workspace:^",
     "@wroud/tests-runner": "workspace:*",
     "@wroud/tsconfig": "workspace:^",
+    "happy-dom": "^17",
     "react": "^19",
     "react-dom": "^19",
     "rimraf": "^6",

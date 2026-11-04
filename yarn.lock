@@ -5243,6 +5243,7 @@ __metadata:
     "@wroud/di-react": "workspace:^"
     "@wroud/tests-runner": "workspace:*"
     "@wroud/tsconfig": "workspace:^"
+    happy-dom: "npm:^17"
     react: "npm:^19"
     react-dom: "npm:^19"
     rimraf: "npm:^6"

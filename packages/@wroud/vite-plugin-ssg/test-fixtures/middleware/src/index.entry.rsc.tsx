@@ -2,6 +2,7 @@ import { AsyncLocalStorage } from "node:async_hooks";
 import { Suspense } from "react";
 import { createRscConfig } from "@wroud/vite-plugin-ssg/app";
 import type { RequestMiddleware, RscEntryProps } from "@wroud/vite-plugin-ssg";
+import { touch } from "./actions.js";
 
 const storage = new AsyncLocalStorage<string>();
 const gates = new Map<
@@ -78,6 +79,7 @@ async function RscRoot({ context, children }: RscEntryProps) {
         <p data-testid="path">{path}</p>
         <p data-testid="context">{storage.getStore()}</p>
         {children}
+        {path === "/shared" && <form action={touch} />}
         {path === "/slow" && (
           <Suspense fallback={<p data-testid="fallback">waiting</p>}>
             <SlowSection id={id!} />
@@ -108,9 +110,14 @@ export default createRscConfig(RscRoot, {
       enter: String(context.headers?.["x-enter"] ?? ""),
       id: storage.getStore() ?? "none",
       nonce: context.cspNonce,
+      declaredHref:
+        new URL(context.href!).pathname === "/shared"
+          ? "/shared?declared=1"
+          : undefined,
     };
   },
   onResponse: (app) => ({
+    href: app.declaredHref,
     headers: {
       "x-enter": app.enter,
       "x-context": app.id,

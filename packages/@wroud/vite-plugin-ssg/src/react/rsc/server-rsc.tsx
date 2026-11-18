@@ -15,7 +15,7 @@ import {
 } from "../../app/RscConfig.js";
 import { RenderContextProvider } from "../components/RenderContext.js";
 import { runWithRenderContext } from "../components/renderContextAccessor.react-server.js";
-import type { IResponseMetadata } from "../../app/IResponseMetadata.js";
+import type { IRscResponseMetadata } from "../../app/IResponseMetadata.js";
 import type {
   IndexComponent,
   IndexComponentContext,
@@ -178,18 +178,32 @@ export function createSsgRuntime<T extends IAppContext>(
     };
   }
 
+  function withResponseHref(
+    context: IndexComponentContext,
+    response: IRscResponseMetadata | undefined,
+  ): IndexComponentContext {
+    if (!response?.href) {
+      return context;
+    }
+    return {
+      ...context,
+      href: new URL(response.href, context.href ?? undefined).href,
+    };
+  }
+
   async function renderFlight(
     mount: Mount<T>,
-    context: IndexComponentContext,
+    requestContext: IndexComponentContext,
     signal: AbortSignal,
     tracker: RenderErrorTracker,
     action?: ActionOutcome,
   ): Promise<{
     stream: ReadableStream<Uint8Array>;
-    response: IResponseMetadata | undefined;
+    response: IRscResponseMetadata | undefined;
+    context: IndexComponentContext;
   }> {
     const { rscApp, Index, css } = await table.load(mount);
-    const app = await rscApp.start(context);
+    const app = await rscApp.start(requestContext);
 
     let stopped = false;
     async function stopApp() {
@@ -202,6 +216,7 @@ export function createSsgRuntime<T extends IAppContext>(
 
     try {
       const response = await rscApp.getResponse(app);
+      const context = withResponseHref(requestContext, response);
       const RscRoot = rscApp.root;
       const clientContext = toClientContext({
         ...context,
@@ -252,6 +267,7 @@ export function createSsgRuntime<T extends IAppContext>(
           new TransformStream<Uint8Array, Uint8Array>(stopTransformer),
         ),
         response,
+        context,
       };
     } catch (error) {
       await stopApp();
@@ -293,8 +309,8 @@ export function createSsgRuntime<T extends IAppContext>(
     requestOptions?: SsgRequestOptions,
   ): Promise<Response> {
     const { isRsc, isAction, actionId, url } = parseRenderRequest(request);
-    const context = createContext(mount, url, request, requestOptions);
-    return runWithDevFetch(context, async () => {
+    const requestContext = createContext(mount, url, request, requestOptions);
+    return runWithDevFetch(requestContext, async () => {
       let action: ActionOutcome | undefined;
       if (isAction) {
         action = await handleServerAction(request, actionId);
@@ -304,9 +320,13 @@ export function createSsgRuntime<T extends IAppContext>(
       }
 
       const tracker = new RenderErrorTracker(request.signal);
-      const { stream: rscStream, response: rscResponse } = await renderFlight(
-        mount,
+      const {
+        stream: rscStream,
+        response: rscResponse,
         context,
+      } = await renderFlight(
+        mount,
+        requestContext,
         request.signal,
         tracker,
         action,
@@ -371,15 +391,14 @@ export function createSsgRuntime<T extends IAppContext>(
         `[vite-plugin-ssg] no mount serves ${url.pathname}; add a root entry or declare the route under a mount`,
       );
     }
-    const context = createContext(mount, url, request);
-    return runWithDevFetch(context, async () => {
+    const requestContext = createContext(mount, url, request);
+    return runWithDevFetch(requestContext, async () => {
       const tracker = new RenderErrorTracker(request.signal);
-      const { stream, response: rscResponse } = await renderFlight(
-        mount,
+      const {
+        stream,
+        response: rscResponse,
         context,
-        request.signal,
-        tracker,
-      );
+      } = await renderFlight(mount, requestContext, request.signal, tracker);
       const [rscStream1, rscStream2] = stream.tee();
 
       const ssr = await loadSsr();

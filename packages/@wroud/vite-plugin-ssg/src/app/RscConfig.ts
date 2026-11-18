@@ -3,7 +3,7 @@ import type {
   RscEntryComponent,
 } from "../react/IndexComponent.js";
 import type { IAppContext } from "./IAppContext.js";
-import type { IResponseMetadata } from "./IResponseMetadata.js";
+import type { IRscResponseMetadata } from "./IResponseMetadata.js";
 
 interface IRscInitializer<T extends IAppContext> {
   (context: IndexComponentContext): T | Promise<T>;
@@ -12,7 +12,10 @@ interface IRscInitializer<T extends IAppContext> {
 interface IRscResponse<T extends IAppContext> {
   (
     app: T,
-  ): IResponseMetadata | undefined | Promise<IResponseMetadata | undefined>;
+  ):
+    | IRscResponseMetadata
+    | undefined
+    | Promise<IRscResponseMetadata | undefined>;
 }
 
 interface IRscRoutesPrerender<T extends IAppContext> {
@@ -67,7 +70,7 @@ export class RscInstance<T extends IAppContext> {
     return (await this.onRoutesPrerender?.(app)) ?? [];
   }
 
-  async getResponse(app: T): Promise<IResponseMetadata | undefined> {
+  async getResponse(app: T): Promise<IRscResponseMetadata | undefined> {
     return await this.onResponse?.(app);
   }
 

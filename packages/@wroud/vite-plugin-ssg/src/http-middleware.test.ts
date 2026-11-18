@@ -107,6 +107,43 @@ describe.each(["development", "production"])("HTTP middleware (%s)", (mode) => {
     expect(await response.text()).toContain("/decorate");
   });
 
+  it.each(["/shared", "/shared.rsc"])(
+    "writes the href declared by onResponse for %s",
+    async (route) => {
+      const href = base + "/shared?declared=1";
+      const response = await request(route + "?utm_source=probe");
+      const body = await response.text();
+      expect(body).toContain(href);
+      expect(body).not.toContain("probe");
+      if (!route.endsWith(".rsc")) {
+        expect(response.headers.get("x-ssr-href")).toBe(href);
+      }
+    },
+  );
+
+  it("writes the href declared by onResponse for a server action", async () => {
+    const html = await (await request("/shared")).text();
+    const actionId = html.match(/name="\$ACTION_ID_([^"]+)"/)?.[1];
+    expect(actionId).toBeTruthy();
+    const response = await request("/shared.rsc?utm_source=probe", {
+      method: "POST",
+      headers: { "rsc-action": actionId! },
+      body: "[]",
+    });
+    const body = await response.text();
+    expect(response.status).toBe(200);
+    expect(body).toContain(base + "/shared?declared=1");
+    expect(body).not.toContain("probe");
+  });
+
+  it.each(["/plain", "/plain.rsc"])(
+    "writes the request URL by default for %s",
+    async (route) => {
+      const body = await (await request(route + "?utm_source=probe")).text();
+      expect(body).toContain("/plain?utm_source=probe");
+    },
+  );
+
   it.each(["/startup-error", "/invalid.rsc"])(
     "catches downstream errors at %s",
     async (route) => {
@@ -226,6 +263,22 @@ describe.each(["development", "production"])("HTTP middleware (%s)", (mode) => {
       );
       expect(response.headers.get("x-nonce")).toBe("nonce-flight");
       expect(await response.text()).toContain('"cspNonce":"nonce-flight"');
+    });
+
+    it("writes the href declared by onResponse when prerendering", async () => {
+      const href = base + "/shared?declared=1";
+      const result = await runtime!.handleSsg(
+        new Request(base + "/shared?utm_source=probe"),
+      );
+      expect(result.headers.get("x-ssr-href")).toBe(href);
+      const bodies = await Promise.all([
+        new Response(result.html).text(),
+        new Response(result.rsc).text(),
+      ]);
+      for (const body of bodies) {
+        expect(body).toContain(href);
+        expect(body).not.toContain("probe");
+      }
     });
 
     it("keeps prerendering outside the middleware boundary", async () => {

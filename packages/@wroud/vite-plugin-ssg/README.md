@@ -380,6 +380,33 @@ Putting `onResponse` on the **rsc** entry removes the asymmetry entirely: it run
 
 `handleSsg` (the static build path) always renders settled and returns `{ status, headers }` alongside its streams, so a prerendered route whose data fetch failed reports `500` and one that hit `renderTimeout` reports `503`. The build fails on any route that reports a 5xx status, since a broken page must never reach the CDN as a static file. A 4xx status declared by your app is a legitimate page: the build logs a warning and still writes its HTML.
 
+### Shared caches and the request URL
+
+The runtime writes the request URL into each response. When a shared cache serves one stored response for several URLs — a CDN cache key that ignores the query string, for example — return `href` from the rsc entry's `onResponse` to name the URL the response was rendered for:
+
+```tsx
+export default createRscConfig(RscRoot, {
+  async onAppStart({ href, base }) {
+    const router = await routerService.setup(base ?? "/", href);
+    return { base: base ?? "/", router };
+  },
+  onResponse: ({ router }) =>
+    router.matched?.public
+      ? {
+          href: router.href,
+          headers: { "cache-control": "public, s-maxage=300" },
+        }
+      : { headers: { "cache-control": "no-store" } },
+});
+```
+
+- `href` is an absolute URL or one relative to the request URL, such as `/review?src=a`. Here `router.href` is the URL your router built from the params the matched route declares.
+- It replaces the request URL in the `context` of the rsc root and of the client entry (`onAppStart` during SSR and the component) and in the flight payload, for document, `.rsc`, server-action and `handleSsg` responses.
+- The rsc `onAppStart` still receives the request URL. For a `.rsc` request that is the URL of the route, not of the `.rsc` file.
+- Without `href` the request URL is used. Only `createRscConfig` reads `href`.
+- In the browser `context.href` is `window.location.href`.
+- State your own code sends to the client, such as router state passed to a `"use client"` provider, is not rewritten.
+
 ### HTTP middleware
 
 Register optional Fetch middleware through `createRscConfig`. It wraps HTML, RSC, and server-action requests in Vite development and production, including Lambda. The first middleware in the array is outermost.

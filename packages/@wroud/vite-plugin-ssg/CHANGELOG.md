@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:7.9.0 -->
+## 7.9.0 (2026-11-18)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-ssg-v7.8.1...vite-plugin-ssg-v7.9.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- let the rsc onResponse declare the rendered href ([9b80c12](https://github.com/Wroud/foundation/commit/9b80c12))
+
 <!-- version:7.8.1 -->
 ## 7.8.1 (2026-11-04)
 

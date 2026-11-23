@@ -99,6 +99,51 @@ describe("createFlightNavigation", () => {
     expect(fetchFlight).toHaveBeenCalledTimes(3);
   });
 
+  it("refresh drops every cached flight and renders a fresh one for the current location", async () => {
+    const fetchFlight = vi.fn(async (url: URL) =>
+      makePayload(`${url.pathname}#${fetchFlight.mock.calls.length}`),
+    );
+    const { navigate, prefetch, refresh, update } = makeNav(fetchFlight);
+
+    await prefetch(BASE);
+    await prefetch("/other");
+    expect(fetchFlight).toHaveBeenCalledTimes(2);
+
+    await refresh();
+
+    expect(fetchFlight).toHaveBeenCalledTimes(3);
+    expect(fetchFlight.mock.calls[2]![0].href).toBe(BASE);
+    expect(update).toHaveBeenCalledTimes(1);
+    expect(update).toHaveBeenCalledWith(makePayload("/#3"), new URL(BASE));
+
+    await navigate("/other");
+    expect(fetchFlight).toHaveBeenCalledTimes(4);
+  });
+
+  it("refresh ignores and drops a prefetch still in flight", async () => {
+    const pending = deferred<RscPayload>();
+    const after = makePayload("after-save");
+    const fetchFlight = vi
+      .fn<(url: URL) => FlightPromise>()
+      .mockReturnValueOnce(pending.promise)
+      .mockResolvedValueOnce(after)
+      .mockResolvedValueOnce(makePayload("next"));
+    const { navigate, prefetch, refresh, update } = makeNav(fetchFlight);
+
+    const warming = prefetch(BASE);
+    const refreshing = refresh();
+    expect(fetchFlight).toHaveBeenCalledTimes(2);
+
+    pending.resolve(makePayload("before-save"));
+    await Promise.all([warming, refreshing]);
+
+    expect(update).toHaveBeenCalledTimes(1);
+    expect(update).toHaveBeenCalledWith(after, expect.any(URL));
+
+    await navigate(BASE);
+    expect(fetchFlight).toHaveBeenCalledTimes(3);
+  });
+
   it("dedupes concurrent prefetch calls for the same href", async () => {
     const d = deferred<RscPayload>();
     const fetchFlight = vi.fn(() => d.promise);

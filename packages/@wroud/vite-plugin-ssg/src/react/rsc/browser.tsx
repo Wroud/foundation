@@ -45,7 +45,7 @@ export async function hydrate<T extends IAppContext>(
 ): Promise<void> {
   const moduleLoads = trackClientModuleLoads();
   setServerCallback(callServer);
-  const { navigate, prefetch } = createFlightNavigation({
+  const { navigate, prefetch, refresh } = createFlightNavigation({
     fetchFlight,
     update,
   });
@@ -71,6 +71,7 @@ export async function hydrate<T extends IAppContext>(
       cspNonce: initialPayload.context?.cspNonce,
       navigate,
       prefetch,
+      refresh,
     };
     appStartData = module
       ? await toAppInstance(module.default).start(context)

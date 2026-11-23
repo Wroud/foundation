@@ -137,6 +137,30 @@ describe("hydrate", () => {
     expect(assign).toHaveBeenCalledWith(expect.stringMatching(/\/about$/));
   });
 
+  it("exposes refresh, which fetches the current location and re-renders the root", async () => {
+    installLoader({});
+    parsePayloadLoading();
+    let context: IndexComponentContext | undefined;
+    const entry = createAppConfig(() => null, {
+      onAppStart: (started) => {
+        context = started;
+        return { base: "/" };
+      },
+    });
+    await hydrate({ "": () => ({ default: entry }) });
+    const root = dom.hydrateRoot.mock.results[0]!.value;
+
+    flight.createFromFetch.mockResolvedValue(payload);
+    const fetchSpy = vi
+      .spyOn(globalThis, "fetch")
+      .mockResolvedValue(new Response());
+    cleanup.push(() => fetchSpy.mockRestore());
+    await context!.refresh!();
+
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+    expect(root.render).toHaveBeenCalledTimes(1);
+  });
+
   it("routes a failed app entry import through the same gate", async () => {
     const error = new TypeError("entry chunk missing");
     installLoader({});

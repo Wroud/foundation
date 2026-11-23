@@ -250,7 +250,7 @@ Each mount is a separate app:
 - It has its own `onAppStart`, `onAppStop`, `onResponse`, middleware and `useAppContext()` data.
 - `context.base` is the mount base, for example `/site/admin/` with `base: "/site/"`. `useBase()`, `<Link>` and `<Script>` use it.
 - Routes returned from `onRoutesPrerender` are relative to the mount: `"/users"` is written to `site/admin/users.html`.
-- `navigate()` and `prefetch()` work inside the mount. A link into another mount is a full page load.
+- `navigate()`, `prefetch()` and `refresh()` work inside the mount. A link into another mount is a full page load.
 - Its code is loaded only for requests under its path, on the server and in the browser.
 
 ### Client navigation (optional)
@@ -259,7 +259,7 @@ By default, links are plain full-page loads — the plugin installs **no** globa
 
 `navigate(href)` only fetches that route's RSC payload and swaps the rendered tree in place — it does **not** touch the URL or history. You (or your router) own history; call `navigate()` to update the content. Its returned promise **rejects** if the flight fetch fails (including when it consumes a prefetch that failed), so catch it and fall back to a full-page load — as the example below does.
 
-`navigate` and `prefetch` are delivered through `context.navigate` / `context.prefetch` — the same `context` your `onAppStart` receives. They exist only in the browser (they are `undefined` during SSR, where there is nothing to navigate), so capture them in your app data and let any component reach them via `useAppContext()`:
+`navigate`, `prefetch` and `refresh` are delivered through `context.navigate` / `context.prefetch` / `context.refresh` — the same `context` your `onAppStart` receives. They exist only in the browser (they are `undefined` during SSR, where there is nothing to navigate), so capture them in your app data and let any component reach them via `useAppContext()`:
 
 ```tsx
 import { createAppConfig } from "@wroud/vite-plugin-ssg/app";
@@ -270,6 +270,7 @@ export default createAppConfig(Index, {
     base: context.base ?? "/",
     navigate: context.navigate,
     prefetch: context.prefetch,
+    refresh: context.refresh,
   }),
   onRoutesPrerender: () => ["/", "/about"],
 });
@@ -306,12 +307,18 @@ For browser back/forward, wire `popstate` yourself with the same `navigate`: `wi
 
 It fetches the same flight `navigate` would and stores the **parsed** payload in a small in-memory cache keyed by URL (hash-stripped), so it helps even for private/`no-store` routes that an HTTP cache can't reuse. It never swaps the rendered tree — only `navigate` does that. Concurrent `prefetch` calls for the same href (and a `navigate` that lands while a prefetch is still in flight) share a single request; a `navigate` that consumes a cached payload evicts it. The cache is bounded and entries expire after a short TTL. Prefetch is best-effort: a failed prefetch is swallowed and evicts its entry, so the next `navigate` or `prefetch` retries cleanly. Server actions are never served from or written to this cache.
 
-To re-render a page after its data changed, pass `{ fresh: true }`. The navigation fetches a new flight, ignores the cache, and drops that URL's cached entry, including a prefetch still in flight:
+#### Refresh
+
+`refresh()` re-renders the current page from the server after its data changed. It drops every cached flight, including prefetches still in flight, fetches a new flight for `location.href`, and renders it in a transition. It does not touch the URL or history. Like `navigate`, its promise rejects if the fetch fails.
 
 ```ts
+const { refresh } = useAppContext<{ refresh?: () => Promise<void> }>();
+
 await saveSettings(values);
-await navigate(location.href, { fresh: true });
+await refresh?.();
 ```
+
+To skip the cache for a single URL only, pass `{ fresh: true }` to `navigate`: it fetches a new flight and drops that URL's cached entry.
 
 ### Server actions (optional)
 

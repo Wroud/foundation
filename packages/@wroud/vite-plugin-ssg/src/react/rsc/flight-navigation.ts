@@ -18,6 +18,7 @@ export interface NavigateOptions {
 export interface FlightNavigation {
   navigate: (href?: string, options?: NavigateOptions) => Promise<void>;
   prefetch: (href?: string) => Promise<void>;
+  refresh: () => Promise<void>;
 }
 
 const DEFAULT_MAX_ENTRIES = 8;
@@ -110,5 +111,10 @@ export function createFlightNavigation(
     }
   }
 
-  return { navigate, prefetch };
+  function refresh(): Promise<void> {
+    cache.clear();
+    return navigate();
+  }
+
+  return { navigate, prefetch, refresh };
 }

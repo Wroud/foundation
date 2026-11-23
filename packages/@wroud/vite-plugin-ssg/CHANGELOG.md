@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:7.11.1 -->
+## 7.11.1 (2026-11-23)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-ssg-v7.11.0...vite-plugin-ssg-v7.11.1)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- drop the navigate fresh option in favor of refresh() ([1db351b](https://github.com/Wroud/foundation/commit/1db351b))
+
 <!-- version:7.11.0 -->
 ## 7.11.0 (2026-11-23)
 

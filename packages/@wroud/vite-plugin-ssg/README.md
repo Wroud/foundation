@@ -304,7 +304,14 @@ For browser back/forward, wire `popstate` yourself with the same `navigate`: `wi
 
 `prefetch(href)` warms a route's flight **before** the user commits to navigating — call it on link hover, focus, or when a link scrolls into view, then `navigate(href)` on click reuses the warm payload instead of issuing a fresh request, so the transition has nothing to wait for.
 
-It fetches the same flight `navigate` would and stores the **parsed** payload in a small in-memory cache keyed by URL (hash-stripped), so it helps even for private/`no-store` routes that an HTTP cache can't reuse. It never swaps the rendered tree — only `navigate` does that. Concurrent `prefetch` calls for the same href (and a `navigate` that lands while a prefetch is still in flight) share a single request; a `navigate` that consumes a cached payload evicts it. The cache is bounded and entries expire after a short TTL, so warmed flights never go stale. Prefetch is best-effort: a failed prefetch is swallowed and evicts its entry, so the next `navigate` or `prefetch` retries cleanly. Server actions are never served from or written to this cache.
+It fetches the same flight `navigate` would and stores the **parsed** payload in a small in-memory cache keyed by URL (hash-stripped), so it helps even for private/`no-store` routes that an HTTP cache can't reuse. It never swaps the rendered tree — only `navigate` does that. Concurrent `prefetch` calls for the same href (and a `navigate` that lands while a prefetch is still in flight) share a single request; a `navigate` that consumes a cached payload evicts it. The cache is bounded and entries expire after a short TTL. Prefetch is best-effort: a failed prefetch is swallowed and evicts its entry, so the next `navigate` or `prefetch` retries cleanly. Server actions are never served from or written to this cache.
+
+To re-render a page after its data changed, pass `{ fresh: true }`. The navigation fetches a new flight, ignores the cache, and drops that URL's cached entry, including a prefetch still in flight:
+
+```ts
+await saveSettings(values);
+await navigate(location.href, { fresh: true });
+```
 
 ### Server actions (optional)
 

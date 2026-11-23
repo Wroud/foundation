@@ -54,6 +54,51 @@ describe("createFlightNavigation", () => {
     expect(update).toHaveBeenCalledWith(payload, expect.any(URL));
   });
 
+  it("a fresh navigate ignores a stored prefetch and evicts it", async () => {
+    const before = makePayload("before-save");
+    const after = makePayload("after-save");
+    const fetchFlight = vi
+      .fn<(url: URL) => FlightPromise>()
+      .mockResolvedValueOnce(before)
+      .mockResolvedValueOnce(after)
+      .mockResolvedValueOnce(makePayload("next"));
+    const { navigate, prefetch, update } = makeNav(fetchFlight);
+
+    await prefetch("/settings");
+    await navigate("/settings", { fresh: true });
+
+    expect(fetchFlight).toHaveBeenCalledTimes(2);
+    expect(update).toHaveBeenCalledTimes(1);
+    expect(update).toHaveBeenCalledWith(after, expect.any(URL));
+
+    await navigate("/settings");
+    expect(fetchFlight).toHaveBeenCalledTimes(3);
+  });
+
+  it("a fresh navigate ignores and evicts a prefetch still in flight", async () => {
+    const pending = deferred<RscPayload>();
+    const after = makePayload("after-save");
+    const fetchFlight = vi
+      .fn<(url: URL) => FlightPromise>()
+      .mockReturnValueOnce(pending.promise)
+      .mockResolvedValueOnce(after)
+      .mockResolvedValueOnce(makePayload("next"));
+    const { navigate, prefetch, update } = makeNav(fetchFlight);
+
+    const warming = prefetch("/settings");
+    const navigation = navigate("/settings", { fresh: true });
+    expect(fetchFlight).toHaveBeenCalledTimes(2);
+
+    pending.resolve(makePayload("before-save"));
+    await Promise.all([warming, navigation]);
+
+    expect(update).toHaveBeenCalledTimes(1);
+    expect(update).toHaveBeenCalledWith(after, expect.any(URL));
+
+    await navigate("/settings");
+    expect(fetchFlight).toHaveBeenCalledTimes(3);
+  });
+
   it("dedupes concurrent prefetch calls for the same href", async () => {
     const d = deferred<RscPayload>();
     const fetchFlight = vi.fn(() => d.promise);

@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:7.11.0 -->
+## 7.11.0 (2026-11-23)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-ssg-v7.10.0...vite-plugin-ssg-v7.11.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- add refresh() to re-render the current page from a fresh flight ([a2ab884](https://github.com/Wroud/foundation/commit/a2ab884))
+
 <!-- version:7.10.0 -->
 ## 7.10.0 (2026-11-23)
 

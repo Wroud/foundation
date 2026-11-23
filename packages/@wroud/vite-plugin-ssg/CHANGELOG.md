@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:7.10.0 -->
+## 7.10.0 (2026-11-23)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-ssg-v7.9.0...vite-plugin-ssg-v7.10.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- add a fresh navigate option that bypasses the prefetch cache ([4c7f4e8](https://github.com/Wroud/foundation/commit/4c7f4e8))
+
 <!-- version:7.9.0 -->
 ## 7.9.0 (2026-11-18)
 

@@ -11,12 +11,8 @@ export interface FlightNavigationOptions {
   now?: () => number;
 }
 
-export interface NavigateOptions {
-  fresh?: boolean;
-}
-
 export interface FlightNavigation {
-  navigate: (href?: string, options?: NavigateOptions) => Promise<void>;
+  navigate: (href?: string) => Promise<void>;
   prefetch: (href?: string) => Promise<void>;
   refresh: () => Promise<void>;
 }
@@ -82,14 +78,13 @@ export function createFlightNavigation(
 
   let requestIndex = 0;
 
-  async function navigate(
-    href?: string,
-    options?: NavigateOptions,
-  ): Promise<void> {
+  async function navigate(href?: string): Promise<void> {
     const { url, key } = resolve(href);
     const request = ++requestIndex;
-    const cached = options?.fresh ? undefined : read(key);
-    cache.delete(key);
+    const cached = read(key);
+    if (cached) {
+      cache.delete(key);
+    }
     const next = await (cached ?? fetchFlight(url));
     if (requestIndex !== request) {
       return;

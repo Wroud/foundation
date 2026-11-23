@@ -1,12 +1,11 @@
 import type React from "react";
-import type { NavigateOptions } from "./rsc/flight-navigation.js";
 
 export interface IndexComponentContext {
   href?: string | null;
   cspNonce?: string;
   base?: string;
   headers?: Record<string, string | string[] | undefined>;
-  navigate?: (href: string, options?: NavigateOptions) => Promise<void>;
+  navigate?: (href: string) => Promise<void>;
   prefetch?: (href: string) => Promise<void>;
   refresh?: () => Promise<void>;
 }

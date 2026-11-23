@@ -318,8 +318,6 @@ await saveSettings(values);
 await refresh?.();
 ```
 
-To skip the cache for a single URL only, pass `{ fresh: true }` to `navigate`: it fetches a new flight and drops that URL's cached entry.
-
 ### Server actions (optional)
 
 `"use server"` functions are dispatched by the rsc entry's default-export handler **at request time** — in dev and in a `prerender: false` runtime (your own server, edge, or lambda). No app wiring is needed; the browser entry registers the server-action callback and the handler routes both paths:

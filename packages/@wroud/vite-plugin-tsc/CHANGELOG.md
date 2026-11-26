@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:1.0.1 -->
+## 1.0.1 (2026-11-26)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-tsc-v1.0.0...vite-plugin-tsc-v1.0.1)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- kill the native compiler with SIGKILL and on Ctrl+C ([ed343cd](https://github.com/Wroud/foundation/commit/ed343cd))
+
 <!-- version:1.0.0 -->
 ## 1.0.0 (2026-09-18)
 

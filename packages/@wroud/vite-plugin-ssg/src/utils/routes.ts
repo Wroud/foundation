@@ -32,6 +32,29 @@ export function joinBase(base: string, route: string): string {
   return b + r || "/";
 }
 
+export function routeFilePath(route: string): string {
+  return route
+    .split("/")
+    .map((segment) => {
+      const decoded = decodeSegment(segment);
+      if (decoded === "." || decoded === ".." || /[\\/]/.test(decoded)) {
+        throw new Error(
+          `[vite-plugin-ssg] invalid route "${route}": segment "${segment}" does not map to a file name`,
+        );
+      }
+      return decoded;
+    })
+    .join("/");
+}
+
+function decodeSegment(segment: string): string {
+  try {
+    return decodeURIComponent(segment);
+  } catch {
+    return segment;
+  }
+}
+
 export function htmlFilePath(route: string): string {
   return route.endsWith("/") ? route + "index.html" : route + ".html";
 }

@@ -160,7 +160,7 @@ Components in the rsc entry's graph are server components (they may be `async`, 
 
 ### Routes and app lifecycle
 
-Use `createAppConfig` to run startup logic and declare which routes to pre-render. Each route in `onRoutesPrerender` becomes one `.html` file, rendered by your root component with `context.href` set to that route — your root decides what to show. Plain `<a href="/about">` links navigate between them.
+Use `createAppConfig` to run startup logic and declare which routes to pre-render. Each route in `onRoutesPrerender` becomes one `.html` file, rendered by your root component with `context.href` set to that route — your root decides what to show. URL-encoded route segments are decoded for the file name, so `/docs/%40scope/` is written to `docs/@scope/index.html`. Plain `<a href="/about">` links navigate between them.
 
 ```tsx
 import { createAppConfig } from "@wroud/vite-plugin-ssg/app";

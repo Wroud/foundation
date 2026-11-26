@@ -7,6 +7,7 @@ import {
   htmlFilePath,
   joinBase,
   normalizeRoute,
+  routeFilePath,
   rscFilePath,
   sanitizeRoute,
   stripBase,
@@ -111,7 +112,8 @@ async function renderStatic(
         );
       }
 
-      const htmlPath = path.join(clientOutDir, htmlFilePath(route));
+      const filePath = routeFilePath(route);
+      const htmlPath = path.join(clientOutDir, htmlFilePath(filePath));
       if (csp) {
         const applied = await applyCsp(
           (await streamToBuffer(html)).toString("utf8"),
@@ -121,7 +123,7 @@ async function renderStatic(
         if (csp.manifest) {
           manifest.push({
             route,
-            file: htmlFilePath(route).replace(/^\//, ""),
+            file: htmlFilePath(filePath).replace(/^\//, ""),
             policy: applied.policy,
             hashes: applied.hashes,
           });
@@ -130,7 +132,7 @@ async function renderStatic(
         await writeFile(htmlPath, await streamToBuffer(html));
       }
       await writeFile(
-        path.join(clientOutDir, rscFilePath(route)),
+        path.join(clientOutDir, rscFilePath(filePath)),
         await streamToBuffer(rsc),
       );
     }

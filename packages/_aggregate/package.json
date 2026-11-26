@@ -55,6 +55,7 @@
     "graphql-codegen-fragment-masking": "workspace:^",
     "graphql-codegen-typed-document-nodes": "workspace:^",
     "graphql-sock": "^1",
+    "playground-test": "workspace:^",
     "react": "^19",
     "react-dom": "^19",
     "rimraf": "^6",

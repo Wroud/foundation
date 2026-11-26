@@ -1,4 +1,4 @@
-import { spawn } from "node:child_process";
+import { spawn, type ChildProcess } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import path from "node:path";
@@ -70,6 +70,40 @@ export async function resolveNativeCompiler(
   return null;
 }
 
+const liveChildren = new Set<ChildProcess>();
+
+function killLiveChildren() {
+  for (const child of liveChildren) {
+    child.kill("SIGKILL");
+  }
+}
+
+function detachHandlers() {
+  process.off("exit", killLiveChildren);
+  process.off("SIGINT", interrupt);
+}
+
+function interrupt(signal: NodeJS.Signals) {
+  killLiveChildren();
+  liveChildren.clear();
+  detachHandlers();
+  process.kill(process.pid, signal);
+}
+
+function track(child: ChildProcess) {
+  if (liveChildren.size === 0) {
+    process.on("exit", killLiveChildren);
+    process.on("SIGINT", interrupt);
+  }
+  liveChildren.add(child);
+}
+
+function untrack(child: ChildProcess) {
+  if (liveChildren.delete(child) && liveChildren.size === 0) {
+    detachHandlers();
+  }
+}
+
 export function startNative(
   compiler: NativeCompiler,
   tscArgs: string[],
@@ -90,8 +124,7 @@ export function startNative(
     cwd,
     stdio: ["ignore", "pipe", "pipe"],
   });
-  const kill = () => child.kill();
-  process.once("exit", kill);
+  track(child);
 
   child.stdout.setEncoding("utf8").on("data", parser.write);
   child.stderr.setEncoding("utf8").on("data", onError);
@@ -105,12 +138,12 @@ export function startNative(
       parser.end();
       resolve(code ?? 1);
     });
-  }).finally(() => process.off("exit", kill));
+  }).finally(() => untrack(child));
 
   return {
     exited,
     async stop() {
-      child.kill();
+      child.kill("SIGKILL");
       await exited;
     },
   };

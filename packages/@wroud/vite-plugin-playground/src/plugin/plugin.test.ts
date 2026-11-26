@@ -72,6 +72,23 @@ describe("playground ssg build", () => {
     ).toContain('data-testid="default-button"');
   });
 
+  it("renders isolated stories with initial props from the schema", async () => {
+    const html = await read("playground/isolated/Button/Controlled/index.html");
+    expect(html).toMatch(
+      /<button data-testid="controlled-button" data-variant="primary" style="font-size:16px">Controlled label<\/button>/,
+    );
+  });
+
+  it("renders a controls panel for stories with a props schema", async () => {
+    const html = await read("playground/story/Button/Controlled/index.html");
+    expect(html).toContain('aria-label="Story controls"');
+    expect(html).toContain("Button text");
+    expect(html).toContain(">disabled</option>");
+
+    const plain = await read("playground/story/Button/Default/index.html");
+    expect(plain).toMatch(/aria-label="Story controls"[^>]*><\/aside>/);
+  });
+
   it("turns markdown docs into story pages", async () => {
     expect(await read("playground/story/Button/Guide/index.html")).toContain(
       "Button guide",

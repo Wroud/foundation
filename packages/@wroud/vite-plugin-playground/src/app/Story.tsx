@@ -1,4 +1,4 @@
-import { useStory } from "@wroud/playground-react/views";
+import { StoryFrame, useStory } from "@wroud/playground-react/views";
 import { Template } from "./pages/Template.js";
 
 interface Props {
@@ -9,11 +9,14 @@ interface Props {
 export function Story({ activeStoryId, preview }: Props) {
   const story = useStory(activeStoryId);
 
-  let Component = story?.component ?? Template;
-
-  if (preview && typeof story?.options.preview === "function") {
-    Component = story.options.preview;
+  if (!story) {
+    return <Template />;
   }
 
-  return <Component />;
+  if (preview && typeof story.options.preview === "function") {
+    const Preview = story.options.preview;
+    return <Preview />;
+  }
+
+  return <StoryFrame key={story.id} story={story} />;
 }

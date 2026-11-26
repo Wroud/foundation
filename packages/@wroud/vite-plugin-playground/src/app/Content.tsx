@@ -1,5 +1,6 @@
 import { NodeContent } from "./NodeContent.js";
-import { IframeView, useNode } from "@wroud/playground-react/views";
+import { useNode } from "@wroud/playground-react/views";
+import { StoryView } from "./StoryView.js";
 
 interface Props {
   activeNodeId: string | null;
@@ -13,7 +14,7 @@ export function Content({ activeNodeId }: Props) {
       {!node || node.type === "doc" ? (
         <NodeContent activeNodeId={activeNodeId} />
       ) : (
-        <IframeView nodeId={activeNodeId} />
+        <StoryView nodeId={activeNodeId} />
       )}
     </div>
   );

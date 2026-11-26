@@ -52,7 +52,8 @@
     "react-dom": "^19",
     "rimraf": "^6",
     "vite": "^8",
-    "vitest": "^3"
+    "vitest": "^3",
+    "zod": "^4"
   },
   "peerDependencies": {
     "@wroud/playground-react": "workspace:^",

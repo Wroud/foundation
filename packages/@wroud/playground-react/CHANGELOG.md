@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.2.0 -->
+## 0.2.0 (2026-11-26)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/playground-react-v0.1.4...playground-react-v0.2.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- add story props controls, story panel and story channel ([b12e831](https://github.com/Wroud/foundation/commit/b12e831))
+
 <!-- version:0.1.4 -->
 ## 0.1.4 (2025-09-22)
 

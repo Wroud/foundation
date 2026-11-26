@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:7.11.2 -->
+## 7.11.2 (2026-11-26)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-ssg-v7.11.1...vite-plugin-ssg-v7.11.2)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- write prerendered pages to decoded route paths ([74436b7](https://github.com/Wroud/foundation/commit/74436b7))
+
 <!-- version:7.11.1 -->
 ## 7.11.1 (2026-11-23)
 

@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.1.4 -->
+## 0.1.4 (2026-11-26)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/react-tree-v0.1.3...react-tree-v0.1.4)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- keep stories in playground production builds ([f7b2cf8](https://github.com/Wroud/foundation/commit/f7b2cf8))
+
 <!-- version:0.1.3 -->
 ## 0.1.3 (2025-09-22)
 

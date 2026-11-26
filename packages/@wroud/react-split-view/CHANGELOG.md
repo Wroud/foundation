@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:0.1.4 -->
+## 0.1.4 (2026-11-26)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/react-split-view-v0.1.3...react-split-view-v0.1.4)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- keep stories in playground production builds ([ec4ddec](https://github.com/Wroud/foundation/commit/ec4ddec))
+
 <!-- version:0.1.3 -->
 ## 0.1.3 (2025-09-22)
 

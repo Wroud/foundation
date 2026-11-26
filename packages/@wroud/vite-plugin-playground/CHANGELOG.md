@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:1.1.0 -->
+## 1.1.0 (2026-11-26)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-playground-v1.0.1...vite-plugin-playground-v1.1.0)
+
+<!-- changelog -->
+### ✨ Features
+
+- render a controls panel next to stories ([f2512d4](https://github.com/Wroud/foundation/commit/f2512d4))
+
 <!-- version:1.0.1 -->
 ## 1.0.1 (2026-11-26)
 

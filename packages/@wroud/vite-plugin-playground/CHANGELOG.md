@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:1.1.1 -->
+## 1.1.1 (2026-11-26)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-playground-v1.1.0...vite-plugin-playground-v1.1.1)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- pick up story files added while the dev server runs ([5678d5c](https://github.com/Wroud/foundation/commit/5678d5c))
+
 <!-- version:1.1.0 -->
 ## 1.1.0 (2026-11-26)
 

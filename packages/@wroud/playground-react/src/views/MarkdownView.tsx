@@ -1,4 +1,6 @@
-import Markdown from "react-markdown";
+import { lazy } from "react";
+
+const Markdown = lazy(() => import("react-markdown"));
 
 export interface MarkdownViewProps {
   content: string;

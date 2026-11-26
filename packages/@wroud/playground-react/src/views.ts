@@ -7,3 +7,4 @@ export * from "./hooks/useStories.js";
 export * from "./hooks/useStoriesListener.js";
 export * from "./hooks/useStory.js";
 export * from "./hooks/useNavigation.js";
+export * from "./views/StoryFrame.js";

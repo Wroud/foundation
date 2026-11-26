@@ -5,3 +5,4 @@ export * from "./IStory.js";
 export * from "./doc.js";
 export * from "./IDoc.js";
 export * from "./IDescribe.js";
+export * from "./useStoryPanel.js";

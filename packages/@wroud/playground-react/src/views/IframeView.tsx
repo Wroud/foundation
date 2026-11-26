@@ -6,13 +6,19 @@ import { useNavigation } from "../hooks/useNavigation.js";
 interface IIframeViewProps {
   nodeId: string | null;
   preview?: boolean;
+  iframeRef?: React.RefObject<HTMLIFrameElement | null>;
 }
 
-export function IframeView({ nodeId, preview = false }: IIframeViewProps) {
+export function IframeView({
+  nodeId,
+  preview = false,
+  iframeRef: externalRef,
+}: IIframeViewProps) {
   const [loading, setLoading] = useState(true);
   const navigation = useNavigation();
   const node = useNode(nodeId);
-  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const ownRef = useRef<HTMLIFrameElement>(null);
+  const iframeRef = externalRef ?? ownRef;
 
   useEffect(() => {
     const iframe = iframeRef.current;

@@ -46,9 +46,11 @@
     "react-dom": "^19",
     "rimraf": "^6",
     "typescript": "^6",
-    "vitest": "^3"
+    "vitest": "^3",
+    "zod": "^4"
   },
   "dependencies": {
+    "@standard-schema/spec": "^1.1.0",
     "@wroud/navigation": "workspace:^",
     "@wroud/playground": "workspace:^",
     "react-markdown": "^10"

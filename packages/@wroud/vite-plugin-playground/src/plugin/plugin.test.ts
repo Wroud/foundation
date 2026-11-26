@@ -117,9 +117,8 @@ describe("playground dev server", () => {
     server = await createServer({
       configFile: path.join(fixtureDir, "vite.config.ts"),
       logLevel: "silent",
-      server: { port: 0 },
+      server: { middlewareMode: true },
     });
-    await server.listen();
   }, 120_000);
 
   afterAll(async () => {
@@ -127,11 +126,13 @@ describe("playground dev server", () => {
     await server?.close();
   });
 
-  const page = async () =>
-    (await fetch(new URL("playground/", server.resolvedUrls!.local[0]))).text();
+  const entry = async () =>
+    (await server.environments.client.transformRequest(
+      "virtual:@wroud/vite-plugin-playground",
+    ))!.code;
 
   it("picks up story files added and removed while running", async () => {
-    expect(await page()).not.toContain("Added");
+    expect(await entry()).not.toContain("Added.stories");
 
     await fs.writeFile(
       added,
@@ -139,16 +140,16 @@ describe("playground dev server", () => {
 describe("Added", () => { story("New", () => <i>new</i>); });
 `,
     );
-    await vi.waitFor(async () => expect(await page()).toContain("Added"), {
-      timeout: 10_000,
-      interval: 200,
-    });
+    await vi.waitFor(
+      async () => expect(await entry()).toContain("/src/Added.stories.tsx"),
+      { timeout: 10_000, interval: 200 },
+    );
 
     await fs.rm(added);
-    await vi.waitFor(async () => expect(await page()).not.toContain("Added"), {
-      timeout: 10_000,
-      interval: 200,
-    });
+    await vi.waitFor(
+      async () => expect(await entry()).not.toContain("Added.stories"),
+      { timeout: 10_000, interval: 200 },
+    );
   }, 30_000);
 });
 

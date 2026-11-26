@@ -1,0 +1,32 @@
+{
+  "name": "playground-test",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsc -b && vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "clear": "rimraf lib dist dist-ssr dist-rsc"
+  },
+  "packageManager": "yarn@4.14.1",
+  "devDependencies": {
+    "@tailwindcss/vite": "^4",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@wroud/playground-react": "workspace:^",
+    "@wroud/react-split-view": "workspace:^",
+    "@wroud/react-tree": "workspace:^",
+    "@wroud/tsconfig": "workspace:^",
+    "@wroud/vite-plugin-asset-resolver": "workspace:^",
+    "@wroud/vite-plugin-playground": "workspace:^",
+    "@wroud/vite-plugin-ssg": "workspace:^",
+    "@wroud/vite-plugin-tsc": "workspace:^",
+    "react": "^19",
+    "react-dom": "^19",
+    "rimraf": "^6",
+    "tailwindcss": "^4",
+    "typescript": "^6",
+    "vite": "^8",
+    "zod": "^4"
+  }
+}

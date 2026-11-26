@@ -2851,6 +2851,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@standard-schema/spec@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@standard-schema/spec@npm:1.1.0"
+  checksum: 10c0/d90f55acde4b2deb983529c87e8025fa693de1a5e8b49ecc6eb84d1fd96328add0e03d7d551442156c7432fd78165b2c26ff561b970a9a881f046abb78d6a526
+  languageName: node
+  linkType: hard
+
 "@swc/core-darwin-arm64@npm:1.11.29":
   version: 1.11.29
   resolution: "@swc/core-darwin-arm64@npm:1.11.29"
@@ -4624,6 +4631,7 @@ __metadata:
     graphql-codegen-fragment-masking: "workspace:^"
     graphql-codegen-typed-document-nodes: "workspace:^"
     graphql-sock: "npm:^1"
+    playground-test: "workspace:^"
     react: "npm:^19"
     react-dom: "npm:^19"
     rimraf: "npm:^6"
@@ -4969,6 +4977,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@wroud/playground-react@workspace:packages/@wroud/playground-react"
   dependencies:
+    "@standard-schema/spec": "npm:^1.1.0"
     "@types/react": "npm:^19"
     "@types/react-dom": "npm:^19"
     "@vitest/coverage-v8": "npm:^3"
@@ -4984,6 +4993,7 @@ __metadata:
     rimraf: "npm:^6"
     typescript: "npm:^6"
     vitest: "npm:^3"
+    zod: "npm:^4"
   peerDependencies:
     "@wroud/vite-plugin-ssg": "workspace:^"
     react: ^19
@@ -5075,12 +5085,16 @@ __metadata:
     rimraf: "npm:^6"
     typescript: "npm:^6"
     vite: "npm:^6"
+    zod: "npm:^4"
   peerDependencies:
     "@wroud/playground-react": "workspace:^"
     react: ^19.0.0
     react-dom: ^19.0.0
+    zod: ^4
   peerDependenciesMeta:
     "@wroud/playground-react":
+      optional: true
+    zod:
       optional: true
   languageName: unknown
   linkType: soft
@@ -5219,6 +5233,7 @@ __metadata:
     typescript: "npm:^6"
     vite: "npm:^8"
     vitest: "npm:^3"
+    zod: "npm:^4"
   peerDependencies:
     "@wroud/playground-react": "workspace:^"
     "@wroud/vite-plugin-ssg": "workspace:^"
@@ -11012,6 +11027,31 @@ __metadata:
   languageName: node
   linkType: hard
 
+"playground-test@workspace:^, playground-test@workspace:packages/playground-test":
+  version: 0.0.0-use.local
+  resolution: "playground-test@workspace:packages/playground-test"
+  dependencies:
+    "@tailwindcss/vite": "npm:^4"
+    "@types/react": "npm:^19"
+    "@types/react-dom": "npm:^19"
+    "@wroud/playground-react": "workspace:^"
+    "@wroud/react-split-view": "workspace:^"
+    "@wroud/react-tree": "workspace:^"
+    "@wroud/tsconfig": "workspace:^"
+    "@wroud/vite-plugin-asset-resolver": "workspace:^"
+    "@wroud/vite-plugin-playground": "workspace:^"
+    "@wroud/vite-plugin-ssg": "workspace:^"
+    "@wroud/vite-plugin-tsc": "workspace:^"
+    react: "npm:^19"
+    react-dom: "npm:^19"
+    rimraf: "npm:^6"
+    tailwindcss: "npm:^4"
+    typescript: "npm:^6"
+    vite: "npm:^8"
+    zod: "npm:^4"
+  languageName: unknown
+  linkType: soft
+
 "postcss-selector-parser@npm:6.0.10":
   version: 6.0.10
   resolution: "postcss-selector-parser@npm:6.0.10"
@@ -13662,6 +13702,13 @@ __metadata:
   dependencies:
     "@types/yoga-layout": "npm:1.9.2"
   checksum: 10c0/e83b6b7078faf4d0472461b53e92bf9cae655de3d896aee5f79b5ba5a960e507bbf8e671b261db13137bf18711686969f19fd1d9c4669beb1d70754b83c5879d
+  languageName: node
+  linkType: hard
+
+"zod@npm:^4":
+  version: 4.6.7
+  resolution: "zod@npm:4.6.7"
+  checksum: 10c0/4ce2eb14034317b7254e347ca37b5ad591cf8333147030cf05b9b5d31692d45073f7f2747aa50cf8c6b29012194d2b22978cecc89969cf34a0d18e89d0ee7d7b
   languageName: node
   linkType: hard
 

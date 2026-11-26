@@ -66,10 +66,36 @@ The playground is served at `<base>/playground/` next to your own app. `vite` se
 ### Options
 
 - `path` (string): Location of the playground under Vite `base` (default: "playground")
-- `imports` (string[]): Packages whose story files are included as well. A package that sets `sideEffects` in its `package.json` must list its story and doc files there, for example `["./lib/**/*.stories.js", "./src/**/*.stories.md"]`, or the production build drops them
-- `stories` (string[]): Glob patterns for story files (default: ["**/*.stories.{ts,tsx,js,jsx}"])
-- `docs` (string[]): Glob patterns for documentation files (default: ["**/*.stories.md", "../src/**/*.stories.md"])
-- `exclude` (string[]): Glob patterns for files to exclude
+- `imports` (string[]): Packages whose story and doc files are included as well. See [Stories from packages](#stories-from-packages)
+- `stories` (string[]): Glob patterns for story files, relative to the Vite `root` (default: ["**/*.stories.{ts,tsx,js,jsx}"])
+- `docs` (string[]): Glob patterns for documentation files, relative to the Vite `root` (default: ["**/*.stories.md", "../src/**/*.stories.md"])
+- `exclude` (string[]): Glob patterns, relative to the Vite `root`, for files to leave out. Patterns in `stories` and `docs` can also start with `!` to leave files out
+
+Story and doc files added or removed while `vite` is running appear without a restart.
+
+### Stories from packages
+
+A package listed in `imports` can be installed from npm or linked from a workspace. Its story and doc files are found with the `stories` and `docs` patterns, starting from the folder of the file its `"."` export points to. With the default patterns and `"exports": { ".": "./lib/index.js" }`, that means `lib/**/*.stories.{ts,tsx,js,jsx}`, `lib/**/*.stories.md` and `src/**/*.stories.md`.
+
+The package needs to:
+
+- publish its story files next to its entry, compiled to JavaScript, and include them in `files`
+- list its story and doc files in `sideEffects` if it sets that field, or the production build drops them
+- declare `@wroud/playground-react` as a peer dependency instead of bundling it
+
+```json
+{
+  "name": "@my/component-library",
+  "type": "module",
+  "exports": { ".": "./lib/index.js" },
+  "files": ["lib", "src/**/*.stories.md"],
+  "sideEffects": ["./lib/**/*.stories.js", "./src/**/*.stories.md"],
+  "peerDependencies": {
+    "@wroud/playground-react": "^0.2.0",
+    "react": "^19"
+  }
+}
+```
 
 ### Creating Stories
 

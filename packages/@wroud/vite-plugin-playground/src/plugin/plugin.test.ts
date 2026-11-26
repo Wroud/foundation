@@ -1,5 +1,5 @@
-import { describe, it, expect, beforeAll } from "vitest";
-import { createBuilder } from "vite";
+import { describe, it, expect, beforeAll, afterAll, vi } from "vitest";
+import { createBuilder, createServer, type ViteDevServer } from "vite";
 import { fileURLToPath } from "node:url";
 import fs from "node:fs/promises";
 import path from "node:path";
@@ -106,4 +106,68 @@ describe("playground ssg build", () => {
     expect(html).toMatch(/<link[^>]*href="data:image\/svg\+xml/);
     expect(html).not.toContain('href="/data:');
   });
+});
+
+describe("playground dev server", () => {
+  const added = path.join(fixtureDir, "src/Added.stories.tsx");
+  let server: ViteDevServer;
+
+  beforeAll(async () => {
+    await fs.rm(added, { force: true });
+    server = await createServer({
+      configFile: path.join(fixtureDir, "vite.config.ts"),
+      logLevel: "silent",
+      server: { port: 0 },
+    });
+    await server.listen();
+  }, 120_000);
+
+  afterAll(async () => {
+    await fs.rm(added, { force: true });
+    await server?.close();
+  });
+
+  const page = async () =>
+    (await fetch(new URL("playground/", server.resolvedUrls!.local[0]))).text();
+
+  it("picks up story files added and removed while running", async () => {
+    expect(await page()).not.toContain("Added");
+
+    await fs.writeFile(
+      added,
+      `import { describe, story } from "@wroud/playground-react";
+describe("Added", () => { story("New", () => <i>new</i>); });
+`,
+    );
+    await vi.waitFor(async () => expect(await page()).toContain("Added"), {
+      timeout: 10_000,
+      interval: 200,
+    });
+
+    await fs.rm(added);
+    await vi.waitFor(async () => expect(await page()).not.toContain("Added"), {
+      timeout: 10_000,
+      interval: 200,
+    });
+  }, 30_000);
+});
+
+describe("playground entry globs", () => {
+  it("honors negated story patterns", async () => {
+    const server = await createServer({
+      configFile: path.join(fixtureDir, "vite.config.negated.ts"),
+      logLevel: "silent",
+      server: { middlewareMode: true },
+    });
+    try {
+      const result = await server.environments.client.transformRequest(
+        "virtual:@wroud/vite-plugin-playground",
+      );
+      expect(result?.code.match(/(?<=from ")\/src\/[^"?]+/g)).toEqual([
+        "/src/Guide.stories.md",
+      ]);
+    } finally {
+      await server.close();
+    }
+  }, 30_000);
 });

@@ -5229,7 +5229,6 @@ __metadata:
     react-markdown: "npm:^10"
     rimraf: "npm:^6"
     tailwindcss: "npm:^4"
-    tinyglobby: "npm:^0"
     typescript: "npm:^6"
     vite: "npm:^8"
     vitest: "npm:^3"

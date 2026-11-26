@@ -1,6 +1,5 @@
 import type { PluginOption } from "vite";
 import type { SsgPluginApi } from "@wroud/vite-plugin-ssg";
-import { globSync } from "tinyglobby";
 import picomatch from "picomatch";
 import nodePath from "node:path";
 import MagicString from "magic-string";
@@ -49,6 +48,13 @@ export function playground({
 }: IPlaygroundOptions = {}): PluginOption {
   const storiesMatcher = picomatch(stories, { dot: true });
   const docsMatcher = picomatch(docs, { dot: true });
+  const patterns = [...stories, ...docs];
+  const entryGlobs = [
+    ...patterns,
+    ...(exclude ?? []).map((pattern) => `!${pattern}`),
+  ].map((pattern) =>
+    pattern.startsWith("!") ? `!/${pattern.slice(1)}` : `/${pattern}`,
+  );
   const api: { ssg: SsgPluginApi } = {
     ssg: { mounts: [{ path, entry: ENTRY_ID }] },
   };
@@ -89,23 +95,7 @@ export function playground({
         if (id !== RESOLVED_ENTRY_ID) {
           return null;
         }
-        const root = this.environment.config.root;
-        let files: string[] = [];
-        try {
-          files = globSync([...stories, ...docs], {
-            cwd: root,
-            ignore: exclude,
-            absolute: true,
-          });
-        } catch (err) {
-          this.warn(
-            `Failed to collect stories: ${err instanceof Error ? err.message : String(err)}`,
-          );
-        }
-        const specifiers = [
-          ...files,
-          ...(imports?.map(createVirtualStoriesModule) ?? []),
-        ];
+        const specifiers = imports?.map(createVirtualStoriesModule) ?? [];
         const names = specifiers.map((_, i) => `m${i}`);
         return {
           code: [
@@ -113,7 +103,8 @@ export function playground({
               (specifier, i) =>
                 `import * as m${i} from ${JSON.stringify(specifier)};`,
             ),
-            `export const modules = [${names.join(", ")}];`,
+            `const files = import.meta.glob(${JSON.stringify(entryGlobs)}, { eager: true });`,
+            `export const modules = [...Object.values(files), ${names.join(", ")}];`,
             `export { default } from ${JSON.stringify(`${PACKAGE}/app/index`)};`,
             "",
           ].join("\n"),
@@ -179,7 +170,7 @@ describe(${JSON.stringify(describe)}, () => doc(${JSON.stringify(title)}, Markdo
         handler(id) {
           if (isVirtualStoriesModule(id)) {
             return {
-              code: `import.meta.glob(${JSON.stringify([...stories, ...docs].map((pattern) => `./${pattern}`))}, { eager: true })`,
+              code: `import.meta.glob(${JSON.stringify(patterns.map((pattern) => `./${pattern}`))}, { eager: true })`,
               moduleSideEffects: "no-treeshake",
               moduleType: "js",
             };

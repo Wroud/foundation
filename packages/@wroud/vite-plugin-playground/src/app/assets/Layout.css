@@ -1,5 +1,6 @@
 @import url("@vscode/codicons/dist/codicon.css");
 @import "tailwindcss" prefix(twp);
+@source "../";
 @plugin "@tailwindcss/typography";
 @custom-variant dark (&:where(.dark, .dark *));
 

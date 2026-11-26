@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- version:1.0.1 -->
+## 1.0.1 (2026-11-26)
+
+[Compare changes](https://github.com/Wroud/foundation/compare/vite-plugin-playground-v1.0.0...vite-plugin-playground-v1.0.1)
+
+<!-- changelog -->
+### 🩹 Fixes
+
+- scan playground sources for tailwind classes when installed from node_modules ([325be6b](https://github.com/Wroud/foundation/commit/325be6b))
+
 <!-- version:1.0.0 -->
 ## 1.0.0 (2026-10-14)
 
